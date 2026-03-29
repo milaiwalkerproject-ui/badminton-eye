@@ -1,0 +1,183 @@
+import SwiftUI
+import SwiftData
+
+struct MatchHistoryView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Query(
+        filter: #Predicate<PersistedMatch> { $0.isComplete },
+        sort: \PersistedMatch.startedAt,
+        order: .reverse
+    )
+    private var completedMatches: [PersistedMatch]
+
+    @State private var showDeleteConfirmation = false
+    @State private var matchToDelete: PersistedMatch?
+
+    var body: some View {
+        Group {
+            if completedMatches.isEmpty {
+                ContentUnavailableView {
+                    Label("No Matches Yet", systemImage: "sportscourt")
+                } description: {
+                    Text("Start your first match to see results here.")
+                } actions: {
+                    NavigationLink("New Match") {
+                        MatchSetupView()
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+            } else {
+                matchList
+            }
+        }
+        .navigationTitle("Match History")
+        .alert("Delete Match?", isPresented: $showDeleteConfirmation) {
+            Button("Delete", role: .destructive) {
+                if let match = matchToDelete {
+                    modelContext.delete(match)
+                    matchToDelete = nil
+                }
+            }
+            Button("Cancel", role: .cancel) {
+                matchToDelete = nil
+            }
+        } message: {
+            Text("This match will be permanently removed.")
+        }
+    }
+
+    private var matchList: some View {
+        List {
+            let grouped = groupedMatches
+            ForEach(grouped, id: \.title) { section in
+                Section(section.title) {
+                    ForEach(section.matches) { match in
+                        NavigationLink {
+                            MatchDetailView(match: match)
+                        } label: {
+                            matchRow(match)
+                        }
+                    }
+                    .onDelete { offsets in
+                        if let first = offsets.first {
+                            matchToDelete = section.matches[first]
+                            showDeleteConfirmation = true
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Match Row
+
+    private func matchRow(_ match: PersistedMatch) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text(playerNamesText(for: match))
+                    .font(.headline)
+                    .lineLimit(1)
+                Spacer()
+                Text(gameScoresText(for: match))
+                    .font(.subheadline.monospacedDigit())
+                    .foregroundStyle(.secondary)
+            }
+            HStack(spacing: 8) {
+                Text(formatBadge(for: match))
+                    .font(.caption)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(.quaternary)
+                    .clipShape(Capsule())
+                if let winner = winnerName(for: match) {
+                    Text(winner + " won")
+                        .font(.caption)
+                        .foregroundStyle(.green)
+                }
+                Spacer()
+                Text(match.startedAt, style: .relative)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(.vertical, 2)
+    }
+
+    // MARK: - Helpers
+
+    private func playerNamesText(for match: PersistedMatch) -> String {
+        let isDoubles = match.format == "doubles" || match.format == "mixed"
+        if isDoubles {
+            let teamA = [match.playerAName, match.playerA2Name]
+                .compactMap { $0 }.joined(separator: " & ")
+            let teamB = [match.playerBName, match.playerB2Name]
+                .compactMap { $0 }.joined(separator: " & ")
+            return "\(teamA.isEmpty ? "Team A" : teamA) vs \(teamB.isEmpty ? "Team B" : teamB)"
+        }
+        return "\(match.playerAName ?? "Player 1") vs \(match.playerBName ?? "Player 2")"
+    }
+
+    private func gameScoresText(for match: PersistedMatch) -> String {
+        var scores: [String] = []
+        scores.append("\(match.game1ScoreA)-\(match.game1ScoreB)")
+        if let g2a = match.game2ScoreA, let g2b = match.game2ScoreB {
+            scores.append("\(g2a)-\(g2b)")
+        }
+        if let g3a = match.game3ScoreA, let g3b = match.game3ScoreB {
+            scores.append("\(g3a)-\(g3b)")
+        }
+        return scores.joined(separator: ", ")
+    }
+
+    private func formatBadge(for match: PersistedMatch) -> String {
+        switch match.format {
+        case "doubles": return "Doubles"
+        case "mixed": return "Mixed"
+        default: return "Singles"
+        }
+    }
+
+    private func winnerName(for match: PersistedMatch) -> String? {
+        guard let side = match.winnerSide else { return nil }
+        if side == "sideA" {
+            return match.playerAName ?? "Team A"
+        } else {
+            return match.playerBName ?? "Team B"
+        }
+    }
+
+    // MARK: - Date Grouping
+
+    private struct MatchSection {
+        let title: String
+        let matches: [PersistedMatch]
+    }
+
+    private var groupedMatches: [MatchSection] {
+        let calendar = Calendar.current
+        var today: [PersistedMatch] = []
+        var yesterday: [PersistedMatch] = []
+        var thisWeek: [PersistedMatch] = []
+        var older: [PersistedMatch] = []
+
+        for match in completedMatches {
+            let date = match.startedAt
+            if calendar.isDateInToday(date) {
+                today.append(match)
+            } else if calendar.isDateInYesterday(date) {
+                yesterday.append(match)
+            } else if calendar.isDate(date, equalTo: Date(), toGranularity: .weekOfYear) {
+                thisWeek.append(match)
+            } else {
+                older.append(match)
+            }
+        }
+
+        var sections: [MatchSection] = []
+        if !today.isEmpty { sections.append(MatchSection(title: "Today", matches: today)) }
+        if !yesterday.isEmpty { sections.append(MatchSection(title: "Yesterday", matches: yesterday)) }
+        if !thisWeek.isEmpty { sections.append(MatchSection(title: "This Week", matches: thisWeek)) }
+        if !older.isEmpty { sections.append(MatchSection(title: "Older", matches: older)) }
+        return sections
+    }
+}

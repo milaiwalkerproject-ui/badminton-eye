@@ -21,41 +21,47 @@ struct ContentView: View {
     )
     private var inProgressMatches: [PersistedMatch]
 
-    @Query(
-        filter: #Predicate<PersistedMatch> { $0.isComplete || $0.isAbandoned },
-        sort: \PersistedMatch.startedAt,
-        order: .reverse
-    )
-    private var completedMatches: [PersistedMatch]
-
     @State private var restoredViewModel: LiveMatchViewModel?
     @State private var hasCheckedRestore = false
 
     var body: some View {
         Group {
-            if sizeClass == .regular {
-                // iPad: sidebar + detail
+            if let vm = restoredViewModel {
+                // Crash recovery: resume in-progress match
+                NavigationStack {
+                    LiveMatchView(viewModel: vm, onMatchEnd: {
+                        restoredViewModel = nil
+                    })
+                }
+            } else if sizeClass == .regular {
+                // iPad: sidebar (match history) + detail
                 NavigationSplitView {
-                    matchListSidebar
+                    MatchHistoryView()
+                        .toolbar {
+                            ToolbarItem(placement: .primaryAction) {
+                                NavigationLink {
+                                    MatchSetupView()
+                                } label: {
+                                    Image(systemName: "plus")
+                                }
+                            }
+                        }
                 } detail: {
-                    if let vm = restoredViewModel {
-                        LiveMatchView(viewModel: vm, onMatchEnd: {
-                            restoredViewModel = nil
-                        })
-                    } else {
-                        MatchSetupView()
-                    }
+                    MatchSetupView()
                 }
             } else {
-                // iPhone: existing NavigationStack
+                // iPhone: match history as root
                 NavigationStack {
-                    if let vm = restoredViewModel {
-                        LiveMatchView(viewModel: vm, onMatchEnd: {
-                            restoredViewModel = nil
-                        })
-                    } else {
-                        MatchSetupView()
-                    }
+                    MatchHistoryView()
+                        .toolbar {
+                            ToolbarItem(placement: .primaryAction) {
+                                NavigationLink {
+                                    MatchSetupView()
+                                } label: {
+                                    Image(systemName: "plus")
+                                }
+                            }
+                        }
                 }
             }
         }
@@ -68,50 +74,6 @@ struct ContentView: View {
                 hasCheckedRestore = true
             }
             WatchSyncManager.shared.activate()
-        }
-    }
-
-    private var matchListSidebar: some View {
-        List {
-            if !inProgressMatches.isEmpty {
-                Section("In Progress") {
-                    ForEach(inProgressMatches) { match in
-                        matchRow(match)
-                    }
-                }
-            }
-
-            if !completedMatches.isEmpty {
-                Section("Completed") {
-                    ForEach(completedMatches) { match in
-                        matchRow(match)
-                    }
-                }
-            }
-
-            if inProgressMatches.isEmpty && completedMatches.isEmpty {
-                ContentUnavailableView(
-                    "No Matches",
-                    systemImage: "sportscourt",
-                    description: Text("Start a new match to begin")
-                )
-            }
-        }
-        .navigationTitle("Matches")
-    }
-
-    private func matchRow(_ match: PersistedMatch) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("\(match.playerAName ?? "Player 1") vs \(match.playerBName ?? "Player 2")")
-                .font(.headline)
-            Text(match.format.capitalized)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            if match.isComplete {
-                Text("\(match.game1ScoreA)-\(match.game1ScoreB)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
         }
     }
 }

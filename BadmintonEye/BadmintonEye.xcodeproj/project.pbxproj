@@ -22,6 +22,8 @@
 		A1000D /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2000E /* WatchConnectivity.framework */; };
 		A1000E /* WatchSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000F /* WatchSyncManager.swift */; };
 		A10010 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20010 /* Player.swift */; };
+		A10011 /* MatchHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20011 /* MatchHistoryView.swift */; };
+		A10012 /* MatchDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20012 /* MatchDetailView.swift */; };
 		W10001 /* BadmintonEyeWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = W20001 /* BadmintonEyeWatchApp.swift */; };
 		W10002 /* WatchMatchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = W20002 /* WatchMatchViewModel.swift */; };
 		W10003 /* WatchSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = W20003 /* WatchSessionManager.swift */; };
@@ -53,6 +55,8 @@
 		A2000E /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = System/Library/Frameworks/WatchConnectivity.framework; sourceTree = SDKROOT; };
 		A2000F /* WatchSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSyncManager.swift; sourceTree = "<group>"; };
 		A20010 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		A20011 /* MatchHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchHistoryView.swift; sourceTree = "<group>"; };
+		A20012 /* MatchDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchDetailView.swift; sourceTree = "<group>"; };
 		W20001 /* BadmintonEyeWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadmintonEyeWatchApp.swift; sourceTree = "<group>"; };
 		W20002 /* WatchMatchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchMatchViewModel.swift; sourceTree = "<group>"; };
 		W20003 /* WatchSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionManager.swift; sourceTree = "<group>"; };
@@ -146,6 +150,8 @@
 				A20007 /* ScorePanel.swift */,
 				A20008 /* GameEndOverlay.swift */,
 				A20009 /* MatchEndView.swift */,
+				A20011 /* MatchHistoryView.swift */,
+				A20012 /* MatchDetailView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -342,6 +348,8 @@
 				A10009 /* MatchEndView.swift in Sources */,
 				A1000E /* WatchSyncManager.swift in Sources */,
 				A10010 /* Player.swift in Sources */,
+				A10011 /* MatchHistoryView.swift in Sources */,
+				A10012 /* MatchDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

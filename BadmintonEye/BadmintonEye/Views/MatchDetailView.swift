@@ -1,0 +1,228 @@
+import SwiftUI
+import ScoringEngine
+
+struct MatchDetailView: View {
+    let match: PersistedMatch
+
+    private var decodedState: CodableMatchState? {
+        guard let data = match.stateJSON else { return nil }
+        return try? JSONDecoder().decode(CodableMatchState.self, from: data)
+    }
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 24) {
+                // Match metadata header
+                metadataSection
+
+                // Scorecard
+                if let state = decodedState {
+                    decodedScorecard(state)
+                } else {
+                    fallbackScorecard
+                }
+            }
+            .padding()
+        }
+        .navigationTitle("Match Details")
+        .toolbar {
+            // Placeholder for share/export (Plan 03)
+            ToolbarItem(placement: .primaryAction) {
+                Menu {
+                    Button("Share", systemImage: "square.and.arrow.up") {}
+                        .disabled(true)
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+            }
+        }
+    }
+
+    // MARK: - Metadata
+
+    private var metadataSection: some View {
+        VStack(spacing: 8) {
+            Text(playerNamesText)
+                .font(.title2.bold())
+                .multilineTextAlignment(.center)
+
+            HStack(spacing: 12) {
+                Label(formatBadge, systemImage: "sportscourt")
+                    .font(.caption)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(.quaternary)
+                    .clipShape(Capsule())
+
+                Text(match.startedAt, format: .dateTime.month().day().year().hour().minute())
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                if let duration = matchDuration {
+                    Text(duration)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            if let side = match.winnerSide {
+                let winnerNames = side == "sideA"
+                    ? (match.playerAName ?? "Team A")
+                    : (match.playerBName ?? "Team B")
+                Text("\(winnerNames) Won!")
+                    .font(.headline)
+                    .foregroundStyle(.green)
+            }
+        }
+    }
+
+    // MARK: - Decoded Scorecard
+
+    private func decodedScorecard(_ state: CodableMatchState) -> some View {
+        VStack(spacing: 16) {
+            // Header row
+            HStack {
+                Text("")
+                    .frame(width: 80)
+                Spacer()
+                Text(state.teamANames.first ?? "Team A")
+                    .font(.headline)
+                    .frame(width: 80)
+                Text(state.teamBNames.first ?? "Team B")
+                    .font(.headline)
+                    .frame(width: 80)
+            }
+
+            Divider()
+
+            // Game rows
+            ForEach(Array(state.games.enumerated()), id: \.offset) { index, game in
+                HStack {
+                    Text("Game \(index + 1)")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .frame(width: 80, alignment: .leading)
+                    Spacer()
+                    Text("\(game.scoreA)")
+                        .font(.title2.bold())
+                        .foregroundStyle(game.scoreA > game.scoreB ? .primary : .secondary)
+                        .frame(width: 80)
+                    Text("\(game.scoreB)")
+                        .font(.title2.bold())
+                        .foregroundStyle(game.scoreB > game.scoreA ? .primary : .secondary)
+                        .frame(width: 80)
+                }
+            }
+
+            Divider()
+
+            // Games won summary
+            let gamesWon = state.games.reduce((a: 0, b: 0)) { result, game in
+                if game.scoreA > game.scoreB {
+                    return (result.a + 1, result.b)
+                } else if game.scoreB > game.scoreA {
+                    return (result.a, result.b + 1)
+                }
+                return result
+            }
+
+            HStack {
+                Text("Games")
+                    .font(.subheadline.bold())
+                    .frame(width: 80, alignment: .leading)
+                Spacer()
+                Text("\(gamesWon.a)")
+                    .font(.title2.bold())
+                    .frame(width: 80)
+                Text("\(gamesWon.b)")
+                    .font(.title2.bold())
+                    .frame(width: 80)
+            }
+        }
+        .padding(24)
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
+    // MARK: - Fallback Scorecard
+
+    private var fallbackScorecard: some View {
+        VStack(spacing: 16) {
+            HStack {
+                Text("")
+                    .frame(width: 80)
+                Spacer()
+                Text(match.playerAName ?? "Team A")
+                    .font(.headline)
+                    .frame(width: 80)
+                Text(match.playerBName ?? "Team B")
+                    .font(.headline)
+                    .frame(width: 80)
+            }
+
+            Divider()
+
+            gameRow("Game 1", scoreA: match.game1ScoreA, scoreB: match.game1ScoreB)
+
+            if let g2a = match.game2ScoreA, let g2b = match.game2ScoreB {
+                gameRow("Game 2", scoreA: g2a, scoreB: g2b)
+            }
+
+            if let g3a = match.game3ScoreA, let g3b = match.game3ScoreB {
+                gameRow("Game 3", scoreA: g3a, scoreB: g3b)
+            }
+        }
+        .padding(24)
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
+    private func gameRow(_ label: String, scoreA: Int, scoreB: Int) -> some View {
+        HStack {
+            Text(label)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .frame(width: 80, alignment: .leading)
+            Spacer()
+            Text("\(scoreA)")
+                .font(.title2.bold())
+                .foregroundStyle(scoreA > scoreB ? .primary : .secondary)
+                .frame(width: 80)
+            Text("\(scoreB)")
+                .font(.title2.bold())
+                .foregroundStyle(scoreB > scoreA ? .primary : .secondary)
+                .frame(width: 80)
+        }
+    }
+
+    // MARK: - Computed
+
+    private var playerNamesText: String {
+        let isDoubles = match.format == "doubles" || match.format == "mixed"
+        if isDoubles {
+            let teamA = [match.playerAName, match.playerA2Name]
+                .compactMap { $0 }.joined(separator: " & ")
+            let teamB = [match.playerBName, match.playerB2Name]
+                .compactMap { $0 }.joined(separator: " & ")
+            return "\(teamA.isEmpty ? "Team A" : teamA) vs \(teamB.isEmpty ? "Team B" : teamB)"
+        }
+        return "\(match.playerAName ?? "Player 1") vs \(match.playerBName ?? "Player 2")"
+    }
+
+    private var formatBadge: String {
+        switch match.format {
+        case "doubles": return "Doubles"
+        case "mixed": return "Mixed"
+        default: return "Singles"
+        }
+    }
+
+    private var matchDuration: String? {
+        guard let end = match.endedAt else { return nil }
+        let seconds = Int(end.timeIntervalSince(match.startedAt))
+        let minutes = seconds / 60
+        if minutes < 1 { return "<1 min" }
+        if minutes < 60 { return "\(minutes) min" }
+        return "\(minutes / 60)h \(minutes % 60)m"
+    }
+}
