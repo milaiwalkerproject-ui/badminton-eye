@@ -22,8 +22,8 @@
 - [x] **WATCH-02**: User can tap to score from Apple Watch with large tap targets and haptic confirmation
 - [x] **WATCH-03**: Score updates sync in real-time between iPhone/iPad and Apple Watch (bidirectional)
 - [x] **WATCH-04**: Watch app functions independently if iPhone is temporarily unreachable
-- [ ] **WATCH-05**: Match automatically starts a HealthKit workout session tracking calories, heart rate, and duration
-- [ ] **WATCH-06**: Completed match workout data is written to HealthKit and counts toward Activity Rings
+- [x] **WATCH-05**: Match automatically starts a HealthKit workout session tracking calories, heart rate, and duration
+- [x] **WATCH-06**: Completed match workout data is written to HealthKit and counts toward Activity Rings
 
 ### Match Data
 
@@ -61,7 +61,7 @@
 ### iPhone UX
 
 - [ ] **UX-01**: Active match score appears as a Live Activity on iPhone lock screen and Dynamic Island
-- [ ] **UX-02**: App supports both iPhone and iPad with adaptive layouts
+- [x] **UX-02**: App supports both iPhone and iPad with adaptive layouts
 
 ## v2 Requirements
 
@@ -111,8 +111,8 @@
 | WATCH-02 | Phase 2 | Complete |
 | WATCH-03 | Phase 2 | Complete |
 | WATCH-04 | Phase 2 | Complete |
-| WATCH-05 | Phase 2 | Pending |
-| WATCH-06 | Phase 2 | Pending |
+| WATCH-05 | Phase 2 | Complete (02-03) |
+| WATCH-06 | Phase 2 | Complete (02-03) |
 | DATA-01 | Phase 3 | Pending |
 | DATA-02 | Phase 3 | Pending |
 | DATA-03 | Phase 3 | Pending |
@@ -135,7 +135,7 @@
 | PREM-03 | Phase 5 | Pending |
 | PREM-04 | Phase 5 | Pending |
 | UX-01 | Phase 4 | Pending |
-| UX-02 | Phase 2 | Pending |
+| UX-02 | Phase 2 | Complete (02-03) |
 
 **Coverage:**
 - v1 requirements: 37 total
