@@ -46,9 +46,9 @@
 - [x] **HAWK-01**: User can initiate a Hawk Eye challenge during a match to review a disputed point
 - [x] **HAWK-02**: User can capture or select court-side video footage for the challenge
 - [x] **HAWK-03**: User can calibrate court boundaries in the camera view (one-time per venue)
-- [ ] **HAWK-04**: AI analyzes shuttle trajectory from video using on-device Core ML model
-- [ ] **HAWK-05**: App displays predicted landing spot on a 2D court overlay with animated trajectory visualization
-- [ ] **HAWK-06**: App shows confidence indicator (percentage + color-coded) for the AI determination
+- [x] **HAWK-04**: AI analyzes shuttle trajectory from video using on-device Core ML model
+- [x] **HAWK-05**: App displays predicted landing spot on a 2D court overlay with animated trajectory visualization
+- [x] **HAWK-06**: App shows confidence indicator (percentage + color-coded) for the AI determination
 - [x] **HAWK-07**: Hawk Eye feature is gated behind premium subscription
 
 ### Premium & Billing
@@ -126,9 +126,9 @@
 | HAWK-01 | Phase 5 | Complete |
 | HAWK-02 | Phase 5 | Complete |
 | HAWK-03 | Phase 5 | Complete |
-| HAWK-04 | Phase 5 | Pending |
-| HAWK-05 | Phase 5 | Pending |
-| HAWK-06 | Phase 5 | Pending |
+| HAWK-04 | Phase 5 | Complete |
+| HAWK-05 | Phase 5 | Complete |
+| HAWK-06 | Phase 5 | Complete |
 | HAWK-07 | Phase 5 | Complete |
 | PREM-01 | Phase 5 | Complete |
 | PREM-02 | Phase 5 | Complete |
