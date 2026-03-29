@@ -4,6 +4,7 @@ import SwiftData
 @main
 struct BadmintonEyeApp: App {
     @State private var authManager = AuthManager.shared
+    @State private var subscriptionManager = SubscriptionManager.shared
 
     var body: some Scene {
         WindowGroup {
@@ -22,7 +23,7 @@ struct BadmintonEyeApp: App {
             config = ModelConfiguration()
         }
         return try! ModelContainer(
-            for: PersistedMatch.self, Player.self,
+            for: PersistedMatch.self, Player.self, CalibrationProfile.self,
             configurations: config
         )
     }

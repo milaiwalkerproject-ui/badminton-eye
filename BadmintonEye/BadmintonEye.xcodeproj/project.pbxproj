@@ -37,6 +37,9 @@
 		A10018 /* MatchExportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20019 /* MatchExportView.swift */; };
 		A10019 /* ScorecardRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2001A /* ScorecardRenderer.swift */; };
 		A1001B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2001B /* SettingsView.swift */; };
+		A1001C /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2001C /* SubscriptionManager.swift */; };
+		A1001D /* Configuration.storekit in Resources */ = {isa = PBXBuildFile; fileRef = A2001D /* Configuration.storekit */; };
+		A1001E /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2001E /* StoreKit.framework */; };
 		A1001F /* AuthenticationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2001F /* AuthenticationServices.framework */; };
 		W10001 /* BadmintonEyeWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = W20001 /* BadmintonEyeWatchApp.swift */; };
 		W10002 /* WatchMatchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = W20002 /* WatchMatchViewModel.swift */; };
@@ -51,6 +54,11 @@
 		W1000B /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2000E /* WatchConnectivity.framework */; };
 		W1000C /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = W2000F /* HealthKit.framework */; };
 		W1000D /* WorkoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = W20009 /* WorkoutManager.swift */; };
+		H10001 /* CalibrationProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20001 /* CalibrationProfile.swift */; };
+		H10002 /* VideoCaptureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20002 /* VideoCaptureManager.swift */; };
+		H10003 /* CourtCalibrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20003 /* CourtCalibrationView.swift */; };
+		H10004 /* ChallengeVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20004 /* ChallengeVideoView.swift */; };
+		H10005 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = H20005 /* AVFoundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -108,6 +116,9 @@
 		A20019 /* MatchExportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchExportView.swift; sourceTree = "<group>"; };
 		A2001A /* ScorecardRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScorecardRenderer.swift; sourceTree = "<group>"; };
 		A2001B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A2001C /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
+		A2001D /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
+		A2001E /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		A2001F /* AuthenticationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AuthenticationServices.framework; path = System/Library/Frameworks/AuthenticationServices.framework; sourceTree = SDKROOT; };
 		W20001 /* BadmintonEyeWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadmintonEyeWatchApp.swift; sourceTree = "<group>"; };
 		W20002 /* WatchMatchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchMatchViewModel.swift; sourceTree = "<group>"; };
@@ -119,6 +130,11 @@
 		W20008 /* BadmintonEyeWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BadmintonEyeWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		W2000F /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		W20009 /* WorkoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutManager.swift; sourceTree = "<group>"; };
+		H20001 /* CalibrationProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationProfile.swift; sourceTree = "<group>"; };
+		H20002 /* VideoCaptureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCaptureManager.swift; sourceTree = "<group>"; };
+		H20003 /* CourtCalibrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourtCalibrationView.swift; sourceTree = "<group>"; };
+		H20004 /* ChallengeVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeVideoView.swift; sourceTree = "<group>"; };
+		H20005 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,7 +144,9 @@
 			files = (
 				A1000B /* ScoringEngine in Frameworks */,
 				A1000D /* WatchConnectivity.framework in Frameworks */,
+				A1001E /* StoreKit.framework in Frameworks */,
 				A1001F /* AuthenticationServices.framework in Frameworks */,
+				H10005 /* AVFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -173,6 +191,7 @@
 				A40006 /* Services */,
 				A2000A /* Assets.xcassets */,
 				A20018 /* BadmintonEye.entitlements */,
+				A2001D /* Configuration.storekit */,
 			);
 			path = BadmintonEye;
 			sourceTree = "<group>";
@@ -192,6 +211,7 @@
 				A20003 /* CodableMatchState.swift */,
 				A2000D /* SyncPayload.swift */,
 				A20010 /* Player.swift */,
+				H20001 /* CalibrationProfile.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -221,6 +241,8 @@
 				A20019 /* MatchExportView.swift */,
 				A2001A /* ScorecardRenderer.swift */,
 				A2001B /* SettingsView.swift */,
+				H20003 /* CourtCalibrationView.swift */,
+				H20004 /* ChallengeVideoView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -230,6 +252,8 @@
 			children = (
 				A2000F /* WatchSyncManager.swift */,
 				A20017 /* AuthManager.swift */,
+				A2001C /* SubscriptionManager.swift */,
+				H20002 /* VideoCaptureManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -306,7 +330,9 @@
 			children = (
 				A2000E /* WatchConnectivity.framework */,
 				W2000F /* HealthKit.framework */,
+				A2001E /* StoreKit.framework */,
 				A2001F /* AuthenticationServices.framework */,
+				H20005 /* AVFoundation.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -423,6 +449,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1000A /* Assets.xcassets in Resources */,
+				A1001D /* Configuration.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -470,7 +497,12 @@
 				A10018 /* MatchExportView.swift in Sources */,
 				A10019 /* ScorecardRenderer.swift in Sources */,
 				A1001B /* SettingsView.swift in Sources */,
+				A1001C /* SubscriptionManager.swift in Sources */,
 				L10004 /* MatchActivityAttributes.swift in Sources */,
+				H10001 /* CalibrationProfile.swift in Sources */,
+				H10002 /* VideoCaptureManager.swift in Sources */,
+				H10003 /* CourtCalibrationView.swift in Sources */,
+				H10004 /* ChallengeVideoView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -567,6 +599,9 @@
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Badminton Eye needs camera access for court calibration and challenge video recording.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Badminton Eye needs microphone access for challenge video recording.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Badminton Eye needs photo library access to select challenge videos.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -600,6 +635,9 @@
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Badminton Eye needs camera access for court calibration and challenge video recording.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Badminton Eye needs microphone access for challenge video recording.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Badminton Eye needs photo library access to select challenge videos.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
