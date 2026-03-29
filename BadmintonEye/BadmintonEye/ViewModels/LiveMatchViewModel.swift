@@ -1,3 +1,4 @@
+import ActivityKit
 import Foundation
 import SwiftData
 import ScoringEngine
@@ -7,6 +8,8 @@ final class LiveMatchViewModel {
     private(set) var state: MatchState
     private var persistedMatch: PersistedMatch
     private let modelContext: ModelContext
+
+    private var currentActivityID: String?
 
     var canUndo: Bool { state.previousState != nil }
     var isMatchOver: Bool {
@@ -42,6 +45,7 @@ final class LiveMatchViewModel {
         WatchSyncManager.shared.onScoringIntentReceived = { [weak self] side in
             self?.scorePoint(for: side)
         }
+        startLiveActivity()
     }
 
     init(state: MatchState, modelContext: ModelContext) {
@@ -65,6 +69,7 @@ final class LiveMatchViewModel {
         WatchSyncManager.shared.onScoringIntentReceived = { [weak self] side in
             self?.scorePoint(for: side)
         }
+        startLiveActivity()
     }
 
     func scorePoint(for side: Side) {
@@ -108,6 +113,81 @@ final class LiveMatchViewModel {
         }
         updateGameScores()
         WatchSyncManager.shared.sendStateUpdate(state, isActive: state.matchPhase == .inProgress)
+
+        if state.matchPhase == .inProgress {
+            updateLiveActivity()
+        } else if state.matchPhase == .complete || state.matchPhase == .abandoned {
+            endLiveActivity()
+        }
+    }
+
+    // MARK: - Live Activity
+
+    private func startLiveActivity() {
+        guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
+        let attributes = MatchActivityAttributes(
+            teamAName: state.teamANames.first ?? "Side A",
+            teamBName: state.teamBNames.first ?? "Side B",
+            format: state.format.rawValue
+        )
+        let contentState = buildContentState()
+        let content = ActivityContent(state: contentState, staleDate: nil)
+        let activity = try? Activity.request(
+            attributes: attributes,
+            content: content,
+            pushType: nil
+        )
+        currentActivityID = activity?.id
+    }
+
+    private func updateLiveActivity() {
+        guard let activityID = currentActivityID else { return }
+        let scoreA = state.currentGame.scoreA
+        let scoreB = state.currentGame.scoreB
+        let won = state.gamesWon
+        let gameNum = state.games.count + (state.matchPhase == .inProgress ? 1 : 0)
+        let server = state.currentServer.side.rawValue
+        Task {
+            let cs = MatchActivityAttributes.ContentState(
+                scoreA: scoreA, scoreB: scoreB, gameNumber: gameNum,
+                gamesWonA: won.sideA, gamesWonB: won.sideB,
+                serverSide: server, isComplete: false
+            )
+            guard let activity = Activity<MatchActivityAttributes>.activities.first(where: { $0.id == activityID }) else { return }
+            await activity.update(ActivityContent(state: cs, staleDate: nil))
+        }
+    }
+
+    private func endLiveActivity() {
+        guard let activityID = currentActivityID else { return }
+        let scoreA = state.currentGame.scoreA
+        let scoreB = state.currentGame.scoreB
+        let won = state.gamesWon
+        let gameNum = state.games.count
+        let server = state.currentServer.side.rawValue
+        currentActivityID = nil
+        Task {
+            let cs = MatchActivityAttributes.ContentState(
+                scoreA: scoreA, scoreB: scoreB, gameNumber: gameNum,
+                gamesWonA: won.sideA, gamesWonB: won.sideB,
+                serverSide: server, isComplete: true
+            )
+            guard let activity = Activity<MatchActivityAttributes>.activities.first(where: { $0.id == activityID }) else { return }
+            await activity.end(ActivityContent(state: cs, staleDate: nil), dismissalPolicy: .after(.now + 300))
+        }
+    }
+
+    private func buildContentState(isComplete: Bool = false) -> MatchActivityAttributes.ContentState {
+        let won = state.gamesWon
+        return MatchActivityAttributes.ContentState(
+            scoreA: state.currentGame.scoreA,
+            scoreB: state.currentGame.scoreB,
+            gameNumber: state.games.count + (state.matchPhase == .inProgress ? 1 : 0),
+            gamesWonA: won.sideA,
+            gamesWonB: won.sideB,
+            serverSide: state.currentServer.side.rawValue,
+            isComplete: isComplete || state.matchPhase == .complete || state.matchPhase == .abandoned
+        )
     }
 
     private func updateGameScores() {
