@@ -47,12 +47,12 @@ Plans:
   3. Watch continues tracking the match independently when iPhone is temporarily out of range, and reconciles when reconnected
   4. Starting a match on Watch automatically begins a HealthKit workout; ending the match writes workout data to HealthKit and counts toward Activity Rings
   5. App adapts its layout correctly for both iPhone and iPad screen sizes
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: WatchConnectivity manager and sync protocol
-- [ ] 02-02: watchOS scoring UI and haptic feedback
-- [ ] 02-03: HealthKit workout integration and adaptive iPad layout
+- [ ] 02-01-PLAN.md — SyncPayload type, iOS WatchSyncManager, watchOS WatchSessionManager, and WatchMatchViewModel with offline scoring
+- [ ] 02-02-PLAN.md — watchOS app target with Xcode project, glanceable scoring UI (top/bottom tap zones), game dots, server icon, haptics
+- [ ] 02-03-PLAN.md — HealthKit WorkoutManager, iPad adaptive layout with NavigationSplitView, and human verification
 
 ### Phase 3: Match Data and Player Profiles
 **Goal**: Users can review match history, manage player profiles, track head-to-head records, and share or export results
