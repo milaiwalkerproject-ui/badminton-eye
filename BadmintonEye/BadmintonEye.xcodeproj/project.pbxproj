@@ -21,6 +21,7 @@
 		A1000C /* SyncPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000D /* SyncPayload.swift */; };
 		A1000D /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2000E /* WatchConnectivity.framework */; };
 		A1000E /* WatchSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000F /* WatchSyncManager.swift */; };
+		A10010 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20010 /* Player.swift */; };
 		W10001 /* BadmintonEyeWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = W20001 /* BadmintonEyeWatchApp.swift */; };
 		W10002 /* WatchMatchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = W20002 /* WatchMatchViewModel.swift */; };
 		W10003 /* WatchSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = W20003 /* WatchSessionManager.swift */; };
@@ -51,6 +52,7 @@
 		A2000D /* SyncPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncPayload.swift; sourceTree = "<group>"; };
 		A2000E /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = System/Library/Frameworks/WatchConnectivity.framework; sourceTree = SDKROOT; };
 		A2000F /* WatchSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSyncManager.swift; sourceTree = "<group>"; };
+		A20010 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		W20001 /* BadmintonEyeWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadmintonEyeWatchApp.swift; sourceTree = "<group>"; };
 		W20002 /* WatchMatchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchMatchViewModel.swift; sourceTree = "<group>"; };
 		W20003 /* WatchSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionManager.swift; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 				A20002 /* SwiftDataModels.swift */,
 				A20003 /* CodableMatchState.swift */,
 				A2000D /* SyncPayload.swift */,
+				A20010 /* Player.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -338,6 +341,7 @@
 				A10008 /* GameEndOverlay.swift in Sources */,
 				A10009 /* MatchEndView.swift in Sources */,
 				A1000E /* WatchSyncManager.swift in Sources */,
+				A10010 /* Player.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -103,6 +103,9 @@ final class LiveMatchViewModel {
         if state.matchPhase == .complete || state.matchPhase == .abandoned {
             persistedMatch.endedAt = Date()
         }
+        if state.matchPhase == .complete, let winner = state.matchWinner {
+            persistedMatch.winnerSide = winner.rawValue
+        }
         updateGameScores()
         WatchSyncManager.shared.sendStateUpdate(state, isActive: state.matchPhase == .inProgress)
     }

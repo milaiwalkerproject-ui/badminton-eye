@@ -25,5 +25,8 @@ final class PersistedMatch {
     var game3ScoreA: Int?
     var game3ScoreB: Int?
 
+    // Winner side ("sideA" or "sideB"), set on match completion for efficient list rendering
+    var winnerSide: String?
+
     init() {}
 }

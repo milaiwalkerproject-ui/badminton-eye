@@ -7,7 +7,7 @@ struct BadmintonEyeApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: PersistedMatch.self)
+        .modelContainer(for: [PersistedMatch.self, Player.self])
     }
 }
 
