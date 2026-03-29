@@ -38,7 +38,10 @@
   2. User can view a line chart of their win rate over their last 10, 20, or 50 matches
   3. User can view per-game point distribution patterns across games 1, 2, and 3
   4. All analytics compute from existing match data with no data migration required
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 06-01-PLAN.md -- MatchStatsViewModel + Stats tab + summary card
+- [ ] 06-02-PLAN.md -- Swift Charts trend and scoring pattern visualizations
 
 ### Phase 7: Training Pipeline
 **Goal**: Developer can train a YOLO nano model on badminton footage and export a production CoreML model
@@ -82,7 +85,7 @@
 | 3. Match Data and Player Profiles | v1.0 | 3/3 | Complete | 2026-03-29 |
 | 4. Cloud Sync and Authentication | v1.0 | 3/3 | Complete | 2026-03-29 |
 | 5. Hawk Eye AI and Premium | v1.0 | 4/4 | Complete | 2026-03-29 |
-| 6. Match Analytics | v1.1 | 0/? | Not started | - |
+| 6. Match Analytics | v1.1 | 0/2 | Planned | - |
 | 7. Training Pipeline | v1.1 | 0/? | Not started | - |
 | 8. 240fps Video Capture | v1.1 | 0/? | Not started | - |
 | 9. Real AI Integration | v1.1 | 0/? | Not started | - |
