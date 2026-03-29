@@ -5,12 +5,20 @@ struct LiveMatchView: View {
     @State var viewModel: LiveMatchViewModel
     var onMatchEnd: (() -> Void)?
     @State private var showAbandonAlert = false
+    @State private var showChallengeSheet = false
+    @State private var challengeCountdown: Int = 0
+    @State private var challengeTimer: Timer?
     @Environment(\.dismiss) private var dismiss
 
     private var completedGameScores: String {
         viewModel.state.games.map { game in
             "\(game.scoreA)-\(game.scoreB)"
         }.joined(separator: " | ")
+    }
+
+    /// Total score in current game, used to detect point changes.
+    private var currentTotalScore: Int {
+        viewModel.state.currentGame.scoreA + viewModel.state.currentGame.scoreB
     }
 
     var body: some View {
@@ -101,6 +109,39 @@ struct LiveMatchView: View {
 
                     Spacer()
 
+                    // Challenge button (visible only during inProgress match)
+                    if viewModel.state.matchPhase == .inProgress {
+                        Button {
+                            showChallengeSheet = true
+                        } label: {
+                            ZStack(alignment: .topTrailing) {
+                                VStack(spacing: 2) {
+                                    Image(systemName: "eye.trianglebadge.exclamationmark")
+                                        .font(.title3)
+                                    Text("Challenge")
+                                        .font(.caption2)
+                                }
+                                .foregroundStyle(.white)
+                                .padding(10)
+                                .background(.black.opacity(0.4))
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                                // Countdown badge
+                                if challengeCountdown > 0 {
+                                    Text("\(challengeCountdown)")
+                                        .font(.caption2.bold())
+                                        .foregroundStyle(.black)
+                                        .frame(width: 18, height: 18)
+                                        .background(Color.yellow)
+                                        .clipShape(Circle())
+                                        .offset(x: 4, y: -4)
+                                }
+                            }
+                        }
+                        .disabled(challengeCountdown == 0)
+                        .opacity(challengeCountdown > 0 ? 1.0 : 0.4)
+                    }
+
                     // End match button
                     Button {
                         showAbandonAlert = true
@@ -132,6 +173,18 @@ struct LiveMatchView: View {
         } message: {
             Text("The match will be recorded as abandoned.")
         }
+        .sheet(isPresented: $showChallengeSheet) {
+            ChallengeVideoView()
+        }
+        .onChange(of: currentTotalScore) { _, _ in
+            startChallengeCountdown()
+        }
+        .onAppear {
+            // Start countdown on first appearance if match is in progress
+            if viewModel.state.matchPhase == .inProgress && currentTotalScore > 0 {
+                startChallengeCountdown()
+            }
+        }
         .navigationDestination(
             isPresented: Binding(
                 get: { viewModel.state.matchPhase == .complete },
@@ -147,6 +200,25 @@ struct LiveMatchView: View {
             )
         ) {
             MatchEndView(state: viewModel.state, onNewMatch: onMatchEnd)
+        }
+    }
+
+    // MARK: - Challenge Countdown
+
+    /// Resets the challenge countdown to 10 seconds after each point scored.
+    private func startChallengeCountdown() {
+        challengeTimer?.invalidate()
+        challengeCountdown = 10
+
+        challengeTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            Task { @MainActor in
+                if challengeCountdown > 0 {
+                    challengeCountdown -= 1
+                } else {
+                    challengeTimer?.invalidate()
+                    challengeTimer = nil
+                }
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
 import SwiftUI
-import AVFoundation
+@preconcurrency import AVFoundation
 import SwiftData
 
 // MARK: - Camera Preview (UIViewRepresentable)
