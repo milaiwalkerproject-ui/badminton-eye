@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Completed 02-03-PLAN.md
-last_updated: "2026-03-29T06:02:23Z"
-last_activity: 2026-03-28 — Completed 02-03-PLAN.md (HealthKit workout + iPad layout)
+status: in_progress
+stopped_at: Completed 03-01-PLAN.md
+last_updated: "2026-03-29T06:18:02Z"
+last_activity: 2026-03-29 — Completed 03-01-PLAN.md (Player model + match history + detail views)
 progress:
   total_phases: 5
   completed_phases: 2
-  total_plans: 6
-  completed_plans: 6
-  percent: 100
+  total_plans: 7
+  completed_plans: 7
+  percent: 44
 ---
 
 # Project State
@@ -21,23 +21,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-28)
 
 **Core value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
-**Current focus:** Phase 2: Apple Watch Companion
+**Current focus:** Phase 3: Match Data and Player Profiles
 
 ## Current Position
 
-Phase: 2 of 5 (Apple Watch Companion) -- PHASE COMPLETE
-Plan: 3 of 3 in current phase (all complete)
-Status: Phase 02 complete, ready for Phase 03
-Last activity: 2026-03-28 — Completed 02-03-PLAN.md (HealthKit workout + iPad layout)
+Phase: 3 of 5 (Match Data and Player Profiles)
+Plan: 1 of 3 in current phase (1 complete)
+Status: Phase 03 in progress
+Last activity: 2026-03-29 — Completed 03-01-PLAN.md (Player model + match history + detail views)
 
-Progress: [██████████] 100%
+Progress: [████------] 44%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
+- Total plans completed: 6
 - Average duration: 4 min
-- Total execution time: 0.35 hours
+- Total execution time: 0.42 hours
 
 **By Phase:**
 
@@ -45,9 +45,10 @@ Progress: [██████████] 100%
 |-------|-------|-------|----------|
 | 01-scoring-engine | 2/3 | 8 min | 4 min |
 | 02-apple-watch-companion | 3/3 | 13 min | 4 min |
+| 03-match-data-and-player-profiles | 1/3 | 4 min | 4 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (4 min), 02-01 (2 min), 02-02 (6 min), 02-03 (5 min)
+- Last 5 plans: 02-01 (2 min), 02-02 (6 min), 02-03 (5 min), 03-01 (4 min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -74,6 +75,10 @@ Recent decisions affecting current work:
 - 02-02: Three-tier haptic feedback: click (point) < success (game) < notification (match)
 - 02-03: WorkoutManager uses @unchecked Sendable for Swift 6 concurrency with singleton pattern
 - 02-03: iPad compact size class falls back to iPhone NavigationStack to avoid narrow scoring tap zones
+- 03-01: winnerSide denormalized on PersistedMatch to avoid decoding stateJSON in list rows
+- 03-01: Date grouping uses Calendar isDateInToday/Yesterday + weekOfYear granularity
+- 03-01: MatchDetailView decodes stateJSON with fallback to persisted game scores when decode fails
+- 03-01: Crash recovery takes priority -- in-progress match hijacks NavigationStack before history shown
 
 ### Pending Todos
 
@@ -86,6 +91,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28
-Stopped at: Completed 02-03-PLAN.md (Phase 02 complete)
+Last session: 2026-03-29
+Stopped at: Completed 03-01-PLAN.md
 Resume file: None
