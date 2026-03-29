@@ -1,0 +1,351 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10001 /* BadmintonEyeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20001 /* BadmintonEyeApp.swift */; };
+		A10002 /* SwiftDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20002 /* SwiftDataModels.swift */; };
+		A10003 /* CodableMatchState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20003 /* CodableMatchState.swift */; };
+		A10004 /* LiveMatchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20004 /* LiveMatchViewModel.swift */; };
+		A10005 /* MatchSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20005 /* MatchSetupView.swift */; };
+		A10006 /* LiveMatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20006 /* LiveMatchView.swift */; };
+		A10007 /* ScorePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20007 /* ScorePanel.swift */; };
+		A10008 /* GameEndOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20008 /* GameEndOverlay.swift */; };
+		A10009 /* MatchEndView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20009 /* MatchEndView.swift */; };
+		A1000A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2000A /* Assets.xcassets */; };
+		A1000B /* ScoringEngine in Frameworks */ = {isa = PBXBuildFile; productRef = A5000B /* ScoringEngine */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A20001 /* BadmintonEyeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadmintonEyeApp.swift; sourceTree = "<group>"; };
+		A20002 /* SwiftDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataModels.swift; sourceTree = "<group>"; };
+		A20003 /* CodableMatchState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableMatchState.swift; sourceTree = "<group>"; };
+		A20004 /* LiveMatchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveMatchViewModel.swift; sourceTree = "<group>"; };
+		A20005 /* MatchSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchSetupView.swift; sourceTree = "<group>"; };
+		A20006 /* LiveMatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveMatchView.swift; sourceTree = "<group>"; };
+		A20007 /* ScorePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScorePanel.swift; sourceTree = "<group>"; };
+		A20008 /* GameEndOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameEndOverlay.swift; sourceTree = "<group>"; };
+		A20009 /* MatchEndView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchEndView.swift; sourceTree = "<group>"; };
+		A2000A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A2000C /* BadmintonEye.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BadmintonEye.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A30001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000B /* ScoringEngine in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A40000 = {
+			isa = PBXGroup;
+			children = (
+				A40001 /* BadmintonEye */,
+				A40099 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A40001 /* BadmintonEye */ = {
+			isa = PBXGroup;
+			children = (
+				A40002 /* App */,
+				A40003 /* Models */,
+				A40004 /* ViewModels */,
+				A40005 /* Views */,
+				A2000A /* Assets.xcassets */,
+			);
+			path = BadmintonEye;
+			sourceTree = "<group>";
+		};
+		A40002 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				A20001 /* BadmintonEyeApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		A40003 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A20002 /* SwiftDataModels.swift */,
+				A20003 /* CodableMatchState.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A40004 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				A20004 /* LiveMatchViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		A40005 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A20005 /* MatchSetupView.swift */,
+				A20006 /* LiveMatchView.swift */,
+				A20007 /* ScorePanel.swift */,
+				A20008 /* GameEndOverlay.swift */,
+				A20009 /* MatchEndView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A40099 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A2000C /* BadmintonEye.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A60001 /* BadmintonEye */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A70001 /* Build configuration list for PBXNativeTarget "BadmintonEye" */;
+			buildPhases = (
+				A80001 /* Sources */,
+				A30001 /* Frameworks */,
+				A90001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BadmintonEye;
+			packageProductDependencies = (
+				A5000B /* ScoringEngine */,
+			);
+			productName = BadmintonEye;
+			productReference = A2000C /* BadmintonEye.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AB0001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					A60001 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = AC0001 /* Build configuration list for PBXProject "BadmintonEye" */;
+			compatibilityVersion = "Xcode 15.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A40000;
+			packageReferences = (
+				AD0001 /* XCLocalSwiftPackageReference "../ScoringEngine" */,
+			);
+			productRefGroup = A40099 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A60001 /* BadmintonEye */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A90001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000A /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A80001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10001 /* BadmintonEyeApp.swift in Sources */,
+				A10002 /* SwiftDataModels.swift in Sources */,
+				A10003 /* CodableMatchState.swift in Sources */,
+				A10004 /* LiveMatchViewModel.swift in Sources */,
+				A10005 /* MatchSetupView.swift in Sources */,
+				A10006 /* LiveMatchView.swift in Sources */,
+				A10007 /* ScorePanel.swift in Sources */,
+				A10008 /* GameEndOverlay.swift in Sources */,
+				A10009 /* MatchEndView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AE0001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AE0002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		AE0003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.badmintoneye.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AE0004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.badmintoneye.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AC0001 /* Build configuration list for PBXProject "BadmintonEye" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AE0001 /* Debug */,
+				AE0002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A70001 /* Build configuration list for PBXNativeTarget "BadmintonEye" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AE0003 /* Debug */,
+				AE0004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		AD0001 /* XCLocalSwiftPackageReference "../ScoringEngine" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../ScoringEngine;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A5000B /* ScoringEngine */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ScoringEngine;
+		};
+/* End XCSwiftPackageProductDependency section */
+
+	};
+	rootObject = AB0001 /* Project object */;
+}
