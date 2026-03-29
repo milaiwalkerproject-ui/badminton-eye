@@ -34,34 +34,58 @@ struct ContentView: View {
                     })
                 }
             } else if sizeClass == .regular {
-                // iPad: sidebar (match history) + detail
+                // iPad: sidebar with Matches + Players sections
                 NavigationSplitView {
-                    MatchHistoryView()
-                        .toolbar {
-                            ToolbarItem(placement: .primaryAction) {
-                                NavigationLink {
-                                    MatchSetupView()
-                                } label: {
-                                    Image(systemName: "plus")
-                                }
+                    List {
+                        Section("Matches") {
+                            NavigationLink {
+                                MatchHistoryView()
+                            } label: {
+                                Label("Match History", systemImage: "sportscourt")
+                            }
+                            NavigationLink {
+                                MatchSetupView()
+                            } label: {
+                                Label("New Match", systemImage: "plus.circle")
                             }
                         }
+                        Section("Players") {
+                            NavigationLink {
+                                PlayerListView()
+                            } label: {
+                                Label("Player List", systemImage: "person.2")
+                            }
+                        }
+                    }
+                    .navigationTitle("Badminton Eye")
                 } detail: {
                     MatchSetupView()
                 }
             } else {
-                // iPhone: match history as root
-                NavigationStack {
-                    MatchHistoryView()
-                        .toolbar {
-                            ToolbarItem(placement: .primaryAction) {
-                                NavigationLink {
-                                    MatchSetupView()
-                                } label: {
-                                    Image(systemName: "plus")
+                // iPhone: TabView with Matches and Players tabs
+                TabView {
+                    NavigationStack {
+                        MatchHistoryView()
+                            .toolbar {
+                                ToolbarItem(placement: .primaryAction) {
+                                    NavigationLink {
+                                        MatchSetupView()
+                                    } label: {
+                                        Image(systemName: "plus")
+                                    }
                                 }
                             }
-                        }
+                    }
+                    .tabItem {
+                        Label("Matches", systemImage: "sportscourt")
+                    }
+
+                    NavigationStack {
+                        PlayerListView()
+                    }
+                    .tabItem {
+                        Label("Players", systemImage: "person.2")
+                    }
                 }
             }
         }
