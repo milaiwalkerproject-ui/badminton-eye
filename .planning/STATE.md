@@ -1,19 +1,3 @@
----
-gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: Hawk Eye Pro + Analytics
-status: defining_requirements
-stopped_at: null
-last_updated: "2026-03-29"
-last_activity: 2026-03-29 — Milestone v1.1 started
-progress:
-  total_phases: 0
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
----
-
 # Project State
 
 ## Project Reference
@@ -21,16 +5,29 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
-**Current focus:** Defining requirements for v1.1
+**Current focus:** Phase 6 — Match Analytics (ready to plan)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-03-29 — Milestone v1.1 started
+Phase: 6 of 9 (Match Analytics)
+Plan: 0 of ? in current phase
+Status: Ready to plan
+Last activity: 2026-03-29 — v1.1 roadmap created (4 phases: 6-9)
 
 Progress: [░░░░░░░░░░] 0%
+
+## Performance Metrics
+
+**Velocity:**
+- Total plans completed: 16 (v1.0)
+- Average duration: —
+- Total execution time: —
+
+**By Phase:**
+
+| Phase | Plans | Total | Avg/Plan |
+|-------|-------|-------|----------|
+| 1-5 (v1.0) | 16 | — | — |
 
 ## Accumulated Context
 
@@ -40,10 +37,14 @@ Decisions are logged in PROJECT.md Key Decisions table.
 Carried forward from v1.0:
 
 - SwiftData models use optional properties and defaults for CloudKit
-- `updateApplicationContext` as primary WatchConnectivity transport
-- iPhone-authoritative sync for Watch reconciliation
-- Placeholder Core ML shuttle detection (to be replaced in v1.1)
+- Placeholder Core ML shuttle detection (to be replaced in Phase 9)
 - Gaussian elimination homography solve (no external linear algebra)
+
+v1.1 roadmap decisions:
+- Analytics first (Phase 6): zero deps on AI/camera, ships user value immediately
+- Training pipeline (Phase 7) parallel with analytics: longest calendar lead time (dataset collection)
+- 240fps capture (Phase 8) before AI integration: testable with placeholder model
+- Real AI integration last (Phase 9): depends on trained model + 240fps pipeline
 
 ### Pending Todos
 
@@ -51,12 +52,12 @@ None yet.
 
 ### Blockers/Concerns
 
-- Hawk Eye single-camera accuracy unproven — need real training data
-- No public badminton shuttle dataset exists — custom data collection needed
+- Dataset quality is the bottleneck for real model training (need 2,000+ diverse annotated images)
+- Neural Engine throughput at 240fps needs on-device profiling (60 YOLO inferences/sec target)
 - BWF 3x15 vote result (April 25, 2026) may require scoring format addition
 
 ## Session Continuity
 
 Last session: 2026-03-29
-Stopped at: Starting v1.1 milestone
+Stopped at: v1.1 roadmap created, ready to plan Phase 6
 Resume file: None

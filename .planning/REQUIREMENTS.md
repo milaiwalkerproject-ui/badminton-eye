@@ -52,31 +52,31 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AI-01 | — | Pending |
-| AI-02 | — | Pending |
-| AI-03 | — | Pending |
-| AI-04 | — | Pending |
-| AI-05 | — | Pending |
-| CAP-01 | — | Pending |
-| CAP-02 | — | Pending |
-| CAP-03 | — | Pending |
-| CAP-04 | — | Pending |
-| CAP-05 | — | Pending |
-| CAP-06 | — | Pending |
-| STAT-01 | — | Pending |
-| STAT-02 | — | Pending |
-| STAT-03 | — | Pending |
-| STAT-04 | — | Pending |
-| STAT-05 | — | Pending |
-| TRAIN-01 | — | Pending |
-| TRAIN-02 | — | Pending |
-| TRAIN-03 | — | Pending |
-| TRAIN-04 | — | Pending |
+| AI-01 | Phase 9 | Pending |
+| AI-02 | Phase 9 | Pending |
+| AI-03 | Phase 9 | Pending |
+| AI-04 | Phase 9 | Pending |
+| AI-05 | Phase 9 | Pending |
+| CAP-01 | Phase 8 | Pending |
+| CAP-02 | Phase 8 | Pending |
+| CAP-03 | Phase 8 | Pending |
+| CAP-04 | Phase 8 | Pending |
+| CAP-05 | Phase 8 | Pending |
+| CAP-06 | Phase 8 | Pending |
+| STAT-01 | Phase 6 | Pending |
+| STAT-02 | Phase 6 | Pending |
+| STAT-03 | Phase 6 | Pending |
+| STAT-04 | Phase 6 | Pending |
+| STAT-05 | Phase 6 | Pending |
+| TRAIN-01 | Phase 7 | Pending |
+| TRAIN-02 | Phase 7 | Pending |
+| TRAIN-03 | Phase 7 | Pending |
+| TRAIN-04 | Phase 7 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 20 total
-- Mapped to phases: 0
-- Unmapped: 20
+- Mapped to phases: 20
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-29*
