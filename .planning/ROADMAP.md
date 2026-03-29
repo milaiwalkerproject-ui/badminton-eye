@@ -12,8 +12,8 @@ Badminton Eye delivers a native iOS + Apple Watch badminton scoring app with an 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Scoring Engine** - BWF-compliant scoring state machine with iPhone UI for singles, doubles, and mixed doubles
-- [ ] **Phase 2: Apple Watch Companion** - Watch app with glanceable scores, tap-to-score, real-time sync, HealthKit workouts, and adaptive iPad layout
+- [x] **Phase 1: Scoring Engine** - BWF-compliant scoring state machine with iPhone UI for singles, doubles, and mixed doubles (completed 2026-03-28)
+- [x] **Phase 2: Apple Watch Companion** - Watch app with glanceable scores, tap-to-score, real-time sync, HealthKit workouts, and adaptive iPad layout (completed 2026-03-28)
 - [x] **Phase 3: Match Data and Player Profiles** - Match history, player profiles, head-to-head records, sharing, and export (completed 2026-03-29)
 - [x] **Phase 4: Cloud Sync and Authentication** - Apple Sign-In, CloudKit cross-device sync, and Live Activity on lock screen (completed 2026-03-29)
 - [x] **Phase 5: Hawk Eye AI and Premium** - AI-powered line-calling from court-side video, visual trajectory replay, and subscription billing (completed 2026-03-29)
@@ -35,7 +35,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 - [x] 01-01-PLAN.md — ScoringEngine Swift package: TDD state machine with BWF rules, singles/doubles/mixed scoring, service rotation, undo
 - [x] 01-02-PLAN.md — iPhone app: Xcode project, SwiftData persistence, match setup screen, live scoring UI with half-screen tap zones
-- [ ] 01-03-PLAN.md — Crash recovery from SwiftData and end-to-end human verification of all scoring requirements
+- [x] 01-03-PLAN.md — Crash recovery from SwiftData and end-to-end human verification of all scoring requirements
 
 ### Phase 2: Apple Watch Companion
 **Goal**: Users can score matches from their Apple Watch with real-time sync to iPhone, plus HealthKit workout tracking
@@ -68,7 +68,7 @@ Plans:
 
 Plans:
 - [x] 03-01-PLAN.md — Player SwiftData model, match history list with date grouping, match detail with game-by-game breakdown
-- [ ] 03-02-PLAN.md — Player profiles (create/edit/list/search), head-to-head records, quick-select player chips in match setup
+- [x] 03-02-PLAN.md — Player profiles (create/edit/list/search), head-to-head records, quick-select player chips in match setup
 - [x] 03-03-PLAN.md — Court-themed scorecard image sharing, CSV export, PDF export with toolbar integration
 
 ### Phase 4: Cloud Sync and Authentication
@@ -111,7 +111,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Scoring Engine | 2/3 | In progress | - |
+| 1. Scoring Engine | 3/3 | Complete | 2026-03-28 |
 | 2. Apple Watch Companion | 3/3 | Complete | 2026-03-28 |
 | 3. Match Data and Player Profiles | 3/3 | Complete   | 2026-03-29 |
 | 4. Cloud Sync and Authentication | 3/3 | Complete   | 2026-03-29 |
