@@ -60,6 +60,8 @@
 		H10003 /* CourtCalibrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20003 /* CourtCalibrationView.swift */; };
 		H10004 /* ChallengeVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20004 /* ChallengeVideoView.swift */; };
 		H10005 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = H20005 /* AVFoundation.framework */; };
+		H10006 /* HawkEyePipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20006 /* HawkEyePipeline.swift */; };
+		H10007 /* TrajectoryCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20007 /* TrajectoryCalculator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -137,6 +139,8 @@
 		H20003 /* CourtCalibrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourtCalibrationView.swift; sourceTree = "<group>"; };
 		H20004 /* ChallengeVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeVideoView.swift; sourceTree = "<group>"; };
 		H20005 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		H20006 /* HawkEyePipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HawkEyePipeline.swift; sourceTree = "<group>"; };
+		H20007 /* TrajectoryCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryCalculator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -257,6 +261,8 @@
 				A20017 /* AuthManager.swift */,
 				A2001C /* SubscriptionManager.swift */,
 				H20002 /* VideoCaptureManager.swift */,
+				H20006 /* HawkEyePipeline.swift */,
+				H20007 /* TrajectoryCalculator.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -507,6 +513,8 @@
 				H10002 /* VideoCaptureManager.swift in Sources */,
 				H10003 /* CourtCalibrationView.swift in Sources */,
 				H10004 /* ChallengeVideoView.swift in Sources */,
+				H10006 /* HawkEyePipeline.swift in Sources */,
+				H10007 /* TrajectoryCalculator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
