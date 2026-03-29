@@ -4,6 +4,8 @@ import ScoringEngine
 
 struct MatchSetupView: View {
     @Environment(\.modelContext) private var modelContext
+    @Query(sort: \Player.name) private var existingPlayers: [Player]
+
     @State private var selectedFormat: MatchFormat = .singles
     @State private var playerAName: String = ""
     @State private var playerBName: String = ""
@@ -12,8 +14,21 @@ struct MatchSetupView: View {
     @State private var navigateToMatch = false
     @State private var matchState: MatchState?
 
+    // Picker sheet state
+    @State private var showPickerFor: PickerTarget?
+
+    private enum PickerTarget: Identifiable {
+        case playerA, playerB, playerA2, playerB2
+        var id: Int { hashValue }
+    }
+
     private var isDoubles: Bool {
         selectedFormat == .doubles || selectedFormat == .mixed
+    }
+
+    private var excludeNames: [String] {
+        [playerAName, playerBName, playerA2Name, playerB2Name]
+            .filter { !$0.isEmpty }
     }
 
     var body: some View {
@@ -28,28 +43,34 @@ struct MatchSetupView: View {
             }
 
             Section("Team A") {
-                TextField(
-                    isDoubles ? "Player 1A" : "Player 1",
-                    text: $playerAName
+                playerField(
+                    placeholder: isDoubles ? "Player 1A" : "Player 1",
+                    text: $playerAName,
+                    target: .playerA
                 )
-                .textContentType(.name)
 
                 if isDoubles {
-                    TextField("Player 1B", text: $playerA2Name)
-                        .textContentType(.name)
+                    playerField(
+                        placeholder: "Player 1B",
+                        text: $playerA2Name,
+                        target: .playerA2
+                    )
                 }
             }
 
             Section("Team B") {
-                TextField(
-                    isDoubles ? "Player 2A" : "Player 2",
-                    text: $playerBName
+                playerField(
+                    placeholder: isDoubles ? "Player 2A" : "Player 2",
+                    text: $playerBName,
+                    target: .playerB
                 )
-                .textContentType(.name)
 
                 if isDoubles {
-                    TextField("Player 2B", text: $playerB2Name)
-                        .textContentType(.name)
+                    playerField(
+                        placeholder: "Player 2B",
+                        text: $playerB2Name,
+                        target: .playerB2
+                    )
                 }
             }
 
@@ -79,9 +100,64 @@ struct MatchSetupView: View {
                 .navigationBarBackButtonHidden(true)
             }
         }
+        .sheet(item: $showPickerFor) { target in
+            NavigationStack {
+                PlayerPickerView(
+                    selectedName: binding(for: target),
+                    label: label(for: target),
+                    excludeNames: excludeNames
+                )
+            }
+        }
+    }
+
+    // MARK: - Player Field with Picker Button
+
+    @ViewBuilder
+    private func playerField(
+        placeholder: String,
+        text: Binding<String>,
+        target: PickerTarget
+    ) -> some View {
+        HStack {
+            TextField(placeholder, text: text)
+                .textContentType(.name)
+
+            Button {
+                showPickerFor = target
+            } label: {
+                Image(systemName: "person.circle")
+                    .foregroundStyle(.accentColor)
+                    .imageScale(.large)
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    // MARK: - Helpers
+
+    private func binding(for target: PickerTarget) -> Binding<String> {
+        switch target {
+        case .playerA: return $playerAName
+        case .playerB: return $playerBName
+        case .playerA2: return $playerA2Name
+        case .playerB2: return $playerB2Name
+        }
+    }
+
+    private func label(for target: PickerTarget) -> String {
+        switch target {
+        case .playerA: return isDoubles ? "Player 1A" : "Player 1"
+        case .playerB: return isDoubles ? "Player 2A" : "Player 2"
+        case .playerA2: return "Player 1B"
+        case .playerB2: return "Player 2B"
+        }
     }
 
     private func startMatch() {
+        // Auto-create Player records for new names
+        autoCreatePlayers()
+
         let state: MatchState
         switch selectedFormat {
         case .singles:
@@ -118,5 +194,25 @@ struct MatchSetupView: View {
         }
         matchState = state
         navigateToMatch = true
+    }
+
+    /// Auto-creates Player records for any entered names not already in the database
+    private func autoCreatePlayers() {
+        let existingNames = Set(existingPlayers.map(\.name))
+        let enteredNames: [String]
+
+        if isDoubles {
+            enteredNames = [playerAName, playerBName, playerA2Name, playerB2Name]
+        } else {
+            enteredNames = [playerAName, playerBName]
+        }
+
+        for name in enteredNames {
+            let trimmed = name.trimmingCharacters(in: .whitespaces)
+            guard !trimmed.isEmpty, !existingNames.contains(trimmed) else { continue }
+            let newPlayer = Player()
+            newPlayer.name = trimmed
+            modelContext.insert(newPlayer)
+        }
     }
 }

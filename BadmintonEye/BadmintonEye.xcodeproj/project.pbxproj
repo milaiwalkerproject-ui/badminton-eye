@@ -27,6 +27,7 @@
 		A10013 /* PlayerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20013 /* PlayerListView.swift */; };
 		A10014 /* PlayerProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20014 /* PlayerProfileView.swift */; };
 		A10015 /* HeadToHeadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20015 /* HeadToHeadView.swift */; };
+		A10016 /* PlayerPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20016 /* PlayerPickerView.swift */; };
 		W10001 /* BadmintonEyeWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = W20001 /* BadmintonEyeWatchApp.swift */; };
 		W10002 /* WatchMatchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = W20002 /* WatchMatchViewModel.swift */; };
 		W10003 /* WatchSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = W20003 /* WatchSessionManager.swift */; };
@@ -63,6 +64,7 @@
 		A20013 /* PlayerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerListView.swift; sourceTree = "<group>"; };
 		A20014 /* PlayerProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerProfileView.swift; sourceTree = "<group>"; };
 		A20015 /* HeadToHeadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadToHeadView.swift; sourceTree = "<group>"; };
+		A20016 /* PlayerPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerPickerView.swift; sourceTree = "<group>"; };
 		W20001 /* BadmintonEyeWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadmintonEyeWatchApp.swift; sourceTree = "<group>"; };
 		W20002 /* WatchMatchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchMatchViewModel.swift; sourceTree = "<group>"; };
 		W20003 /* WatchSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionManager.swift; sourceTree = "<group>"; };
@@ -161,6 +163,7 @@
 				A20013 /* PlayerListView.swift */,
 				A20014 /* PlayerProfileView.swift */,
 				A20015 /* HeadToHeadView.swift */,
+				A20016 /* PlayerPickerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -362,6 +365,7 @@
 				A10013 /* PlayerListView.swift in Sources */,
 				A10014 /* PlayerProfileView.swift in Sources */,
 				A10015 /* HeadToHeadView.swift in Sources */,
+				A10016 /* PlayerPickerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
