@@ -85,7 +85,7 @@
 
 | Feature | Reason |
 |---------|--------|
-| Tournament bracket management | Separate complex domain — competitors (Spogenie, ScoreMine) specialize here |
+| Tournament bracket management | Separate complex domain -- competitors (Spogenie, ScoreMine) specialize here |
 | Real-time multiplayer / online matches | Badminton is played in person; remote scoring adds massive complexity for no use case |
 | Live streaming | High bandwidth/CDN costs, not core to scoring or line-calling |
 | Coaching / training drills | Different user mindset (practice vs match); dilutes product identity |
@@ -99,49 +99,49 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SCORE-01 | — | Pending |
-| SCORE-02 | — | Pending |
-| SCORE-03 | — | Pending |
-| SCORE-04 | — | Pending |
-| SCORE-05 | — | Pending |
-| SCORE-06 | — | Pending |
-| SCORE-07 | — | Pending |
-| SCORE-08 | — | Pending |
-| WATCH-01 | — | Pending |
-| WATCH-02 | — | Pending |
-| WATCH-03 | — | Pending |
-| WATCH-04 | — | Pending |
-| WATCH-05 | — | Pending |
-| WATCH-06 | — | Pending |
-| DATA-01 | — | Pending |
-| DATA-02 | — | Pending |
-| DATA-03 | — | Pending |
-| DATA-04 | — | Pending |
-| DATA-05 | — | Pending |
-| DATA-06 | — | Pending |
-| DATA-07 | — | Pending |
-| AUTH-01 | — | Pending |
-| AUTH-02 | — | Pending |
-| AUTH-03 | — | Pending |
-| HAWK-01 | — | Pending |
-| HAWK-02 | — | Pending |
-| HAWK-03 | — | Pending |
-| HAWK-04 | — | Pending |
-| HAWK-05 | — | Pending |
-| HAWK-06 | — | Pending |
-| HAWK-07 | — | Pending |
-| PREM-01 | — | Pending |
-| PREM-02 | — | Pending |
-| PREM-03 | — | Pending |
-| PREM-04 | — | Pending |
-| UX-01 | — | Pending |
-| UX-02 | — | Pending |
+| SCORE-01 | Phase 1 | Pending |
+| SCORE-02 | Phase 1 | Pending |
+| SCORE-03 | Phase 1 | Pending |
+| SCORE-04 | Phase 1 | Pending |
+| SCORE-05 | Phase 1 | Pending |
+| SCORE-06 | Phase 1 | Pending |
+| SCORE-07 | Phase 1 | Pending |
+| SCORE-08 | Phase 1 | Pending |
+| WATCH-01 | Phase 2 | Pending |
+| WATCH-02 | Phase 2 | Pending |
+| WATCH-03 | Phase 2 | Pending |
+| WATCH-04 | Phase 2 | Pending |
+| WATCH-05 | Phase 2 | Pending |
+| WATCH-06 | Phase 2 | Pending |
+| DATA-01 | Phase 3 | Pending |
+| DATA-02 | Phase 3 | Pending |
+| DATA-03 | Phase 3 | Pending |
+| DATA-04 | Phase 3 | Pending |
+| DATA-05 | Phase 3 | Pending |
+| DATA-06 | Phase 3 | Pending |
+| DATA-07 | Phase 3 | Pending |
+| AUTH-01 | Phase 4 | Pending |
+| AUTH-02 | Phase 4 | Pending |
+| AUTH-03 | Phase 4 | Pending |
+| HAWK-01 | Phase 5 | Pending |
+| HAWK-02 | Phase 5 | Pending |
+| HAWK-03 | Phase 5 | Pending |
+| HAWK-04 | Phase 5 | Pending |
+| HAWK-05 | Phase 5 | Pending |
+| HAWK-06 | Phase 5 | Pending |
+| HAWK-07 | Phase 5 | Pending |
+| PREM-01 | Phase 5 | Pending |
+| PREM-02 | Phase 5 | Pending |
+| PREM-03 | Phase 5 | Pending |
+| PREM-04 | Phase 5 | Pending |
+| UX-01 | Phase 4 | Pending |
+| UX-02 | Phase 2 | Pending |
 
 **Coverage:**
 - v1 requirements: 37 total
-- Mapped to phases: 0
-- Unmapped: 37 ⚠️
+- Mapped to phases: 37
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-28*
-*Last updated: 2026-03-28 after initial definition*
+*Last updated: 2026-03-28 after roadmap creation*
