@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 1: Scoring Engine** - BWF-compliant scoring state machine with iPhone UI for singles, doubles, and mixed doubles
 - [ ] **Phase 2: Apple Watch Companion** - Watch app with glanceable scores, tap-to-score, real-time sync, HealthKit workouts, and adaptive iPad layout
 - [x] **Phase 3: Match Data and Player Profiles** - Match history, player profiles, head-to-head records, sharing, and export (completed 2026-03-29)
-- [ ] **Phase 4: Cloud Sync and Authentication** - Apple Sign-In, CloudKit cross-device sync, and Live Activity on lock screen
+- [x] **Phase 4: Cloud Sync and Authentication** - Apple Sign-In, CloudKit cross-device sync, and Live Activity on lock screen (completed 2026-03-29)
 - [ ] **Phase 5: Hawk Eye AI and Premium** - AI-powered line-calling from court-side video, visual trajectory replay, and subscription billing
 
 ## Phase Details
@@ -83,8 +83,8 @@ Plans:
 
 Plans:
 - [x] 04-01-PLAN.md — Apple Sign-In AuthManager, CloudKit-toggled SwiftData modelContainer, Settings tab with sign-in UI
-- [ ] 04-02-PLAN.md — Live Activity widget extension with lock screen and Dynamic Island views, LiveMatchViewModel integration
-- [ ] 04-03-PLAN.md — Human verification of auth, CloudKit sync, local-only mode, and Live Activity
+- [x] 04-02-PLAN.md — Live Activity widget extension with lock screen and Dynamic Island views, LiveMatchViewModel integration
+- [x] 04-03-PLAN.md — Human verification of auth, CloudKit sync, local-only mode, and Live Activity
 
 ### Phase 5: Hawk Eye AI and Premium
 **Goal**: Premium subscribers can challenge disputed points with AI-powered video analysis that shows where the shuttle landed
@@ -114,5 +114,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Scoring Engine | 2/3 | In progress | - |
 | 2. Apple Watch Companion | 3/3 | Complete | 2026-03-28 |
 | 3. Match Data and Player Profiles | 3/3 | Complete   | 2026-03-29 |
-| 4. Cloud Sync and Authentication | 2/3 | In Progress|  |
+| 4. Cloud Sync and Authentication | 3/3 | Complete   | 2026-03-29 |
 | 5. Hawk Eye AI and Premium | 0/4 | Not started | - |
