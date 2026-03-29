@@ -69,7 +69,7 @@ Plans:
 Plans:
 - [x] 03-01-PLAN.md — Player SwiftData model, match history list with date grouping, match detail with game-by-game breakdown
 - [ ] 03-02-PLAN.md — Player profiles (create/edit/list/search), head-to-head records, quick-select player chips in match setup
-- [ ] 03-03-PLAN.md — Court-themed scorecard image sharing, CSV export, PDF export with toolbar integration
+- [x] 03-03-PLAN.md — Court-themed scorecard image sharing, CSV export, PDF export with toolbar integration
 
 ### Phase 4: Cloud Sync and Authentication
 **Goal**: Users can sign in with Apple ID to sync match data across all their devices, and see live scores on their lock screen
@@ -113,6 +113,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Scoring Engine | 2/3 | In progress | - |
 | 2. Apple Watch Companion | 3/3 | Complete | 2026-03-28 |
-| 3. Match Data and Player Profiles | 1/3 | In progress | - |
+| 3. Match Data and Player Profiles | 3/3 | Complete | 2026-03-29 |
 | 4. Cloud Sync and Authentication | 0/3 | Not started | - |
 | 5. Hawk Eye AI and Premium | 0/4 | Not started | - |

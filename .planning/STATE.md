@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: in_progress
-stopped_at: Completed 03-01-PLAN.md
-last_updated: "2026-03-29T06:18:02Z"
-last_activity: 2026-03-29 — Completed 03-01-PLAN.md (Player model + match history + detail views)
+status: executing
+stopped_at: Completed 03-03-PLAN.md
+last_updated: "2026-03-29T06:23:00Z"
+last_activity: 2026-03-29 — Completed 03-03-PLAN.md (Match sharing and CSV/PDF export)
 progress:
   total_phases: 5
-  completed_phases: 2
-  total_plans: 7
-  completed_plans: 7
-  percent: 44
+  completed_phases: 3
+  total_plans: 9
+  completed_plans: 8
+  percent: 89
 ---
 
 # Project State
@@ -26,18 +26,18 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 ## Current Position
 
 Phase: 3 of 5 (Match Data and Player Profiles)
-Plan: 1 of 3 in current phase (1 complete)
-Status: Phase 03 in progress
-Last activity: 2026-03-29 — Completed 03-01-PLAN.md (Player model + match history + detail views)
+Plan: 3 of 3 in current phase (3 complete)
+Status: Phase 03 complete
+Last activity: 2026-03-29 — Completed 03-03-PLAN.md (Match sharing and CSV/PDF export)
 
-Progress: [████------] 44%
+Progress: [█████████░] 89%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 4 min
-- Total execution time: 0.42 hours
+- Total plans completed: 8
+- Average duration: 3 min
+- Total execution time: 0.50 hours
 
 **By Phase:**
 
@@ -45,11 +45,11 @@ Progress: [████------] 44%
 |-------|-------|-------|----------|
 | 01-scoring-engine | 2/3 | 8 min | 4 min |
 | 02-apple-watch-companion | 3/3 | 13 min | 4 min |
-| 03-match-data-and-player-profiles | 1/3 | 4 min | 4 min |
+| 03-match-data-and-player-profiles | 3/3 | 8 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (2 min), 02-02 (6 min), 02-03 (5 min), 03-01 (4 min)
-- Trend: stable
+- Last 5 plans: 02-02 (6 min), 02-03 (5 min), 03-01 (4 min), 03-02 (2 min), 03-03 (2 min)
+- Trend: stable/improving
 
 *Updated after each plan completion*
 
@@ -79,6 +79,9 @@ Recent decisions affecting current work:
 - 03-01: Date grouping uses Calendar isDateInToday/Yesterday + weekOfYear granularity
 - 03-01: MatchDetailView decodes stateJSON with fallback to persisted game scores when decode fails
 - 03-01: Crash recovery takes priority -- in-progress match hijacks NavigationStack before history shown
+- 03-03: Pure CoreGraphics/UIKit rendering for scorecard image and PDF -- no SwiftUI snapshot or third-party libraries
+- 03-03: UIViewControllerRepresentable wrapper for UIActivityViewController over ShareLink for reliable sharing
+- 03-03: stateJSON decode with fallback to persisted game scores in both renderers
 
 ### Pending Todos
 
@@ -92,5 +95,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-29
-Stopped at: Completed 03-01-PLAN.md
+Stopped at: Completed 03-03-PLAN.md
 Resume file: None

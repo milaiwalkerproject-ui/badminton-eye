@@ -32,8 +32,8 @@
 - [ ] **DATA-03**: User can create and save player profiles with name and optional photo
 - [ ] **DATA-04**: User can quick-select saved players when starting a new match
 - [ ] **DATA-05**: User can view head-to-head win/loss record against a specific opponent
-- [ ] **DATA-06**: User can share a match result scorecard as an image via the share sheet
-- [ ] **DATA-07**: User can export match data as CSV or PDF
+- [x] **DATA-06**: User can share a match result scorecard as an image via the share sheet
+- [x] **DATA-07**: User can export match data as CSV or PDF
 
 ### Cloud & Authentication
 
@@ -118,8 +118,8 @@
 | DATA-03 | Phase 3 | Pending |
 | DATA-04 | Phase 3 | Pending |
 | DATA-05 | Phase 3 | Pending |
-| DATA-06 | Phase 3 | Pending |
-| DATA-07 | Phase 3 | Pending |
+| DATA-06 | Phase 3 | Complete |
+| DATA-07 | Phase 3 | Complete |
 | AUTH-01 | Phase 4 | Pending |
 | AUTH-02 | Phase 4 | Pending |
 | AUTH-03 | Phase 4 | Pending |
