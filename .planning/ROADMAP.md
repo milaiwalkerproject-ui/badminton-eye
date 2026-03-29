@@ -96,13 +96,13 @@ Plans:
   3. App displays the predicted shuttle landing spot on a 2D court overlay with animated trajectory and a color-coded confidence indicator
   4. User can subscribe to a monthly or yearly premium plan via in-app purchase; Hawk Eye is locked for free users
   5. Free users retain full access to scoring, match history, and all non-premium features without limitations
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 05-01: Court calibration and video capture pipeline
-- [ ] 05-02: Core ML shuttle detection and trajectory calculation
-- [ ] 05-03: Visual trajectory replay and confidence rendering
-- [ ] 05-04: StoreKit 2 subscription and premium feature gating
+- [ ] 05-01-PLAN.md — Court calibration (4-corner tap), video capture/selection, Challenge button in live match toolbar with 10s countdown
+- [ ] 05-02-PLAN.md — StoreKit 2 subscription manager, paywall UI, premium feature gating, Restore Purchases
+- [ ] 05-03-PLAN.md — Hawk Eye analysis pipeline (placeholder Core ML), trajectory calculation, animated 2D court replay with confidence
+- [ ] 05-04-PLAN.md — Human verification of full Hawk Eye challenge flow and premium subscription
 
 ## Progress
 
