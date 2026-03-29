@@ -4,6 +4,8 @@ import AuthenticationServices
 struct SettingsView: View {
 
     @Bindable private var authManager = AuthManager.shared
+    private var subscriptionManager = SubscriptionManager.shared
+    @State private var showPaywall = false
 
     var body: some View {
         List {
@@ -13,9 +15,65 @@ struct SettingsView: View {
                 signInSection
             }
 
+            premiumSection
+
             aboutSection
         }
         .navigationTitle("Settings")
+        .sheet(isPresented: $showPaywall) {
+            PaywallView()
+        }
+    }
+
+    // MARK: - Premium
+
+    private var premiumSection: some View {
+        Section {
+            if subscriptionManager.isPremium {
+                HStack(spacing: 12) {
+                    Image(systemName: "checkmark.seal.fill")
+                        .foregroundStyle(.green)
+                        .font(.title2)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Hawk Eye Premium Active")
+                            .font(.headline)
+                        Text("All premium features unlocked")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.vertical, 4)
+
+                Link(destination: URL(string: "https://apps.apple.com/account/subscriptions")!) {
+                    HStack {
+                        Text("Manage Subscription")
+                        Spacer()
+                        Image(systemName: "arrow.up.right")
+                            .font(.caption)
+                    }
+                }
+            } else {
+                Button {
+                    showPaywall = true
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "eye.trianglebadge.exclamationmark")
+                            .foregroundStyle(.blue)
+                            .font(.title2)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Upgrade to Premium")
+                                .font(.headline)
+                            Text("Unlock Hawk Eye AI line calling")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+        } header: {
+            Text("Premium")
+        }
     }
 
     // MARK: - Signed Out
@@ -99,6 +157,14 @@ struct SettingsView: View {
                 Spacer()
                 Text(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1")
                     .foregroundStyle(.secondary)
+            }
+
+            Button {
+                Task {
+                    await subscriptionManager.restorePurchases()
+                }
+            } label: {
+                Text("Restore Purchases")
             }
         } header: {
             Text("About")

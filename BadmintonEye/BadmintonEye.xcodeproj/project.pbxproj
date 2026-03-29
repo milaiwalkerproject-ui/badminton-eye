@@ -38,6 +38,7 @@
 		A10019 /* ScorecardRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2001A /* ScorecardRenderer.swift */; };
 		A1001B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2001B /* SettingsView.swift */; };
 		A1001C /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2001C /* SubscriptionManager.swift */; };
+		P10001 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = P20001 /* PaywallView.swift */; };
 		A1001D /* Configuration.storekit in Resources */ = {isa = PBXBuildFile; fileRef = A2001D /* Configuration.storekit */; };
 		A1001E /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2001E /* StoreKit.framework */; };
 		A1001F /* AuthenticationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2001F /* AuthenticationServices.framework */; };
@@ -117,6 +118,7 @@
 		A2001A /* ScorecardRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScorecardRenderer.swift; sourceTree = "<group>"; };
 		A2001B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A2001C /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
+		P20001 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		A2001D /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
 		A2001E /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		A2001F /* AuthenticationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AuthenticationServices.framework; path = System/Library/Frameworks/AuthenticationServices.framework; sourceTree = SDKROOT; };
@@ -241,6 +243,7 @@
 				A20019 /* MatchExportView.swift */,
 				A2001A /* ScorecardRenderer.swift */,
 				A2001B /* SettingsView.swift */,
+				P20001 /* PaywallView.swift */,
 				H20003 /* CourtCalibrationView.swift */,
 				H20004 /* ChallengeVideoView.swift */,
 			);
@@ -498,6 +501,7 @@
 				A10019 /* ScorecardRenderer.swift in Sources */,
 				A1001B /* SettingsView.swift in Sources */,
 				A1001C /* SubscriptionManager.swift in Sources */,
+				P10001 /* PaywallView.swift in Sources */,
 				L10004 /* MatchActivityAttributes.swift in Sources */,
 				H10001 /* CalibrationProfile.swift in Sources */,
 				H10002 /* VideoCaptureManager.swift in Sources */,
