@@ -30,12 +30,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. App displays correct service side and server (including doubles rotation) after every rally
   4. User can undo the last scored point and the entire match state reverts correctly
   5. All scoring works without any internet connection
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: Scoring state machine and BWF rules engine
-- [ ] 01-02: iPhone scoring UI with match setup flow
-- [ ] 01-03: Offline persistence and undo system
+- [ ] 01-01-PLAN.md — ScoringEngine Swift package: TDD state machine with BWF rules, singles/doubles/mixed scoring, service rotation, undo
+- [ ] 01-02-PLAN.md — iPhone app: Xcode project, SwiftData persistence, match setup screen, live scoring UI with half-screen tap zones
+- [ ] 01-03-PLAN.md — Crash recovery from SwiftData and end-to-end human verification of all scoring requirements
 
 ### Phase 2: Apple Watch Companion
 **Goal**: Users can score matches from their Apple Watch with real-time sync to iPhone, plus HealthKit workout tracking
@@ -111,7 +111,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Scoring Engine | 0/3 | Not started | - |
+| 1. Scoring Engine | 0/3 | Planning complete | - |
 | 2. Apple Watch Companion | 0/3 | Not started | - |
 | 3. Match Data and Player Profiles | 0/3 | Not started | - |
 | 4. Cloud Sync and Authentication | 0/3 | Not started | - |
