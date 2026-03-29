@@ -112,7 +112,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Scoring Engine | 2/3 | In progress | - |
-| 2. Apple Watch Companion | 1/3 | In progress | - |
+| 2. Apple Watch Companion | 2/3 | In Progress|  |
 | 3. Match Data and Player Profiles | 0/3 | Not started | - |
 | 4. Cloud Sync and Authentication | 0/3 | Not started | - |
 | 5. Hawk Eye AI and Premium | 0/4 | Not started | - |
