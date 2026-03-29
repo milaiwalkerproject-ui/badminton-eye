@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 2: Apple Watch Companion** - Watch app with glanceable scores, tap-to-score, real-time sync, HealthKit workouts, and adaptive iPad layout
 - [x] **Phase 3: Match Data and Player Profiles** - Match history, player profiles, head-to-head records, sharing, and export (completed 2026-03-29)
 - [x] **Phase 4: Cloud Sync and Authentication** - Apple Sign-In, CloudKit cross-device sync, and Live Activity on lock screen (completed 2026-03-29)
-- [ ] **Phase 5: Hawk Eye AI and Premium** - AI-powered line-calling from court-side video, visual trajectory replay, and subscription billing
+- [x] **Phase 5: Hawk Eye AI and Premium** - AI-powered line-calling from court-side video, visual trajectory replay, and subscription billing (completed 2026-03-29)
 
 ## Phase Details
 
@@ -99,10 +99,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 05-01-PLAN.md — Court calibration (4-corner tap), video capture/selection, Challenge button in live match toolbar with 10s countdown
-- [ ] 05-02-PLAN.md — StoreKit 2 subscription manager, paywall UI, premium feature gating, Restore Purchases
-- [ ] 05-03-PLAN.md — Hawk Eye analysis pipeline (placeholder Core ML), trajectory calculation, animated 2D court replay with confidence
-- [ ] 05-04-PLAN.md — Human verification of full Hawk Eye challenge flow and premium subscription
+- [x] 05-01-PLAN.md — Court calibration (4-corner tap), video capture/selection, Challenge button in live match toolbar with 10s countdown
+- [x] 05-02-PLAN.md — StoreKit 2 subscription manager, paywall UI, premium feature gating, Restore Purchases
+- [x] 05-03-PLAN.md — Hawk Eye analysis pipeline (placeholder Core ML), trajectory calculation, animated 2D court replay with confidence
+- [x] 05-04-PLAN.md — Human verification of full Hawk Eye challenge flow and premium subscription
 
 ## Progress
 
@@ -115,4 +115,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Apple Watch Companion | 3/3 | Complete | 2026-03-28 |
 | 3. Match Data and Player Profiles | 3/3 | Complete   | 2026-03-29 |
 | 4. Cloud Sync and Authentication | 3/3 | Complete   | 2026-03-29 |
-| 5. Hawk Eye AI and Premium | 3/4 | In Progress|  |
+| 5. Hawk Eye AI and Premium | 4/4 | Complete | 2026-03-29 |
