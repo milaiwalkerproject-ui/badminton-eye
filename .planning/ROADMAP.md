@@ -79,12 +79,12 @@ Plans:
   1. User can sign in with Apple ID and all match history and player profiles sync to their other devices via iCloud
   2. User can use the app without signing in, with all data stored locally
   3. Active match score appears as a Live Activity on iPhone lock screen and Dynamic Island
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: Apple Sign-In and local-only mode
-- [ ] 04-02: CloudKit sync for match data and player profiles
-- [ ] 04-03: Live Activity and Dynamic Island integration
+- [ ] 04-01-PLAN.md — Apple Sign-In AuthManager, CloudKit-toggled SwiftData modelContainer, Settings tab with sign-in UI
+- [ ] 04-02-PLAN.md — Live Activity widget extension with lock screen and Dynamic Island views, LiveMatchViewModel integration
+- [ ] 04-03-PLAN.md — Human verification of auth, CloudKit sync, local-only mode, and Live Activity
 
 ### Phase 5: Hawk Eye AI and Premium
 **Goal**: Premium subscribers can challenge disputed points with AI-powered video analysis that shows where the shuttle landed
