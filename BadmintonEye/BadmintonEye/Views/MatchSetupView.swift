@@ -17,64 +17,66 @@ struct MatchSetupView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            Form {
-                Section("Match Format") {
-                    Picker("Format", selection: $selectedFormat) {
-                        Text("Singles").tag(MatchFormat.singles)
-                        Text("Doubles").tag(MatchFormat.doubles)
-                        Text("Mixed").tag(MatchFormat.mixed)
-                    }
-                    .pickerStyle(.segmented)
+        Form {
+            Section("Match Format") {
+                Picker("Format", selection: $selectedFormat) {
+                    Text("Singles").tag(MatchFormat.singles)
+                    Text("Doubles").tag(MatchFormat.doubles)
+                    Text("Mixed").tag(MatchFormat.mixed)
                 }
+                .pickerStyle(.segmented)
+            }
 
-                Section("Team A") {
-                    TextField(
-                        isDoubles ? "Player 1A" : "Player 1",
-                        text: $playerAName
-                    )
-                    .textContentType(.name)
+            Section("Team A") {
+                TextField(
+                    isDoubles ? "Player 1A" : "Player 1",
+                    text: $playerAName
+                )
+                .textContentType(.name)
 
-                    if isDoubles {
-                        TextField("Player 1B", text: $playerA2Name)
-                            .textContentType(.name)
-                    }
-                }
-
-                Section("Team B") {
-                    TextField(
-                        isDoubles ? "Player 2A" : "Player 2",
-                        text: $playerBName
-                    )
-                    .textContentType(.name)
-
-                    if isDoubles {
-                        TextField("Player 2B", text: $playerB2Name)
-                            .textContentType(.name)
-                    }
-                }
-
-                Section {
-                    Button(action: startMatch) {
-                        Text("Start Match")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 8)
-                    }
-                    .buttonStyle(.borderedProminent)
+                if isDoubles {
+                    TextField("Player 1B", text: $playerA2Name)
+                        .textContentType(.name)
                 }
             }
-            .navigationTitle("Badminton Eye")
-            .navigationDestination(isPresented: $navigateToMatch) {
-                if let state = matchState {
-                    LiveMatchView(
-                        viewModel: LiveMatchViewModel(
-                            state: state,
-                            modelContext: modelContext
-                        )
-                    )
-                    .navigationBarBackButtonHidden(true)
+
+            Section("Team B") {
+                TextField(
+                    isDoubles ? "Player 2A" : "Player 2",
+                    text: $playerBName
+                )
+                .textContentType(.name)
+
+                if isDoubles {
+                    TextField("Player 2B", text: $playerB2Name)
+                        .textContentType(.name)
                 }
+            }
+
+            Section {
+                Button(action: startMatch) {
+                    Text("Start Match")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                }
+                .buttonStyle(.borderedProminent)
+            }
+        }
+        .navigationTitle("Badminton Eye")
+        .navigationDestination(isPresented: $navigateToMatch) {
+            if let state = matchState {
+                LiveMatchView(
+                    viewModel: LiveMatchViewModel(
+                        state: state,
+                        modelContext: modelContext
+                    ),
+                    onMatchEnd: {
+                        navigateToMatch = false
+                        matchState = nil
+                    }
+                )
+                .navigationBarBackButtonHidden(true)
             }
         }
     }

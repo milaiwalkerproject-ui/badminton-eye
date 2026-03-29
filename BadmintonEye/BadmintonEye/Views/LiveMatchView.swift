@@ -3,6 +3,7 @@ import ScoringEngine
 
 struct LiveMatchView: View {
     @State var viewModel: LiveMatchViewModel
+    var onMatchEnd: (() -> Void)?
     @State private var showAbandonAlert = false
     @Environment(\.dismiss) private var dismiss
 
@@ -137,7 +138,7 @@ struct LiveMatchView: View {
                 set: { _ in }
             )
         ) {
-            MatchEndView(state: viewModel.state)
+            MatchEndView(state: viewModel.state, onNewMatch: onMatchEnd)
         }
         .navigationDestination(
             isPresented: Binding(
@@ -145,7 +146,7 @@ struct LiveMatchView: View {
                 set: { _ in }
             )
         ) {
-            MatchEndView(state: viewModel.state)
+            MatchEndView(state: viewModel.state, onNewMatch: onMatchEnd)
         }
     }
 }

@@ -3,6 +3,7 @@ import ScoringEngine
 
 struct MatchEndView: View {
     let state: MatchState
+    var onNewMatch: (() -> Void)?
     @Environment(\.dismiss) private var dismiss
 
     private var winnerText: String {
@@ -119,7 +120,13 @@ struct MatchEndView: View {
             Spacer()
 
             // New Match button
-            NavigationLink(destination: MatchSetupView().navigationBarBackButtonHidden(true)) {
+            Button {
+                if let onNewMatch {
+                    onNewMatch()
+                } else {
+                    dismiss()
+                }
+            } label: {
                 Text("New Match")
                     .font(.headline)
                     .frame(maxWidth: .infinity)

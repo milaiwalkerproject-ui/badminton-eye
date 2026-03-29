@@ -15,6 +15,32 @@ final class LiveMatchViewModel {
     var showGameEndOverlay: Bool = false
     var justCompletedGame: GameState?
 
+    // MARK: - Crash Recovery
+
+    static func restoreFromPersistedMatch(
+        _ match: PersistedMatch,
+        modelContext: ModelContext
+    ) -> LiveMatchViewModel? {
+        guard let stateJSON = match.stateJSON else { return nil }
+        let decoder = JSONDecoder()
+        guard let codableState = try? decoder.decode(
+            CodableMatchState.self, from: stateJSON
+        ) else { return nil }
+        let state = codableState.toMatchState()
+        return LiveMatchViewModel(
+            restoringState: state,
+            persistedMatch: match,
+            modelContext: modelContext
+        )
+    }
+
+    init(restoringState state: MatchState, persistedMatch: PersistedMatch, modelContext: ModelContext) {
+        self.state = state
+        self.persistedMatch = persistedMatch
+        self.modelContext = modelContext
+        self.showGameEndOverlay = false
+    }
+
     init(state: MatchState, modelContext: ModelContext) {
         self.state = state
         self.modelContext = modelContext
