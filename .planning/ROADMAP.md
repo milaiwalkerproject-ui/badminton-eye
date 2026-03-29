@@ -82,7 +82,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — Apple Sign-In AuthManager, CloudKit-toggled SwiftData modelContainer, Settings tab with sign-in UI
+- [x] 04-01-PLAN.md — Apple Sign-In AuthManager, CloudKit-toggled SwiftData modelContainer, Settings tab with sign-in UI
 - [ ] 04-02-PLAN.md — Live Activity widget extension with lock screen and Dynamic Island views, LiveMatchViewModel integration
 - [ ] 04-03-PLAN.md — Human verification of auth, CloudKit sync, local-only mode, and Live Activity
 
@@ -114,5 +114,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Scoring Engine | 2/3 | In progress | - |
 | 2. Apple Watch Companion | 3/3 | Complete | 2026-03-28 |
 | 3. Match Data and Player Profiles | 3/3 | Complete   | 2026-03-29 |
-| 4. Cloud Sync and Authentication | 0/3 | Not started | - |
+| 4. Cloud Sync and Authentication | 1/3 | In progress | - |
 | 5. Hawk Eye AI and Premium | 0/4 | Not started | - |

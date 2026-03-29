@@ -37,9 +37,9 @@
 
 ### Cloud & Authentication
 
-- [ ] **AUTH-01**: User can sign in with Apple ID (Sign in with Apple)
-- [ ] **AUTH-02**: Match history and player profiles sync across user's devices via CloudKit
-- [ ] **AUTH-03**: User can use the app without signing in (local-only mode)
+- [x] **AUTH-01**: User can sign in with Apple ID (Sign in with Apple)
+- [x] **AUTH-02**: Match history and player profiles sync across user's devices via CloudKit
+- [x] **AUTH-03**: User can use the app without signing in (local-only mode)
 
 ### Hawk Eye AI (Premium)
 
@@ -120,9 +120,9 @@
 | DATA-05 | Phase 3 | Complete |
 | DATA-06 | Phase 3 | Complete |
 | DATA-07 | Phase 3 | Complete |
-| AUTH-01 | Phase 4 | Pending |
-| AUTH-02 | Phase 4 | Pending |
-| AUTH-03 | Phase 4 | Pending |
+| AUTH-01 | Phase 4 | Complete |
+| AUTH-02 | Phase 4 | Complete |
+| AUTH-03 | Phase 4 | Complete |
 | HAWK-01 | Phase 5 | Pending |
 | HAWK-02 | Phase 5 | Pending |
 | HAWK-03 | Phase 5 | Pending |
