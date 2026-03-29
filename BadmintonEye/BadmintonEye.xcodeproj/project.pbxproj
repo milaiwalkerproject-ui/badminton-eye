@@ -31,6 +31,7 @@
 		A10017 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20017 /* AuthManager.swift */; };
 		A10018 /* MatchExportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20019 /* MatchExportView.swift */; };
 		A10019 /* ScorecardRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2001A /* ScorecardRenderer.swift */; };
+		A1001B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2001B /* SettingsView.swift */; };
 		A1001F /* AuthenticationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2001F /* AuthenticationServices.framework */; };
 		W10001 /* BadmintonEyeWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = W20001 /* BadmintonEyeWatchApp.swift */; };
 		W10002 /* WatchMatchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = W20002 /* WatchMatchViewModel.swift */; };
@@ -73,6 +74,7 @@
 		A20018 /* BadmintonEye.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BadmintonEye.entitlements; sourceTree = "<group>"; };
 		A20019 /* MatchExportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchExportView.swift; sourceTree = "<group>"; };
 		A2001A /* ScorecardRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScorecardRenderer.swift; sourceTree = "<group>"; };
+		A2001B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A2001F /* AuthenticationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AuthenticationServices.framework; path = System/Library/Frameworks/AuthenticationServices.framework; sourceTree = SDKROOT; };
 		W20001 /* BadmintonEyeWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadmintonEyeWatchApp.swift; sourceTree = "<group>"; };
 		W20002 /* WatchMatchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchMatchViewModel.swift; sourceTree = "<group>"; };
@@ -177,6 +179,7 @@
 				A20016 /* PlayerPickerView.swift */,
 				A20019 /* MatchExportView.swift */,
 				A2001A /* ScorecardRenderer.swift */,
+				A2001B /* SettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -384,6 +387,7 @@
 				A10017 /* AuthManager.swift in Sources */,
 				A10018 /* MatchExportView.swift in Sources */,
 				A10019 /* ScorecardRenderer.swift in Sources */,
+				A1001B /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

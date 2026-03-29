@@ -3,11 +3,28 @@ import SwiftData
 
 @main
 struct BadmintonEyeApp: App {
+    @State private var authManager = AuthManager.shared
+
     var body: some Scene {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: [PersistedMatch.self, Player.self])
+        .modelContainer(makeModelContainer())
+    }
+
+    private func makeModelContainer() -> ModelContainer {
+        let config: ModelConfiguration
+        if authManager.isSignedIn {
+            config = ModelConfiguration(
+                cloudKitDatabase: .automatic
+            )
+        } else {
+            config = ModelConfiguration()
+        }
+        return try! ModelContainer(
+            for: PersistedMatch.self, Player.self,
+            configurations: config
+        )
     }
 }
 
@@ -34,7 +51,7 @@ struct ContentView: View {
                     })
                 }
             } else if sizeClass == .regular {
-                // iPad: sidebar with Matches + Players sections
+                // iPad: sidebar with Matches + Players + Settings sections
                 NavigationSplitView {
                     List {
                         Section("Matches") {
@@ -56,13 +73,20 @@ struct ContentView: View {
                                 Label("Player List", systemImage: "person.2")
                             }
                         }
+                        Section("Settings") {
+                            NavigationLink {
+                                SettingsView()
+                            } label: {
+                                Label("Settings", systemImage: "gear")
+                            }
+                        }
                     }
                     .navigationTitle("Badminton Eye")
                 } detail: {
                     MatchSetupView()
                 }
             } else {
-                // iPhone: TabView with Matches and Players tabs
+                // iPhone: TabView with Matches, Players, and Settings tabs
                 TabView {
                     NavigationStack {
                         MatchHistoryView()
@@ -86,6 +110,13 @@ struct ContentView: View {
                     .tabItem {
                         Label("Players", systemImage: "person.2")
                     }
+
+                    NavigationStack {
+                        SettingsView()
+                    }
+                    .tabItem {
+                        Label("Settings", systemImage: "gear")
+                    }
                 }
             }
         }
@@ -98,6 +129,7 @@ struct ContentView: View {
                 hasCheckedRestore = true
             }
             WatchSyncManager.shared.activate()
+            AuthManager.shared.checkAuthState()
         }
     }
 }
