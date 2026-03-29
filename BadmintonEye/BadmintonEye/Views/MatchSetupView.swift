@@ -127,7 +127,7 @@ struct MatchSetupView: View {
                 showPickerFor = target
             } label: {
                 Image(systemName: "person.circle")
-                    .foregroundStyle(.accentColor)
+                    .foregroundStyle(.tint)
                     .imageScale(.large)
             }
             .buttonStyle(.plain)
