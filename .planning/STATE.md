@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 05-02-PLAN.md
-last_updated: "2026-03-29T12:22:54.600Z"
-last_activity: 2026-03-29 — Completed 05-02-PLAN.md (Premium subscription and paywall)
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-03-29T12:25:22Z"
+last_activity: 2026-03-29 — Completed 05-01-PLAN.md (Court calibration and challenge video pipeline)
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 16
-  completed_plans: 13
-  percent: 81
+  completed_plans: 14
+  percent: 87
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-28)
 
 **Core value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
-**Current focus:** Phase 5: Hawk Eye AI and Premium (Plan 2 of 4 complete)
+**Current focus:** Phase 5: Hawk Eye AI and Premium (Plan 2 of 4 complete, Plan 1 also complete)
 
 ## Current Position
 
 Phase: 5 of 5 (Hawk Eye AI and Premium)
-Plan: 2 of 4 in current phase (2 complete)
+Plan: 2 of 4 in current phase (3 complete: 01, 02)
 Status: Executing Phase 05
-Last activity: 2026-03-29 — Completed 05-02-PLAN.md (Premium subscription and paywall)
+Last activity: 2026-03-29 — Completed 05-01-PLAN.md (Court calibration and challenge video pipeline)
 
-Progress: [████████░░] 81%
+Progress: [████████░░] 87%
 
 ## Performance Metrics
 
@@ -56,6 +56,7 @@ Progress: [████████░░] 81%
 | Phase 04 P02 | 4min | 2 tasks | 5 files |
 | Phase 04 P03 | 1 | 1 tasks | 0 files |
 | Phase 05 P02 | 6 | 2 tasks | 6 files |
+| Phase 05 P01 | 9min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -98,6 +99,10 @@ Recent decisions affecting current work:
 - [Phase 04]: Auto-approved human-verify checkpoint in YOLO mode -- all Phase 4 features verified as correctly implemented
 - [Phase 05]: @Observable singleton SubscriptionManager with StoreKit 2 Transaction.currentEntitlements for entitlement checking
 - [Phase 05]: Single isPremium boolean flag on SubscriptionManager for all premium feature gating
+- [Phase 05]: CameraPreviewView as UIViewRepresentable wrapping AVCaptureVideoPreviewLayer for SwiftUI camera integration
+- [Phase 05]: @preconcurrency import AVFoundation for Swift 6 Sendable compliance with AVCaptureSession
+- [Phase 05]: Challenge countdown tracks currentGame scoreA+scoreB via onChange to reset 10s timer after each rally
+- [Phase 05]: CalibrationProfile uses JSON-encoded CodablePoint wrapper for CGPoint in SwiftData Data fields
 
 ### Pending Todos
 
@@ -110,6 +115,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-29T12:22:54.598Z
-Stopped at: Completed 05-02-PLAN.md
+Last session: 2026-03-29T12:25:22Z
+Stopped at: Completed 05-01-PLAN.md
 Resume file: None
