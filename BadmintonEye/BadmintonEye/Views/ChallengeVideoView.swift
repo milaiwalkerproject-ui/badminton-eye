@@ -9,10 +9,13 @@ struct ChallengeVideoView: View {
     @Query private var calibrations: [CalibrationProfile]
 
     @State private var videoCaptureManager = VideoCaptureManager()
+    @State private var pipeline = HawkEyePipeline()
     @State private var selectedVideoItem: PhotosPickerItem?
     @State private var selectedVideoURL: URL?
     @State private var showCalibration = false
     @State private var showRecorder = false
+    @State private var showResult = false
+    @State private var showErrorAlert = false
 
     private var hasCalibration: Bool { !calibrations.isEmpty }
 
@@ -41,6 +44,17 @@ struct ChallengeVideoView: View {
             }
             .fullScreenCover(isPresented: $showCalibration) {
                 CourtCalibrationView()
+            }
+            .onChange(of: pipeline.isAnalyzing) { _, isAnalyzing in
+                if isAnalyzing {
+                    withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
+                        analyzingTextOpacity = 0.3
+                    }
+                } else {
+                    withAnimation(.default) {
+                        analyzingTextOpacity = 1.0
+                    }
+                }
             }
         }
     }
@@ -215,41 +229,83 @@ struct ChallengeVideoView: View {
     // MARK: - Video Review
 
     private func videoReviewView(url: URL) -> some View {
-        VStack(spacing: 20) {
-            VideoPlayer(player: AVPlayer(url: url))
-                .frame(height: 300)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .padding(.horizontal)
+        ZStack {
+            VStack(spacing: 20) {
+                VideoPlayer(player: AVPlayer(url: url))
+                    .frame(height: 300)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .padding(.horizontal)
 
-            Text("Video captured successfully")
-                .font(.headline)
-
-            Button {
-                // Placeholder: Hawk Eye analysis will be wired in Plan 03
-            } label: {
-                Label("Analyze", systemImage: "eye.trianglebadge.exclamationmark")
+                Text("Video captured successfully")
                     .font(.headline)
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(.yellow)
-            .padding(.horizontal, 40)
 
-            Text("Analysis coming soon -- Hawk Eye AI pipeline will be connected in a future update.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
+                Button {
+                    guard let calibration = calibrations.first else { return }
+                    Task {
+                        await pipeline.analyze(videoURL: url, calibration: calibration)
+                        if pipeline.result != nil {
+                            showResult = true
+                        }
+                        if pipeline.errorMessage != nil {
+                            showErrorAlert = true
+                        }
+                    }
+                } label: {
+                    Label("Analyze", systemImage: "eye.trianglebadge.exclamationmark")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.yellow)
                 .padding(.horizontal, 40)
+                .disabled(pipeline.isAnalyzing)
 
-            Button("Retake") {
-                videoCaptureManager.cleanup()
-                selectedVideoURL = nil
-                selectedVideoItem = nil
-                showRecorder = false
+                Button("Retake") {
+                    videoCaptureManager.cleanup()
+                    selectedVideoURL = nil
+                    selectedVideoItem = nil
+                    showRecorder = false
+                }
+                .foregroundStyle(.red)
+                .disabled(pipeline.isAnalyzing)
             }
-            .foregroundStyle(.red)
+
+            // Analyzing overlay
+            if pipeline.isAnalyzing {
+                Color.black.opacity(0.7)
+                    .ignoresSafeArea()
+
+                VStack(spacing: 20) {
+                    ProgressView(value: pipeline.progress)
+                        .progressViewStyle(.circular)
+                        .scaleEffect(1.5)
+                        .tint(.yellow)
+
+                    Text("Analyzing...")
+                        .font(.title3.bold())
+                        .foregroundStyle(.white)
+                        .opacity(analyzingTextOpacity)
+
+                    Text("\(Int(pipeline.progress * 100))%")
+                        .font(.headline.monospacedDigit())
+                        .foregroundStyle(.white.opacity(0.8))
+                }
+            }
+        }
+        .fullScreenCover(isPresented: $showResult) {
+            if let hawkEyeResult = pipeline.result {
+                TrajectoryReplayView(result: hawkEyeResult)
+            }
+        }
+        .alert("Analysis Error", isPresented: $showErrorAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(pipeline.errorMessage ?? "An unknown error occurred.")
         }
     }
+
+    // Shimmer effect for analyzing text
+    @State private var analyzingTextOpacity: Double = 1.0
 
     // MARK: - Photo Library Selection
 

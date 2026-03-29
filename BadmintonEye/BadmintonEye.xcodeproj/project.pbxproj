@@ -62,6 +62,7 @@
 		H10005 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = H20005 /* AVFoundation.framework */; };
 		H10006 /* HawkEyePipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20006 /* HawkEyePipeline.swift */; };
 		H10007 /* TrajectoryCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20007 /* TrajectoryCalculator.swift */; };
+		H10008 /* TrajectoryReplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20008 /* TrajectoryReplayView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -141,6 +142,7 @@
 		H20005 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		H20006 /* HawkEyePipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HawkEyePipeline.swift; sourceTree = "<group>"; };
 		H20007 /* TrajectoryCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryCalculator.swift; sourceTree = "<group>"; };
+		H20008 /* TrajectoryReplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryReplayView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -250,6 +252,7 @@
 				P20001 /* PaywallView.swift */,
 				H20003 /* CourtCalibrationView.swift */,
 				H20004 /* ChallengeVideoView.swift */,
+				H20008 /* TrajectoryReplayView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -515,6 +518,7 @@
 				H10004 /* ChallengeVideoView.swift in Sources */,
 				H10006 /* HawkEyePipeline.swift in Sources */,
 				H10007 /* TrajectoryCalculator.swift in Sources */,
+				H10008 /* TrajectoryReplayView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

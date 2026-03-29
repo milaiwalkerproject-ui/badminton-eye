@@ -6,9 +6,12 @@ struct LiveMatchView: View {
     var onMatchEnd: (() -> Void)?
     @State private var showAbandonAlert = false
     @State private var showChallengeSheet = false
+    @State private var showPaywall = false
     @State private var challengeCountdown: Int = 0
     @State private var challengeTimer: Timer?
     @Environment(\.dismiss) private var dismiss
+
+    private var subscriptionManager: SubscriptionManager { SubscriptionManager.shared }
 
     private var completedGameScores: String {
         viewModel.state.games.map { game in
@@ -112,12 +115,26 @@ struct LiveMatchView: View {
                     // Challenge button (visible only during inProgress match)
                     if viewModel.state.matchPhase == .inProgress {
                         Button {
-                            showChallengeSheet = true
+                            if subscriptionManager.isPremium {
+                                showChallengeSheet = true
+                            } else {
+                                showPaywall = true
+                            }
                         } label: {
                             ZStack(alignment: .topTrailing) {
                                 VStack(spacing: 2) {
-                                    Image(systemName: "eye.trianglebadge.exclamationmark")
-                                        .font(.title3)
+                                    ZStack(alignment: .bottomTrailing) {
+                                        Image(systemName: "eye.trianglebadge.exclamationmark")
+                                            .font(.title3)
+
+                                        // Lock badge for non-premium users
+                                        if !subscriptionManager.isPremium {
+                                            Image(systemName: "lock.fill")
+                                                .font(.caption2)
+                                                .foregroundStyle(.yellow)
+                                                .offset(x: 4, y: 2)
+                                        }
+                                    }
                                     Text("Challenge")
                                         .font(.caption2)
                                 }
@@ -126,8 +143,8 @@ struct LiveMatchView: View {
                                 .background(.black.opacity(0.4))
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
 
-                                // Countdown badge
-                                if challengeCountdown > 0 {
+                                // Countdown badge (only for premium)
+                                if subscriptionManager.isPremium && challengeCountdown > 0 {
                                     Text("\(challengeCountdown)")
                                         .font(.caption2.bold())
                                         .foregroundStyle(.black)
@@ -138,8 +155,8 @@ struct LiveMatchView: View {
                                 }
                             }
                         }
-                        .disabled(challengeCountdown == 0)
-                        .opacity(challengeCountdown > 0 ? 1.0 : 0.4)
+                        .disabled(subscriptionManager.isPremium && challengeCountdown == 0)
+                        .opacity(subscriptionManager.isPremium ? (challengeCountdown > 0 ? 1.0 : 0.4) : 1.0)
                     }
 
                     // End match button
@@ -175,6 +192,9 @@ struct LiveMatchView: View {
         }
         .sheet(isPresented: $showChallengeSheet) {
             ChallengeVideoView()
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView()
         }
         .onChange(of: currentTotalScore) { _, _ in
             startChallengeCountdown()
