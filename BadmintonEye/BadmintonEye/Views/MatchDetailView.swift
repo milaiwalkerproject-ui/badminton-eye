@@ -1,8 +1,12 @@
 import SwiftUI
+import UIKit
 import ScoringEngine
 
 struct MatchDetailView: View {
     let match: PersistedMatch
+    @State private var showExportPicker = false
+    @State private var showShareSheet = false
+    @State private var shareImage: UIImage?
 
     private var decodedState: CodableMatchState? {
         guard let data = match.stateJSON else { return nil }
@@ -26,14 +30,31 @@ struct MatchDetailView: View {
         }
         .navigationTitle("Match Details")
         .toolbar {
-            // Placeholder for share/export (Plan 03)
             ToolbarItem(placement: .primaryAction) {
                 Menu {
-                    Button("Share", systemImage: "square.and.arrow.up") {}
-                        .disabled(true)
+                    Button {
+                        shareImage = ScorecardRenderer.renderImage(for: match)
+                        if shareImage != nil { showShareSheet = true }
+                    } label: {
+                        Label("Share Scorecard", systemImage: "square.and.arrow.up")
+                    }
+
+                    Button {
+                        showExportPicker = true
+                    } label: {
+                        Label("Export...", systemImage: "doc.text")
+                    }
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }
+            }
+        }
+        .sheet(isPresented: $showExportPicker) {
+            ExportFormatPicker(match: match, isPresented: $showExportPicker)
+        }
+        .sheet(isPresented: $showShareSheet) {
+            if let image = shareImage {
+                ActivityViewController(items: [image])
             }
         }
     }
