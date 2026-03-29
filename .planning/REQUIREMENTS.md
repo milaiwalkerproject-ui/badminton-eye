@@ -29,9 +29,9 @@
 
 - [x] **DATA-01**: User can browse a list of completed matches with date, players, and final scores
 - [x] **DATA-02**: User can view detailed match breakdown showing game-by-game scores
-- [ ] **DATA-03**: User can create and save player profiles with name and optional photo
-- [ ] **DATA-04**: User can quick-select saved players when starting a new match
-- [ ] **DATA-05**: User can view head-to-head win/loss record against a specific opponent
+- [x] **DATA-03**: User can create and save player profiles with name and optional photo
+- [x] **DATA-04**: User can quick-select saved players when starting a new match
+- [x] **DATA-05**: User can view head-to-head win/loss record against a specific opponent
 - [x] **DATA-06**: User can share a match result scorecard as an image via the share sheet
 - [x] **DATA-07**: User can export match data as CSV or PDF
 
@@ -115,9 +115,9 @@
 | WATCH-06 | Phase 2 | Complete (02-03) |
 | DATA-01 | Phase 3 | Complete (03-01) |
 | DATA-02 | Phase 3 | Complete (03-01) |
-| DATA-03 | Phase 3 | Pending |
-| DATA-04 | Phase 3 | Pending |
-| DATA-05 | Phase 3 | Pending |
+| DATA-03 | Phase 3 | Complete |
+| DATA-04 | Phase 3 | Complete |
+| DATA-05 | Phase 3 | Complete |
 | DATA-06 | Phase 3 | Complete |
 | DATA-07 | Phase 3 | Complete |
 | AUTH-01 | Phase 4 | Pending |
