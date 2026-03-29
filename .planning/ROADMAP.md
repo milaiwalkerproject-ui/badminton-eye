@@ -64,12 +64,12 @@ Plans:
   3. User can view their win/loss record against any saved opponent
   4. User can share a match result scorecard as an image via the system share sheet
   5. User can export match data as CSV or PDF files
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 03-01: SwiftData models and match history UI
-- [ ] 03-02: Player profiles and head-to-head records
-- [ ] 03-03: Share scorecard and CSV/PDF export
+- [ ] 03-01-PLAN.md — Player SwiftData model, match history list with date grouping, match detail with game-by-game breakdown
+- [ ] 03-02-PLAN.md — Player profiles (create/edit/list/search), head-to-head records, quick-select player chips in match setup
+- [ ] 03-03-PLAN.md — Court-themed scorecard image sharing, CSV export, PDF export with toolbar integration
 
 ### Phase 4: Cloud Sync and Authentication
 **Goal**: Users can sign in with Apple ID to sync match data across all their devices, and see live scores on their lock screen
