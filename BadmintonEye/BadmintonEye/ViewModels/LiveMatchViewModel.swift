@@ -39,6 +39,9 @@ final class LiveMatchViewModel {
         self.persistedMatch = persistedMatch
         self.modelContext = modelContext
         self.showGameEndOverlay = false
+        WatchSyncManager.shared.onScoringIntentReceived = { [weak self] side in
+            self?.scorePoint(for: side)
+        }
     }
 
     init(state: MatchState, modelContext: ModelContext) {
@@ -59,6 +62,9 @@ final class LiveMatchViewModel {
         modelContext.insert(match)
         self.persistedMatch = match
         persistState()
+        WatchSyncManager.shared.onScoringIntentReceived = { [weak self] side in
+            self?.scorePoint(for: side)
+        }
     }
 
     func scorePoint(for side: Side) {
@@ -98,6 +104,7 @@ final class LiveMatchViewModel {
             persistedMatch.endedAt = Date()
         }
         updateGameScores()
+        WatchSyncManager.shared.sendStateUpdate(state, isActive: state.matchPhase == .inProgress)
     }
 
     private func updateGameScores() {
