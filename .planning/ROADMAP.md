@@ -114,5 +114,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Scoring Engine | 2/3 | In progress | - |
 | 2. Apple Watch Companion | 3/3 | Complete | 2026-03-28 |
 | 3. Match Data and Player Profiles | 3/3 | Complete   | 2026-03-29 |
-| 4. Cloud Sync and Authentication | 1/3 | In progress | - |
+| 4. Cloud Sync and Authentication | 2/3 | In Progress|  |
 | 5. Hawk Eye AI and Premium | 0/4 | Not started | - |

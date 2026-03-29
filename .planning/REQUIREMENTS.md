@@ -60,7 +60,7 @@
 
 ### iPhone UX
 
-- [ ] **UX-01**: Active match score appears as a Live Activity on iPhone lock screen and Dynamic Island
+- [x] **UX-01**: Active match score appears as a Live Activity on iPhone lock screen and Dynamic Island
 - [x] **UX-02**: App supports both iPhone and iPad with adaptive layouts
 
 ## v2 Requirements
@@ -134,7 +134,7 @@
 | PREM-02 | Phase 5 | Pending |
 | PREM-03 | Phase 5 | Pending |
 | PREM-04 | Phase 5 | Pending |
-| UX-01 | Phase 4 | Pending |
+| UX-01 | Phase 4 | Complete |
 | UX-02 | Phase 2 | Complete (02-03) |
 
 **Coverage:**
