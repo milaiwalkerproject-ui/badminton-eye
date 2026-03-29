@@ -20,8 +20,8 @@
 
 - [ ] **WATCH-01**: Apple Watch displays current score, game number, and server indicator in a glanceable layout
 - [ ] **WATCH-02**: User can tap to score from Apple Watch with large tap targets and haptic confirmation
-- [ ] **WATCH-03**: Score updates sync in real-time between iPhone/iPad and Apple Watch (bidirectional)
-- [ ] **WATCH-04**: Watch app functions independently if iPhone is temporarily unreachable
+- [x] **WATCH-03**: Score updates sync in real-time between iPhone/iPad and Apple Watch (bidirectional)
+- [x] **WATCH-04**: Watch app functions independently if iPhone is temporarily unreachable
 - [ ] **WATCH-05**: Match automatically starts a HealthKit workout session tracking calories, heart rate, and duration
 - [ ] **WATCH-06**: Completed match workout data is written to HealthKit and counts toward Activity Rings
 
@@ -109,8 +109,8 @@
 | SCORE-08 | Phase 1 | Complete |
 | WATCH-01 | Phase 2 | Pending |
 | WATCH-02 | Phase 2 | Pending |
-| WATCH-03 | Phase 2 | Pending |
-| WATCH-04 | Phase 2 | Pending |
+| WATCH-03 | Phase 2 | Complete |
+| WATCH-04 | Phase 2 | Complete |
 | WATCH-05 | Phase 2 | Pending |
 | WATCH-06 | Phase 2 | Pending |
 | DATA-01 | Phase 3 | Pending |

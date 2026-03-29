@@ -50,7 +50,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — SyncPayload type, iOS WatchSyncManager, watchOS WatchSessionManager, and WatchMatchViewModel with offline scoring
+- [x] 02-01-PLAN.md — SyncPayload type, iOS WatchSyncManager, watchOS WatchSessionManager, and WatchMatchViewModel with offline scoring
 - [ ] 02-02-PLAN.md — watchOS app target with Xcode project, glanceable scoring UI (top/bottom tap zones), game dots, server icon, haptics
 - [ ] 02-03-PLAN.md — HealthKit WorkoutManager, iPad adaptive layout with NavigationSplitView, and human verification
 
@@ -112,7 +112,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Scoring Engine | 2/3 | In progress | - |
-| 2. Apple Watch Companion | 0/3 | Not started | - |
+| 2. Apple Watch Companion | 1/3 | In progress | - |
 | 3. Match Data and Player Profiles | 0/3 | Not started | - |
 | 4. Cloud Sync and Authentication | 0/3 | Not started | - |
 | 5. Hawk Eye AI and Premium | 0/4 | Not started | - |
