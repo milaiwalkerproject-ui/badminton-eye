@@ -33,6 +33,7 @@
 		W1000A /* SyncPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000D /* SyncPayload.swift */; };
 		W1000B /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2000E /* WatchConnectivity.framework */; };
 		W1000C /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = W2000F /* HealthKit.framework */; };
+		W1000D /* WorkoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = W20009 /* WorkoutManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,6 +60,7 @@
 		W20007 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		W20008 /* BadmintonEyeWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BadmintonEyeWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		W2000F /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
+		W20009 /* WorkoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,6 +196,7 @@
 			isa = PBXGroup;
 			children = (
 				W20003 /* WatchSessionManager.swift */,
+				W20009 /* WorkoutManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -350,6 +353,7 @@
 				W10006 /* WatchWaitingView.swift in Sources */,
 				W10009 /* CodableMatchState.swift in Sources */,
 				W1000A /* SyncPayload.swift in Sources */,
+				W1000D /* WorkoutManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

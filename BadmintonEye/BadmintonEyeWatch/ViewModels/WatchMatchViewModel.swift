@@ -12,6 +12,7 @@ final class WatchMatchViewModel {
     private(set) var state: MatchState?
     private(set) var isOffline: Bool = false
     private var localEngine: Bool = false
+    private let workoutManager = WorkoutManager.shared
 
     // MARK: - Computed Properties
 
@@ -53,18 +54,46 @@ final class WatchMatchViewModel {
         // Always apply locally for immediate UI update
         state = MatchEngine.apply(event: .scorePoint(side), to: currentState)
         persistToUserDefaults()
+
+        // If match just completed via local scoring, end workout
+        if !isMatchActive {
+            let wm = workoutManager
+            Task { await wm.endWorkout() }
+        }
+    }
+
+    /// Start workout if match is in progress but workout hasn't started yet.
+    /// Called on restore from UserDefaults to resume workout tracking.
+    func startWorkoutIfNeeded() async {
+        if state?.matchPhase == .inProgress && !workoutManager.isWorkoutActive {
+            try? await workoutManager.startWorkout()
+        }
     }
 
     // MARK: - Receiving State from iPhone
 
     /// iPhone-authoritative: adopt the iPhone's state unconditionally.
+    /// Auto-starts workout when match becomes active, ends when match finishes.
     func receiveStateFromiPhone(_ payload: SyncPayload) {
+        let wasActive = state?.matchPhase == .inProgress
         state = payload.matchState.toMatchState()
         localEngine = false
         isOffline = false
 
+        let isNowActive = state?.matchPhase == .inProgress
+
+        let wm = workoutManager
+        if !wasActive && isNowActive {
+            // Match just started -- begin HealthKit workout
+            Task { try? await wm.startWorkout() }
+        } else if wasActive && !isNowActive {
+            // Match just ended -- end HealthKit workout
+            Task { await wm.endWorkout() }
+        }
+
         if !payload.isMatchActive {
             // Match ended on iPhone; keep final state for display
+            Task { await wm.endWorkout() }
         }
 
         persistToUserDefaults()

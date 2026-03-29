@@ -15,6 +15,7 @@ struct BadmintonEyeWatchApp: App {
             }
             .onAppear {
                 WatchSessionManager.shared.activate()
+                Task { await WorkoutManager.shared.requestAuthorization() }
             }
         }
     }
