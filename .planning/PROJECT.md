@@ -8,6 +8,15 @@ A native iOS app (iPhone + iPad) with Apple Watch companion for badminton player
 
 Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time — making scorekeeping seamless during actual play.
 
+## Current Milestone: v1.1 Hawk Eye Pro + Analytics
+
+**Goal:** Make Hawk Eye production-ready with real AI model and 240fps capture, and add advanced match statistics for competitive players.
+
+**Target features:**
+- Train real YOLO26 Core ML model on badminton footage (replace placeholder)
+- 240fps slow-motion video capture for improved shuttle tracking accuracy
+- Advanced match statistics with charts (win streaks, scoring patterns, performance trends)
+
 ## Current State
 
 **Shipped:** v1.0 (2026-03-29)
@@ -84,4 +93,4 @@ Players can effortlessly record badminton match scores from either their iPhone/
 | Placeholder Core ML for v1 | Ship full UX flow, train real model separately | ⚠️ Revisit — needs real data before production |
 
 ---
-*Last updated: 2026-03-29 after v1.0 milestone*
+*Last updated: 2026-03-29 after v1.1 milestone start*
