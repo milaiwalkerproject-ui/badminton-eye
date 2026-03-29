@@ -8,13 +8,13 @@
 ### Scoring Engine
 
 - [x] **SCORE-01**: User can start a new match selecting singles, doubles, or mixed doubles format
-- [ ] **SCORE-02**: User can tap to increment score for either side with large one-hand-friendly tap targets
+- [x] **SCORE-02**: User can tap to increment score for either side with large one-hand-friendly tap targets
 - [x] **SCORE-03**: App enforces BWF 21-point rally scoring with deuce rules (2-point lead at 20-all, 30-point cap)
 - [x] **SCORE-04**: App automatically tracks best-of-3 games with side switch at game end and mid-third-game
 - [x] **SCORE-05**: App automatically tracks service side and server based on current score (even/odd)
 - [x] **SCORE-06**: App tracks doubles service rotation (which player serves and from which court)
 - [x] **SCORE-07**: User can undo the last scored point
-- [ ] **SCORE-08**: All scoring works fully offline without internet connectivity
+- [x] **SCORE-08**: All scoring works fully offline without internet connectivity
 
 ### Apple Watch
 
@@ -100,13 +100,13 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | SCORE-01 | Phase 1 | Complete (01-01) |
-| SCORE-02 | Phase 1 | Pending |
+| SCORE-02 | Phase 1 | Complete |
 | SCORE-03 | Phase 1 | Complete (01-01) |
 | SCORE-04 | Phase 1 | Complete (01-01) |
 | SCORE-05 | Phase 1 | Complete (01-01) |
 | SCORE-06 | Phase 1 | Complete (01-01) |
 | SCORE-07 | Phase 1 | Complete (01-01) |
-| SCORE-08 | Phase 1 | Pending |
+| SCORE-08 | Phase 1 | Complete |
 | WATCH-01 | Phase 2 | Pending |
 | WATCH-02 | Phase 2 | Pending |
 | WATCH-03 | Phase 2 | Pending |

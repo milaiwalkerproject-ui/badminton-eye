@@ -34,7 +34,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 - [x] 01-01-PLAN.md — ScoringEngine Swift package: TDD state machine with BWF rules, singles/doubles/mixed scoring, service rotation, undo
-- [ ] 01-02-PLAN.md — iPhone app: Xcode project, SwiftData persistence, match setup screen, live scoring UI with half-screen tap zones
+- [x] 01-02-PLAN.md — iPhone app: Xcode project, SwiftData persistence, match setup screen, live scoring UI with half-screen tap zones
 - [ ] 01-03-PLAN.md — Crash recovery from SwiftData and end-to-end human verification of all scoring requirements
 
 ### Phase 2: Apple Watch Companion
@@ -111,7 +111,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Scoring Engine | 1/3 | In progress | - |
+| 1. Scoring Engine | 2/3 | In progress | - |
 | 2. Apple Watch Companion | 0/3 | Not started | - |
 | 3. Match Data and Player Profiles | 0/3 | Not started | - |
 | 4. Cloud Sync and Authentication | 0/3 | Not started | - |
