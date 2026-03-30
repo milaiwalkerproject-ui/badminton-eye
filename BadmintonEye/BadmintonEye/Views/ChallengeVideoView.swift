@@ -9,7 +9,13 @@ struct ChallengeVideoView: View {
     @Query private var calibrations: [CalibrationProfile]
 
     @State private var videoCaptureManager = VideoCaptureManager()
-    @State private var pipeline = HawkEyePipeline()
+    @State private var pipeline: HawkEyePipeline = {
+        if Bundle.main.url(forResource: CoreMLShuttleDetector.defaultModelName, withExtension: "mlmodelc") != nil {
+            return HawkEyePipeline(detector: CoreMLShuttleDetector())
+        } else {
+            return HawkEyePipeline(detector: PlaceholderShuttleDetector())
+        }
+    }()
     @State private var selectedVideoItem: PhotosPickerItem?
     @State private var selectedVideoURL: URL?
     @State private var showCalibration = false
@@ -18,6 +24,10 @@ struct ChallengeVideoView: View {
     @State private var showErrorAlert = false
 
     private var hasCalibration: Bool { !calibrations.isEmpty }
+
+    private var isDemoMode: Bool {
+        Bundle.main.url(forResource: CoreMLShuttleDetector.defaultModelName, withExtension: "mlmodelc") == nil
+    }
 
     var body: some View {
         NavigationStack {
@@ -330,7 +340,8 @@ struct ChallengeVideoView: View {
                 TrajectoryReplayView(
                     result: hawkEyeResult,
                     videoURL: videoCaptureManager.capturedVideoURL,
-                    captureFPS: videoCaptureManager.currentFPS
+                    captureFPS: videoCaptureManager.currentFPS,
+                    isDemoMode: isDemoMode
                 )
             }
         }

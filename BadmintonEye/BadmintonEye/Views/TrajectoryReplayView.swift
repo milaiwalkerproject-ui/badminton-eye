@@ -8,6 +8,7 @@ struct TrajectoryReplayView: View {
     let result: HawkEyeResult
     var videoURL: URL? = nil
     var captureFPS: Double = 30
+    var isDemoMode: Bool = false
     @Environment(\.dismiss) private var dismiss
 
     // Animation state
@@ -34,6 +35,19 @@ struct TrajectoryReplayView: View {
                     .foregroundStyle(.white)
                     .opacity(titleOpacity)
                     .padding(.top, 40)
+
+                if isDemoMode {
+                    HStack(spacing: 6) {
+                        Image(systemName: "eye.trianglebadge.exclamationmark")
+                        Text("Demo Mode")
+                            .font(.caption.bold())
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color.orange)
+                    .clipShape(Capsule())
+                }
 
                 // Video replay (if available)
                 if videoURL != nil, let player {

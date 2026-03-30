@@ -6,7 +6,7 @@ import Vision
 
 // MARK: - Constants
 
-private enum CoreMLDetectorConstants {
+enum CoreMLDetectorConstants {
     static let defaultModelName = "ShuttlecockDetector"
     static let confidenceThreshold: Float = 0.5
 }
@@ -18,6 +18,8 @@ private enum CoreMLDetectorConstants {
 final class CoreMLShuttleDetector: ShuttleDetecting, @unchecked Sendable {
 
     // MARK: - Properties
+
+    static let defaultModelName = CoreMLDetectorConstants.defaultModelName
 
     let modelName: String
 
