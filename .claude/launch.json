@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "swift-test",
+      "runtimeExecutable": "swift",
+      "runtimeArgs": ["test", "--package-path", "ScoringEngine"],
+      "port": 0
+    }
+  ]
+}
