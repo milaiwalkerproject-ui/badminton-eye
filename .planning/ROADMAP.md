@@ -80,7 +80,10 @@ Plans:
   2. Swapping between placeholder and real model requires only changing the ShuttleDetecting conformance (no pipeline changes)
   3. At 240fps, frame-skip strategy processes every Nth frame to sustain real-time detection without thermal throttling
   4. Detection results flow into the existing TrajectoryCalculator to produce landing spot predictions
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 09-01-PLAN.md -- CoreMLShuttleDetector + HawkEyePipeline real-frame analysis with frame-skip
+- [ ] 09-02-PLAN.md -- Detector selection wiring, fallback logic, and Demo Mode badge
 
 ## Progress
 
@@ -94,4 +97,4 @@ Plans:
 | 6. Match Analytics | v1.1 | 1/2 | In Progress | - |
 | 7. Training Pipeline | v1.1 | 0/2 | Not started | - |
 | 8. 240fps Video Capture | v1.1 | 0/2 | Not started | - |
-| 9. Real AI Integration | v1.1 | 0/? | Not started | - |
+| 9. Real AI Integration | v1.1 | 0/2 | Not started | - |
