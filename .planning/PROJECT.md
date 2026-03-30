@@ -8,14 +8,14 @@ A native iOS app (iPhone + iPad) with Apple Watch companion for badminton player
 
 Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time — making scorekeeping seamless during actual play.
 
-## Current Milestone: v1.1 Hawk Eye Pro + Analytics
+## Current Milestone: v1.2 Haptic Scoring, BWF 3×15 & Multi-Camera
 
-**Goal:** Make Hawk Eye production-ready with real AI model and 240fps capture, and add advanced match statistics for competitive players.
+**Goal:** Add haptic score feedback, support BWF's new 3×15 scoring format as a user option, and enable multi-camera Hawk Eye for higher confidence.
 
 **Target features:**
-- Train real YOLO26 Core ML model on badminton footage (replace placeholder)
-- 240fps slow-motion video capture for improved shuttle tracking accuracy
-- Advanced match statistics with charts (win streaks, scoring patterns, performance trends)
+- Haptic feedback toggle for score changes during live play
+- BWF 3×15 scoring format as user-selectable match option
+- Multi-camera angle support for improved Hawk Eye confidence
 
 ## Current State
 
@@ -44,12 +44,9 @@ Players can effortlessly record badminton match scores from either their iPhone/
 
 ### Active
 
-- [ ] Train real YOLO26 Core ML model on badminton footage (replacing placeholder)
-- [ ] 240fps slow-motion video capture for improved shuttle tracking
-- [ ] Multiple camera angle support for higher confidence
-- [ ] Advanced match statistics (win streaks, scoring patterns, rally trends)
-- [ ] Performance trends over time with charts and graphs
-- [ ] Score announcements (voice/haptic)
+- [ ] Haptic feedback toggle for score changes during live play
+- [ ] BWF 3×15 scoring format as user-selectable match option
+- [ ] Multi-camera angle support for higher Hawk Eye confidence
 
 ### Out of Scope
 
@@ -65,7 +62,7 @@ Players can effortlessly record badminton match scores from either their iPhone/
 
 - **Platform**: Native iOS (Swift/SwiftUI) + watchOS for Apple Watch
 - **AI/ML**: On-device Core ML for Hawk Eye shuttle tracking (placeholder model, needs real training data)
-- **Camera**: Court-side recording (tripod recommended) at 30fps; 240fps deferred to v2
+- **Camera**: Court-side recording (tripod recommended) at up to 240fps (v1.1)
 - **Scoring rules**: BWF standard — 21 points per game, best of 3, deuce/cap, doubles service rotation
 - **Target audience**: Both casual players and competitive club players
 - **Data persistence**: SwiftData with CloudKit sync for cross-device access
@@ -93,4 +90,4 @@ Players can effortlessly record badminton match scores from either their iPhone/
 | Placeholder Core ML for v1 | Ship full UX flow, train real model separately | ⚠️ Revisit — needs real data before production |
 
 ---
-*Last updated: 2026-03-29 after v1.1 milestone start*
+*Last updated: 2026-03-29 after v1.2 milestone start*

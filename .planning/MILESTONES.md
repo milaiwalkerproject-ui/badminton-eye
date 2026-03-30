@@ -1,5 +1,32 @@
 # Milestones
 
+## v1.1 — Hawk Eye Pro + Analytics
+
+**Shipped:** 2026-03-29
+**Phases:** 4 (6-9) | **Plans:** 8 | **Requirements:** 20/20 verified
+**Timeline:** 2026-03-29
+
+### Key Accomplishments
+
+1. **Match analytics** — Stats dashboard with win rate, streaks, Swift Charts trend/scoring pattern visualizations
+2. **Training pipeline** — Python YOLO training script, annotation guide, CoreML export, ShuttleDetecting protocol
+3. **240fps video capture** — Delegate-based AVCaptureVideoDataOutput, CircularFrameBuffer, HEVC recording, slow-motion replay
+4. **Real AI integration** — CoreMLShuttleDetector with VNCoreMLRequest, frame-skip strategy, detector auto-selection
+
+### Tech Debt
+
+- Dataset collection needed (2,000+ annotated images) before real model training
+- On-device 240fps + YOLO thermal profiling untested on hardware
+- BWF 3×15 format pending April 2026 vote
+
+### Archive
+
+- [v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
+- [v1.1-REQUIREMENTS.md](milestones/v1.1-REQUIREMENTS.md)
+- [v1.1-MILESTONE-AUDIT.md](milestones/v1.1-MILESTONE-AUDIT.md)
+
+---
+
 ## v1.0 — Badminton Eye MVP
 
 **Shipped:** 2026-03-29
