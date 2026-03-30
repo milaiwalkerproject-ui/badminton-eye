@@ -97,7 +97,6 @@ final class HawkEyePipeline: @unchecked Sendable {
             do {
                 observations = try await analyzeWithRealFrames(
                     videoURL: videoURL,
-                    calibration: calibration,
                     homography: homography,
                     imageSize: imageSize
                 )
@@ -194,7 +193,6 @@ final class HawkEyePipeline: @unchecked Sendable {
     /// At 240fps with frameSkipInterval=4, this yields ~60 detections/sec.
     private func analyzeWithRealFrames(
         videoURL: URL,
-        calibration: CalibrationProfile,
         homography: [[Double]],
         imageSize: CGSize
     ) async throws -> [ShuttleObservation] {

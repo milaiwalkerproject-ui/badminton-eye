@@ -67,6 +67,10 @@
 		S10002 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20002 /* StatsView.swift */; };
 		T70001 /* ShuttleDetecting.swift in Sources */ = {isa = PBXBuildFile; fileRef = T72001 /* ShuttleDetecting.swift */; };
 		T70002 /* PlaceholderShuttleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = T72002 /* PlaceholderShuttleDetector.swift */; };
+		V61001 /* WinRateTrendChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = V62001 /* WinRateTrendChart.swift */; };
+		V61002 /* ScoringPatternsChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = V62002 /* ScoringPatternsChart.swift */; };
+		V81001 /* CircularFrameBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = V82001 /* CircularFrameBuffer.swift */; };
+		V91001 /* CoreMLShuttleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = V92001 /* CoreMLShuttleDetector.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -151,6 +155,10 @@
 		S20002 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		T72001 /* ShuttleDetecting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShuttleDetecting.swift; sourceTree = "<group>"; };
 		T72002 /* PlaceholderShuttleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderShuttleDetector.swift; sourceTree = "<group>"; };
+		V62001 /* WinRateTrendChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WinRateTrendChart.swift; sourceTree = "<group>"; };
+		V62002 /* ScoringPatternsChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoringPatternsChart.swift; sourceTree = "<group>"; };
+		V82001 /* CircularFrameBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularFrameBuffer.swift; sourceTree = "<group>"; };
+		V92001 /* CoreMLShuttleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMLShuttleDetector.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -263,6 +271,8 @@
 				H20004 /* ChallengeVideoView.swift */,
 				H20008 /* TrajectoryReplayView.swift */,
 				S20002 /* StatsView.swift */,
+				V62001 /* WinRateTrendChart.swift */,
+				V62002 /* ScoringPatternsChart.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -278,6 +288,8 @@
 				H20007 /* TrajectoryCalculator.swift */,
 				T72001 /* ShuttleDetecting.swift */,
 				T72002 /* PlaceholderShuttleDetector.swift */,
+				V82001 /* CircularFrameBuffer.swift */,
+				V92001 /* CoreMLShuttleDetector.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -535,6 +547,10 @@
 				S10002 /* StatsView.swift in Sources */,
 				T70001 /* ShuttleDetecting.swift in Sources */,
 				T70002 /* PlaceholderShuttleDetector.swift in Sources */,
+				V61001 /* WinRateTrendChart.swift in Sources */,
+				V61002 /* ScoringPatternsChart.swift in Sources */,
+				V81001 /* CircularFrameBuffer.swift in Sources */,
+				V91001 /* CoreMLShuttleDetector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

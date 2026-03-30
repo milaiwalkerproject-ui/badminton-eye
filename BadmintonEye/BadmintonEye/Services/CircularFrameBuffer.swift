@@ -74,11 +74,7 @@ final class CircularFrameBuffer: @unchecked Sendable {
         fps: Double
     ) async throws -> URL {
         // Snapshot and clear under lock
-        let snapshot: [CMSampleBuffer]
-        lock.lock()
-        snapshot = buffers
-        buffers.removeAll()
-        lock.unlock()
+        let snapshot = snapshotAndClear()
 
         guard !snapshot.isEmpty else {
             throw FlushError.emptyBuffer
@@ -147,6 +143,15 @@ final class CircularFrameBuffer: @unchecked Sendable {
     }
 
     // MARK: - Private
+
+    /// Atomically copies all buffered frames and clears the buffer.
+    private func snapshotAndClear() -> [CMSampleBuffer] {
+        lock.lock()
+        defer { lock.unlock() }
+        let copy = buffers
+        buffers.removeAll()
+        return copy
+    }
 
     /// Removes buffers whose PTS is older than (newest PTS - capacity).
     private func evictStaleBuffers() {

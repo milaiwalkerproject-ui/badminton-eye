@@ -3,7 +3,7 @@
 ## Milestones
 
 - ✅ **v1.0 MVP** -- Phases 1-5 (shipped 2026-03-29)
-- **v1.1 Hawk Eye Pro + Analytics** -- Phases 6-9 (in progress)
+- ✅ **v1.1 Hawk Eye Pro + Analytics** -- Phases 6-9 (shipped 2026-03-29)
 
 ## Phases
 
@@ -22,10 +22,10 @@
 
 **Milestone Goal:** Make Hawk Eye production-ready with real AI shuttle detection and 240fps capture, and add match analytics for competitive players.
 
-- [ ] **Phase 6: Match Analytics** - Statistics dashboard with win streaks, scoring patterns, and performance trends via Swift Charts
-- [ ] **Phase 7: Training Pipeline** - Python-based YOLO training workflow with annotation guide and CoreML export
-- [ ] **Phase 8: 240fps Video Capture** - Delegate-based high-frame-rate capture with circular buffer and slow-motion replay
-- [ ] **Phase 9: Real AI Integration** - Replace placeholder model with trained YOLO, wire through Vision framework and existing trajectory pipeline
+- [x] **Phase 6: Match Analytics** - Statistics dashboard with win streaks, scoring patterns, and performance trends via Swift Charts
+- [x] **Phase 7: Training Pipeline** - Python-based YOLO training workflow with annotation guide and CoreML export
+- [x] **Phase 8: 240fps Video Capture** - Delegate-based high-frame-rate capture with circular buffer and slow-motion replay
+- [x] **Phase 9: Real AI Integration** - Replace placeholder model with trained YOLO, wire through Vision framework and existing trajectory pipeline
 
 ## Phase Details
 
@@ -41,7 +41,7 @@
 **Plans:** 2 plans
 Plans:
 - [x] 06-01-PLAN.md -- MatchStatsViewModel + Stats tab + summary card
-- [ ] 06-02-PLAN.md -- Swift Charts trend and scoring pattern visualizations
+- [x] 06-02-PLAN.md -- Swift Charts trend and scoring pattern visualizations
 
 ### Phase 7: Training Pipeline
 **Goal**: Developer can train a YOLO nano model on badminton footage and export a production CoreML model
@@ -54,8 +54,8 @@ Plans:
   4. Training README specifies dataset requirements (2,000+ images, diverse courts/lighting)
 **Plans:** 2 plans
 Plans:
-- [ ] 07-01-PLAN.md -- ShuttleDetecting protocol and HawkEyePipeline refactor
-- [ ] 07-02-PLAN.md -- Python training script, annotation guide, and README
+- [x] 07-01-PLAN.md -- ShuttleDetecting protocol and HawkEyePipeline refactor
+- [x] 07-02-PLAN.md -- Python training script, annotation guide, and README
 
 ### Phase 8: 240fps Video Capture
 **Goal**: App captures court-side video at the highest frame rate the device supports for accurate shuttle tracking
@@ -68,8 +68,8 @@ Plans:
   4. User can view a slow-motion replay of captured 240fps footage in the trajectory replay screen
 **Plans:** 2 plans
 Plans:
-- [ ] 08-01-PLAN.md -- Refactor VideoCaptureManager to delegate-based 240fps capture with CircularFrameBuffer
-- [ ] 08-02-PLAN.md -- ChallengeVideoView buffer integration, FPS fallback banner, slow-motion replay
+- [x] 08-01-PLAN.md -- Refactor VideoCaptureManager to delegate-based 240fps capture with CircularFrameBuffer
+- [x] 08-02-PLAN.md -- ChallengeVideoView buffer integration, FPS fallback banner, slow-motion replay
 
 ### Phase 9: Real AI Integration
 **Goal**: Hawk Eye uses a trained YOLO model for real shuttle detection, replacing the placeholder
@@ -82,8 +82,8 @@ Plans:
   4. Detection results flow into the existing TrajectoryCalculator to produce landing spot predictions
 **Plans:** 2 plans
 Plans:
-- [ ] 09-01-PLAN.md -- CoreMLShuttleDetector + HawkEyePipeline real-frame analysis with frame-skip
-- [ ] 09-02-PLAN.md -- Detector selection wiring, fallback logic, and Demo Mode badge
+- [x] 09-01-PLAN.md -- CoreMLShuttleDetector + HawkEyePipeline real-frame analysis with frame-skip
+- [x] 09-02-PLAN.md -- Detector selection wiring, fallback logic, and Demo Mode badge
 
 ## Progress
 
@@ -94,7 +94,7 @@ Plans:
 | 3. Match Data and Player Profiles | v1.0 | 3/3 | Complete | 2026-03-29 |
 | 4. Cloud Sync and Authentication | v1.0 | 3/3 | Complete | 2026-03-29 |
 | 5. Hawk Eye AI and Premium | v1.0 | 4/4 | Complete | 2026-03-29 |
-| 6. Match Analytics | v1.1 | 1/2 | In Progress | - |
-| 7. Training Pipeline | v1.1 | 0/2 | Not started | - |
-| 8. 240fps Video Capture | v1.1 | 0/2 | Not started | - |
-| 9. Real AI Integration | v1.1 | 0/2 | Not started | - |
+| 6. Match Analytics | v1.1 | 2/2 | Complete | 2026-03-29 |
+| 7. Training Pipeline | v1.1 | 2/2 | Complete | 2026-03-29 |
+| 8. 240fps Video Capture | v1.1 | 2/2 | Complete | 2026-03-29 |
+| 9. Real AI Integration | v1.1 | 2/2 | Complete | 2026-03-29 |
