@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
-**Current focus:** v1.3 — Live Multi-Cam, Auto-Sync & Custom Scoring
+**Current focus:** v1.4 — Test Coverage & Accessibility (COMPLETE)
 
 ## Current Position
 
-Phase: 15 of 15 (All complete)
+Phase: 17 of 17 (All complete)
 Plan: All plans complete
 Status: Milestone complete
-Last activity: 2026-03-29 — All v1.3 phases executed, build verified, 53 tests passing
+Last activity: 2026-03-29 — All v1.4 phases executed, build verified, 75 tests passing
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [##########] 100%
 
 ## Performance Metrics
 
@@ -29,7 +29,9 @@ Progress: [░░░░░░░░░░] 0%
 |-------|-------|-------|----------|
 | 1-5 (v1.0) | 16 | — | — |
 | 6-9 (v1.1) | 8 | — | — |
-| 10-12 (v1.2) | 0/6 | — | — |
+| 10-12 (v1.2) | 3 | — | — |
+| 13-15 (v1.3) | 3 | — | — |
+| 16-17 (v1.4) | 2 | — | — |
 
 ## Accumulated Context
 
@@ -42,29 +44,20 @@ Carried forward from v1.0:
 - Placeholder Core ML shuttle detection (replaced in Phase 9 with real CoreMLShuttleDetector)
 - Gaussian elimination homography solve (no external linear algebra)
 
-v1.1 roadmap decisions:
-- Analytics first (Phase 6): zero deps on AI/camera, ships user value immediately
-- Training pipeline (Phase 7) parallel with analytics: longest calendar lead time (dataset collection)
-- 240fps capture (Phase 8) before AI integration: testable with placeholder model
-- Real AI integration last (Phase 9): depends on trained model + 240fps pipeline
-
-v1.2 roadmap decisions:
-- BWF 3x15 first (Phase 10): pure scoring logic, no hardware deps, foundational for haptics
-- Haptics second (Phase 11): must trigger on both scoring formats, quick win after scoring stabilizes
-- Multi-camera last (Phase 12): highest complexity, device-dependent, builds on stable pipeline
+v1.4 decisions:
+- Custom scoring tests first (Phase 16): fills the biggest gap in ScoringEngine coverage
+- VoiceOver accessibility second (Phase 17): user-facing quality improvement on existing views
 
 ### Pending Todos
 
-None yet.
+None.
 
 ### Blockers/Concerns
 
-- BWF 3x15 exact thresholds (deuce at 14? cap at 17?) — depends on April 25 vote; implement best-known rules, parameterize for easy update
-- Dual 240fps CircularFrameBuffer memory (~8.6GB) — use asymmetric FPS (240 primary + 60 secondary) for multi-camera
 - Watch haptics threading — WatchMatchViewModel not @MainActor; haptic calls from WCSession callbacks silently fail on background threads
 
 ## Session Continuity
 
 Last session: 2026-03-29
-Stopped at: v1.2 roadmap created — ready to plan Phase 10
+Stopped at: v1.4 complete — ready for v1.5 milestone
 Resume file: None

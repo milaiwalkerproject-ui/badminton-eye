@@ -8,19 +8,19 @@ A native iOS app (iPhone + iPad) with Apple Watch companion for badminton player
 
 Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time — making scorekeeping seamless during actual play.
 
-## Current Milestone: v1.3 Live Multi-Cam, Auto-Sync & Custom Scoring
+## Current Milestone: v1.4 Test Coverage & Accessibility
 
-**Goal:** Upgrade multi-camera from sequential import to simultaneous live capture with automatic alignment, and let users define their own scoring formats.
+**Goal:** Harden the scoring engine with comprehensive test coverage for custom scoring, Codable round-tripping, and validation logic, then add VoiceOver accessibility to the live scoring experience.
 
 **Target features:**
-- Simultaneous dual-camera capture via AVCaptureMultiCamSession
-- Audio cross-correlation for automatic temporal alignment between camera angles
-- Custom scoring format builder (user-defined points per game, number of games)
+- Custom scoring engine tests (custom rules, validation, abandon event)
+- ScoringSystem Codable round-trip tests (backward compatibility)
+- VoiceOver accessibility labels and hints on LiveMatchView and ScorePanel
 
 ## Current State
 
 **Shipped:** v1.0 (2026-03-29)
-**Codebase:** 6,812 LOC Swift, 55 source files, 44 tests passing
+**Codebase:** 6,812 LOC Swift, 55 source files, 75 tests passing
 **Stack:** Swift 6, SwiftUI, SwiftData + CloudKit, WatchConnectivity, Core ML, StoreKit 2, ActivityKit, HealthKit
 **Dependencies:** 0 external (100% Apple-native)
 
@@ -48,12 +48,15 @@ Players can effortlessly record badminton match scores from either their iPhone/
 - ✓ BWF 3×15 scoring format with parameterized ScoringRules — v1.2
 - ✓ Haptic score feedback (iPhone + Watch) with Settings toggle — v1.2
 - ✓ Sequential multi-angle Hawk Eye with ResultFusionService — v1.2
+- ✓ Simultaneous dual-camera capture via AVCaptureMultiCamSession — v1.3
+- ✓ Audio cross-correlation for automatic multi-angle temporal alignment — v1.3
+- ✓ Custom scoring format builder (user-defined points/games) — v1.3
+- ✓ Custom scoring engine tests (custom rules, validation, Codable, abandon) — v1.4
+- ✓ VoiceOver accessibility for LiveMatchView and ScorePanel — v1.4
 
 ### Active
 
-- [ ] Simultaneous dual-camera capture via AVCaptureMultiCamSession (Pro devices)
-- [ ] Audio cross-correlation for automatic multi-angle temporal alignment
-- [ ] Custom scoring format builder (user-defined points/games)
+None (v1.4 complete)
 
 ### Out of Scope
 
@@ -91,10 +94,10 @@ Players can effortlessly record badminton match scores from either their iPhone/
 | Subscription model for premium | Recurring revenue supports ongoing AI model improvements | ✓ Good — $4.99/mo and $29.99/yr via StoreKit 2 |
 | Court-side camera as recommended setup | Best angle for shuttle trajectory analysis | ✓ Good — 4-corner calibration adapts to angles |
 | BWF scoring rules as default | Industry standard, covers 99% of play | ✓ Good — 3x15 format may need adding after April 2026 vote |
-| Pure struct state machine | Zero side effects, exhaustively testable, Sendable | ✓ Good — 44 tests, shared across iOS + watchOS |
+| Pure struct state machine | Zero side effects, exhaustively testable, Sendable | ✓ Good — 75 tests, shared across iOS + watchOS |
 | SwiftData with CloudKit constraints from day one | Avoids painful migration when sync is enabled | ✓ Good — CloudKit worked first try |
 | WatchConnectivity dual transport | applicationContext (guaranteed) + sendMessage (fast) | ✓ Good — reliable sync pattern |
 | Placeholder Core ML for v1 | Ship full UX flow, train real model separately | ⚠️ Revisit — needs real data before production |
 
 ---
-*Last updated: 2026-03-29 after v1.3 milestone start*
+*Last updated: 2026-03-29 after v1.4 milestone complete*

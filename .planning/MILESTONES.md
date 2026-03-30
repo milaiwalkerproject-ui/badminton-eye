@@ -1,5 +1,24 @@
 # Milestones
 
+## v1.3 — Live Multi-Cam, Auto-Sync & Custom Scoring
+
+**Shipped:** 2026-03-29
+**Phases:** 3 (13-15) | **Requirements:** 14/14 verified
+**Tests:** 53 (8 suites)
+
+### Key Accomplishments
+
+1. **Custom scoring builder** — ScoringFormatBuilderView with validation, Codable ScoringRules, backward-compatible ScoringSystem encoding
+2. **Audio cross-correlation sync** — AudioTemporalSync using Accelerate/vDSP for sub-100ms alignment of separate video recordings
+3. **Live dual-camera capture** — MultiCamCaptureManager with AVCaptureMultiCamSession, asymmetric FPS, thermal throttle fallback
+
+### Archive
+
+- [v1.3-ROADMAP.md](milestones/v1.3-ROADMAP.md)
+- [v1.3-REQUIREMENTS.md](milestones/v1.3-REQUIREMENTS.md)
+
+---
+
 ## v1.2 — Haptic Scoring, BWF 3×15 & Multi-Camera
 
 **Shipped:** 2026-03-29
