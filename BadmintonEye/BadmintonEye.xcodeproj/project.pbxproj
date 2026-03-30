@@ -76,6 +76,7 @@
 		MC1002 /* MultiAngleAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = MC2002 /* MultiAngleAnalysisView.swift */; };
 		CF1001 /* ScoringFormatBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2001 /* ScoringFormatBuilderView.swift */; };
 		AS1001 /* AudioTemporalSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = AS2001 /* AudioTemporalSync.swift */; };
+		DC1001 /* MultiCamCaptureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2001 /* MultiCamCaptureManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -169,6 +170,7 @@
 		MC2002 /* MultiAngleAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiAngleAnalysisView.swift; sourceTree = "<group>"; };
 		CF2001 /* ScoringFormatBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoringFormatBuilderView.swift; sourceTree = "<group>"; };
 		AS2001 /* AudioTemporalSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioTemporalSync.swift; sourceTree = "<group>"; };
+		DC2001 /* MultiCamCaptureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiCamCaptureManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -305,6 +307,7 @@
 				HP2001 /* HapticFeedbackService.swift */,
 				MC2001 /* ResultFusionService.swift */,
 				AS2001 /* AudioTemporalSync.swift */,
+				DC2001 /* MultiCamCaptureManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -571,6 +574,7 @@
 				MC1002 /* MultiAngleAnalysisView.swift in Sources */,
 				CF1001 /* ScoringFormatBuilderView.swift in Sources */,
 				AS1001 /* AudioTemporalSync.swift in Sources */,
+				DC1001 /* MultiCamCaptureManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
