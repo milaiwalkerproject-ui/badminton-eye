@@ -66,7 +66,10 @@ Plans:
   2. On devices without high-FPS support, capture falls back to 30fps with a user-visible message explaining the limitation
   3. When the user triggers a Hawk Eye challenge, the last 10 seconds of frames are saved from the circular buffer
   4. User can view a slow-motion replay of captured 240fps footage in the trajectory replay screen
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 08-01-PLAN.md -- Refactor VideoCaptureManager to delegate-based 240fps capture with CircularFrameBuffer
+- [ ] 08-02-PLAN.md -- ChallengeVideoView buffer integration, FPS fallback banner, slow-motion replay
 
 ### Phase 9: Real AI Integration
 **Goal**: Hawk Eye uses a trained YOLO model for real shuttle detection, replacing the placeholder
@@ -90,5 +93,5 @@ Plans:
 | 5. Hawk Eye AI and Premium | v1.0 | 4/4 | Complete | 2026-03-29 |
 | 6. Match Analytics | v1.1 | 1/2 | In Progress | - |
 | 7. Training Pipeline | v1.1 | 0/2 | Not started | - |
-| 8. 240fps Video Capture | v1.1 | 0/? | Not started | - |
+| 8. 240fps Video Capture | v1.1 | 0/2 | Not started | - |
 | 9. Real AI Integration | v1.1 | 0/? | Not started | - |
