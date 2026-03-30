@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-29)
+See: .planning/PROJECT.md (updated 2026-03-30)
 
 **Core value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
-**Current focus:** v1.4 — Test Coverage & Accessibility (COMPLETE)
+**Current focus:** v1.5 — Watch Haptic Reliability
 
 ## Current Position
 
-Phase: 17 of 17 (All complete)
-Plan: All plans complete
-Status: Milestone complete
-Last activity: 2026-03-29 — All v1.4 phases executed, build verified, 75 tests passing
+Phase: 18 of 18 (Phase 18 in progress)
+Plan: Phase 18 executing
+Status: In progress
+Last activity: 2026-03-30 — v1.5 milestone started
 
-Progress: [##########] 100%
+Progress: [#---------] 10%
 
 ## Performance Metrics
 
@@ -32,6 +32,7 @@ Progress: [##########] 100%
 | 10-12 (v1.2) | 3 | — | — |
 | 13-15 (v1.3) | 3 | — | — |
 | 16-17 (v1.4) | 2 | — | — |
+| 18 (v1.5) | 0 | — | — |
 
 ## Accumulated Context
 
@@ -44,9 +45,9 @@ Carried forward from v1.0:
 - Placeholder Core ML shuttle detection (replaced in Phase 9 with real CoreMLShuttleDetector)
 - Gaussian elimination homography solve (no external linear algebra)
 
-v1.4 decisions:
-- Custom scoring tests first (Phase 16): fills the biggest gap in ScoringEngine coverage
-- VoiceOver accessibility second (Phase 17): user-facing quality improvement on existing views
+v1.5 decisions:
+- Mark WatchMatchViewModel @MainActor: explicit isolation matches actual runtime (WatchSessionManager already dispatches to @MainActor before calling onStateReceived)
+- Play haptics in receiveStateFromiPhone only when !localEngine at receive time: avoids double-haptic when Watch scores locally then iPhone echoes back confirmed state
 
 ### Pending Todos
 
@@ -54,10 +55,10 @@ None.
 
 ### Blockers/Concerns
 
-- Watch haptics threading — WatchMatchViewModel not @MainActor; haptic calls from WCSession callbacks silently fail on background threads
+None after v1.5.
 
 ## Session Continuity
 
-Last session: 2026-03-29
-Stopped at: v1.4 complete — ready for v1.5 milestone
+Last session: 2026-03-30
+Stopped at: Phase 18 in progress
 Resume file: None

@@ -1,53 +1,41 @@
-# Requirements: Badminton Eye v1.4 — Test Coverage & Accessibility
+# Requirements: Badminton Eye v1.5 — Watch Haptic Reliability
 
-**Defined:** 2026-03-29
+**Defined:** 2026-03-30
 **Core Value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
 
-## v1.4 Requirements
+## v1.5 Requirements
 
-### Custom Scoring Tests
+### Watch Haptic Reliability
 
-- [x] **TEST-01**: Custom ScoringRules with user-defined points/deuce/cap/games play a correct match through MatchEngine
-- [x] **TEST-02**: ScoringRules.isValid returns true for valid configs and false for invalid ones (zero points, deuce >= cap, even games)
-- [x] **TEST-03**: ScoringSystem Codable round-trips correctly for .standard21, .threeByFifteen, and .custom
-- [x] **TEST-04**: ScoringSystem decodes v1.2 raw string format ("standard21") for backward compatibility
-- [x] **TEST-05**: MatchEngine.apply(.abandon) transitions match to .abandoned phase
-- [x] **TEST-06**: Custom scoring with deuce and cap plays correctly at edge boundaries
-
-### VoiceOver Accessibility
-
-- [x] **A11Y-01**: ScorePanel has accessibility label announcing team name, score, and serving status
-- [x] **A11Y-02**: LiveMatchView score tap zones have accessibility labels and hints for VoiceOver users
-- [x] **A11Y-03**: Undo and End Match buttons have descriptive accessibility labels
-- [x] **A11Y-04**: Game info overlay (game number, completed scores) has accessibility label
+- [ ] **HAP-W01**: WatchMatchViewModel is annotated @MainActor so all state mutations are main-actor-isolated
+- [ ] **HAP-W02**: When the iPhone scores a point and sends state to the Watch, the Watch plays a click haptic for a regular point
+- [ ] **HAP-W03**: When the iPhone scores a game-ending point, the Watch plays a success haptic
+- [ ] **HAP-W04**: When the iPhone ends the match, the Watch plays a notification haptic
+- [ ] **HAP-W05**: When the Watch user scores locally (online or offline), the Watch plays only one haptic (no double-haptic when iPhone echoes state back)
+- [ ] **HAP-W06**: Haptics respect the user's haptic toggle (AppStorage "hapticFeedbackEnabled")
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| UI snapshot tests | Requires XCTest target setup, separate tooling |
-| Service-layer unit tests | Requires mocking AVFoundation/CoreML, high complexity |
-| iPad-specific accessibility | Standard SwiftUI accessibility covers iPad layout |
+| Unit tests for WatchMatchViewModel haptics | Requires WatchKit, cannot run in SPM test target |
+| Custom haptic patterns | Standard WKHapticType set is sufficient |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TEST-01 | Phase 16 | Complete |
-| TEST-02 | Phase 16 | Complete |
-| TEST-03 | Phase 16 | Complete |
-| TEST-04 | Phase 16 | Complete |
-| TEST-05 | Phase 16 | Complete |
-| TEST-06 | Phase 16 | Complete |
-| A11Y-01 | Phase 17 | Complete |
-| A11Y-02 | Phase 17 | Complete |
-| A11Y-03 | Phase 17 | Complete |
-| A11Y-04 | Phase 17 | Complete |
+| HAP-W01 | Phase 18 | Pending |
+| HAP-W02 | Phase 18 | Pending |
+| HAP-W03 | Phase 18 | Pending |
+| HAP-W04 | Phase 18 | Pending |
+| HAP-W05 | Phase 18 | Pending |
+| HAP-W06 | Phase 18 | Pending |
 
 **Coverage:**
-- v1.4 requirements: 10 total
-- Mapped to phases: 10
+- v1.5 requirements: 6 total
+- Mapped to phases: 6
 - Unmapped: 0
 
 ---
-*Requirements defined: 2026-03-29*
+*Requirements defined: 2026-03-30*

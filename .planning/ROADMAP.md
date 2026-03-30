@@ -7,6 +7,7 @@
 - [x] **v1.2 Haptic Scoring, BWF 3x15 & Multi-Camera** -- Phases 10-12 (shipped 2026-03-29)
 - [x] **v1.3 Live Multi-Cam, Auto-Sync & Custom Scoring** -- Phases 13-15 (shipped 2026-03-29)
 - [x] **v1.4 Test Coverage & Accessibility** -- Phases 16-17 (shipped 2026-03-29)
+- [ ] **v1.5 Watch Haptic Reliability** -- Phase 18 (in progress)
 
 ## Phases
 
@@ -263,6 +264,25 @@ Plans:
 | 15. Live Dual-Camera Capture | v1.3 | 1/1 | Complete | 2026-03-29 |
 | 16. Custom Scoring & Codable Tests | v1.4 | 1/1 | Complete | 2026-03-29 |
 | 17. VoiceOver Accessibility | v1.4 | 1/1 | Complete | 2026-03-29 |
+| 18. Watch Haptic Reliability | v1.5 | 0/1 | In Progress | — |
+
+### v1.5 Watch Haptic Reliability
+
+**Milestone Goal:** Fix the Watch haptics threading bug: mark WatchMatchViewModel @MainActor and play haptic feedback for iPhone-initiated score changes.
+
+- [ ] **Phase 18: @MainActor + Receive-Side Haptics** - WatchMatchViewModel is @MainActor-isolated; Watch plays haptic when iPhone scores
+
+## Phase Details (v1.5)
+
+### Phase 18: @MainActor + Receive-Side Haptics
+**Goal**: Watch plays correct haptic feedback for both Watch-initiated and iPhone-initiated score changes, with no double-haptic
+**Depends on**: Nothing (modifies WatchMatchViewModel and WatchScoringView)
+**Requirements**: HAP-W01, HAP-W02, HAP-W03, HAP-W04, HAP-W05, HAP-W06
+**Success Criteria** (what must be TRUE):
+  1. WatchMatchViewModel is annotated @MainActor
+  2. When iPhone sends a score update, Watch plays click/success/notification haptic as appropriate
+  3. Watch-initiated scores still play exactly one haptic (no double on iPhone echo)
+  4. Haptic toggle is respected
 
 ---
-*Roadmap updated: 2026-03-29 -- v1.4 phases added*
+*Roadmap updated: 2026-03-30 -- v1.5 phase added*

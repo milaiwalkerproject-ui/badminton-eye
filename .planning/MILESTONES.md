@@ -1,5 +1,23 @@
 # Milestones
 
+## v1.4 — Test Coverage & Accessibility
+
+**Shipped:** 2026-03-29
+**Phases:** 2 (16-17) | **Requirements:** 10/10 verified
+**Tests:** 75 (9 suites)
+
+### Key Accomplishments
+
+1. **Custom scoring engine tests** — CustomScoringTests covering custom rules, validation, Codable round-trips, backward compat, and abandon
+2. **VoiceOver accessibility** — ScorePanel, LiveMatchView score tap zones, Undo/End Match buttons, and game info overlay all have accessibility labels and hints
+
+### Archive
+
+- [v1.4-ROADMAP.md](milestones/v1.4-ROADMAP.md)
+- [v1.4-REQUIREMENTS.md](milestones/v1.4-REQUIREMENTS.md)
+
+---
+
 ## v1.3 — Live Multi-Cam, Auto-Sync & Custom Scoring
 
 **Shipped:** 2026-03-29
