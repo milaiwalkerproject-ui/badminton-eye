@@ -4,13 +4,13 @@ import Charts
 enum TrendRange: String, CaseIterable {
     case last10 = "Last 10"
     case last20 = "Last 20"
-    case all = "All"
+    case last50 = "Last 50"
 
     var matchCount: Int {
         switch self {
         case .last10: return 10
         case .last20: return 20
-        case .all: return 0
+        case .last50: return 50
         }
     }
 }
