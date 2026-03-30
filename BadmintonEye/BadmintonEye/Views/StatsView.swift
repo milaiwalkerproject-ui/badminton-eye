@@ -28,8 +28,8 @@ struct StatsView: View {
         ScrollView {
             VStack(spacing: 20) {
                 summaryCard
-                trendPlaceholder
-                scoringPlaceholder
+                WinRateTrendChart(viewModel: viewModel)
+                ScoringPatternsChart(viewModel: viewModel)
             }
             .padding()
         }
@@ -90,42 +90,6 @@ struct StatsView: View {
             RoundedRectangle(cornerRadius: 16)
                 .fill(.background)
                 .shadow(color: .black.opacity(0.08), radius: 8, y: 2)
-        )
-    }
-
-    // MARK: - Placeholder Sections
-
-    private var trendPlaceholder: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Performance Trend")
-                .font(.headline)
-            Text("Coming soon")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(.background)
-                .shadow(color: .black.opacity(0.05), radius: 4, y: 1)
-        )
-    }
-
-    private var scoringPlaceholder: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Scoring Patterns")
-                .font(.headline)
-            Text("Coming soon")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(.background)
-                .shadow(color: .black.opacity(0.05), radius: 4, y: 1)
         )
     }
 
