@@ -24,11 +24,11 @@
 
 ### Match Analytics
 
-- [ ] **STAT-01**: User can view match statistics dashboard showing wins, losses, win rate, and current win streak
+- [x] **STAT-01**: User can view match statistics dashboard showing wins, losses, win rate, and current win streak
 - [ ] **STAT-02**: User can view performance trend chart (win rate over last 10/20/50 matches) using Swift Charts
 - [ ] **STAT-03**: User can view per-game scoring patterns (point distribution across games 1, 2, 3)
-- [ ] **STAT-04**: Analytics data computed from existing PersistedMatch and game-level scores (no new data model required for v1.1)
-- [ ] **STAT-05**: Analytics views accessible from a new "Stats" tab in the main TabView
+- [x] **STAT-04**: Analytics data computed from existing PersistedMatch and game-level scores (no new data model required for v1.1)
+- [x] **STAT-05**: Analytics views accessible from a new "Stats" tab in the main TabView
 
 ### Training Pipeline (Developer Tooling)
 
@@ -63,11 +63,11 @@
 | CAP-04 | Phase 8 | Pending |
 | CAP-05 | Phase 8 | Pending |
 | CAP-06 | Phase 8 | Pending |
-| STAT-01 | Phase 6 | Pending |
+| STAT-01 | Phase 6 | Complete |
 | STAT-02 | Phase 6 | Pending |
 | STAT-03 | Phase 6 | Pending |
-| STAT-04 | Phase 6 | Pending |
-| STAT-05 | Phase 6 | Pending |
+| STAT-04 | Phase 6 | Complete |
+| STAT-05 | Phase 6 | Complete |
 | TRAIN-01 | Phase 7 | Pending |
 | TRAIN-02 | Phase 7 | Pending |
 | TRAIN-03 | Phase 7 | Pending |

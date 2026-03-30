@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
-**Current focus:** Phase 6 — Match Analytics (ready to plan)
+**Current focus:** Phase 6 — Match Analytics (executing)
 
 ## Current Position
 
 Phase: 6 of 9 (Match Analytics)
-Plan: 0 of ? in current phase
-Status: Ready to plan
-Last activity: 2026-03-29 — v1.1 roadmap created (4 phases: 6-9)
+Plan: 1 of 2 in current phase (Plan 01 complete)
+Status: Executing
+Last activity: 2026-03-29 — Plan 06-01 complete (Stats Dashboard Foundation)
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
@@ -46,6 +46,11 @@ v1.1 roadmap decisions:
 - 240fps capture (Phase 8) before AI integration: testable with placeholder model
 - Real AI integration last (Phase 9): depends on trained model + 240fps pipeline
 
+Phase 6 Plan 01 decisions:
+- ViewModel receives [PersistedMatch] array rather than owning @Query for testability
+- Auto-detect "me" player from most frequent playerAName across matches
+- ContentUnavailableView for empty state (iOS 17+ baseline)
+
 ### Pending Todos
 
 None yet.
@@ -59,5 +64,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-29
-Stopped at: v1.1 roadmap created, ready to plan Phase 6
+Stopped at: Completed 06-01-PLAN.md (Stats Dashboard Foundation)
 Resume file: None
