@@ -1,5 +1,24 @@
 # Milestones
 
+## v1.5 — Watch Haptic Reliability
+
+**Shipped:** 2026-03-30
+**Phases:** 1 (18) | **Requirements:** 6/6 verified
+**Tests:** 75 (9 suites)
+
+### Key Accomplishments
+
+1. **@MainActor WatchMatchViewModel** — Explicit main-actor isolation resolves the threading concern; state mutations are now compiler-enforced on the main thread
+2. **Receive-side haptics** — Watch plays click/success/notification haptics when iPhone scores, fixing the silent-update gap
+3. **No double-haptic** — Watch-initiated scores skip the receive-side haptic when iPhone echoes state back (wasLocallyUpdated guard)
+
+### Archive
+
+- [v1.5-ROADMAP.md](milestones/v1.5-ROADMAP.md)
+- [v1.5-REQUIREMENTS.md](milestones/v1.5-REQUIREMENTS.md)
+
+---
+
 ## v1.4 — Test Coverage & Accessibility
 
 **Shipped:** 2026-03-29

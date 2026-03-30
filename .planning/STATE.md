@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-30)
 
 **Core value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
-**Current focus:** v1.5 — Watch Haptic Reliability
+**Current focus:** v1.5 — Watch Haptic Reliability (COMPLETE)
 
 ## Current Position
 
-Phase: 18 of 18 (Phase 18 in progress)
-Plan: Phase 18 executing
-Status: In progress
-Last activity: 2026-03-30 — v1.5 milestone started
+Phase: 18 of 18 (All complete)
+Plan: All plans complete
+Status: Milestone complete
+Last activity: 2026-03-30 — v1.5 Phase 18 executed, build verified, 75 tests passing
 
-Progress: [#---------] 10%
+Progress: [##########] 100%
 
 ## Performance Metrics
 
@@ -32,7 +32,7 @@ Progress: [#---------] 10%
 | 10-12 (v1.2) | 3 | — | — |
 | 13-15 (v1.3) | 3 | — | — |
 | 16-17 (v1.4) | 2 | — | — |
-| 18 (v1.5) | 0 | — | — |
+| 18 (v1.5) | 1 | — | — |
 
 ## Accumulated Context
 
@@ -46,8 +46,8 @@ Carried forward from v1.0:
 - Gaussian elimination homography solve (no external linear algebra)
 
 v1.5 decisions:
-- Mark WatchMatchViewModel @MainActor: explicit isolation matches actual runtime (WatchSessionManager already dispatches to @MainActor before calling onStateReceived)
-- Play haptics in receiveStateFromiPhone only when !localEngine at receive time: avoids double-haptic when Watch scores locally then iPhone echoes back confirmed state
+- @MainActor on WatchMatchViewModel: explicit isolation matches actual runtime (WatchSessionManager already dispatches to @MainActor before calling onStateReceived)
+- playReceiveHaptic skipped when wasLocallyUpdated: avoids double-haptic when Watch scores locally and iPhone echoes back confirmed state
 
 ### Pending Todos
 
@@ -55,10 +55,10 @@ None.
 
 ### Blockers/Concerns
 
-None after v1.5.
+None.
 
 ## Session Continuity
 
 Last session: 2026-03-30
-Stopped at: Phase 18 in progress
+Stopped at: v1.5 complete — ready for v1.6 milestone
 Resume file: None
