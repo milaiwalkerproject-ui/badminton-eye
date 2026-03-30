@@ -1,9 +1,13 @@
 import SwiftUI
+import AVKit
 
 /// Dramatic Hawk Eye result display with animated 2D court overlay,
-/// trajectory path, and color-coded landing spot visualization.
+/// trajectory path, color-coded landing spot visualization, and
+/// optional slow-motion video replay for high-FPS footage.
 struct TrajectoryReplayView: View {
     let result: HawkEyeResult
+    var videoURL: URL? = nil
+    var captureFPS: Double = 30
     @Environment(\.dismiss) private var dismiss
 
     // Animation state
@@ -11,6 +15,10 @@ struct TrajectoryReplayView: View {
     @State private var showLanding = false
     @State private var pulseScale: CGFloat = 1.0
     @State private var titleOpacity: Double = 0
+
+    // Video playback state
+    @State private var isSlowMotion: Bool = false
+    @State private var player: AVPlayer?
 
     // Court proportions: 13.4m x 6.1m
     private let courtAspect: CGFloat = 13.4 / 6.1
@@ -26,6 +34,34 @@ struct TrajectoryReplayView: View {
                     .foregroundStyle(.white)
                     .opacity(titleOpacity)
                     .padding(.top, 40)
+
+                // Video replay (if available)
+                if videoURL != nil, let player {
+                    VideoPlayer(player: player)
+                        .frame(height: 200)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .padding(.horizontal, 20)
+
+                    // Slow-motion toggle (only for high-FPS footage)
+                    if captureFPS >= 120 {
+                        Button {
+                            isSlowMotion.toggle()
+                            let rate: Float = isSlowMotion ? Float(30.0 / captureFPS) : 1.0
+                            player.rate = rate
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: isSlowMotion ? "tortoise.fill" : "hare.fill")
+                                Text(isSlowMotion ? "Slow-Mo (\(Int(captureFPS / 30))x slower)" : "Normal Speed")
+                                    .font(.subheadline.bold())
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(isSlowMotion ? Color.blue : Color.white.opacity(0.15))
+                            .foregroundStyle(.white)
+                            .clipShape(Capsule())
+                        }
+                    }
+                }
 
                 // Court with trajectory
                 courtView
@@ -55,6 +91,10 @@ struct TrajectoryReplayView: View {
         }
         .onAppear {
             startAnimationSequence()
+            if let url = videoURL {
+                player = AVPlayer(url: url)
+                player?.play()
+            }
         }
     }
 
