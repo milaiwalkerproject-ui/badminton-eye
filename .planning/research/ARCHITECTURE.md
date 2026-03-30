@@ -1,441 +1,722 @@
-# Architecture Patterns: v1.2 Haptic Feedback, BWF 3x15 Scoring, Multi-Camera Hawk Eye
+# Architecture Patterns: v1.3 Dual-Camera Capture, Audio Sync, Custom Scoring
 
 **Domain:** iOS badminton scoring app with AI line calling
 **Researched:** 2026-03-29
-**Confidence:** HIGH (based on direct codebase analysis and Apple framework knowledge)
+**Confidence:** HIGH (based on direct codebase analysis + iOS platform knowledge)
 
-## Integration Map
+## Executive Summary
+
+v1.3 introduces three features that each touch different architectural layers. Dual-camera capture requires the most invasive change (VideoCaptureManager must NOT be modified -- a new MultiCamCaptureManager is needed for AVCaptureMultiCamSession). Audio cross-correlation is a new standalone service that slots cleanly between capture and analysis. Custom scoring extends the already-parameterized ScoringRules struct with minimal engine changes but requires a new UI builder, SwiftData model, and CodableMatchState migration.
+
+The key architectural insight: VideoCaptureManager currently owns a single AVCaptureSession. AVCaptureMultiCamSession is NOT a drop-in replacement -- it has different device requirements, different input/output topology, and different resource constraints. The recommended approach is to create a new MultiCamCaptureManager that composes two CircularFrameBuffers (one per camera), behind a CaptureCoordinator facade, while keeping the existing VideoCaptureManager intact as single-camera fallback for non-Pro devices.
+
+## Current Architecture (As-Is)
 
 ```
-Feature 1: HAPTIC FEEDBACK
-  LiveMatchViewModel.scorePoint()  -->  [NEW] HapticFeedbackService
-  WatchMatchViewModel.scorePoint() -->  WKInterfaceDevice.current().play(.success)
-  SettingsView                     -->  [MODIFIED] haptic toggle in UserDefaults/AppStorage
-
-Feature 2: BWF 3x15 SCORING
-  MatchState (ScoringEngine)       -->  [MODIFIED] add ScoringSystem enum
-  BWFRules.swift                   -->  [MODIFIED] parameterized thresholds
-  MatchEngine.swift                -->  [MODIFIED] best-of-5 game transitions
-  MatchSetupView                   -->  [MODIFIED] scoring format picker
-  CodableMatchState                -->  [MODIFIED] encode ScoringSystem
-  SyncPayload                      -->  cascades from CodableMatchState
-  PersistedMatch                   -->  [MODIFIED] game4/game5 score fields
-  LiveActivity                     -->  [MODIFIED] display up to 5 games won
-
-Feature 3: MULTI-CAMERA HAWK EYE
-  [NEW] MultiCamSessionManager     -->  AVCaptureMultiCamSession
-  [NEW] CameraAngle enum           -->  identifies primary/secondary angles
-  [NEW] MultiAngleBuffer           -->  synchronized CircularFrameBuffers per camera
-  HawkEyePipeline                  -->  [MODIFIED] accept multiple video sources
-  TrajectoryCalculator             -->  [MODIFIED] multi-view triangulation
-  CalibrationProfile               -->  [MODIFIED] per-camera calibration data
-  ChallengeVideoView               -->  [MODIFIED] angle switcher UI
+MatchSetupView
+  --> LiveMatchView / LiveMatchViewModel
+        --> ScoringEngine (MatchState + MatchEngine) [separate SPM package]
+              ScoringSystem enum: .standard21 | .threeByFifteen
+              ScoringRules struct: parameterized thresholds (pointsToWin, deuce, cap, etc.)
+              MatchEngine.apply: pure (MatchState, MatchEvent) -> MatchState
+        --> VideoCaptureManager (single AVCaptureSession, back camera only)
+              --> CircularFrameBuffer (10s rolling window, NSLock-synchronized)
+        --> HawkEyePipeline (ShuttleDetecting protocol DI, frame-skip strategy)
+              --> CoreMLShuttleDetector | PlaceholderShuttleDetector
+              --> TrajectoryCalculator (homography + trajectory fitting)
+        --> MultiAngleAnalysisView (sequential PhotosPicker import for 2nd angle)
+              --> ResultFusionService (weighted confidence fusion of HawkEyeResult[])
 ```
 
-## New Components
+### Key Characteristics
+- **VideoCaptureManager:** Instantiated per challenge, owns one AVCaptureSession, one back camera, one CircularFrameBuffer (10s at up to 240fps). Delegate-based capture via AVCaptureVideoDataOutput on a single captureQueue.
+- **HawkEyePipeline:** Analyzes one video URL at a time. Frame-skip interval of 4 at 240fps = 60 detections/sec. Max 150 frames analyzed.
+- **MultiAngleAnalysisView:** Imports second angle AFTER primary analysis, via PhotosPicker. Sequential, not simultaneous. Uses a second HawkEyePipeline instance.
+- **ResultFusionService:** Pure static function. Weighted average by confidence, 15% multi-view bonus, capped at 99%.
+- **ScoringEngine:** Pure struct state machine in separate SPM package. ScoringSystem enum maps to ScoringRules static constants via `rules(for:)`. MatchEngine is a pure function with zero side effects.
+- **CodableMatchState:** Manual Codable mirror of MatchState. `scoringSystem` is already optional (`ScoringSystem?`) for backward compat with v1.0/v1.1 JSON.
 
-### 1. HapticFeedbackService (Services/)
+## Recommended Architecture (v1.3 To-Be)
 
-**Responsibility:** Centralized haptic playback for score events on iOS. Uses UIImpactFeedbackGenerator for standard taps and Core Haptics (CHHapticEngine) for richer patterns on score, game win, and match win.
+```
+MatchSetupView
+  --> ScoringFormatPicker
+        standard21 | threeByFifteen | .custom(CustomScoringConfig)
+        "Create Custom Format" --> ScoringFormatBuilderView
+  --> LiveMatchView / LiveMatchViewModel
+        --> ScoringEngine (MatchState + MatchEngine) -- ScoringSystem gains .custom case
+        --> CaptureCoordinator (NEW: facade over single-cam and multi-cam)
+              --> VideoCaptureManager (UNCHANGED, single-cam fallback)
+              --> MultiCamCaptureManager (NEW: AVCaptureMultiCamSession)
+                    --> CircularFrameBuffer x2 (REUSED, one per camera)
+                    --> Audio capture outputs (NEW: for cross-correlation)
+        --> AudioSyncService (NEW: Accelerate/vDSP cross-correlation)
+        --> HawkEyePipeline (UNCHANGED API, called once per angle)
+        --> ResultFusionService (UNCHANGED)
+        --> DualCameraAnalysisView (NEW: replaces sequential MultiAngleAnalysisView)
+```
 
-**Why a separate service:** Haptic patterns differ by event type (point scored vs game won vs match won). Encapsulating this avoids scattering UIKit haptic calls across ViewModels. Also enables future customization of haptic intensity.
+### Component Boundaries
 
-**Interface:**
+| Component | Responsibility | Communicates With |
+|-----------|---------------|-------------------|
+| **CaptureCoordinator** | Decides single-cam vs multi-cam based on device capability; exposes uniform capture API | LiveMatchViewModel, MultiCamCaptureManager, VideoCaptureManager |
+| **MultiCamCaptureManager** | Manages AVCaptureMultiCamSession with two camera inputs + two audio inputs | CaptureCoordinator, CircularFrameBuffer (x2), AudioSyncService |
+| **AudioSyncService** | Computes temporal offset between two audio tracks via cross-correlation | MultiCamCaptureManager (provides audio buffers), CaptureCoordinator (receives offset for PTS adjustment) |
+| **CustomScoringConfig** | Codable struct holding user-defined scoring parameters (lives in ScoringEngine SPM) | ScoringSystem enum, ScoringRules.rules(for:) |
+| **CustomScoringFormat** | SwiftData model storing saved custom formats (lives in app target) | MatchSetupView, converts to/from CustomScoringConfig |
+| **ScoringFormatBuilderView** | UI for creating/editing custom scoring rules with validation | CustomScoringFormat, MatchSetupView |
+| **DualCameraAnalysisView** | Dual-camera preview + synchronized analysis trigger | CaptureCoordinator, HawkEyePipeline, ResultFusionService |
+
+## New Component: MultiCamCaptureManager
+
+### Why Not Extend VideoCaptureManager
+
+The existing VideoCaptureManager is tightly bound to AVCaptureSession (singular). AVCaptureMultiCamSession differs in critical ways:
+
+1. **Device requirement:** Only available on devices where `AVCaptureMultiCamSession.isMultiCamSupported` returns true (A12+ chip, iPhone XS and later). Practically useful on Pro models for dual back cameras (wide + ultra-wide).
+2. **Input topology:** Requires separate AVCaptureDeviceInput per camera, each connected to its own AVCaptureVideoDataOutput via AVCaptureConnection. You cannot share one output across two inputs.
+3. **Separate dispatch queues:** AVFoundation REQUIRES each AVCaptureVideoDataOutput in a multi-cam session to use its own dispatch queue. Sharing a queue causes dropped frames. The existing single `captureQueue` pattern in VideoCaptureManager cannot be reused.
+4. **Resource budget:** At 240fps on two cameras simultaneously, the ISP pipeline will throttle or drop frames. Realistic target: 120fps per camera in multi-cam mode.
+5. **Format constraints:** Each camera can have a different format, but the system balances resources. You must query `AVCaptureDevice.DiscoverySession` to find valid camera pairs.
+
+### Recommended Implementation
+
 ```swift
-import CoreHaptics
-import UIKit
-
-final class HapticFeedbackService {
-    static let shared = HapticFeedbackService()
-
-    private var engine: CHHapticEngine?
-    private let impactGenerator = UIImpactFeedbackGenerator(style: .medium)
-
-    /// Whether haptics are enabled (reads from UserDefaults).
-    var isEnabled: Bool {
-        UserDefaults.standard.bool(forKey: "hapticFeedbackEnabled")
-    }
-
-    func playScorePoint() { ... }
-    func playGameWon() { ... }
-    func playMatchWon() { ... }
-
-    private func prepareEngineIfNeeded() { ... }
-}
-```
-
-**Key decisions:**
-- Use `UIImpactFeedbackGenerator` for basic point-scored feedback (simple, low latency, no engine setup).
-- Use `CHHapticEngine` only for game-won and match-won patterns (sustained vibration patterns that UIFeedbackGenerator cannot produce).
-- Prepare the engine lazily on first use -- CHHapticEngine is expensive to create.
-- Check `CHHapticEngine.capabilitiesForHardware().supportsHaptics` before attempting Core Haptics; fall back to UINotificationFeedbackGenerator on devices without Taptic Engine.
-- Single `@AppStorage("hapticFeedbackEnabled")` toggle, defaulting to `true`.
-
-**watchOS counterpart:** No new service needed. `WKInterfaceDevice.current().play(.success)` for point scored, `.notification` for game/match end. Two lines added to `WatchMatchViewModel.scorePoint()`.
-
-### 2. ScoringSystem Enum (ScoringEngine/Types.swift)
-
-**Responsibility:** Distinguishes between BWF 3x21 (current default) and BWF 3x15 (proposed new format) at the type level.
-
-```swift
-public enum ScoringSystem: String, Codable, Sendable, Equatable {
-    case threeByTwentyOne  // Best of 3, play to 21, deuce at 20, cap at 30
-    case threeByFifteen    // Best of 3, play to 15, deuce at 14, cap at 21 (BWF proposal)
-}
-```
-
-**Why an enum, not a config struct:** The two formats differ in exactly 3 numeric thresholds (game point, deuce threshold, cap). An enum with computed properties is cleaner than a freeform config object and prevents invalid combinations. If BWF adopts further variations, new cases can be added without breaking existing match persistence.
-
-### 3. MultiCamSessionManager (Services/)
-
-**Responsibility:** Manages `AVCaptureMultiCamSession` for simultaneous capture from two cameras. Provides synchronized frame streams from each angle.
-
-**Key architecture decisions:**
-
-- `AVCaptureMultiCamSession` is available on iPhone XS and later (A12+ chip). It allows simultaneous capture from multiple cameras (e.g., wide + ultra-wide, or wide + front). On devices that do not support multi-cam, gracefully fall back to single-camera mode via the existing `VideoCaptureManager`.
-- Each camera gets its own `AVCaptureVideoDataOutput` and `CircularFrameBuffer`.
-- Frame synchronization uses presentation timestamps (PTS) -- frames from different cameras are correlated by nearest PTS within a tolerance window (e.g., 8ms at 120fps).
-- Multi-cam limits FPS per stream. On iPhone 15 Pro, two cameras can each run at 120fps but not 240fps simultaneously. The architecture must negotiate the best available FPS per camera.
-
-**Interface:**
-```swift
-enum CameraAngle: String, Codable, Sendable {
-    case primary    // Main court-side camera (wide angle)
-    case secondary  // Second angle (ultra-wide or opposite side)
-}
-
+/// Manages simultaneous dual-camera capture via AVCaptureMultiCamSession.
+/// Falls back to nil (caller uses VideoCaptureManager) on unsupported devices.
 @Observable
-final class MultiCamSessionManager: NSObject, @unchecked Sendable {
-    var isMultiCamSupported: Bool { AVCaptureMultiCamSession.isMultiCamSupported }
-    var activeCameras: [CameraAngle] = []
-    var currentFPS: [CameraAngle: Double] = [:]
+final class MultiCamCaptureManager: NSObject, @unchecked Sendable {
 
-    func startCapture(cameras: [CameraAngle]) { ... }
+    // Two independent circular buffers, one per camera
+    let primaryBuffer = CircularFrameBuffer(capacity: 10.0)
+    let secondaryBuffer = CircularFrameBuffer(capacity: 10.0)
+
+    // Audio sample accumulation for cross-correlation
+    private var primaryAudioSamples: [CMSampleBuffer] = []
+    private var secondaryAudioSamples: [CMSampleBuffer] = []
+    private let audioLock = NSLock()
+
+    private var multiCamSession: AVCaptureMultiCamSession?
+
+    // Camera pair: wide-angle + ultra-wide (natural for court-side dual-angle)
+    private let primaryType: AVCaptureDevice.DeviceType = .builtInWideAngleCamera
+    private let secondaryType: AVCaptureDevice.DeviceType = .builtInUltraWideCamera
+
+    // SEPARATE dispatch queues per output (REQUIRED by AVFoundation for multi-cam)
+    private let primaryVideoQueue = DispatchQueue(label: "multicam.video.primary", qos: .userInteractive)
+    private let secondaryVideoQueue = DispatchQueue(label: "multicam.video.secondary", qos: .userInteractive)
+    private let primaryAudioQueue = DispatchQueue(label: "multicam.audio.primary", qos: .userInteractive)
+    private let secondaryAudioQueue = DispatchQueue(label: "multicam.audio.secondary", qos: .userInteractive)
+
+    static var isSupported: Bool {
+        AVCaptureMultiCamSession.isMultiCamSupported
+    }
+
+    var isRecording: Bool = false
+    var primaryFPS: Double = 0
+    var secondaryFPS: Double = 0
+}
+```
+
+### Key Design Decisions
+
+**Two CircularFrameBuffers, not one:** Each camera's frames have independent timestamps from different sensor clocks. They must be stored separately and aligned AFTER capture via audio cross-correlation. Interleaving them in one buffer would corrupt temporal ordering.
+
+**Audio capture alongside video:** Each camera input gets a paired AVCaptureAudioDataOutput. The audio tracks enable cross-correlation sync. Both microphones hear the same ambient sound (shuttle hits, footsteps, crowd) but with a slight time offset based on microphone physical position. Cross-correlation finds this offset.
+
+**FPS reduction in multi-cam:** Target 120fps per camera (not 240fps). The frame-skip strategy in HawkEyePipeline already handles variable FPS gracefully (`effectiveSkipInterval` adjusts based on `nominalFPS >= 120`). At 120fps with frameSkipInterval=4, each camera yields 30 detections/sec -- more than sufficient for trajectory fitting.
+
+**Wide + Ultra-Wide pairing:** The wide-angle and ultra-wide cameras on Pro iPhones are the natural pair. They capture overlapping but different perspectives of the court. Telephoto is less useful because its narrow FOV may miss the shuttle landing zone. Using front + back cameras is impractical for tripod-mounted court-side recording.
+
+## New Component: CaptureCoordinator
+
+A lightweight facade that decides which capture path to use and provides a uniform API:
+
+```swift
+/// Facade providing uniform capture API regardless of device capability.
+@Observable
+final class CaptureCoordinator: @unchecked Sendable {
+
+    enum CaptureMode {
+        case singleCamera    // Non-Pro devices, or user preference
+        case dualCamera      // Pro devices with AVCaptureMultiCamSession
+    }
+
+    let mode: CaptureMode
+    private(set) var singleCam: VideoCaptureManager?
+    private(set) var multiCam: MultiCamCaptureManager?
+
+    init(preferDualCamera: Bool = true) {
+        if preferDualCamera && MultiCamCaptureManager.isSupported {
+            self.mode = .dualCamera
+            self.multiCam = MultiCamCaptureManager()
+        } else {
+            self.mode = .singleCamera
+            self.singleCam = VideoCaptureManager()
+        }
+    }
+
+    func startCapture() { ... }
     func stopCapture() { ... }
-    func saveBuffersToDisk() async throws -> [CameraAngle: URL] { ... }
 
-    // Delegate pattern: frame delivery per angle
-    var onFrame: ((CameraAngle, CMSampleBuffer) -> Void)?
+    /// Returns one or two captured video angles with optional audio for sync
+    func saveBuffers() async throws -> [CapturedAngle] { ... }
+}
+
+/// Output from capture -- one per camera angle
+struct CapturedAngle: Sendable {
+    let videoURL: URL
+    let audioURL: URL?          // nil for single-cam mode
+    let cameraIdentifier: String // "wide", "ultrawide"
 }
 ```
 
-### 4. MultiAngleAnalysisResult (within HawkEyePipeline)
+**Why a coordinator instead of a protocol:** VideoCaptureManager and MultiCamCaptureManager have fundamentally different output shapes (one video vs two videos + audio). A protocol would force awkward optional arrays. A coordinator with an enum mode is explicit and the calling code branches cleanly on `mode`.
 
-**Responsibility:** Wraps per-angle HawkEyeResults and the fused multi-angle result with overall confidence.
+**Why not replace MultiAngleAnalysisView's PhotosPicker flow:** The existing sequential import flow (MultiAngleAnalysisView) should be KEPT as an alternative for users who want to import video from a second phone or external camera. DualCameraAnalysisView is for the simultaneous on-device dual-cam path. The two are complementary, not replacement.
 
-```swift
-struct MultiAngleAnalysisResult {
-    let perAngle: [CameraAngle: HawkEyeResult]
-    let fusedResult: HawkEyeResult       // Triangulated from multiple views
-    let confidenceBoost: Double           // How much multi-angle improved confidence
-    let agreementScore: Double            // 0-1, do angles agree on IN/OUT?
-}
-```
+## New Component: AudioSyncService
 
-## Modified Components
+### Cross-Correlation Algorithm
 
-### 1. MatchState (ScoringEngine) -- MODERATE changes
+Audio cross-correlation computes the time offset where two audio signals are most similar. For two microphones recording the same environment:
 
-**What changes:**
-- Add `scoringSystem: ScoringSystem` stored property (default: `.threeByTwentyOne`).
-- Factory methods gain `scoringSystem:` parameter.
-- `Equatable` conformance includes `scoringSystem`.
-
-**What does NOT change:** `GameState`, `MatchPhase`, `Side`, `Court`, `PlayerPosition`, `MatchEvent` -- all unchanged.
-
-### 2. BWFRules.swift -- MODERATE changes
-
-**What changes:** Every threshold becomes parameterized by `scoringSystem`.
-
-| Property | 3x21 | 3x15 |
-|----------|-------|------|
-| `isDeuce` | both >= 20 | both >= 14 |
-| `isAtCap` | both == 29 | both == 20 |
-| `isGameWon` | >= 21 with 2-pt lead, or 30 | >= 15 with 2-pt lead, or 21 |
-| `isMatchComplete` | 2 games won | 2 games won (same) |
-| `shouldSwitchSides` | at 11 in 3rd game | at 8 in 3rd game (proportional) |
-
-**Implementation approach:** Add private computed thresholds:
-```swift
-private var gamePoint: Int {
-    scoringSystem == .threeByFifteen ? 15 : 21
-}
-private var deuceThreshold: Int {
-    scoringSystem == .threeByFifteen ? 14 : 20
-}
-private var capScore: Int {
-    scoringSystem == .threeByFifteen ? 21 : 30
-}
-private var midGameSwitch: Int {
-    scoringSystem == .threeByFifteen ? 8 : 11
-}
-```
-
-Then rewrite `isDeuce`, `isAtCap`, `isGameWon`, and `shouldSwitchSides` to use these thresholds. The best-of-3 structure (2 games to win) stays the same for both formats.
-
-**Note on BWF 3x15 mid-game interval:** The proposed BWF 3x15 format may include a 60-second interval when the leading score reaches 8 (similar to the interval at 11 in 3x21). This does not affect scoring logic -- it is a UI concern (show interval overlay). The `shouldSwitchSides` logic at midpoint can double as the interval trigger.
-
-### 3. MatchEngine.swift -- SMALL changes
-
-**What changes:** No structural changes. The `applyScorePoint` function already delegates game-won checks to `isGameWon` and match-complete checks to `isMatchComplete`. Since those are parameterized in BWFRules.swift, MatchEngine automatically works with 3x15.
-
-**One edge case:** The `resetServiceForNewGame` function is called when `!isMatchComplete` after a game win. Since both formats are best-of-3, this logic is unchanged.
-
-### 4. CodableMatchState -- SMALL changes
-
-**What changes:** Add `scoringSystem` field. Must handle backward compatibility -- matches serialized before v1.2 lack this field, so decode with a default of `.threeByTwentyOne`.
+1. Extract PCM float arrays from both audio tracks
+2. Compute cross-correlation using Accelerate's `vDSP_conv`
+3. Find the peak in the correlation output -- its index gives the sample offset
+4. Convert sample offset to time: `offset_seconds = peak_index / sample_rate`
 
 ```swift
-var scoringSystem: ScoringSystem
+import Accelerate
 
-init(from state: MatchState) {
-    // ... existing fields ...
-    self.scoringSystem = state.scoringSystem
-}
+/// Computes temporal offset between two audio tracks using
+/// cross-correlation via Accelerate/vDSP.
+struct AudioSyncService: Sendable {
 
-// Custom Decodable for backward compat:
-init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.scoringSystem = try container.decodeIfPresent(ScoringSystem.self,
-        forKey: .scoringSystem) ?? .threeByTwentyOne
-    // ... rest of fields ...
-}
-```
+    /// Returns the time offset (in seconds) that the secondary audio
+    /// leads (+) or lags (-) the primary audio.
+    static func computeOffset(
+        primarySamples: [Float],
+        secondarySamples: [Float],
+        sampleRate: Double = 44100.0
+    ) -> TimeInterval {
+        let primaryCount = primarySamples.count
+        let secondaryCount = secondarySamples.count
+        guard primaryCount > 0, secondaryCount > 0 else { return 0 }
 
-### 5. MatchSetupView -- MODERATE changes
+        let correlationLength = primaryCount + secondaryCount - 1
+        var result = [Float](repeating: 0, count: correlationLength)
 
-**What changes:** Add a scoring system picker in the "Match Format" section:
-```swift
-Section("Scoring") {
-    Picker("System", selection: $selectedScoringSystem) {
-        Text("21-point (standard)").tag(ScoringSystem.threeByTwentyOne)
-        Text("15-point (BWF new)").tag(ScoringSystem.threeByFifteen)
+        // vDSP_conv computes cross-correlation
+        primarySamples.withUnsafeBufferPointer { pBuf in
+            secondarySamples.withUnsafeBufferPointer { sBuf in
+                vDSP_conv(
+                    pBuf.baseAddress!, 1,
+                    sBuf.baseAddress! + (secondaryCount - 1), -1,
+                    &result, 1,
+                    vDSP_Length(correlationLength),
+                    vDSP_Length(secondaryCount)
+                )
+            }
+        }
+
+        // Find peak index
+        var maxVal: Float = 0
+        var maxIdx: vDSP_Length = 0
+        vDSP_maxvi(result, 1, &maxVal, &maxIdx, vDSP_Length(correlationLength))
+
+        let sampleOffset = Int(maxIdx) - (secondaryCount - 1)
+        return Double(sampleOffset) / sampleRate
     }
 }
 ```
 
-Pass `scoringSystem` through to `MatchState` factory methods.
+### Integration with the Pipeline
 
-### 6. PersistedMatch -- SMALL changes
+The audio offset adjusts temporal alignment BEFORE analysis, at the capture layer:
 
-**What changes:**
-- Add `scoringSystem: String = "threeByTwentyOne"` field.
-- Game 4 and Game 5 score fields are NOT needed because both 3x21 and 3x15 are best-of-3. Maximum 3 games. The existing `game1ScoreA/B`, `game2ScoreA/B`, `game3ScoreA/B` fields suffice.
+1. MultiCamCaptureManager captures frames + audio into two buffers
+2. AudioSyncService computes offset from the two audio tracks
+3. When flushing secondaryBuffer, adjust PTS timestamps by the computed offset
+4. Both videos now share a common time base
+5. HawkEyePipeline analyzes each video independently (UNCHANGED)
+6. ResultFusionService fuses results (UNCHANGED)
 
-### 7. LiveMatchViewModel -- SMALL changes
+**This is the cleanest integration point** because it keeps sync logic isolated to the capture layer and does not pollute the analysis pipeline. HawkEyePipeline has zero awareness of multi-cam or audio sync.
 
-**What changes:**
-- After `scorePoint()`, call `HapticFeedbackService.shared.playScorePoint()`.
-- After game end detection, call `.playGameWon()`.
-- After match complete, call `.playMatchWon()`.
-- Three lines of code total.
+### Accuracy Expectations
 
-### 8. SettingsView -- SMALL changes
+At 44.1kHz audio sample rate, cross-correlation achieves sub-millisecond alignment accuracy (one sample = 0.023ms). At 120fps video, one frame = 8.3ms. Audio sync is therefore more than precise enough.
 
-**What changes:** Add a "Haptic Feedback" toggle in a new section:
+For shuttle tracking, even 2-3 frame alignment error would be acceptable since ResultFusionService fuses landing positions, not trajectory synchronization. But sub-frame accuracy from audio sync enables future features like 3D position triangulation.
+
+## Scoring System Extension: Custom Rules
+
+### Current State Analysis
+
+The scoring system is well-designed for extension:
+
+1. `ScoringRules` is already a parameterized struct with 6 fields: `pointsToWin`, `deuceThreshold`, `capScore`, `gamesToWin`, `maxGames`, `midGameSwitchPoint`
+2. `ScoringSystem` enum maps to static `ScoringRules` instances via `rules(for:)`
+3. `MatchEngine.apply` uses `state.scoringRules` for ALL threshold checks -- zero hardcoded numbers
+4. `BWFRules.swift` computes game/match state purely from `scoringRules`
+
+The only gap: `ScoringSystem` is a closed enum with `String` raw value. Adding `.custom` requires changing it from `RawRepresentable` to a custom Codable implementation.
+
+### Recommended Extension
+
 ```swift
-Section("Match Experience") {
-    Toggle("Haptic Feedback", isOn: $hapticEnabled)
+// In ScoringEngine/Sources/ScoringEngine/Types.swift
+
+/// User-defined scoring parameters for custom formats
+public struct CustomScoringConfig: Codable, Sendable, Equatable {
+    public let name: String               // "Club Tournament", "Training", etc.
+    public let pointsToWin: Int           // 11, 15, 21, etc.
+    public let deuceEnabled: Bool         // some casual formats skip deuce
+    public let deuceThreshold: Int?       // nil when deuceEnabled == false
+    public let capScore: Int?             // nil = no cap (deuce until 2-point lead)
+    public let gamesToWin: Int            // 1, 2, or 3
+    public let maxGames: Int              // 1, 3, or 5
+    public let midGameSwitchPoint: Int?   // nil = no mid-game switch
+
+    public init(
+        name: String, pointsToWin: Int, deuceEnabled: Bool = true,
+        deuceThreshold: Int? = nil, capScore: Int? = nil,
+        gamesToWin: Int = 2, maxGames: Int = 3, midGameSwitchPoint: Int? = nil
+    ) { ... }
+}
+
+/// Scoring format: standard BWF 21-point, BWF 3x15, or user-defined custom.
+public enum ScoringSystem: Codable, Sendable, Equatable {
+    case standard21
+    case threeByFifteen
+    case custom(CustomScoringConfig)
+}
+
+// Drop the String rawValue -- use custom Codable instead
+extension ScoringSystem {
+    private enum CodingKeys: String, CodingKey { case type, config }
+
+    public init(from decoder: Decoder) throws {
+        // Backward compat: try decoding as plain string first (v1.0-v1.2 format)
+        if let container = try? decoder.singleValueContainer(),
+           let raw = try? container.decode(String.self) {
+            switch raw {
+            case "standard21": self = .standard21
+            case "threeByFifteen": self = .threeByFifteen
+            default: self = .standard21  // unknown string -> safe default
+            }
+            return
+        }
+        // New keyed format for .custom
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try container.decode(String.self, forKey: .type)
+        switch type {
+        case "standard21": self = .standard21
+        case "threeByFifteen": self = .threeByFifteen
+        case "custom":
+            let config = try container.decode(CustomScoringConfig.self, forKey: .config)
+            self = .custom(config)
+        default: self = .standard21
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        switch self {
+        case .standard21:
+            var container = encoder.singleValueContainer()
+            try container.encode("standard21")
+        case .threeByFifteen:
+            var container = encoder.singleValueContainer()
+            try container.encode("threeByFifteen")
+        case .custom(let config):
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode("custom", forKey: .type)
+            try container.encode(config, forKey: .config)
+        }
+    }
+}
+
+extension ScoringRules {
+    public static func rules(for system: ScoringSystem) -> ScoringRules {
+        switch system {
+        case .standard21: return .standard21
+        case .threeByFifteen: return .threeByFifteen
+        case .custom(let config):
+            return ScoringRules(
+                pointsToWin: config.pointsToWin,
+                deuceThreshold: config.deuceEnabled
+                    ? (config.deuceThreshold ?? config.pointsToWin - 1)
+                    : config.pointsToWin + 999,   // effectively disabled
+                capScore: config.capScore ?? config.pointsToWin + 999,
+                gamesToWin: config.gamesToWin,
+                maxGames: config.maxGames,
+                midGameSwitchPoint: config.midGameSwitchPoint ?? -1
+            )
+        }
+    }
 }
 ```
-Using `@AppStorage("hapticFeedbackEnabled") private var hapticEnabled = true`.
 
-### 9. HawkEyePipeline -- MODERATE changes
+**Why `.custom(CustomScoringConfig)` instead of just exposing ScoringRules init:** The ScoringSystem enum is stored in MatchState and serialized via CodableMatchState. If we let users construct arbitrary ScoringRules directly, we lose the ability to serialize what system a match used. The `.custom(CustomScoringConfig)` case preserves this -- including the user-given name ("Club Tournament") for display.
 
-**What changes:**
-- Add a new `analyze(videos: [CameraAngle: URL], calibrations: [CameraAngle: CalibrationProfile])` method that runs the existing single-camera analysis per angle, then fuses results.
-- The existing `analyze(videoURL:calibration:)` method stays as-is for single-camera fallback.
-- Fusion logic: if both angles agree (both IN or both OUT), confidence = max(angle1, angle2) + agreementBonus. If they disagree, confidence = min(angle1, angle2) * 0.5, result = `.uncertain`.
+### Backward Compatibility Strategy
 
-### 10. CalibrationProfile -- MODERATE changes
+The Codable implementation above handles three JSON shapes:
+- **v1.0-v1.1:** `scoringSystem` field missing entirely -- CodableMatchState's `decodeIfPresent` defaults to `.standard21` (already implemented)
+- **v1.2:** `"scoringSystem": "standard21"` or `"threeByFifteen"` as plain string -- decoded via `singleValueContainer`
+- **v1.3:** `"scoringSystem": {"type": "custom", "config": {...}}` as keyed object -- decoded via `container(keyedBy:)`
 
-**What changes:**
-- Add `cameraAngle: String = "primary"` field to identify which camera this calibration belongs to.
-- A venue may have multiple CalibrationProfiles -- one per camera angle.
-- Query becomes: `#Predicate<CalibrationProfile> { $0.venueName == venueName && $0.cameraAngle == angle }`.
+All three decode correctly without migration. Old app versions encountering a `.custom` JSON will fail to decode (they expect a raw string), but old app versions cannot see v1.3 matches anyway because CloudKit schema is additive.
 
-### 11. TrajectoryCalculator -- SMALL changes for multi-view
+### Impact on CodableMatchState
 
-**What changes:**
-- Add `fuseTrajectories(_ results: [HawkEyeResult]) -> HawkEyeResult` method.
-- Simple fusion: weight landing points by confidence, compute weighted average. If landing results disagree, mark as `.uncertain`.
-- More sophisticated triangulation (epipolar geometry) is a v2 concern. For v1.2, independent per-angle analysis with confidence-weighted fusion is sufficient and testable.
+Minimal. `CodableMatchState` already has `var scoringSystem: ScoringSystem?`. The optional handles backward compat. The only change is that `ScoringSystem` is no longer `RawRepresentable: String`, so its Codable is now custom. The `CodableMatchState` file itself needs zero modifications -- it delegates to `ScoringSystem`'s own Codable conformance.
 
-### 12. LiveActivity -- SMALL changes
+### SwiftData Model for Saved Custom Formats
 
-**What changes:** The `MatchActivityAttributes.ContentState` already uses `gamesWonA`/`gamesWonB` integers. No changes needed for 3x15 -- the numbers just represent different game point totals. The display logic ("Game 2 of 3") stays identical.
+```swift
+// In BadmintonEye/Models/CustomScoringFormat.swift
 
-### 13. WatchMatchViewModel -- SMALL changes
+@Model
+final class CustomScoringFormat {
+    var id: UUID = UUID()
+    var name: String = ""
+    var pointsToWin: Int = 21
+    var deuceEnabled: Bool = true
+    var deuceThreshold: Int = 20
+    var capScore: Int = 30
+    var gamesToWin: Int = 2
+    var maxGames: Int = 3
+    var midGameSwitchPoint: Int = 11
+    var isDefault: Bool = false   // user can mark one as default
+    var createdAt: Date = Date()
 
-**What changes:**
-- Add haptic feedback calls: `WKInterfaceDevice.current().play(.success)` after local scoring.
-- `CodableMatchState` changes cascade automatically -- Watch decodes the new `scoringSystem` field and passes it through.
-- No Watch UI changes needed -- the Watch shows scores and game numbers, which work identically for both formats.
+    /// Convert to ScoringEngine's CustomScoringConfig
+    func toConfig() -> CustomScoringConfig {
+        CustomScoringConfig(
+            name: name,
+            pointsToWin: pointsToWin,
+            deuceEnabled: deuceEnabled,
+            deuceThreshold: deuceEnabled ? deuceThreshold : nil,
+            capScore: deuceEnabled ? capScore : nil,
+            gamesToWin: gamesToWin,
+            maxGames: maxGames,
+            midGameSwitchPoint: midGameSwitchPoint > 0 ? midGameSwitchPoint : nil
+        )
+    }
+}
+```
 
-### 14. SyncPayload -- NO changes
+### Validation Rules for Custom Formats
 
-The `SyncPayload` wraps `CodableMatchState` generically. Adding `scoringSystem` to `CodableMatchState` flows through automatically.
+The ScoringFormatBuilderView must enforce:
+- `pointsToWin` in range 1...99
+- If `deuceEnabled`: `deuceThreshold >= pointsToWin - 1` (deuce must be reachable)
+- If `deuceEnabled`: `capScore > deuceThreshold` (cap must exceed deuce)
+- `gamesToWin <= maxGames` and `gamesToWin > maxGames / 2` (majority required to win)
+- `maxGames` is odd (1, 3, 5) -- even values create ambiguous draw states
+- If `midGameSwitchPoint` set: must be `< pointsToWin`
+
+## Data Flow
+
+### Dual-Camera Capture Flow
+
+```
+User taps "Record Challenge"
+  |
+  v
+CaptureCoordinator.startCapture()
+  |
+  +--> [dualCamera mode]
+  |      MultiCamCaptureManager.startRecording()
+  |        --> AVCaptureMultiCamSession starts
+  |        --> primaryBuffer.append(frame)    via primaryVideoQueue
+  |        --> secondaryBuffer.append(frame)  via secondaryVideoQueue
+  |        --> primaryAudioSamples.append()   via primaryAudioQueue
+  |        --> secondaryAudioSamples.append() via secondaryAudioQueue
+  |
+  +--> [singleCamera mode]
+         VideoCaptureManager.startRecording()  (unchanged)
+
+User taps "Challenge!" (or auto-trigger at 10s)
+  |
+  v
+CaptureCoordinator.stopCapture()
+CaptureCoordinator.saveBuffers()
+  |
+  +--> [dualCamera]
+  |      1. Extract PCM from accumulated audio samples
+  |      2. AudioSyncService.computeOffset(primary, secondary) -> TimeInterval
+  |      3. primaryBuffer.flush(to: url1) -> primary.mp4
+  |      4. secondaryBuffer.flush(to: url2, timeOffset: offset) -> secondary.mp4
+  |      5. Return [CapturedAngle(primary), CapturedAngle(secondary)]
+  |
+  +--> [singleCamera]
+         1. singleCam.saveBufferToDisk() -> url
+         2. Return [CapturedAngle(url)]
+
+For each CapturedAngle:
+  HawkEyePipeline.analyze(videoURL: angle.videoURL, calibration: calibrationForCamera)
+  |
+  v
+ResultFusionService.fuse([result1, result2]) -> HawkEyeResult
+```
+
+### Custom Scoring Flow
+
+```
+MatchSetupView
+  |
+  Section("Scoring")
+  +--> Picker: "Standard (21 pts)" | "BWF 3x15" | [saved custom formats...]
+  |                                                   |
+  |                                       "Create New Format" button
+  |                                                   |
+  |                                       ScoringFormatBuilderView (sheet)
+  |                                         --> validates inputs
+  |                                         --> saves CustomScoringFormat to SwiftData
+  |                                         --> returns .custom(config)
+  |
+  +--> MatchState.newSinglesMatch(scoringSystem: selectedSystem)
+         --> state.scoringRules returns ScoringRules (via rules(for:))
+         --> MatchEngine.apply uses scoringRules -- ZERO changes to engine logic
+```
+
+## Refactoring Required
+
+### Must Change
+
+| File | Change | Risk |
+|------|--------|------|
+| `ScoringEngine/Types.swift` | ScoringSystem drops String rawValue, gains `.custom(CustomScoringConfig)` case, custom Codable | MEDIUM -- every `switch` on ScoringSystem needs a `.custom` case |
+| `ScoringEngine/MatchState.swift` | `scoringRules` computed property now handles `.custom` via `ScoringRules.rules(for:)` -- this already works, no change needed | LOW |
+| `MatchSetupView.swift` | Add custom format options to scoring Picker, navigation to builder | LOW -- additive UI |
+| `MultiAngleAnalysisView.swift` | Keep as-is for sequential import path; add DualCameraAnalysisView as a sibling, not a replacement | LOW |
+
+### Must Add (New Files)
+
+| File | Component | Location |
+|------|-----------|----------|
+| `MultiCamCaptureManager.swift` | AVCaptureMultiCamSession dual-camera capture | `BadmintonEye/Services/` |
+| `CaptureCoordinator.swift` | Facade over single/multi capture | `BadmintonEye/Services/` |
+| `AudioSyncService.swift` | Cross-correlation via Accelerate/vDSP | `BadmintonEye/Services/` |
+| `CustomScoringFormat.swift` | SwiftData model for saved user formats | `BadmintonEye/Models/` |
+| `CustomScoringConfig.swift` | Plain Codable struct (or add to Types.swift) | `ScoringEngine/Sources/` |
+| `ScoringFormatBuilderView.swift` | Form UI for creating custom scoring rules | `BadmintonEye/Views/` |
+| `DualCameraAnalysisView.swift` | Simultaneous dual-camera preview + analysis | `BadmintonEye/Views/` |
+| `DualCameraPreviewView.swift` | Side-by-side camera preview (UIViewRepresentable) | `BadmintonEye/Views/` |
+
+### Should NOT Change
+
+| File | Reason |
+|------|--------|
+| `VideoCaptureManager.swift` | Preserved as single-camera fallback; no modification needed |
+| `HawkEyePipeline.swift` | Analyzes one video URL at a time; no awareness of multi-cam needed |
+| `ResultFusionService.swift` | Already handles N results; works unchanged with 2 simultaneous results |
+| `CircularFrameBuffer.swift` | Reused as-is; MultiCamCaptureManager instantiates two of them |
+| `ShuttleDetecting.swift` | Protocol unchanged; detector implementations unchanged |
+| `CoreMLShuttleDetector.swift` | Unchanged; works on any video frame |
+| `MatchEngine.swift` | Already fully parameterized via `state.scoringRules` |
+| `BWFRules.swift` | Already fully parameterized via `state.scoringRules` |
+| `CodableMatchState.swift` | `ScoringSystem?` optional already handles backward compat; custom Codable is on the ScoringSystem type itself |
+
+### CalibrationProfile: Minor Extension
+
+Each camera in dual-cam mode has different intrinsics (field of view, distortion). The existing CalibrationProfile stores corners for one camera view. Add:
+
+```swift
+// Addition to CalibrationProfile
+var cameraIdentifier: String?  // "wide", "ultrawide" -- nil for legacy single-cam profiles
+```
+
+This is a new optional field on an existing `@Model`, which SwiftData handles as a lightweight migration (no explicit migration plan needed -- new field defaults to nil).
+
+## Patterns to Follow
+
+### Pattern 1: Capability-Gated Features
+
+AVCaptureMultiCamSession is not available on all devices. The feature must be invisible (not grayed out) on unsupported devices.
+
+```swift
+// In ChallengeVideoView or similar
+if MultiCamCaptureManager.isSupported {
+    Toggle("Dual Camera", isOn: $useDualCamera)
+}
+// On unsupported devices: toggle never appears, single-cam is the only path
+```
+
+### Pattern 2: Per-Camera CalibrationProfile
+
+When calibrating in dual-cam mode, the user calibrates each camera angle separately. CourtCalibrationView runs once per camera. Query by camera identifier at analysis time:
+
+```swift
+let calibrations = calibrationProfiles.filter { $0.venueName == venue }
+let wideCal = calibrations.first { $0.cameraIdentifier == "wide" || $0.cameraIdentifier == nil }
+let ultraWideCal = calibrations.first { $0.cameraIdentifier == "ultrawide" }
+```
+
+### Pattern 3: Struct-First Scoring Extension
+
+The ScoringEngine SPM package has zero external dependencies. Custom scoring MUST stay within this boundary:
+- `CustomScoringConfig` is a plain Codable struct in the SPM package
+- No SwiftData, no UIKit, no SwiftUI imports in ScoringEngine
+- The SwiftData model (`CustomScoringFormat`) lives in the app target and converts to/from `CustomScoringConfig` via a `toConfig()` method
+
+### Pattern 4: Sync Logic at Capture Layer, Not Analysis Layer
+
+Audio cross-correlation and PTS adjustment happen in CaptureCoordinator/MultiCamCaptureManager. By the time videos reach HawkEyePipeline, they are temporally aligned. This keeps the analysis pipeline simple and testable with any video file, regardless of source.
+
+## Anti-Patterns to Avoid
+
+### Anti-Pattern 1: Making VideoCaptureManager Support Both Session Types
+
+**What:** Adding if/else branches inside VideoCaptureManager to handle either AVCaptureSession or AVCaptureMultiCamSession.
+**Why bad:** AVCaptureMultiCamSession has fundamentally different setup (multiple inputs, multiple outputs, separate queues per output). Cramming both paths into one class creates a 400+ line file with interleaved logic, violating the <500 line constraint and making both paths fragile.
+**Instead:** Separate classes behind CaptureCoordinator facade.
+
+### Anti-Pattern 2: Synchronizing Frames by Video Timestamp Alone
+
+**What:** Attempting to align two camera feeds by matching CMSampleBuffer presentation timestamps.
+**Why bad:** Each camera sensor has its own clock domain. Timestamps from two different AVCaptureDeviceInputs are NOT on a shared time base in multi-cam mode. Offsets can be tens of milliseconds -- significant at 120fps (8.3ms per frame).
+**Instead:** Use audio cross-correlation. Both microphones record the same ambient sound, providing a ground-truth alignment signal independent of video clock domains.
+
+### Anti-Pattern 3: Running Both Cameras at 240fps
+
+**What:** Configuring both cameras in multi-cam mode at maximum frame rate.
+**Why bad:** The ISP pipeline on even A17 Pro chips cannot sustain 240fps x 2 cameras. You will get thermal throttling within 30-60 seconds, dropped frames, and potential session interruption via `AVCaptureSession.wasInterruptedNotification`.
+**Instead:** Cap multi-cam at 120fps per camera. HawkEyePipeline's frame-skip strategy already handles variable FPS (`effectiveSkipInterval` adjusts based on `nominalFPS >= 120`).
+
+### Anti-Pattern 4: Storing Custom Rules as Freeform JSON
+
+**What:** Storing custom scoring rules as a raw JSON string in MatchState instead of a typed struct.
+**Why bad:** Loses compile-time safety, makes validation ad-hoc, breaks when fields are added.
+**Instead:** `CustomScoringConfig` as a Codable struct with associated value in the ScoringSystem enum.
+
+### Anti-Pattern 5: Breaking ScoringSystem's Codable Contract
+
+**What:** Changing ScoringSystem from String rawValue to keyed Codable without backward compat.
+**Why bad:** All v1.0-v1.2 persisted matches encode scoringSystem as `"standard21"` or `"threeByFifteen"` (plain strings). A keyed-only decoder crashes on existing data.
+**Instead:** The custom `init(from decoder:)` tries `singleValueContainer` first (old format), falls back to `container(keyedBy:)` (new format).
+
+## Scalability Considerations
+
+| Concern | v1.2 (current) | v1.3 Dual-Cam | Future |
+|---------|----------------|---------------|--------|
+| Memory per challenge | ~300MB (10s @ 240fps, 720p, 1 buffer) | ~400MB (10s @ 120fps x 2, 720p, 2 buffers) | Disk-backed ring buffer for 3+ cameras |
+| Analysis time | ~3-5s per angle | ~6-10s (two sequential analyses) | Parallel pipeline instances on different cores |
+| Storage per challenge | ~15MB HEVC | ~30MB (two videos) | Temp storage; cleaned up after analysis |
+| CalibrationProfiles | 1 per venue | 2 per venue (per camera) | N per venue; venue-camera relationship model |
+| Scoring formats | 2 built-in | 2 built-in + N user-created | SwiftData query, no scaling concern |
+
+### Thermal Management
+
+Multi-cam 120fps capture for 10 seconds is within thermal budget on A12+ devices. Risk is if users leave capture running longer. Mitigations:
+- Hard cap at 10 seconds (`maxDuration` -- already exists, preserve it)
+- Monitor `AVCaptureSession.wasInterruptedNotification` and fall back to single-cam if interrupted
+- Show thermal warning if `ProcessInfo.processInfo.thermalState >= .serious`
+
+### CircularFrameBuffer Modification for Audio Sync
+
+The existing `flush(to:codec:width:height:fps:)` method writes frames with their original PTS. For the secondary buffer in dual-cam mode, a `timeOffset` parameter is needed:
+
+```swift
+// Addition to CircularFrameBuffer
+func flush(
+    to outputURL: URL,
+    codec: AVVideoCodecType,
+    width: Int, height: Int, fps: Double,
+    timeOffset: CMTime = .zero  // NEW: shift all PTS by this amount
+) async throws -> URL
+```
+
+This is a backward-compatible additive change (default `.zero` preserves existing behavior). The offset is applied when appending pixel buffers to the writer adaptor.
 
 ## Component Dependency Graph
 
 ```
-                    ScoringSystem (new enum)
-                         |
-            +------------+------------+
-            |            |            |
-       MatchState   BWFRules    MatchEngine
-       (modified)  (modified)  (unchanged logic,
-            |                   uses BWFRules)
-            |
-     CodableMatchState (modified)
-            |
-    +-------+-------+
-    |               |
-SyncPayload    PersistedMatch
-(no change)    (add scoringSystem field)
+CustomScoringConfig (new, in ScoringEngine SPM)
+         |
+    ScoringSystem (modified: gains .custom case)
+         |
+    +----+----+
+    |         |
+MatchState  ScoringRules.rules(for:) (modified)
+(unchanged   |
+ except      BWFRules.swift (unchanged -- already parameterized)
+ Codable)    |
+    |        MatchEngine.apply (unchanged)
     |
-WatchMatchViewModel
-(haptics added)
+CodableMatchState (unchanged -- delegates to ScoringSystem Codable)
+    |
+CustomScoringFormat (new, SwiftData @Model in app target)
+    |
+ScoringFormatBuilderView (new)
+    |
+MatchSetupView (modified: adds custom format picker)
 
-HapticFeedbackService (new) <-- LiveMatchViewModel (modified)
-                             <-- WatchMatchViewModel (modified)
 
-MultiCamSessionManager (new) --> CircularFrameBuffer (per camera)
-         |
-         v
-  HawkEyePipeline (modified) --> TrajectoryCalculator (modified)
-         |
-CalibrationProfile (modified, per-camera)
+CaptureCoordinator (new)
+    |
+    +---> VideoCaptureManager (unchanged, single-cam)
+    |
+    +---> MultiCamCaptureManager (new)
+              |
+              +---> CircularFrameBuffer x2 (reused)
+              |
+              +---> AudioSyncService (new)
+
+DualCameraAnalysisView (new)
+    |
+    +---> CaptureCoordinator
+    +---> HawkEyePipeline (unchanged, called per angle)
+    +---> ResultFusionService (unchanged)
+
+MultiAngleAnalysisView (preserved as sequential import alternative)
+CalibrationProfile (minor: add cameraIdentifier optional field)
 ```
 
-## Build Order
+## Build Order Recommendation
 
-The three features have specific dependency relationships that determine build order.
+### Phase 1: Custom Scoring (lowest risk, highest independence)
 
-### Phase 1: BWF 3x15 Scoring (build first)
+Touches only the ScoringEngine SPM package + UI. Zero interaction with camera/ML pipeline. Can be built and shipped independently.
 
-**Rationale:** This touches the ScoringEngine pure Swift package, which is the foundation of the app. Changes here cascade to CodableMatchState, SyncPayload (implicitly), PersistedMatch, and UI. Building this first ensures the state machine is stable before adding side-effect features.
+1. Add `CustomScoringConfig` struct to `Types.swift`
+2. Change `ScoringSystem` enum: drop String rawValue, add `.custom` case, custom Codable with backward compat
+3. Update `ScoringRules.rules(for:)` to handle `.custom`
+4. Add `CustomScoringFormat` SwiftData model
+5. Build `ScoringFormatBuilderView` with validation
+6. Update `MatchSetupView` scoring picker
+7. Exhaustive unit tests (clone existing test suites with custom thresholds)
 
-**Build sequence within phase:**
-1. Add `ScoringSystem` enum to `Types.swift`
-2. Add `scoringSystem` property to `MatchState`, update factory methods
-3. Parameterize thresholds in `BWFRules.swift`
-4. Update `CodableMatchState` with backward-compatible decoding
-5. Add `scoringSystem` field to `PersistedMatch`
-6. Update `MatchSetupView` with scoring system picker
-7. Write exhaustive unit tests (duplicate existing test suites with 3x15 thresholds)
+### Phase 2: Dual-Camera Capture (highest complexity)
 
-**Dependencies:** None. Self-contained in ScoringEngine + UI layer.
+New capture infrastructure. Requires device testing (cannot validate multi-cam in simulator).
 
-**Risk:** LOW. Pure value-type transformations. Exhaustively testable. No async, no hardware, no side effects.
+1. Build `MultiCamCaptureManager` with AVCaptureMultiCamSession
+2. Build `CaptureCoordinator` facade
+3. Add `timeOffset` parameter to `CircularFrameBuffer.flush()`
+4. Add `cameraIdentifier` to `CalibrationProfile`
+5. Build `DualCameraPreviewView` (UIViewRepresentable for side-by-side preview)
+6. Build `DualCameraAnalysisView`
+7. Integration test with real dual-cam device
 
-### Phase 2: Haptic Feedback (build second)
+### Phase 3: Audio Cross-Correlation Sync (depends on Phase 2)
 
-**Rationale:** Haptic feedback is a thin layer on top of the scoring flow. It requires the scoring system to be finalized (Phase 1) because haptic patterns fire on score events, game ends, and match ends -- events whose thresholds differ between 3x21 and 3x15.
+Requires MultiCamCaptureManager's audio outputs to exist.
 
-**Build sequence within phase:**
-1. Create `HapticFeedbackService` with `UIImpactFeedbackGenerator` for points
-2. Add Core Haptics patterns for game-won and match-won
-3. Wire into `LiveMatchViewModel.scorePoint()` / game-end / match-end
-4. Add `@AppStorage` toggle in `SettingsView`
-5. Add `WKInterfaceDevice.play()` calls in `WatchMatchViewModel`
-6. Test on device (haptics cannot be tested in simulator)
-
-**Dependencies:** Phase 1 (scoring events must be stable).
-
-**Risk:** LOW. UIKit/Core Haptics APIs are stable and well-documented. Main risk is haptic pattern tuning (subjective, requires real-device testing).
-
-### Phase 3: Multi-Camera Hawk Eye (build last)
-
-**Rationale:** This is the most complex feature and touches the camera/ML pipeline. It has zero dependencies on Phase 1 (scoring) or Phase 2 (haptics) -- it is architecturally independent. However, it should be built last because:
-- Highest complexity and risk (hardware-dependent, async, multi-stream synchronization).
-- Requires real multi-camera device testing (cannot validate in simulator).
-- The scoring and haptic features deliver user value quickly while this is in development.
-- If v1.2 needs to ship early, Phase 1 + Phase 2 can ship without Phase 3.
-
-**Build sequence within phase:**
-1. Add `CameraAngle` enum and `cameraAngle` field to `CalibrationProfile`
-2. Build `MultiCamSessionManager` with `AVCaptureMultiCamSession`
-3. Add per-camera `CircularFrameBuffer` management
-4. Add `fuseTrajectories()` to `TrajectoryCalculator`
-5. Add multi-angle `analyze()` method to `HawkEyePipeline`
-6. Update `CourtCalibrationView` for per-camera calibration
-7. Update `ChallengeVideoView` with angle switcher
-8. Add fallback path: if device does not support multi-cam, use existing single-camera flow unchanged
-
-**Dependencies:** None on Phase 1 or 2. Internal dependency: CalibrationProfile changes before Pipeline changes.
-
-**Risk:** MEDIUM.
-- `AVCaptureMultiCamSession` has device-specific limitations on simultaneous resolution and FPS.
-- Frame synchronization across cameras requires careful PTS correlation.
-- CalibrationProfile schema change needs SwiftData lightweight migration.
-- Fusion algorithm quality is hard to validate without real multi-angle footage.
-
-## Anti-Patterns to Avoid
-
-### Anti-Pattern 1: Scoring System as Global Setting
-
-**What:** Storing 3x15 vs 3x21 as a global app preference instead of per-match.
-**Why bad:** A user may play a 3x21 match in the morning and a 3x15 match in the evening. Historical matches must retain their original scoring system for correct score display and stat calculation.
-**Instead:** Store `scoringSystem` on `MatchState` (and thus `PersistedMatch`). The setup screen picks the system; it travels with the match forever.
-
-### Anti-Pattern 2: Haptics in the ScoringEngine Package
-
-**What:** Adding haptic feedback triggers inside the pure Swift ScoringEngine.
-**Why bad:** ScoringEngine is a pure, platform-independent package shared between iOS and watchOS. UIKit (UIImpactFeedbackGenerator) and WatchKit (WKInterfaceDevice) are platform-specific. Importing them would break the clean package boundary.
-**Instead:** Haptics are a side effect triggered by the ViewModel layer after applying state transitions.
-
-### Anti-Pattern 3: Shared AVCaptureSession for Multi-Camera
-
-**What:** Trying to add two camera inputs to a regular `AVCaptureSession`.
-**Why bad:** `AVCaptureSession` supports only one camera input at a time. Adding a second silently fails or crashes.
-**Instead:** Use `AVCaptureMultiCamSession` (requires A12+ chip) which explicitly supports multiple simultaneous camera inputs. Check `AVCaptureMultiCamSession.isMultiCamSupported` and fall back to single-camera.
-
-### Anti-Pattern 4: Breaking CodableMatchState Backward Compatibility
-
-**What:** Adding required fields to `CodableMatchState` without defaults.
-**Why bad:** Existing persisted matches (stateJSON in SwiftData) were encoded without `scoringSystem`. Decoding them with a required field throws and crashes the app on update.
-**Instead:** Use `decodeIfPresent` with a default of `.threeByTwentyOne` for all new fields.
-
-## Patterns to Follow
-
-### Pattern 1: Parameterized Rules via Stored Enum
-
-**What:** Store a `ScoringSystem` enum on `MatchState` and derive all scoring thresholds from it via computed properties.
-**When:** Any time game rules vary by configuration but the state machine structure is identical.
-**Why:** Keeps the state machine unified (one `MatchEngine.apply()`) while supporting multiple rule sets. No branching in the engine -- only the threshold values change.
-
-### Pattern 2: Side-Effect Layer in ViewModel
-
-**What:** All side effects (haptics, persistence, sync, Live Activity) live in the ViewModel layer, triggered after pure state transitions from the engine.
-**When:** Always. This is the existing pattern and must be maintained.
-**Why:** The ScoringEngine remains pure and testable. Side effects are explicit and ordered.
-
-### Pattern 3: Multi-Camera Graceful Degradation
-
-**What:** Design multi-camera as an enhancement layer that falls back to single-camera transparently.
-**When:** Any feature that depends on hardware capabilities varying across devices.
-**Why:** Users on older devices (pre-A12) or with only one calibrated camera should get the same Hawk Eye experience they had in v1.0/v1.1. Multi-camera is additive confidence, not a requirement.
-
-### Pattern 4: Confidence-Weighted Fusion
-
-**What:** When multiple data sources provide independent estimates (two camera angles), combine them by weighting each estimate by its confidence score rather than simple averaging.
-**When:** Multi-camera Hawk Eye result fusion.
-**Why:** A clear shot from one angle (high confidence) should dominate over an occluded shot from another angle (low confidence). Equal weighting would degrade the good estimate.
-
-## Scalability Considerations
-
-| Concern | v1.0-1.1 | v1.2 | Future |
-|---------|----------|------|--------|
-| Scoring formats | Single (3x21) | Two (3x21, 3x15) | Enum extensible for any future BWF format |
-| Camera streams | Single | Dual simultaneous | Could extend to external cameras via NDI/RTSP |
-| Haptic patterns | None | 3 patterns (point, game, match) | Custom patterns per user preference |
-| CalibrationProfiles | One per venue | One per venue per camera | Auto-calibration via court line detection |
-| Frame buffers | 1 CircularFrameBuffer | 2 (one per camera) | Memory pressure: 2x buffer at 120fps = ~3.6GB/10s at 720p |
+1. Build `AudioSyncService` with vDSP cross-correlation
+2. Wire into `CaptureCoordinator.saveBuffers()` -- compute offset, apply to secondary flush
+3. Unit test with synthetic audio signals (known offset, verify recovery)
+4. Integration test with real dual-cam recordings
 
 ## Sources
 
-- Direct codebase analysis: all 55 Swift source files read
-- Apple AVCaptureMultiCamSession documentation (training data, MEDIUM confidence -- API available since iOS 13, well-established)
-- Apple Core Haptics / UIFeedbackGenerator documentation (training data, HIGH confidence -- stable APIs since iOS 13/10 respectively)
-- BWF 3x15 scoring proposal (training data, MEDIUM confidence -- details of deuce/cap thresholds may differ from final BWF ratification; flag for verification when BWF publishes final rules)
+- Direct codebase analysis: all 55 Swift source files, ScoringEngine SPM package, test suites
+- Apple AVFoundation AVCaptureMultiCamSession documentation (training data, MEDIUM confidence -- API introduced iOS 13 / WWDC 2019 session 249, stable since)
+- Apple Accelerate/vDSP documentation for cross-correlation (training data, HIGH confidence -- stable API since iOS 4, `vDSP_conv` well-established)
+- ScoringEngine internal analysis (HIGH confidence -- direct code reading, all parameterization verified)
+
+**Note:** WebSearch was unavailable during this research. AVCaptureMultiCamSession specifics (especially `supportedMultiCamDeviceSets` and per-device FPS limits) should be verified against current Apple documentation during implementation. The audio cross-correlation approach via vDSP is well-established and unlikely to have changed.

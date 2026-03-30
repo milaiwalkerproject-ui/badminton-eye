@@ -5,6 +5,7 @@
 - [x] **v1.0 MVP** -- Phases 1-5 (shipped 2026-03-29)
 - [x] **v1.1 Hawk Eye Pro + Analytics** -- Phases 6-9 (shipped 2026-03-29)
 - [x] **v1.2 Haptic Scoring, BWF 3x15 & Multi-Camera** -- Phases 10-12 (shipped 2026-03-29)
+- [ ] **v1.3 Live Multi-Cam, Auto-Sync & Custom Scoring** -- Phases 13-15 (in progress)
 
 ## Phases
 
@@ -142,6 +143,53 @@ Plans:
   4. Single-angle Hawk Eye challenges work exactly as before when no second angle is provided
 **Plans**: 2 (TBD)
 
+</details>
+
+### v1.3 Live Multi-Cam, Auto-Sync & Custom Scoring
+
+**Milestone Goal:** Upgrade multi-camera from sequential import to simultaneous live capture with automatic alignment, and let users define custom scoring formats.
+
+- [ ] **Phase 13: Custom Scoring Builder** - Users create and play matches with custom scoring rules
+- [ ] **Phase 14: Audio Cross-Correlation Sync** - Automatically align two separately-recorded videos by audio
+- [ ] **Phase 15: Live Dual-Camera Capture** - Simultaneous dual-camera via AVCaptureMultiCamSession
+
+## Phase Details (v1.3)
+
+### Phase 13: Custom Scoring Builder
+**Goal**: Users can define custom scoring rules and play matches with them
+**Depends on**: Nothing (builds on existing ScoringRules from v1.2)
+**Requirements**: CUST-01, CUST-02, CUST-03, CUST-04, CUST-05
+**Success Criteria** (what must be TRUE):
+  1. User can select "Custom" scoring and configure points-to-win, deuce threshold, cap score, and number of games
+  2. Invalid configurations are rejected with clear validation messages
+  3. Custom format matches survive crash recovery, Watch sync, and CloudKit correctly
+  4. Match history shows the custom format parameters for each custom match
+  5. A v1.2 device receiving a custom-format match via CloudKit falls back to standard-21 without crash
+**Plans**: 2 (TBD)
+
+### Phase 14: Audio Cross-Correlation Sync
+**Goal**: Two separately-recorded videos are automatically time-aligned using audio cross-correlation
+**Depends on**: Nothing (testable with recorded files independent of camera work)
+**Requirements**: SYNC-01, SYNC-02, SYNC-03, SYNC-04
+**Success Criteria** (what must be TRUE):
+  1. When two video files are imported, their audio tracks are extracted and cross-correlated to find the temporal offset
+  2. The cross-correlation runs in under 100ms for 10-second clips using Accelerate/vDSP
+  3. The computed offset is applied as PTS adjustment so HawkEyePipeline receives aligned frames without modification
+  4. Low-confidence alignments prompt the user to set a manual sync point
+**Plans**: 2 (TBD)
+
+### Phase 15: Live Dual-Camera Capture
+**Goal**: Supported devices capture from two cameras simultaneously for real-time multi-angle Hawk Eye
+**Depends on**: Phase 14 (audio sync for fallback import path)
+**Requirements**: DCAM-01, DCAM-02, DCAM-03, DCAM-04, DCAM-05
+**Success Criteria** (what must be TRUE):
+  1. On A12+ devices, user can enable dual-camera mode in Hawk Eye settings
+  2. Dual-camera runs at asymmetric FPS (primary 120fps + secondary 60fps) with synchronized timestamps
+  3. Each camera writes to its own CircularFrameBuffer with hardwareCost monitoring
+  4. At thermal throttle or on unsupported devices, app gracefully falls back to single-camera 240fps
+  5. Existing single-camera 240fps mode is unchanged as the default
+**Plans**: 2 (TBD)
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -158,6 +206,9 @@ Plans:
 | 10. BWF 3x15 Scoring Format | v1.2 | 1/1 | Complete | 2026-03-29 |
 | 11. Haptic Score Feedback | v1.2 | 1/1 | Complete | 2026-03-29 |
 | 12. Multi-Camera Hawk Eye | v1.2 | 1/1 | Complete | 2026-03-29 |
+| 13. Custom Scoring Builder | v1.3 | 0/2 | Not started | - |
+| 14. Audio Cross-Correlation Sync | v1.3 | 0/2 | Not started | - |
+| 15. Live Dual-Camera Capture | v1.3 | 0/2 | Not started | - |
 
 ---
 *Roadmap updated: 2026-03-29 -- v1.2 phases added*

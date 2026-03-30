@@ -1,84 +1,72 @@
-# Requirements: Badminton Eye v1.2 — Haptic Scoring, BWF 3×15 & Multi-Camera
+# Requirements: Badminton Eye v1.3 — Live Multi-Cam, Auto-Sync & Custom Scoring
 
 **Defined:** 2026-03-29
 **Core Value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
 
-## v1.2 Requirements
+## v1.3 Requirements
 
-### BWF 3×15 Scoring Format
+### Custom Scoring Formats
 
-- [x] **FMT-01**: User can choose between standard 21-point and BWF 3×15 scoring format when setting up a new match
-- [x] **FMT-02**: In 3×15 mode, games are played to 15 points with deuce at 14 and a cap score
-- [x] **FMT-03**: In 3×15 mode, best-of-5 games determines the match winner
-- [x] **FMT-04**: ScoringEngine uses parameterized ScoringRules struct (not hardcoded thresholds) so both formats share the same logic paths
-- [x] **FMT-05**: Existing matches (v1.0/v1.1) decode correctly with default standard-21 format — no data migration required
-- [x] **FMT-06**: Match history and stats views display the scoring format used for each match
-- [x] **FMT-07**: Apple Watch sync correctly transmits and displays the chosen scoring format
+- [ ] **CUST-01**: User can select "Custom" in the scoring system picker on match setup and define points-to-win, deuce threshold, cap score, and number of games
+- [ ] **CUST-02**: Custom scoring rules are validated (points > 0, deuce < points, cap > deuce, games is odd 1-5)
+- [ ] **CUST-03**: ScoringRules conforms to Codable so custom configurations survive crash recovery, Watch sync, and CloudKit
+- [ ] **CUST-04**: Custom format matches display correctly in match history and stats views
+- [ ] **CUST-05**: Devices running v1.2 that receive a "custom" scoring system via CloudKit fall back to standard-21 without crashing
 
-### Haptic Feedback
+### Simultaneous Dual-Camera Capture
 
-- [x] **HAP-01**: User can toggle haptic feedback on/off in Settings (default: on)
-- [x] **HAP-02**: On iPhone, a haptic pulse fires on each point scored (UIImpactFeedbackGenerator)
-- [x] **HAP-03**: On iPhone, a distinct haptic fires on game point and match point (UINotificationFeedbackGenerator)
-- [x] **HAP-04**: On Apple Watch, haptic feedback fires on score changes using WKInterfaceDevice haptic types
-- [x] **HAP-05**: Haptic toggle preference syncs between iPhone and Watch
+- [ ] **DCAM-01**: On supported devices (A12+), user can enable dual-camera mode in Hawk Eye settings
+- [ ] **DCAM-02**: Dual-camera uses AVCaptureMultiCamSession with asymmetric FPS (primary 120fps + secondary 60fps)
+- [ ] **DCAM-03**: Each camera writes to its own CircularFrameBuffer with synchronized timestamps
+- [ ] **DCAM-04**: On unsupported devices or at thermal throttle, app falls back to single-camera with user notification
+- [ ] **DCAM-05**: Existing single-camera 240fps mode remains available and unchanged as the default
 
-### Multi-Camera Hawk Eye
+### Audio Cross-Correlation Sync
 
-- [x] **CAM-01**: User can import a second video angle for a Hawk Eye challenge (sequential multi-angle analysis)
-- [x] **CAM-02**: Each video angle is analyzed independently through the existing HawkEyePipeline
-- [x] **CAM-03**: Results from multiple angles are fused into a single higher-confidence landing prediction
-- [x] **CAM-04**: Confidence score reflects the benefit of multiple angles (higher than single-angle)
-- [x] **CAM-05**: Single-angle Hawk Eye continues to work unchanged when no second angle is provided
+- [ ] **SYNC-01**: When two separately-recorded videos are imported, audio tracks are cross-correlated to find temporal offset
+- [ ] **SYNC-02**: Cross-correlation uses Accelerate/vDSP for hardware-accelerated computation
+- [ ] **SYNC-03**: Computed offset is applied as PTS adjustment before frame analysis, keeping HawkEyePipeline unchanged
+- [ ] **SYNC-04**: If audio correlation confidence is below threshold, user is prompted to set manual sync point
 
 ## Future Requirements
 
-### Multi-Camera Enhancements (v1.3+)
+### Advanced Multi-Camera (v2+)
 
-- **CAM-F1**: Simultaneous live multi-camera capture via AVCaptureMultiCamSession
-- **CAM-F2**: Audio cross-correlation for automatic temporal alignment between angles
-- **CAM-F3**: On-screen multi-angle split view during replay
-
-### Scoring Enhancements (v1.3+)
-
-- **FMT-F1**: Custom scoring formats (user-defined points per game, number of games)
-- **FMT-F2**: Tournament mode with bracket management
+- **DCAM-F1**: Multi-device camera orchestration (two iPhones)
+- **DCAM-F2**: Real-time frame-level sync between devices via local network
+- **DCAM-F3**: Split-view replay showing both angles simultaneously
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Voice score announcements | User requested haptic only — no TTS/speech synthesis |
-| CoreHaptics custom patterns | Conflicts with AVFoundation audio sessions during Hawk Eye; UIFeedbackGenerator sufficient |
-| Simultaneous multi-cam capture | Requires AVCaptureMultiCamSession (Pro devices only), FPS limits — defer to v1.3 |
-| Real-time multi-camera streaming | Network sync complexity, thermal constraints — sequential import is MVP |
-| Per-rally event model | Requires SwiftData migration beyond scoring format — defer to v2+ |
+| Multi-device networking | Too complex for v1.3; single-device multi-cam sufficient |
+| 240fps in multi-cam mode | Hardware limitation — multi-cam caps at ~120fps per camera |
+| Voice score announcements | User requested haptic only in v1.2 |
+| Custom format sharing between users | Social features deferred to v2+ |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FMT-01 | Phase 10 | Complete |
-| FMT-02 | Phase 10 | Complete |
-| FMT-03 | Phase 10 | Complete |
-| FMT-04 | Phase 10 | Complete |
-| FMT-05 | Phase 10 | Complete |
-| FMT-06 | Phase 10 | Complete |
-| FMT-07 | Phase 10 | Complete |
-| HAP-01 | Phase 11 | Complete |
-| HAP-02 | Phase 11 | Complete |
-| HAP-03 | Phase 11 | Complete |
-| HAP-04 | Phase 11 | Complete |
-| HAP-05 | Phase 11 | Complete |
-| CAM-01 | Phase 12 | Complete |
-| CAM-02 | Phase 12 | Complete |
-| CAM-03 | Phase 12 | Complete |
-| CAM-04 | Phase 12 | Complete |
-| CAM-05 | Phase 12 | Complete |
+| CUST-01 | Phase 13 | Pending |
+| CUST-02 | Phase 13 | Pending |
+| CUST-03 | Phase 13 | Pending |
+| CUST-04 | Phase 13 | Pending |
+| CUST-05 | Phase 13 | Pending |
+| DCAM-01 | Phase 14 | Pending |
+| DCAM-02 | Phase 14 | Pending |
+| DCAM-03 | Phase 14 | Pending |
+| DCAM-04 | Phase 14 | Pending |
+| DCAM-05 | Phase 14 | Pending |
+| SYNC-01 | Phase 15 | Pending |
+| SYNC-02 | Phase 15 | Pending |
+| SYNC-03 | Phase 15 | Pending |
+| SYNC-04 | Phase 15 | Pending |
 
 **Coverage:**
-- v1.2 requirements: 17 total
-- Mapped to phases: 17
+- v1.3 requirements: 14 total
+- Mapped to phases: 14
 - Unmapped: 0
 
 ---
