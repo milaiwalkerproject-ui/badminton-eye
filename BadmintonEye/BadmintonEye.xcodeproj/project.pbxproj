@@ -63,6 +63,8 @@
 		H10006 /* HawkEyePipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20006 /* HawkEyePipeline.swift */; };
 		H10007 /* TrajectoryCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20007 /* TrajectoryCalculator.swift */; };
 		H10008 /* TrajectoryReplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20008 /* TrajectoryReplayView.swift */; };
+		S10001 /* MatchStatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20001 /* MatchStatsViewModel.swift */; };
+		S10002 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20002 /* StatsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -143,6 +145,8 @@
 		H20006 /* HawkEyePipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HawkEyePipeline.swift; sourceTree = "<group>"; };
 		H20007 /* TrajectoryCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryCalculator.swift; sourceTree = "<group>"; };
 		H20008 /* TrajectoryReplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryReplayView.swift; sourceTree = "<group>"; };
+		S20001 /* MatchStatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchStatsViewModel.swift; sourceTree = "<group>"; };
+		S20002 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -228,6 +232,7 @@
 			isa = PBXGroup;
 			children = (
 				A20004 /* LiveMatchViewModel.swift */,
+				S20001 /* MatchStatsViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -253,6 +258,7 @@
 				H20003 /* CourtCalibrationView.swift */,
 				H20004 /* ChallengeVideoView.swift */,
 				H20008 /* TrajectoryReplayView.swift */,
+				S20002 /* StatsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -519,6 +525,8 @@
 				H10006 /* HawkEyePipeline.swift in Sources */,
 				H10007 /* TrajectoryCalculator.swift in Sources */,
 				H10008 /* TrajectoryReplayView.swift in Sources */,
+				S10001 /* MatchStatsViewModel.swift in Sources */,
+				S10002 /* StatsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

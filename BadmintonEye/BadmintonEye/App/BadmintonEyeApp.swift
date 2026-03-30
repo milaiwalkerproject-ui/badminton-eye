@@ -74,6 +74,13 @@ struct ContentView: View {
                                 Label("Player List", systemImage: "person.2")
                             }
                         }
+                        Section("Stats") {
+                            NavigationLink {
+                                StatsView()
+                            } label: {
+                                Label("Statistics", systemImage: "chart.bar")
+                            }
+                        }
                         Section("Settings") {
                             NavigationLink {
                                 SettingsView()
@@ -110,6 +117,13 @@ struct ContentView: View {
                     }
                     .tabItem {
                         Label("Players", systemImage: "person.2")
+                    }
+
+                    NavigationStack {
+                        StatsView()
+                    }
+                    .tabItem {
+                        Label("Stats", systemImage: "chart.bar")
                     }
 
                     NavigationStack {
