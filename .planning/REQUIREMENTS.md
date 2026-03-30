@@ -1,41 +1,39 @@
-# Requirements: Badminton Eye v1.6 — Undo Edge Cases & Cross-Game Service Tests
+# Requirements: Badminton Eye v1.7 — 3×15 Service Continuity & Doubles Game-3 Tests
 
 **Defined:** 2026-03-30
 **Core Value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
 
-## v1.6 Requirements
+## v1.7 Requirements
 
-### Undo Edge Cases
+### 3×15 Cross-Game Service
 
-- [x] **UND-01**: Undo the match-winning point reverts matchPhase to `.inProgress` with correct game state
-- [x] **UND-02**: Undo at 21-20 (during deuce) reverts to 20-20 and `isDeuce` remains true
-- [x] **UND-03**: Undo the 11th point in the third game (mid-game switch) clears `hasSwitchedInThirdGame` and `shouldSwitchSidesFlag`
+- [ ] **SVC3X-01**: After sideA wins game 1 in 3×15 format, sideB (loser) serves first in game 2 from the right court
+- [ ] **SVC3X-02**: After sideB wins game 2 in 3×15 (with sideA having won game 1), sideA (loser of game 2) serves first in game 3
 
-### Cross-Game Service Continuity
+### Doubles Game-3 Service
 
-- [x] **SVC-01**: After sideA wins game 1, sideB (the loser) serves first in game 2
-- [x] **SVC-02**: After sideB wins game 2 (with sideA having won game 1), sideA (the loser of game 2) serves first in game 3
+- [ ] **DBLS3-01**: After sideB wins game 2 in doubles (with sideA winning game 1), sideA (loser of game 2) serves first in game 3 with correctly reset doublesRotation
+- [ ] **UNDO-G-01**: Undoing the first point of game 2 in doubles restores the cross-game-boundary state (correct server, rotation, and game 1 still in games array)
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Changing the winner/loser service rule | Requires BWF rule verification before behavioral change |
-| Doubles cross-game service tests | Covered by existing DoublesScoring tests |
+| Doubles 3×15 cross-game service | Same resetServiceForNewGame code path as singles 3×15 |
+| Mixed doubles game 3 service | Same rotation reset code path as doubles |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| UND-01 | Phase 19 | Complete |
-| UND-02 | Phase 19 | Complete |
-| UND-03 | Phase 19 | Complete |
-| SVC-01 | Phase 20 | Complete |
-| SVC-02 | Phase 20 | Complete |
+| SVC3X-01 | Phase 21 | Pending |
+| SVC3X-02 | Phase 21 | Pending |
+| DBLS3-01 | Phase 22 | Pending |
+| UNDO-G-01 | Phase 22 | Pending |
 
 **Coverage:**
-- v1.6 requirements: 5 total
-- Mapped to phases: 5
+- v1.7 requirements: 4 total
+- Mapped to phases: 4
 - Unmapped: 0
 
 ---

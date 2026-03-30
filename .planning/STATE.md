@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-30)
 
 **Core value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
-**Current focus:** v1.6 — Undo Edge Cases & Cross-Game Service Tests (COMPLETE)
+**Current focus:** v1.7 — 3×15 Service Continuity & Doubles Game-3 Tests
 
 ## Current Position
 
-Phase: 20 of 20 (All complete)
-Plan: All plans complete
-Status: Milestone complete
-Last activity: 2026-03-30 — v1.6 Phases 19-20 executed, build verified, 80 tests passing
+Phase: 21 of 22
+Plan: Phase 21 complete, Phase 22 in progress
+Status: In progress
+Last activity: 2026-03-30 — v1.7 started, planning docs written
 
-Progress: [##########] 100%
+Progress: [#---------] 10%
 
 ## Performance Metrics
 
@@ -33,6 +33,7 @@ Progress: [##########] 100%
 | 13-15 (v1.3) | 3 | — | — |
 | 16-17 (v1.4) | 2 | — | — |
 | 18 (v1.5) | 1 | — | — |
+| 19-20 (v1.6) | 2 | — | — |
 
 ## Accumulated Context
 
@@ -52,6 +53,9 @@ v1.5 decisions:
 v1.6 decisions:
 - Not changing winner/loser service rule behavior: requires BWF rule verification; tests document current behavior (loser of prev game serves first)
 
+v1.7 decisions:
+- Doubles 3×15 and mixed doubles game-3 service are out of scope: same resetServiceForNewGame code path as singles; standard doubles covers the implementation
+
 ### Pending Todos
 
 None.
@@ -63,5 +67,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-30
-Stopped at: v1.6 complete — ready for v1.7 milestone
+Stopped at: v1.7 in progress — planning docs written, tests pending
 Resume file: None

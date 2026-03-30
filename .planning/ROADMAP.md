@@ -9,6 +9,7 @@
 - [x] **v1.4 Test Coverage & Accessibility** -- Phases 16-17 (shipped 2026-03-29)
 - [x] **v1.5 Watch Haptic Reliability** -- Phase 18 (shipped 2026-03-30)
 - [x] **v1.6 Undo Edge Cases & Cross-Game Service Tests** -- Phases 19-20 (shipped 2026-03-30)
+- [ ] **v1.7 3×15 Service Continuity & Doubles Game-3 Tests** -- Phases 21-22 (in progress)
 
 ## Phases
 
@@ -294,5 +295,57 @@ Plans:
   3. Watch-initiated scores still play exactly one haptic (no double on iPhone echo)
   4. Haptic toggle is respected
 
+### v1.7 3×15 Service Continuity & Doubles Game-3 Tests
+
+**Milestone Goal:** Close remaining cross-game service test gaps: who serves first in 3×15 games 2 and 3, doubles game 2→3 service reset, and undo across a game boundary in doubles.
+
+- [ ] **Phase 21: 3×15 Cross-Game Service** - Two tests verifying loser serves in game 2 and game 3 under 3×15 format
+- [ ] **Phase 22: Doubles Game-3 & Boundary Undo** - Test that doubles game 2→3 correctly resets rotation to loser's side, plus undo of first game-2 point restores cross-game state
+
+## Phase Details (v1.7)
+
+### Phase 21: 3×15 Cross-Game Service
+**Goal**: ScoringEngine correctly resets service to the loser at each game transition under the 3×15 scoring format
+**Depends on**: Nothing (tests existing code)
+**Requirements**: SVC3X-01, SVC3X-02
+**Success Criteria** (what must be TRUE):
+  1. After sideA wins game 1 (15-0) in 3×15, sideB serves first in game 2 from the right court
+  2. After sideB wins game 2 in 3×15, sideA (loser of game 2) serves first in game 3
+
+### Phase 22: Doubles Game-3 & Boundary Undo
+**Goal**: Doubles game 2→3 service reset is tested; undo across a game boundary in doubles is verified
+**Depends on**: Nothing (tests existing code)
+**Requirements**: DBLS3-01, UNDO-G-01
+**Success Criteria** (what must be TRUE):
+  1. After sideA wins game 1 and sideB wins game 2 (doubles), sideA serves first in game 3 with doublesRotation[0].side == .sideA
+  2. Undoing the first point of game 2 restores the pre-first-point game-2 state: server, rotation, score all correct, game 1 still in games array
+
+## Progress (updated)
+
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 1. Scoring Engine | v1.0 | 3/3 | Complete | 2026-03-28 |
+| 2. Apple Watch Companion | v1.0 | 3/3 | Complete | 2026-03-28 |
+| 3. Match Data and Player Profiles | v1.0 | 3/3 | Complete | 2026-03-29 |
+| 4. Cloud Sync and Authentication | v1.0 | 3/3 | Complete | 2026-03-29 |
+| 5. Hawk Eye AI and Premium | v1.0 | 4/4 | Complete | 2026-03-29 |
+| 6. Match Analytics | v1.1 | 2/2 | Complete | 2026-03-29 |
+| 7. Training Pipeline | v1.1 | 2/2 | Complete | 2026-03-29 |
+| 8. 240fps Video Capture | v1.1 | 2/2 | Complete | 2026-03-29 |
+| 9. Real AI Integration | v1.1 | 2/2 | Complete | 2026-03-29 |
+| 10. BWF 3x15 Scoring Format | v1.2 | 1/1 | Complete | 2026-03-29 |
+| 11. Haptic Score Feedback | v1.2 | 1/1 | Complete | 2026-03-29 |
+| 12. Multi-Camera Hawk Eye | v1.2 | 1/1 | Complete | 2026-03-29 |
+| 13. Custom Scoring Builder | v1.3 | 1/1 | Complete | 2026-03-29 |
+| 14. Audio Cross-Correlation Sync | v1.3 | 1/1 | Complete | 2026-03-29 |
+| 15. Live Dual-Camera Capture | v1.3 | 1/1 | Complete | 2026-03-29 |
+| 16. Custom Scoring & Codable Tests | v1.4 | 1/1 | Complete | 2026-03-29 |
+| 17. VoiceOver Accessibility | v1.4 | 1/1 | Complete | 2026-03-29 |
+| 18. Watch Haptic Reliability | v1.5 | 1/1 | Complete | 2026-03-30 |
+| 19. Undo Edge Cases | v1.6 | 1/1 | Complete | 2026-03-30 |
+| 20. Cross-Game Service Tests | v1.6 | 1/1 | Complete | 2026-03-30 |
+| 21. 3×15 Cross-Game Service | v1.7 | 0/1 | In Progress | — |
+| 22. Doubles Game-3 & Boundary Undo | v1.7 | 0/1 | Pending | — |
+
 ---
-*Roadmap updated: 2026-03-30 -- v1.5 shipped*
+*Roadmap updated: 2026-03-30 -- v1.7 started*
