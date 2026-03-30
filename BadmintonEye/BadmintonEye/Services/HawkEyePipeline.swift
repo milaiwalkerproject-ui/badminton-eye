@@ -1,4 +1,5 @@
 @preconcurrency import AVFoundation
+import CoreMedia
 import Foundation
 
 /// Orchestrates video analysis: frame extraction, shuttle detection (placeholder),
@@ -13,10 +14,23 @@ final class HawkEyePipeline: @unchecked Sendable {
     var result: HawkEyeResult?
     var errorMessage: String?
 
+    // MARK: - Constants
+
+    /// Process every 4th frame at 240fps = 60 detections/sec.
+    static let frameSkipInterval = 4
+
+    /// Cap total frames analyzed to prevent runaway analysis.
+    static let maxAnalysisFrames = 150
+
     // MARK: - Private
 
     private let calculator = TrajectoryCalculator()
     private let detector: ShuttleDetecting
+
+    /// Whether the injected detector supports real frame analysis.
+    private var usesRealDetection: Bool {
+        !(detector is PlaceholderShuttleDetector)
+    }
 
     // MARK: - Init
 
@@ -73,37 +87,74 @@ final class HawkEyePipeline: @unchecked Sendable {
 
         progress = 0.2
 
-        // Artificial delay to match user expectation (3-5 seconds total analysis)
-        try? await Task.sleep(for: .seconds(1.0))
+        // Branch: real frame extraction or placeholder simulation
+        let imagePositions: [CGPoint]
+        let detectionCount: Int
 
-        // Step 3: Simulate frame extraction progress
-        let frameCount = Int(videoDuration * 10) // 0.1s intervals
-        let actualFrames = min(frameCount, 100)
-
-        for i in 0..<actualFrames {
-            progress = 0.2 + 0.4 * (Double(i + 1) / Double(actualFrames))
-            if i % 10 == 0 {
-                try? await Task.sleep(for: .milliseconds(200))
+        if usesRealDetection {
+            // Real-frame analysis path (no artificial delays)
+            let observations: [ShuttleObservation]
+            do {
+                observations = try await analyzeWithRealFrames(
+                    videoURL: videoURL,
+                    calibration: calibration,
+                    homography: homography,
+                    imageSize: imageSize
+                )
+            } catch {
+                errorMessage = "Shuttle detection failed: \(error.localizedDescription)"
+                isAnalyzing = false
+                return
             }
-        }
 
-        // Step 4: Shuttle detection (via injected ShuttleDetecting conformance)
-        let detectionCount = Int.random(in: 8...15)
-        let observations: [ShuttleObservation]
-        do {
-            observations = try await detector.detect(imageSize: imageSize, frameCount: detectionCount)
-        } catch {
-            errorMessage = "Shuttle detection failed: \(error.localizedDescription)"
-            isAnalyzing = false
-            return
-        }
-        let simulatedImagePositions = observations.map { $0.position }
+            // Vision returns normalized 0-1 coords; scale to image-space for homography
+            imagePositions = observations.map { obs in
+                CGPoint(
+                    x: obs.position.x * imageSize.width,
+                    y: obs.position.y * imageSize.height
+                )
+            }
+            detectionCount = observations.count
+            progress = 0.7
+        } else {
+            // Placeholder path (preserved exactly as original)
 
-        progress = 0.7
-        try? await Task.sleep(for: .seconds(1.0))
+            // Artificial delay to match user expectation (3-5 seconds total analysis)
+            try? await Task.sleep(for: .seconds(1.0))
+
+            // Simulate frame extraction progress
+            let frameCount = Int(videoDuration * 10) // 0.1s intervals
+            let actualFrames = min(frameCount, 100)
+
+            for i in 0..<actualFrames {
+                progress = 0.2 + 0.4 * (Double(i + 1) / Double(actualFrames))
+                if i % 10 == 0 {
+                    try? await Task.sleep(for: .milliseconds(200))
+                }
+            }
+
+            // Shuttle detection (via injected ShuttleDetecting conformance)
+            let placeholderDetectionCount = Int.random(in: 8...15)
+            let observations: [ShuttleObservation]
+            do {
+                observations = try await detector.detect(
+                    imageSize: imageSize,
+                    frameCount: placeholderDetectionCount
+                )
+            } catch {
+                errorMessage = "Shuttle detection failed: \(error.localizedDescription)"
+                isAnalyzing = false
+                return
+            }
+            imagePositions = observations.map { $0.position }
+            detectionCount = placeholderDetectionCount
+
+            progress = 0.7
+            try? await Task.sleep(for: .seconds(1.0))
+        }
 
         // Step 5: Transform image positions to court coordinates
-        let courtPositions = simulatedImagePositions.map { point in
+        let courtPositions = imagePositions.map { point in
             calculator.transformPoint(point, using: homography)
         }
 
@@ -135,6 +186,82 @@ final class HawkEyePipeline: @unchecked Sendable {
         result = hawkEyeResult
         progress = 1.0
         isAnalyzing = false
+    }
+
+    // MARK: - Real Frame Analysis
+
+    /// Extracts video frames via AVAssetReader and runs the detector on every Nth frame.
+    /// At 240fps with frameSkipInterval=4, this yields ~60 detections/sec.
+    private func analyzeWithRealFrames(
+        videoURL: URL,
+        calibration: CalibrationProfile,
+        homography: [[Double]],
+        imageSize: CGSize
+    ) async throws -> [ShuttleObservation] {
+        let asset = AVURLAsset(url: videoURL)
+
+        guard let track = try await asset.loadTracks(withMediaType: .video).first else {
+            throw NSError(
+                domain: "HawkEyePipeline",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "No video track found"]
+            )
+        }
+
+        let nominalFPS = try await Double(track.load(.nominalFrameRate))
+
+        // Use frame skip for high-FPS video; process every frame for low FPS
+        let effectiveSkipInterval = nominalFPS >= 120 ? Self.frameSkipInterval : 1
+
+        let reader = try AVAssetReader(asset: asset)
+        let outputSettings: [String: Any] = [
+            kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA
+        ]
+        let output = AVAssetReaderTrackOutput(track: track, outputSettings: outputSettings)
+        reader.add(output)
+        reader.startReading()
+
+        var allObservations = [ShuttleObservation]()
+        var frameIndex = 0
+        var processedCount = 0
+
+        while let sampleBuffer = output.copyNextSampleBuffer(),
+              processedCount < Self.maxAnalysisFrames {
+
+            frameIndex += 1
+
+            // Skip frames according to interval
+            if frameIndex % effectiveSkipInterval != 0 {
+                continue
+            }
+
+            guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+                continue
+            }
+
+            do {
+                let detections = try await detector.detect(in: pixelBuffer)
+                // Update each observation with the correct frame index
+                let indexed = detections.map { obs in
+                    ShuttleObservation(
+                        position: obs.position,
+                        confidence: obs.confidence,
+                        frameIndex: frameIndex
+                    )
+                }
+                allObservations.append(contentsOf: indexed)
+            } catch {
+                // Skip frames that fail detection; continue processing
+                continue
+            }
+
+            processedCount += 1
+            await MainActor.run {
+                self.progress = 0.2 + 0.5 * (Double(processedCount) / Double(Self.maxAnalysisFrames))
+            }
+        }
+
+        return allObservations
     }
 
 }
