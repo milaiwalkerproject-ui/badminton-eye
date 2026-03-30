@@ -8,14 +8,14 @@ A native iOS app (iPhone + iPad) with Apple Watch companion for badminton player
 
 Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time — making scorekeeping seamless during actual play.
 
-## Current Milestone: v1.2 Haptic Scoring, BWF 3×15 & Multi-Camera
+## Current Milestone: v1.3 Live Multi-Cam, Auto-Sync & Custom Scoring
 
-**Goal:** Add haptic score feedback, support BWF's new 3×15 scoring format as a user option, and enable multi-camera Hawk Eye for higher confidence.
+**Goal:** Upgrade multi-camera from sequential import to simultaneous live capture with automatic alignment, and let users define their own scoring formats.
 
 **Target features:**
-- Haptic feedback toggle for score changes during live play
-- BWF 3×15 scoring format as user-selectable match option
-- Multi-camera angle support for improved Hawk Eye confidence
+- Simultaneous dual-camera capture via AVCaptureMultiCamSession
+- Audio cross-correlation for automatic temporal alignment between camera angles
+- Custom scoring format builder (user-defined points per game, number of games)
 
 ## Current State
 
@@ -41,12 +41,19 @@ Players can effortlessly record badminton match scores from either their iPhone/
 - ✓ Live Activity on lock screen and Dynamic Island — v1.0
 - ✓ iPad adaptive layout — v1.0
 - ✓ HealthKit workout integration on Apple Watch — v1.0
+- ✓ Match analytics with Swift Charts (win rate trends, scoring patterns) — v1.1
+- ✓ Python YOLO training pipeline with CoreML export — v1.1
+- ✓ 240fps delegate-based video capture with CircularFrameBuffer — v1.1
+- ✓ Real CoreMLShuttleDetector via VNCoreMLRequest with frame-skip — v1.1
+- ✓ BWF 3×15 scoring format with parameterized ScoringRules — v1.2
+- ✓ Haptic score feedback (iPhone + Watch) with Settings toggle — v1.2
+- ✓ Sequential multi-angle Hawk Eye with ResultFusionService — v1.2
 
 ### Active
 
-- [ ] Haptic feedback toggle for score changes during live play
-- [ ] BWF 3×15 scoring format as user-selectable match option
-- [ ] Multi-camera angle support for higher Hawk Eye confidence
+- [ ] Simultaneous dual-camera capture via AVCaptureMultiCamSession (Pro devices)
+- [ ] Audio cross-correlation for automatic multi-angle temporal alignment
+- [ ] Custom scoring format builder (user-defined points/games)
 
 ### Out of Scope
 
@@ -90,4 +97,4 @@ Players can effortlessly record badminton match scores from either their iPhone/
 | Placeholder Core ML for v1 | Ship full UX flow, train real model separately | ⚠️ Revisit — needs real data before production |
 
 ---
-*Last updated: 2026-03-29 after v1.2 milestone start*
+*Last updated: 2026-03-29 after v1.3 milestone start*

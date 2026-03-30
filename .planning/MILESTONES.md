@@ -1,5 +1,25 @@
 # Milestones
 
+## v1.2 — Haptic Scoring, BWF 3×15 & Multi-Camera
+
+**Shipped:** 2026-03-29
+**Phases:** 3 (10-12) | **Requirements:** 17/17 verified
+**Tests:** 53 (8 suites)
+
+### Key Accomplishments
+
+1. **BWF 3×15 scoring** — Parameterized ScoringRules struct, best-of-5, deuce at 14, cap at 17, 9 new tests
+2. **Haptic feedback** — HapticFeedbackService (point/game-point/match), Settings toggle, Watch support
+3. **Multi-camera Hawk Eye** — Sequential multi-angle via PhotosPicker, ResultFusionService with confidence fusion
+
+### Archive
+
+- [v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md)
+- [v1.2-REQUIREMENTS.md](milestones/v1.2-REQUIREMENTS.md)
+- [v1.2-MILESTONE-AUDIT.md](milestones/v1.2-MILESTONE-AUDIT.md)
+
+---
+
 ## v1.1 — Hawk Eye Pro + Analytics
 
 **Shipped:** 2026-03-29
