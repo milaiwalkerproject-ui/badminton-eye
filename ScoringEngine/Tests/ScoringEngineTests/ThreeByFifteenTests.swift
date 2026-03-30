@@ -145,6 +145,40 @@ struct ThreeByFifteenTests {
         #expect(state.shouldSwitchSidesFlag)
     }
 
+    // MARK: - Cross-Game Service Continuity
+
+    @Test("3×15: Loser of game 1 serves first in game 2")
+    func threeByFifteenLoserServesInGame2() {
+        var state = MatchState.newSinglesMatch(scoringSystem: .threeByFifteen)
+        // sideA wins game 1 (15-0), so sideB is the loser
+        for _ in 0..<15 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        }
+        #expect(state.games.count == 1)
+        #expect(state.currentGame.gameNumber == 2)
+        // Loser (sideB) serves first in game 2
+        #expect(state.currentServer.side == .sideB)
+        // New game score is 0-0; server starts from right court (0 is even)
+        #expect(state.serviceCourt == .right)
+    }
+
+    @Test("3×15: Loser of game 2 serves first in game 3")
+    func threeByFifteenLoserServesInGame3() {
+        var state = MatchState.newSinglesMatch(scoringSystem: .threeByFifteen)
+        // sideA wins game 1 (15-0)
+        for _ in 0..<15 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        }
+        // sideB wins game 2 (15-0), so sideA is the loser of game 2
+        for _ in 0..<15 {
+            state = MatchEngine.apply(event: .scorePoint(.sideB), to: state)
+        }
+        #expect(state.currentGame.gameNumber == 3)
+        // sideA lost game 2, so sideA serves first in game 3
+        #expect(state.currentServer.side == .sideA)
+        #expect(state.serviceCourt == .right)
+    }
+
     // MARK: - Standard 21 Unchanged
 
     @Test("Standard 21-point mode still works correctly")

@@ -143,6 +143,52 @@ struct DoublesScoringTests {
         #expect(undone.currentGame.scoreA == 0)
     }
 
+    @Test("Doubles: loser of game 2 serves first in game 3")
+    func doublesGameThreeService() {
+        var state = MatchState.newDoublesMatch()
+        // sideA wins game 1 (21-0) -> sideB (loser) serves in game 2
+        for _ in 0..<21 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        }
+        #expect(state.currentServer.side == .sideB)
+
+        // sideB wins game 2 (21-0) -> sideA (loser) serves in game 3
+        for _ in 0..<21 {
+            state = MatchEngine.apply(event: .scorePoint(.sideB), to: state)
+        }
+        #expect(state.currentGame.gameNumber == 3)
+        #expect(state.currentServer.side == .sideA)
+        #expect(state.servingPlayerIndex == 0)
+        // doublesRotation should be reset with sideA player 0 as first server
+        #expect(state.doublesRotation[0].side == .sideA)
+        #expect(state.doublesRotation[0].playerIndex == 0)
+    }
+
+    @Test("Doubles: undo first point of game 2 restores cross-game-boundary state")
+    func doublesUndoFirstPointOfGame2() {
+        var state = MatchState.newDoublesMatch()
+        // sideA wins game 1 (21-0) -> sideB serves in game 2
+        for _ in 0..<21 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        }
+        #expect(state.currentServer.side == .sideB)
+        #expect(state.currentGame.gameNumber == 2)
+        let game2Start = state
+
+        // Score first point of game 2 (sideB serves and scores)
+        let afterFirst = MatchEngine.apply(event: .scorePoint(.sideB), to: game2Start)
+        #expect(afterFirst.currentGame.scoreB == 1)
+
+        // Undo should restore to game2Start state
+        let undone = MatchEngine.apply(event: .undo, to: afterFirst)
+        #expect(undone.currentServer.side == .sideB)
+        #expect(undone.currentGame.scoreA == 0)
+        #expect(undone.currentGame.scoreB == 0)
+        #expect(undone.currentGame.gameNumber == 2)
+        #expect(undone.games.count == 1) // game 1 still complete
+        #expect(undone.servingPlayerIndex == game2Start.servingPlayerIndex)
+    }
+
     @Test("Doubles: serving side scores multiple times, court swaps each time")
     func multipleServingSideScores() {
         var state = MatchState.newDoublesMatch()
