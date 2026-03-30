@@ -55,7 +55,13 @@ final class LiveMatchViewModel {
         // Create persisted match
         let match = PersistedMatch()
         match.format = state.format.rawValue
-        match.scoringSystemRaw = state.scoringSystem.rawValue
+        switch state.scoringSystem {
+        case .standard21: match.scoringSystemRaw = "standard21"
+        case .threeByFifteen: match.scoringSystemRaw = "threeByFifteen"
+        case .custom(let rules):
+            match.scoringSystemRaw = "custom"
+            match.customRulesJSON = try? JSONEncoder().encode(rules)
+        }
         match.playerAName = state.teamANames.first
         match.playerBName = state.teamBNames.first
         if state.format != .singles {

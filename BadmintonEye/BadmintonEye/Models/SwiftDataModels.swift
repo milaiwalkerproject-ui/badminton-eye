@@ -29,8 +29,12 @@ final class PersistedMatch {
     var game5ScoreA: Int?
     var game5ScoreB: Int?
 
-    // Scoring system ("standard21" or "threeByFifteen"), defaults to standard21 for CloudKit compat
+    // Scoring system JSON — stores encoded ScoringSystem for custom rules support
+    // Defaults to "standard21" string for backward compat with CloudKit
     var scoringSystemRaw: String = "standard21"
+
+    // Custom rules JSON (nil for standard formats, populated for custom)
+    var customRulesJSON: Data?
 
     // Winner side ("sideA" or "sideB"), set on match completion for efficient list rendering
     var winnerSide: String?

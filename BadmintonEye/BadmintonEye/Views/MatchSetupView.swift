@@ -8,6 +8,8 @@ struct MatchSetupView: View {
 
     @State private var selectedFormat: MatchFormat = .singles
     @State private var selectedScoringSystem: ScoringSystem = .standard21
+    @State private var customRules: ScoringRules?
+    @State private var showCustomBuilder = false
     @State private var playerAName: String = ""
     @State private var playerBName: String = ""
     @State private var playerA2Name: String = ""
@@ -47,6 +49,16 @@ struct MatchSetupView: View {
                 Picker("Scoring System", selection: $selectedScoringSystem) {
                     Text("Standard (21 pts, best of 3)").tag(ScoringSystem.standard21)
                     Text("BWF 3×15 (15 pts, best of 5)").tag(ScoringSystem.threeByFifteen)
+                    if let rules = customRules {
+                        Text("Custom (\(rules.pointsToWin) pts, best of \(rules.maxGames))")
+                            .tag(ScoringSystem.custom(rules))
+                    }
+                }
+
+                Button {
+                    showCustomBuilder = true
+                } label: {
+                    Label("Create Custom Format", systemImage: "slider.horizontal.3")
                 }
             }
 
@@ -106,6 +118,14 @@ struct MatchSetupView: View {
                     }
                 )
                 .navigationBarBackButtonHidden(true)
+            }
+        }
+        .sheet(isPresented: $showCustomBuilder) {
+            ScoringFormatBuilderView(customRules: $customRules)
+        }
+        .onChange(of: customRules) { _, newRules in
+            if let rules = newRules {
+                selectedScoringSystem = .custom(rules)
             }
         }
         .sheet(item: $showPickerFor) { target in

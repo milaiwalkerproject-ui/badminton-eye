@@ -237,10 +237,11 @@ struct MatchDetailView: View {
         case "mixed": base = "Mixed"
         default: base = "Singles"
         }
-        if match.scoringSystemRaw == "threeByFifteen" {
-            return "\(base) · 3×15"
+        switch match.scoringSystemRaw {
+        case "threeByFifteen": return "\(base) · 3×15"
+        case "custom": return "\(base) · Custom"
+        default: return base
         }
-        return base
     }
 
     private var matchDuration: String? {

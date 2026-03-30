@@ -74,6 +74,7 @@
 		HP1001 /* HapticFeedbackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = HP2001 /* HapticFeedbackService.swift */; };
 		MC1001 /* ResultFusionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = MC2001 /* ResultFusionService.swift */; };
 		MC1002 /* MultiAngleAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = MC2002 /* MultiAngleAnalysisView.swift */; };
+		CF1001 /* ScoringFormatBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2001 /* ScoringFormatBuilderView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -165,6 +166,7 @@
 		HP2001 /* HapticFeedbackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticFeedbackService.swift; sourceTree = "<group>"; };
 		MC2001 /* ResultFusionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultFusionService.swift; sourceTree = "<group>"; };
 		MC2002 /* MultiAngleAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiAngleAnalysisView.swift; sourceTree = "<group>"; };
+		CF2001 /* ScoringFormatBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoringFormatBuilderView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -280,6 +282,7 @@
 				V62001 /* WinRateTrendChart.swift */,
 				V62002 /* ScoringPatternsChart.swift */,
 				MC2002 /* MultiAngleAnalysisView.swift */,
+				CF2001 /* ScoringFormatBuilderView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -563,6 +566,7 @@
 				HP1001 /* HapticFeedbackService.swift in Sources */,
 				MC1001 /* ResultFusionService.swift in Sources */,
 				MC1002 /* MultiAngleAnalysisView.swift in Sources */,
+				CF1001 /* ScoringFormatBuilderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
