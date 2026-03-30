@@ -231,11 +231,16 @@ struct MatchDetailView: View {
     }
 
     private var formatBadge: String {
+        let base: String
         switch match.format {
-        case "doubles": return "Doubles"
-        case "mixed": return "Mixed"
-        default: return "Singles"
+        case "doubles": base = "Doubles"
+        case "mixed": base = "Mixed"
+        default: base = "Singles"
         }
+        if match.scoringSystemRaw == "threeByFifteen" {
+            return "\(base) · 3×15"
+        }
+        return base
     }
 
     private var matchDuration: String? {

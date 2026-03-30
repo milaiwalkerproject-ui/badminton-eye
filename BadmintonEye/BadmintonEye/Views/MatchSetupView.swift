@@ -7,6 +7,7 @@ struct MatchSetupView: View {
     @Query(sort: \Player.name) private var existingPlayers: [Player]
 
     @State private var selectedFormat: MatchFormat = .singles
+    @State private var selectedScoringSystem: ScoringSystem = .standard21
     @State private var playerAName: String = ""
     @State private var playerBName: String = ""
     @State private var playerA2Name: String = ""
@@ -40,6 +41,13 @@ struct MatchSetupView: View {
                     Text("Mixed").tag(MatchFormat.mixed)
                 }
                 .pickerStyle(.segmented)
+            }
+
+            Section("Scoring") {
+                Picker("Scoring System", selection: $selectedScoringSystem) {
+                    Text("Standard (21 pts, best of 3)").tag(ScoringSystem.standard21)
+                    Text("BWF 3×15 (15 pts, best of 5)").tag(ScoringSystem.threeByFifteen)
+                }
             }
 
             Section("Team A") {
@@ -163,7 +171,8 @@ struct MatchSetupView: View {
         case .singles:
             state = MatchState.newSinglesMatch(
                 teamAName: playerAName.isEmpty ? nil : playerAName,
-                teamBName: playerBName.isEmpty ? nil : playerBName
+                teamBName: playerBName.isEmpty ? nil : playerBName,
+                scoringSystem: selectedScoringSystem
             )
         case .doubles:
             let aNames = [
@@ -176,7 +185,8 @@ struct MatchSetupView: View {
             ]
             state = MatchState.newDoublesMatch(
                 teamANames: aNames,
-                teamBNames: bNames
+                teamBNames: bNames,
+                scoringSystem: selectedScoringSystem
             )
         case .mixed:
             let aNames = [
@@ -189,7 +199,8 @@ struct MatchSetupView: View {
             ]
             state = MatchState.newMixedMatch(
                 teamANames: aNames,
-                teamBNames: bNames
+                teamBNames: bNames,
+                scoringSystem: selectedScoringSystem
             )
         }
         matchState = state

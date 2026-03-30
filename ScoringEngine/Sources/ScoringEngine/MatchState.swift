@@ -22,6 +22,7 @@ public final class StateSnapshot: @unchecked Sendable {
 
 public struct MatchState: Sendable {
     public let format: MatchFormat
+    public var scoringSystem: ScoringSystem = .standard21
     public var games: [GameState]
     public var currentGame: GameState
     public var matchPhase: MatchPhase = .inProgress
@@ -47,12 +48,19 @@ public struct MatchState: Sendable {
 
     // MARK: - Factory Methods
 
+    /// Convenience accessor for the current scoring rules.
+    public var scoringRules: ScoringRules {
+        ScoringRules.rules(for: scoringSystem)
+    }
+
     public static func newSinglesMatch(
         teamAName: String? = nil,
-        teamBName: String? = nil
+        teamBName: String? = nil,
+        scoringSystem: ScoringSystem = .standard21
     ) -> MatchState {
         MatchState(
             format: .singles,
+            scoringSystem: scoringSystem,
             games: [],
             currentGame: GameState(gameNumber: 1),
             teamANames: [teamAName ?? "Player 1"],
@@ -62,12 +70,14 @@ public struct MatchState: Sendable {
 
     public static func newDoublesMatch(
         teamANames: [String]? = nil,
-        teamBNames: [String]? = nil
+        teamBNames: [String]? = nil,
+        scoringSystem: ScoringSystem = .standard21
     ) -> MatchState {
         let aNames = teamANames ?? ["Player A1", "Player A2"]
         let bNames = teamBNames ?? ["Player B1", "Player B2"]
         var state = MatchState(
             format: .doubles,
+            scoringSystem: scoringSystem,
             games: [],
             currentGame: GameState(gameNumber: 1),
             teamANames: aNames,
@@ -79,12 +89,14 @@ public struct MatchState: Sendable {
 
     public static func newMixedMatch(
         teamANames: [String]? = nil,
-        teamBNames: [String]? = nil
+        teamBNames: [String]? = nil,
+        scoringSystem: ScoringSystem = .standard21
     ) -> MatchState {
         let aNames = teamANames ?? ["Player A1", "Player A2"]
         let bNames = teamBNames ?? ["Player B1", "Player B2"]
         var state = MatchState(
             format: .mixed,
+            scoringSystem: scoringSystem,
             games: [],
             currentGame: GameState(gameNumber: 1),
             teamANames: aNames,
@@ -116,6 +128,7 @@ public struct MatchState: Sendable {
 extension MatchState: Equatable {
     public static func == (lhs: MatchState, rhs: MatchState) -> Bool {
         lhs.format == rhs.format
+            && lhs.scoringSystem == rhs.scoringSystem
             && lhs.games == rhs.games
             && lhs.currentGame == rhs.currentGame
             && lhs.matchPhase == rhs.matchPhase

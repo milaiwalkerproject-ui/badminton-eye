@@ -24,6 +24,13 @@ final class PersistedMatch {
     var game2ScoreB: Int?
     var game3ScoreA: Int?
     var game3ScoreB: Int?
+    var game4ScoreA: Int?
+    var game4ScoreB: Int?
+    var game5ScoreA: Int?
+    var game5ScoreB: Int?
+
+    // Scoring system ("standard21" or "threeByFifteen"), defaults to standard21 for CloudKit compat
+    var scoringSystemRaw: String = "standard21"
 
     // Winner side ("sideA" or "sideB"), set on match completion for efficient list rendering
     var winnerSide: String?

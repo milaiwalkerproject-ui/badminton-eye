@@ -55,6 +55,7 @@ final class LiveMatchViewModel {
         // Create persisted match
         let match = PersistedMatch()
         match.format = state.format.rawValue
+        match.scoringSystemRaw = state.scoringSystem.rawValue
         match.playerAName = state.teamANames.first
         match.playerBName = state.teamBNames.first
         if state.format != .singles {
@@ -204,6 +205,14 @@ final class LiveMatchViewModel {
         if allGames.count >= 3 {
             persistedMatch.game3ScoreA = allGames[2].scoreA
             persistedMatch.game3ScoreB = allGames[2].scoreB
+        }
+        if allGames.count >= 4 {
+            persistedMatch.game4ScoreA = allGames[3].scoreA
+            persistedMatch.game4ScoreB = allGames[3].scoreB
+        }
+        if allGames.count >= 5 {
+            persistedMatch.game5ScoreA = allGames[4].scoreA
+            persistedMatch.game5ScoreB = allGames[4].scoreB
         }
     }
 }

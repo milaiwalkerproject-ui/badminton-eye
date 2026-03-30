@@ -45,3 +45,36 @@ public enum MatchEvent: Codable, Sendable, Equatable {
     case undo
     case abandon
 }
+
+/// Scoring format: standard BWF 21-point (best-of-3) or 3×15 (best-of-5).
+public enum ScoringSystem: String, Codable, Sendable, Equatable {
+    case standard21
+    case threeByFifteen
+}
+
+/// Parameterized scoring thresholds — eliminates hardcoded magic numbers.
+public struct ScoringRules: Sendable, Equatable {
+    public let pointsToWin: Int
+    public let deuceThreshold: Int
+    public let capScore: Int
+    public let gamesToWin: Int
+    public let maxGames: Int
+    public let midGameSwitchPoint: Int
+
+    public static let standard21 = ScoringRules(
+        pointsToWin: 21, deuceThreshold: 20, capScore: 30,
+        gamesToWin: 2, maxGames: 3, midGameSwitchPoint: 11
+    )
+
+    public static let threeByFifteen = ScoringRules(
+        pointsToWin: 15, deuceThreshold: 14, capScore: 17,
+        gamesToWin: 3, maxGames: 5, midGameSwitchPoint: 8
+    )
+
+    public static func rules(for system: ScoringSystem) -> ScoringRules {
+        switch system {
+        case .standard21: return .standard21
+        case .threeByFifteen: return .threeByFifteen
+        }
+    }
+}

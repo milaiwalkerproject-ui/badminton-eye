@@ -5,6 +5,7 @@ import ScoringEngine
 /// Used solely for JSON serialization to SwiftData for crash recovery.
 struct CodableMatchState: Codable {
     let format: MatchFormat
+    var scoringSystem: ScoringSystem?  // Optional for backward compat with v1.0/v1.1 JSON
     var games: [GameState]
     var currentGame: GameState
     var matchPhase: MatchPhase
@@ -18,6 +19,7 @@ struct CodableMatchState: Codable {
 
     init(from state: MatchState) {
         self.format = state.format
+        self.scoringSystem = state.scoringSystem
         self.games = state.games
         self.currentGame = state.currentGame
         self.matchPhase = state.matchPhase
@@ -31,22 +33,26 @@ struct CodableMatchState: Codable {
     }
 
     func toMatchState() -> MatchState {
+        let system = scoringSystem ?? .standard21
         var state: MatchState
         switch format {
         case .singles:
             state = MatchState.newSinglesMatch(
                 teamAName: teamANames.first,
-                teamBName: teamBNames.first
+                teamBName: teamBNames.first,
+                scoringSystem: system
             )
         case .doubles:
             state = MatchState.newDoublesMatch(
                 teamANames: teamANames,
-                teamBNames: teamBNames
+                teamBNames: teamBNames,
+                scoringSystem: system
             )
         case .mixed:
             state = MatchState.newMixedMatch(
                 teamANames: teamANames,
-                teamBNames: teamBNames
+                teamBNames: teamBNames,
+                scoringSystem: system
             )
         }
         state.games = games

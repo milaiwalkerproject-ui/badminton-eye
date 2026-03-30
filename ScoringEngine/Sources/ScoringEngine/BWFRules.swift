@@ -1,25 +1,28 @@
-// BWFRules.swift — BWF rule computations as computed properties on MatchState
+// BWFRules.swift — BWF rule computations using parameterized ScoringRules
 
 extension MatchState {
-    /// Both scores >= 20 (Law 7.3)
+    /// Both scores >= deuceThreshold (Law 7.3 / 3×15 equivalent)
     public var isDeuce: Bool {
-        currentGame.scoreA >= 20 && currentGame.scoreB >= 20
+        let threshold = scoringRules.deuceThreshold
+        return currentGame.scoreA >= threshold && currentGame.scoreB >= threshold
     }
 
-    /// Both scores == 29 (Law 7.4)
+    /// Both scores at one below cap (Law 7.4 / 3×15 equivalent)
     public var isAtCap: Bool {
-        currentGame.scoreA == 29 && currentGame.scoreB == 29
+        let capMinusOne = scoringRules.capScore - 1
+        return currentGame.scoreA == capMinusOne && currentGame.scoreB == capMinusOne
     }
 
-    /// Game is won: score >= 21 with 2-point lead, OR score == 30 at cap (Law 7.1, 7.3, 7.4)
+    /// Game is won: score >= pointsToWin with 2-point lead, OR score == capScore at cap
     public var isGameWon: Bool {
+        let rules = scoringRules
         let a = currentGame.scoreA
         let b = currentGame.scoreB
         let maxScore = max(a, b)
         let minScore = min(a, b)
 
-        if maxScore < 21 { return false }
-        if maxScore == 30 { return true }
+        if maxScore < rules.pointsToWin { return false }
+        if maxScore == rules.capScore { return true }
         return maxScore - minScore >= 2
     }
 
@@ -43,34 +46,30 @@ extension MatchState {
         return (a, b)
     }
 
-    /// One side has won 2 games (best-of-3)
+    /// One side has won enough games (best-of-3 or best-of-5)
     public var isMatchComplete: Bool {
         let won = gamesWon
-        return won.sideA >= 2 || won.sideB >= 2
+        let target = scoringRules.gamesToWin
+        return won.sideA >= target || won.sideB >= target
     }
 
     /// Which side won the match (nil if not complete)
     public var matchWinner: Side? {
         guard isMatchComplete else { return nil }
         let won = gamesWon
-        return won.sideA >= 2 ? .sideA : .sideB
+        let target = scoringRules.gamesToWin
+        return won.sideA >= target ? .sideA : .sideB
     }
 
-    /// Should switch sides: end of game (Law 8.1.1, 8.1.2) or at 11 in third game (Law 8.1.3)
+    /// Should switch sides: end of game or at midGameSwitchPoint in final game
     public var shouldSwitchSides: Bool {
-        // End of game triggers side switch (handled during game transition)
-        // Mid-third-game switch at 11
-        if currentGame.gameNumber == 3
+        let rules = scoringRules
+        let finalGame = rules.maxGames // 3 for standard21, 5 for 3×15
+
+        if currentGame.gameNumber == finalGame
             && !currentGame.hasSwitchedInThirdGame
-            && max(currentGame.scoreA, currentGame.scoreB) == 11
-            && min(currentGame.scoreA, currentGame.scoreB) < 11
-        {
-            return true
-        }
-        // Also trigger when the leading score first reaches 11 (could be 11-11 scenario)
-        if currentGame.gameNumber == 3
-            && !currentGame.hasSwitchedInThirdGame
-            && (currentGame.scoreA == 11 || currentGame.scoreB == 11)
+            && (currentGame.scoreA == rules.midGameSwitchPoint
+                || currentGame.scoreB == rules.midGameSwitchPoint)
         {
             return true
         }
