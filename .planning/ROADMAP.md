@@ -2,8 +2,9 @@
 
 ## Milestones
 
-- ✅ **v1.0 MVP** -- Phases 1-5 (shipped 2026-03-29)
-- ✅ **v1.1 Hawk Eye Pro + Analytics** -- Phases 6-9 (shipped 2026-03-29)
+- [x] **v1.0 MVP** -- Phases 1-5 (shipped 2026-03-29)
+- [x] **v1.1 Hawk Eye Pro + Analytics** -- Phases 6-9 (shipped 2026-03-29)
+- [ ] **v1.2 Haptic Scoring, BWF 3x15 & Multi-Camera** -- Phases 10-12 (in progress)
 
 ## Phases
 
@@ -18,16 +19,35 @@
 
 </details>
 
-### v1.1 Hawk Eye Pro + Analytics
-
-**Milestone Goal:** Make Hawk Eye production-ready with real AI shuttle detection and 240fps capture, and add match analytics for competitive players.
+<details>
+<summary>v1.1 Hawk Eye Pro + Analytics (Phases 6-9) -- SHIPPED 2026-03-29</summary>
 
 - [x] **Phase 6: Match Analytics** - Statistics dashboard with win streaks, scoring patterns, and performance trends via Swift Charts
 - [x] **Phase 7: Training Pipeline** - Python-based YOLO training workflow with annotation guide and CoreML export
 - [x] **Phase 8: 240fps Video Capture** - Delegate-based high-frame-rate capture with circular buffer and slow-motion replay
 - [x] **Phase 9: Real AI Integration** - Replace placeholder model with trained YOLO, wire through Vision framework and existing trajectory pipeline
 
+</details>
+
+### v1.2 Haptic Scoring, BWF 3x15 & Multi-Camera
+
+**Milestone Goal:** Add haptic score feedback, support BWF's new 3x15 scoring format as a user option, and enable multi-camera Hawk Eye for higher confidence.
+
+- [ ] **Phase 10: BWF 3x15 Scoring Format** - Users can play matches using the new BWF best-of-5 games-to-15 scoring format
+- [ ] **Phase 11: Haptic Score Feedback** - Users feel tactile confirmation on every point, game point, and match point
+- [ ] **Phase 12: Multi-Camera Hawk Eye** - Users get higher-confidence Hawk Eye calls by providing a second camera angle
+
 ## Phase Details
+
+<details>
+<summary>v1.0 Phase Details (Phases 1-5) -- SHIPPED</summary>
+
+See [v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for full phase details.
+
+</details>
+
+<details>
+<summary>v1.1 Phase Details (Phases 6-9) -- SHIPPED</summary>
 
 ### Phase 6: Match Analytics
 **Goal**: Competitive players can analyze their performance through statistics and trend charts
@@ -85,6 +105,43 @@ Plans:
 - [x] 09-01-PLAN.md -- CoreMLShuttleDetector + HawkEyePipeline real-frame analysis with frame-skip
 - [x] 09-02-PLAN.md -- Detector selection wiring, fallback logic, and Demo Mode badge
 
+</details>
+
+### Phase 10: BWF 3x15 Scoring Format
+**Goal**: Users can select and play a full match using BWF 3x15 scoring rules, with correct persistence, history display, and Watch sync
+**Depends on**: Nothing (first phase of v1.2; builds on existing ScoringEngine from v1.0)
+**Requirements**: FMT-01, FMT-02, FMT-03, FMT-04, FMT-05, FMT-06, FMT-07
+**Success Criteria** (what must be TRUE):
+  1. User sees a format picker (standard 21 vs 3x15) on the new match setup screen and can select either
+  2. A 3x15 match plays correctly: games to 15, deuce at 14-all, best of 5 games determines the winner
+  3. Existing v1.0/v1.1 matches open without errors and default to standard-21 format
+  4. Match history clearly shows which scoring format was used for each match
+  5. Apple Watch displays the chosen scoring format and syncs 3x15 match state correctly
+**Plans**: 2 (TBD)
+
+### Phase 11: Haptic Score Feedback
+**Goal**: Users receive distinct haptic pulses on score changes during live play, configurable via a settings toggle that syncs across devices
+**Depends on**: Phase 10 (haptic triggers fire on scoring events from either format)
+**Requirements**: HAP-01, HAP-02, HAP-03, HAP-04, HAP-05
+**Success Criteria** (what must be TRUE):
+  1. User can find and toggle haptic feedback on/off in Settings (default is on)
+  2. iPhone vibrates with a short tap on every point scored during a live match
+  3. iPhone produces a distinct stronger vibration on game point and match point events
+  4. Apple Watch delivers haptic feedback on score changes during a live match
+  5. Changing the haptic toggle on iPhone reflects on Watch (and vice versa) after sync
+**Plans**: 2 (TBD)
+
+### Phase 12: Multi-Camera Hawk Eye
+**Goal**: Users can import a second video angle for a Hawk Eye challenge and receive a fused, higher-confidence landing prediction
+**Depends on**: Phase 10, Phase 11 (sequential build order; uses stable scoring + haptic foundation)
+**Requirements**: CAM-01, CAM-02, CAM-03, CAM-04, CAM-05
+**Success Criteria** (what must be TRUE):
+  1. User can import a second video angle from their photo library during a Hawk Eye challenge
+  2. Each video angle is analyzed independently and the user can see per-angle results
+  3. The fused multi-angle result displays a single landing prediction with confidence higher than either angle alone
+  4. Single-angle Hawk Eye challenges work exactly as before when no second angle is provided
+**Plans**: 2 (TBD)
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -98,3 +155,9 @@ Plans:
 | 7. Training Pipeline | v1.1 | 2/2 | Complete | 2026-03-29 |
 | 8. 240fps Video Capture | v1.1 | 2/2 | Complete | 2026-03-29 |
 | 9. Real AI Integration | v1.1 | 2/2 | Complete | 2026-03-29 |
+| 10. BWF 3x15 Scoring Format | v1.2 | 0/2 | Not started | - |
+| 11. Haptic Score Feedback | v1.2 | 0/2 | Not started | - |
+| 12. Multi-Camera Hawk Eye | v1.2 | 0/2 | Not started | - |
+
+---
+*Roadmap updated: 2026-03-29 -- v1.2 phases added*

@@ -5,21 +5,21 @@
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
-**Current focus:** v1.2 — Haptic Scoring, BWF 3×15 & Multi-Camera
+**Current focus:** v1.2 — Haptic Scoring, BWF 3x15 & Multi-Camera
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 10 of 12
 Plan: —
-Status: Defining requirements
-Last activity: 2026-03-29 — Milestone v1.2 started
+Status: Ready to plan
+Last activity: 2026-03-29 — Roadmap created
 
 Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16 (v1.0)
+- Total plans completed: 24 (16 v1.0 + 8 v1.1)
 - Average duration: —
 - Total execution time: —
 
@@ -28,6 +28,8 @@ Progress: [░░░░░░░░░░] 0%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1-5 (v1.0) | 16 | — | — |
+| 6-9 (v1.1) | 8 | — | — |
+| 10-12 (v1.2) | 0/6 | — | — |
 
 ## Accumulated Context
 
@@ -37,7 +39,7 @@ Decisions are logged in PROJECT.md Key Decisions table.
 Carried forward from v1.0:
 
 - SwiftData models use optional properties and defaults for CloudKit
-- Placeholder Core ML shuttle detection (to be replaced in Phase 9)
+- Placeholder Core ML shuttle detection (replaced in Phase 9 with real CoreMLShuttleDetector)
 - Gaussian elimination homography solve (no external linear algebra)
 
 v1.1 roadmap decisions:
@@ -46,10 +48,10 @@ v1.1 roadmap decisions:
 - 240fps capture (Phase 8) before AI integration: testable with placeholder model
 - Real AI integration last (Phase 9): depends on trained model + 240fps pipeline
 
-Phase 6 Plan 01 decisions:
-- ViewModel receives [PersistedMatch] array rather than owning @Query for testability
-- Auto-detect "me" player from most frequent playerAName across matches
-- ContentUnavailableView for empty state (iOS 17+ baseline)
+v1.2 roadmap decisions:
+- BWF 3x15 first (Phase 10): pure scoring logic, no hardware deps, foundational for haptics
+- Haptics second (Phase 11): must trigger on both scoring formats, quick win after scoring stabilizes
+- Multi-camera last (Phase 12): highest complexity, device-dependent, builds on stable pipeline
 
 ### Pending Todos
 
@@ -57,12 +59,12 @@ None yet.
 
 ### Blockers/Concerns
 
-- Dataset quality is the bottleneck for real model training (need 2,000+ diverse annotated images)
-- Neural Engine throughput at 240fps needs on-device profiling (60 YOLO inferences/sec target)
-- BWF 3x15 vote result (April 25, 2026) may require scoring format addition
+- BWF 3x15 exact thresholds (deuce at 14? cap at 17?) — depends on April 25 vote; implement best-known rules, parameterize for easy update
+- Dual 240fps CircularFrameBuffer memory (~8.6GB) — use asymmetric FPS (240 primary + 60 secondary) for multi-camera
+- Watch haptics threading — WatchMatchViewModel not @MainActor; haptic calls from WCSession callbacks silently fail on background threads
 
 ## Session Continuity
 
 Last session: 2026-03-29
-Stopped at: v1.1 milestone complete — all 4 phases (6-9) built and verified
+Stopped at: v1.2 roadmap created — ready to plan Phase 10
 Resume file: None
