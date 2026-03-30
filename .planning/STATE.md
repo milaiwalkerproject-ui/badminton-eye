@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
-**Current focus:** v1.2 — Haptic Scoring, BWF 3x15 & Multi-Camera
+**Current focus:** v1.2 complete — all phases shipped
 
 ## Current Position
 
-Phase: 10 of 12
-Plan: —
-Status: Ready to plan
-Last activity: 2026-03-29 — Roadmap created
+Phase: 12 of 12 (All complete)
+Plan: All plans complete
+Status: Milestone complete
+Last activity: 2026-03-29 — All v1.2 phases executed, build verified, 53 tests passing
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
