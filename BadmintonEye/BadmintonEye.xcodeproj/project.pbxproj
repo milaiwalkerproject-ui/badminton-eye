@@ -72,6 +72,8 @@
 		V81001 /* CircularFrameBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = V82001 /* CircularFrameBuffer.swift */; };
 		V91001 /* CoreMLShuttleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = V92001 /* CoreMLShuttleDetector.swift */; };
 		HP1001 /* HapticFeedbackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = HP2001 /* HapticFeedbackService.swift */; };
+		MC1001 /* ResultFusionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = MC2001 /* ResultFusionService.swift */; };
+		MC1002 /* MultiAngleAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = MC2002 /* MultiAngleAnalysisView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -161,6 +163,8 @@
 		V82001 /* CircularFrameBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularFrameBuffer.swift; sourceTree = "<group>"; };
 		V92001 /* CoreMLShuttleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMLShuttleDetector.swift; sourceTree = "<group>"; };
 		HP2001 /* HapticFeedbackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticFeedbackService.swift; sourceTree = "<group>"; };
+		MC2001 /* ResultFusionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultFusionService.swift; sourceTree = "<group>"; };
+		MC2002 /* MultiAngleAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiAngleAnalysisView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -275,6 +279,7 @@
 				S20002 /* StatsView.swift */,
 				V62001 /* WinRateTrendChart.swift */,
 				V62002 /* ScoringPatternsChart.swift */,
+				MC2002 /* MultiAngleAnalysisView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -293,6 +298,7 @@
 				V82001 /* CircularFrameBuffer.swift */,
 				V92001 /* CoreMLShuttleDetector.swift */,
 				HP2001 /* HapticFeedbackService.swift */,
+				MC2001 /* ResultFusionService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -555,6 +561,8 @@
 				V81001 /* CircularFrameBuffer.swift in Sources */,
 				V91001 /* CoreMLShuttleDetector.swift in Sources */,
 				HP1001 /* HapticFeedbackService.swift in Sources */,
+				MC1001 /* ResultFusionService.swift in Sources */,
+				MC1002 /* MultiAngleAnalysisView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
