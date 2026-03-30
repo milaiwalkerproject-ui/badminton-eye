@@ -1,5 +1,23 @@
 # Milestones
 
+## v1.7 — 3×15 Service Continuity & Doubles Game-3 Tests
+
+**Shipped:** 2026-03-30
+**Phases:** 2 (21-22) | **Requirements:** 4/4 verified
+**Tests:** 84 (9 suites, +4 from v1.6)
+
+### Key Accomplishments
+
+1. **3×15 cross-game service** — Two tests verifying loser serves in game 2 and game 3 under 3×15 format (same resetServiceForNewGame code path, now explicitly covered)
+2. **Doubles game-3 service** — Test documenting that loser of game 2 in doubles serves first in game 3 with correct doublesRotation reset
+3. **Doubles boundary undo** — Test verifying that undoing the first point of game 2 fully restores the cross-game-boundary state (server, rotation, score, completed-game list)
+
+### Archive
+
+- [v1.7-REQUIREMENTS.md](.planning/REQUIREMENTS.md)
+
+---
+
 ## v1.6 — Undo Edge Cases & Cross-Game Service Tests
 
 **Shipped:** 2026-03-30

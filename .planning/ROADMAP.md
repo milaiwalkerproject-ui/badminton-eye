@@ -9,7 +9,7 @@
 - [x] **v1.4 Test Coverage & Accessibility** -- Phases 16-17 (shipped 2026-03-29)
 - [x] **v1.5 Watch Haptic Reliability** -- Phase 18 (shipped 2026-03-30)
 - [x] **v1.6 Undo Edge Cases & Cross-Game Service Tests** -- Phases 19-20 (shipped 2026-03-30)
-- [ ] **v1.7 3×15 Service Continuity & Doubles Game-3 Tests** -- Phases 21-22 (in progress)
+- [x] **v1.7 3×15 Service Continuity & Doubles Game-3 Tests** -- Phases 21-22 (shipped 2026-03-30)
 
 ## Phases
 
@@ -299,8 +299,8 @@ Plans:
 
 **Milestone Goal:** Close remaining cross-game service test gaps: who serves first in 3×15 games 2 and 3, doubles game 2→3 service reset, and undo across a game boundary in doubles.
 
-- [ ] **Phase 21: 3×15 Cross-Game Service** - Two tests verifying loser serves in game 2 and game 3 under 3×15 format
-- [ ] **Phase 22: Doubles Game-3 & Boundary Undo** - Test that doubles game 2→3 correctly resets rotation to loser's side, plus undo of first game-2 point restores cross-game state
+- [x] **Phase 21: 3×15 Cross-Game Service** - Two tests verifying loser serves in game 2 and game 3 under 3×15 format
+- [x] **Phase 22: Doubles Game-3 & Boundary Undo** - Test that doubles game 2→3 correctly resets rotation to loser's side, plus undo of first game-2 point restores cross-game state
 
 ## Phase Details (v1.7)
 
@@ -344,8 +344,8 @@ Plans:
 | 18. Watch Haptic Reliability | v1.5 | 1/1 | Complete | 2026-03-30 |
 | 19. Undo Edge Cases | v1.6 | 1/1 | Complete | 2026-03-30 |
 | 20. Cross-Game Service Tests | v1.6 | 1/1 | Complete | 2026-03-30 |
-| 21. 3×15 Cross-Game Service | v1.7 | 0/1 | In Progress | — |
-| 22. Doubles Game-3 & Boundary Undo | v1.7 | 0/1 | Pending | — |
+| 21. 3×15 Cross-Game Service | v1.7 | 1/1 | Complete | 2026-03-30 |
+| 22. Doubles Game-3 & Boundary Undo | v1.7 | 1/1 | Complete | 2026-03-30 |
 
 ---
-*Roadmap updated: 2026-03-30 -- v1.7 started*
+*Roadmap updated: 2026-03-30 -- v1.7 shipped*

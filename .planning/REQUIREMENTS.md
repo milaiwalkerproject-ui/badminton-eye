@@ -7,13 +7,13 @@
 
 ### 3×15 Cross-Game Service
 
-- [ ] **SVC3X-01**: After sideA wins game 1 in 3×15 format, sideB (loser) serves first in game 2 from the right court
-- [ ] **SVC3X-02**: After sideB wins game 2 in 3×15 (with sideA having won game 1), sideA (loser of game 2) serves first in game 3
+- [x] **SVC3X-01**: After sideA wins game 1 in 3×15 format, sideB (loser) serves first in game 2 from the right court
+- [x] **SVC3X-02**: After sideB wins game 2 in 3×15 (with sideA having won game 1), sideA (loser of game 2) serves first in game 3
 
 ### Doubles Game-3 Service
 
-- [ ] **DBLS3-01**: After sideB wins game 2 in doubles (with sideA winning game 1), sideA (loser of game 2) serves first in game 3 with correctly reset doublesRotation
-- [ ] **UNDO-G-01**: Undoing the first point of game 2 in doubles restores the cross-game-boundary state (correct server, rotation, and game 1 still in games array)
+- [x] **DBLS3-01**: After sideB wins game 2 in doubles (with sideA winning game 1), sideA (loser of game 2) serves first in game 3 with correctly reset doublesRotation
+- [x] **UNDO-G-01**: Undoing the first point of game 2 in doubles restores the cross-game-boundary state (correct server, rotation, and game 1 still in games array)
 
 ## Out of Scope
 
@@ -26,10 +26,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SVC3X-01 | Phase 21 | Pending |
-| SVC3X-02 | Phase 21 | Pending |
-| DBLS3-01 | Phase 22 | Pending |
-| UNDO-G-01 | Phase 22 | Pending |
+| SVC3X-01 | Phase 21 | Complete |
+| SVC3X-02 | Phase 21 | Complete |
+| DBLS3-01 | Phase 22 | Complete |
+| UNDO-G-01 | Phase 22 | Complete |
 
 **Coverage:**
 - v1.7 requirements: 4 total
