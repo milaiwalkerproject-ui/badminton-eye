@@ -65,6 +65,8 @@
 		H10008 /* TrajectoryReplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20008 /* TrajectoryReplayView.swift */; };
 		S10001 /* MatchStatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20001 /* MatchStatsViewModel.swift */; };
 		S10002 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20002 /* StatsView.swift */; };
+		T70001 /* ShuttleDetecting.swift in Sources */ = {isa = PBXBuildFile; fileRef = T72001 /* ShuttleDetecting.swift */; };
+		T70002 /* PlaceholderShuttleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = T72002 /* PlaceholderShuttleDetector.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -147,6 +149,8 @@
 		H20008 /* TrajectoryReplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryReplayView.swift; sourceTree = "<group>"; };
 		S20001 /* MatchStatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchStatsViewModel.swift; sourceTree = "<group>"; };
 		S20002 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
+		T72001 /* ShuttleDetecting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShuttleDetecting.swift; sourceTree = "<group>"; };
+		T72002 /* PlaceholderShuttleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderShuttleDetector.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -272,6 +276,8 @@
 				H20002 /* VideoCaptureManager.swift */,
 				H20006 /* HawkEyePipeline.swift */,
 				H20007 /* TrajectoryCalculator.swift */,
+				T72001 /* ShuttleDetecting.swift */,
+				T72002 /* PlaceholderShuttleDetector.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -527,6 +533,8 @@
 				H10008 /* TrajectoryReplayView.swift in Sources */,
 				S10001 /* MatchStatsViewModel.swift in Sources */,
 				S10002 /* StatsView.swift in Sources */,
+				T70001 /* ShuttleDetecting.swift in Sources */,
+				T70002 /* PlaceholderShuttleDetector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

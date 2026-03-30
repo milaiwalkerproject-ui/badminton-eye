@@ -16,6 +16,15 @@ final class HawkEyePipeline: @unchecked Sendable {
     // MARK: - Private
 
     private let calculator = TrajectoryCalculator()
+    private let detector: ShuttleDetecting
+
+    // MARK: - Init
+
+    /// Creates a pipeline with the given shuttle detector.
+    /// Defaults to PlaceholderShuttleDetector for development and UI testing.
+    init(detector: ShuttleDetecting = PlaceholderShuttleDetector()) {
+        self.detector = detector
+    }
 
     // MARK: - Analysis
 
@@ -78,14 +87,17 @@ final class HawkEyePipeline: @unchecked Sendable {
             }
         }
 
-        // Step 4: Placeholder shuttle detection
-        // TODO: Replace with real Core ML shuttle detection model (YOLO26 nano)
-        // Placeholder generates realistic trajectory for UI development and user testing
+        // Step 4: Shuttle detection (via injected ShuttleDetecting conformance)
         let detectionCount = Int.random(in: 8...15)
-        let simulatedImagePositions = generatePlaceholderPositions(
-            count: detectionCount,
-            imageSize: imageSize
-        )
+        let observations: [ShuttleObservation]
+        do {
+            observations = try await detector.detect(imageSize: imageSize, frameCount: detectionCount)
+        } catch {
+            errorMessage = "Shuttle detection failed: \(error.localizedDescription)"
+            isAnalyzing = false
+            return
+        }
+        let simulatedImagePositions = observations.map { $0.position }
 
         progress = 0.7
         try? await Task.sleep(for: .seconds(1.0))
@@ -125,42 +137,4 @@ final class HawkEyePipeline: @unchecked Sendable {
         isAnalyzing = false
     }
 
-    // MARK: - Placeholder Detection
-
-    /// Generates simulated shuttle positions along a realistic parabolic arc.
-    /// Starts from one side of the court, arcs upward, then descends toward the opposite side.
-    /// Adds small random noise (+-5 pixels) for realism.
-    private func generatePlaceholderPositions(count: Int, imageSize: CGSize) -> [CGPoint] {
-        let w = imageSize.width
-        let h = imageSize.height
-
-        // Shuttle travels from bottom-left area to top-right area of image
-        let startX = w * 0.2
-        let endX = w * 0.75
-        let startY = h * 0.8
-        let endY = h * 0.3
-
-        var positions = [CGPoint]()
-
-        for i in 0..<count {
-            let t = Double(i) / Double(count - 1)
-
-            // Linear horizontal movement
-            let x = startX + (endX - startX) * t
-
-            // Parabolic vertical movement (arcs upward then descends)
-            // Peak at t=0.4, creating a natural shuttle arc
-            let baseY = startY + (endY - startY) * t
-            let arcHeight = -h * 0.15 * (4 * t * (1 - t)) // parabolic arc offset
-            let y = baseY + arcHeight
-
-            // Add random noise (+-5 pixels)
-            let noiseX = Double.random(in: -5...5)
-            let noiseY = Double.random(in: -5...5)
-
-            positions.append(CGPoint(x: x + noiseX, y: y + noiseY))
-        }
-
-        return positions
-    }
 }
