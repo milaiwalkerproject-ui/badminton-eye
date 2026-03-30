@@ -71,6 +71,7 @@
 		V61002 /* ScoringPatternsChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = V62002 /* ScoringPatternsChart.swift */; };
 		V81001 /* CircularFrameBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = V82001 /* CircularFrameBuffer.swift */; };
 		V91001 /* CoreMLShuttleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = V92001 /* CoreMLShuttleDetector.swift */; };
+		HP1001 /* HapticFeedbackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = HP2001 /* HapticFeedbackService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -159,6 +160,7 @@
 		V62002 /* ScoringPatternsChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoringPatternsChart.swift; sourceTree = "<group>"; };
 		V82001 /* CircularFrameBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularFrameBuffer.swift; sourceTree = "<group>"; };
 		V92001 /* CoreMLShuttleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMLShuttleDetector.swift; sourceTree = "<group>"; };
+		HP2001 /* HapticFeedbackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticFeedbackService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -290,6 +292,7 @@
 				T72002 /* PlaceholderShuttleDetector.swift */,
 				V82001 /* CircularFrameBuffer.swift */,
 				V92001 /* CoreMLShuttleDetector.swift */,
+				HP2001 /* HapticFeedbackService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -551,6 +554,7 @@
 				V61002 /* ScoringPatternsChart.swift in Sources */,
 				V81001 /* CircularFrameBuffer.swift in Sources */,
 				V91001 /* CoreMLShuttleDetector.swift in Sources */,
+				HP1001 /* HapticFeedbackService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

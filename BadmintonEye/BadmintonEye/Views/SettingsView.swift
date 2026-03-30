@@ -6,6 +6,7 @@ struct SettingsView: View {
     @Bindable private var authManager = AuthManager.shared
     private var subscriptionManager = SubscriptionManager.shared
     @State private var showPaywall = false
+    @AppStorage("hapticFeedbackEnabled") private var hapticEnabled = true
 
     var body: some View {
         List {
@@ -16,6 +17,8 @@ struct SettingsView: View {
             }
 
             premiumSection
+
+            hapticSection
 
             aboutSection
         }
@@ -139,6 +142,29 @@ struct SettingsView: View {
             }
         } header: {
             Text("Account")
+        }
+    }
+
+    // MARK: - Haptic Feedback
+
+    private var hapticSection: some View {
+        Section {
+            Toggle(isOn: $hapticEnabled) {
+                HStack(spacing: 12) {
+                    Image(systemName: "hand.tap.fill")
+                        .foregroundStyle(.orange)
+                        .font(.title3)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Haptic Feedback")
+                            .font(.subheadline)
+                        Text("Vibrate on score changes during live play")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+        } header: {
+            Text("Scoring")
         }
     }
 

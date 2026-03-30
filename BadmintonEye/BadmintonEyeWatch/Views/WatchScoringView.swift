@@ -6,6 +6,7 @@ struct WatchScoringView: View {
     @State var viewModel: WatchMatchViewModel
     @State private var previousGameCount: Int = 0
     @State private var wasMatchActive: Bool = true
+    @AppStorage("hapticFeedbackEnabled") private var hapticEnabled = true
 
     var body: some View {
         GeometryReader { geo in
@@ -47,7 +48,7 @@ struct WatchScoringView: View {
         .overlay(alignment: .center) {
             GameDotsIndicator(
                 currentGame: viewModel.currentGameNumber,
-                totalGames: 3
+                totalGames: viewModel.state?.scoringRules.maxGames ?? 3
             )
         }
         .overlay(alignment: .topTrailing) {
@@ -61,15 +62,13 @@ struct WatchScoringView: View {
     }
 
     private func playHaptic(gamesBefore: Int) {
+        guard hapticEnabled else { return }
         if !viewModel.isMatchActive {
-            // Match just completed
-            WKInterfaceDevice.current().play(.notification) // long buzz
+            WKInterfaceDevice.current().play(.notification)
         } else if viewModel.completedGames.count > gamesBefore {
-            // Game just won
-            WKInterfaceDevice.current().play(.success) // double tap
+            WKInterfaceDevice.current().play(.success)
         } else {
-            // Normal point scored
-            WKInterfaceDevice.current().play(.click) // single tap
+            WKInterfaceDevice.current().play(.click)
         }
     }
 }

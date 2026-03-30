@@ -84,6 +84,21 @@ final class LiveMatchViewModel {
                 showGameEndOverlay = true
             }
         }
+
+        // Haptic feedback
+        let matchComplete = state.matchPhase == .complete
+        let gamePoint = state.isDeuce || state.isAtCap
+        Task { @MainActor in
+            let haptics = HapticFeedbackService.shared
+            if matchComplete {
+                haptics.playMatchComplete()
+            } else if gamePoint {
+                haptics.playGamePoint()
+            } else {
+                haptics.playPointScored()
+            }
+        }
+
         persistState()
     }
 
