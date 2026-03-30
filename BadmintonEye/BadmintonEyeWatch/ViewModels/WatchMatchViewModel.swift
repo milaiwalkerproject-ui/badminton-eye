@@ -1,5 +1,6 @@
 import Foundation
 import WatchConnectivity
+import WatchKit
 import ScoringEngine
 
 /// ViewModel driving the Watch match UI.
@@ -7,6 +8,7 @@ import ScoringEngine
 /// Persists state to UserDefaults after every point for SIGKILL protection.
 /// iPhone-authoritative: adopts iPhone state on reconnection.
 @Observable
+@MainActor
 final class WatchMatchViewModel {
 
     private(set) var state: MatchState?
@@ -74,8 +76,13 @@ final class WatchMatchViewModel {
 
     /// iPhone-authoritative: adopt the iPhone's state unconditionally.
     /// Auto-starts workout when match becomes active, ends when match finishes.
+    /// Plays haptic only for iPhone-initiated changes (when !localEngine at receive time)
+    /// to avoid double-haptic when the Watch scored locally and iPhone echoes back.
     func receiveStateFromiPhone(_ payload: SyncPayload) {
         let wasActive = state?.matchPhase == .inProgress
+        let previousGamesCount = state?.games.count ?? 0
+        let wasLocallyUpdated = localEngine
+
         state = payload.matchState.toMatchState()
         localEngine = false
         isOffline = false
@@ -94,6 +101,14 @@ final class WatchMatchViewModel {
         if !payload.isMatchActive {
             // Match ended on iPhone; keep final state for display
             Task { await wm.endWorkout() }
+        }
+
+        // Play haptic for iPhone-initiated changes only.
+        // Skip if localEngine was true — Watch already played haptic for this point.
+        if !wasLocallyUpdated {
+            playReceiveHaptic(previousGamesCount: previousGamesCount,
+                              wasActive: wasActive,
+                              isNowActive: isNowActive)
         }
 
         persistToUserDefaults()
@@ -135,5 +150,25 @@ final class WatchMatchViewModel {
     func clearLocalPersistence() {
         UserDefaults.standard.removeObject(forKey: "watchMatchState")
         UserDefaults.standard.removeObject(forKey: "watchIsOffline")
+    }
+
+    // MARK: - Private Haptics
+
+    private var hapticEnabled: Bool {
+        UserDefaults.standard.object(forKey: "hapticFeedbackEnabled") as? Bool ?? true
+    }
+
+    private func playReceiveHaptic(previousGamesCount: Int, wasActive: Bool, isNowActive: Bool) {
+        guard hapticEnabled else { return }
+        if wasActive && !isNowActive {
+            // Match just ended
+            WKInterfaceDevice.current().play(.notification)
+        } else if let games = state?.games, games.count > previousGamesCount {
+            // Game just completed
+            WKInterfaceDevice.current().play(.success)
+        } else if isNowActive {
+            // Regular point scored
+            WKInterfaceDevice.current().play(.click)
+        }
     }
 }
