@@ -52,7 +52,10 @@ Plans:
   2. Exported .mlmodel integrates with HawkEyePipeline via the ShuttleDetecting protocol without code changes
   3. Annotation guide exists documenting bounding box labeling for shuttlecocks including motion blur cases
   4. Training README specifies dataset requirements (2,000+ images, diverse courts/lighting)
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 07-01-PLAN.md -- ShuttleDetecting protocol and HawkEyePipeline refactor
+- [ ] 07-02-PLAN.md -- Python training script, annotation guide, and README
 
 ### Phase 8: 240fps Video Capture
 **Goal**: App captures court-side video at the highest frame rate the device supports for accurate shuttle tracking
@@ -86,6 +89,6 @@ Plans:
 | 4. Cloud Sync and Authentication | v1.0 | 3/3 | Complete | 2026-03-29 |
 | 5. Hawk Eye AI and Premium | v1.0 | 4/4 | Complete | 2026-03-29 |
 | 6. Match Analytics | v1.1 | 1/2 | In Progress | - |
-| 7. Training Pipeline | v1.1 | 0/? | Not started | - |
+| 7. Training Pipeline | v1.1 | 0/2 | Not started | - |
 | 8. 240fps Video Capture | v1.1 | 0/? | Not started | - |
 | 9. Real AI Integration | v1.1 | 0/? | Not started | - |
