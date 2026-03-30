@@ -1,5 +1,22 @@
 # Milestones
 
+## v1.6 — Undo Edge Cases & Cross-Game Service Tests
+
+**Shipped:** 2026-03-30
+**Phases:** 2 (19-20) | **Requirements:** 5/5 verified
+**Tests:** 80 (9 suites, +5 from v1.5)
+
+### Key Accomplishments
+
+1. **Undo edge cases** — Three tests covering match-winning point undo, deuce-state undo, and mid-game switch flag clearing on undo
+2. **Cross-game service continuity** — Two tests documenting that the loser of each game serves first in the next game (phases 2 and 3)
+
+### Archive
+
+- [v1.6-REQUIREMENTS.md](.planning/REQUIREMENTS.md)
+
+---
+
 ## v1.5 — Watch Haptic Reliability
 
 **Shipped:** 2026-03-30

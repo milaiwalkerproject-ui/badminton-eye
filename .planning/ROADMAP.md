@@ -8,6 +8,7 @@
 - [x] **v1.3 Live Multi-Cam, Auto-Sync & Custom Scoring** -- Phases 13-15 (shipped 2026-03-29)
 - [x] **v1.4 Test Coverage & Accessibility** -- Phases 16-17 (shipped 2026-03-29)
 - [x] **v1.5 Watch Haptic Reliability** -- Phase 18 (shipped 2026-03-30)
+- [x] **v1.6 Undo Edge Cases & Cross-Game Service Tests** -- Phases 19-20 (shipped 2026-03-30)
 
 ## Phases
 
@@ -265,6 +266,15 @@ Plans:
 | 16. Custom Scoring & Codable Tests | v1.4 | 1/1 | Complete | 2026-03-29 |
 | 17. VoiceOver Accessibility | v1.4 | 1/1 | Complete | 2026-03-29 |
 | 18. Watch Haptic Reliability | v1.5 | 1/1 | Complete | 2026-03-30 |
+| 19. Undo Edge Cases | v1.6 | 1/1 | Complete | 2026-03-30 |
+| 20. Cross-Game Service Tests | v1.6 | 1/1 | Complete | 2026-03-30 |
+
+### v1.6 Undo Edge Cases & Cross-Game Service Tests
+
+**Milestone Goal:** Fill critical test coverage gaps: undo of match-winning points, undo during deuce, undo clearing mid-game switch state, and cross-game service continuity.
+
+- [x] **Phase 19: Undo Edge Cases** - Three tests covering match-win undo, deuce undo, mid-switch undo
+- [x] **Phase 20: Cross-Game Service Tests** - Two tests documenting service continuity across games
 
 ### v1.5 Watch Haptic Reliability
 

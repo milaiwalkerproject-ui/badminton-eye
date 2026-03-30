@@ -18,8 +18,8 @@ Players can effortlessly record badminton match scores from either their iPhone/
 
 ## Current State
 
-**Shipped:** v1.5 (2026-03-30) | **In progress:** v1.6
-**Codebase:** 6,812 LOC Swift, 55 source files, 75 tests passing
+**Shipped:** v1.6 (2026-03-30)
+**Codebase:** 6,812 LOC Swift, 55 source files, 80 tests passing
 **Stack:** Swift 6, SwiftUI, SwiftData + CloudKit, WatchConnectivity, Core ML, StoreKit 2, ActivityKit, HealthKit
 **Dependencies:** 0 external (100% Apple-native)
 
@@ -53,6 +53,7 @@ Players can effortlessly record badminton match scores from either their iPhone/
 - ✓ Custom scoring engine tests (custom rules, validation, Codable, abandon) — v1.4
 - ✓ VoiceOver accessibility for LiveMatchView and ScorePanel — v1.4
 - ✓ @MainActor WatchMatchViewModel with receive-side haptic feedback — v1.5
+- ✓ Undo edge case tests (match-win, deuce, mid-game switch) and cross-game service tests — v1.6
 
 ### Active
 
@@ -100,4 +101,4 @@ None (v1.5 complete)
 | Placeholder Core ML for v1 | Ship full UX flow, train real model separately | ⚠️ Revisit — needs real data before production |
 
 ---
-*Last updated: 2026-03-30 after v1.5 milestone complete*
+*Last updated: 2026-03-30 after v1.6 milestone complete*

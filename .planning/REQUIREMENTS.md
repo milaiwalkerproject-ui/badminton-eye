@@ -7,14 +7,14 @@
 
 ### Undo Edge Cases
 
-- [ ] **UND-01**: Undo the match-winning point reverts matchPhase to `.inProgress` with correct game state
-- [ ] **UND-02**: Undo at 21-20 (during deuce) reverts to 20-20 and `isDeuce` remains true
-- [ ] **UND-03**: Undo the 11th point in the third game (mid-game switch) clears `hasSwitchedInThirdGame` and `shouldSwitchSidesFlag`
+- [x] **UND-01**: Undo the match-winning point reverts matchPhase to `.inProgress` with correct game state
+- [x] **UND-02**: Undo at 21-20 (during deuce) reverts to 20-20 and `isDeuce` remains true
+- [x] **UND-03**: Undo the 11th point in the third game (mid-game switch) clears `hasSwitchedInThirdGame` and `shouldSwitchSidesFlag`
 
 ### Cross-Game Service Continuity
 
-- [ ] **SVC-01**: After sideA wins game 1, sideB (the loser) serves first in game 2
-- [ ] **SVC-02**: After sideB wins game 2 (with sideA having won game 1), sideA (the loser of game 2) serves first in game 3
+- [x] **SVC-01**: After sideA wins game 1, sideB (the loser) serves first in game 2
+- [x] **SVC-02**: After sideB wins game 2 (with sideA having won game 1), sideA (the loser of game 2) serves first in game 3
 
 ## Out of Scope
 
@@ -27,11 +27,11 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| UND-01 | Phase 19 | Pending |
-| UND-02 | Phase 19 | Pending |
-| UND-03 | Phase 19 | Pending |
-| SVC-01 | Phase 20 | Pending |
-| SVC-02 | Phase 20 | Pending |
+| UND-01 | Phase 19 | Complete |
+| UND-02 | Phase 19 | Complete |
+| UND-03 | Phase 19 | Complete |
+| SVC-01 | Phase 20 | Complete |
+| SVC-02 | Phase 20 | Complete |
 
 **Coverage:**
 - v1.6 requirements: 5 total
