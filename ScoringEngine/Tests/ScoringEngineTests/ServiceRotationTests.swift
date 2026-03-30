@@ -87,4 +87,38 @@ struct ServiceRotationTests {
         #expect(state.currentServer.side == .sideA)
         #expect(state.serviceCourt == .right) // A score is 2
     }
+
+    // MARK: - Cross-Game Service Continuity
+
+    @Test("Loser of game 1 serves first in game 2")
+    func loserServesFirstInGame2() {
+        var state = MatchState.newSinglesMatch()
+        // sideA wins game 1 (21-0), so sideB is the loser
+        for _ in 0..<21 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        }
+        #expect(state.games.count == 1)
+        #expect(state.currentGame.gameNumber == 2)
+        // Loser (sideB) serves first in game 2
+        #expect(state.currentServer.side == .sideB)
+        // New game score is 0-0; server starts from right court (0 is even)
+        #expect(state.serviceCourt == .right)
+    }
+
+    @Test("Loser of game 2 serves first in game 3")
+    func loserServesFirstInGame3() {
+        var state = MatchState.newSinglesMatch()
+        // sideA wins game 1
+        for _ in 0..<21 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        }
+        // sideB wins game 2 (sideA is the loser of game 2)
+        for _ in 0..<21 {
+            state = MatchEngine.apply(event: .scorePoint(.sideB), to: state)
+        }
+        #expect(state.currentGame.gameNumber == 3)
+        // sideA lost game 2, so sideA serves first in game 3
+        #expect(state.currentServer.side == .sideA)
+        #expect(state.serviceCourt == .right)
+    }
 }
