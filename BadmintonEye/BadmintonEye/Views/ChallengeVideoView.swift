@@ -138,12 +138,22 @@ struct ChallengeVideoView: View {
         }
     }
 
+    // MARK: - FPS Badge Color
+
+    private var fpsBadgeColor: Color {
+        let fps = videoCaptureManager.currentFPS
+        if fps >= 240 { return .green }
+        if fps >= 120 { return .yellow }
+        if fps >= 60 { return .orange }
+        return .red
+    }
+
     // MARK: - Recorder View
 
     private var recorderView: some View {
         ZStack {
             // Camera preview
-            if let session = videoCaptureManager.session, videoCaptureManager.isRecording || videoCaptureManager.capturedVideoURL == nil {
+            if let session = videoCaptureManager.session {
                 CameraPreviewView(session: session)
                     .ignoresSafeArea()
             } else {
@@ -151,11 +161,46 @@ struct ChallengeVideoView: View {
             }
 
             VStack {
+                // FPS badge at top-right
+                HStack {
+                    Spacer()
+                    HStack(spacing: 4) {
+                        Circle()
+                            .fill(fpsBadgeColor)
+                            .frame(width: 8, height: 8)
+                        Text("\(Int(videoCaptureManager.currentFPS))fps")
+                            .font(.caption.bold().monospacedDigit())
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(.black.opacity(0.7))
+                    .clipShape(Capsule())
+                    .foregroundStyle(.white)
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+
+                // Fallback banner for 30fps devices
+                if videoCaptureManager.currentFPS <= 30 && videoCaptureManager.currentFPS > 0 {
+                    HStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.yellow)
+                        Text("Recording at 30fps \u{2014} For best results, use iPhone 12 or newer.")
+                            .font(.caption)
+                            .foregroundStyle(.white)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(.black.opacity(0.8))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .padding(.horizontal, 20)
+                }
+
                 Spacer()
 
-                // Duration counter
+                // Buffer duration counter
                 if videoCaptureManager.isRecording {
-                    Text(String(format: "%.1fs / 10.0s", videoCaptureManager.recordingDuration))
+                    Text(String(format: "Buffer: %.1fs / 10.0s", min(videoCaptureManager.recordingDuration, 10.0)))
                         .font(.headline.monospacedDigit())
                         .foregroundStyle(.white)
                         .padding(.horizontal, 16)
@@ -164,16 +209,17 @@ struct ChallengeVideoView: View {
                         .clipShape(Capsule())
 
                     // Progress bar
-                    ProgressView(value: videoCaptureManager.recordingDuration, total: 10.0)
+                    ProgressView(value: min(videoCaptureManager.recordingDuration, 10.0), total: 10.0)
                         .progressViewStyle(.linear)
-                        .tint(.red)
+                        .tint(.yellow)
                         .padding(.horizontal, 40)
                 }
 
-                // Record button
+                // Save challenge button and back
                 HStack {
                     Button("Back") {
                         videoCaptureManager.stopRecording()
+                        videoCaptureManager.cleanup()
                         showRecorder = false
                     }
                     .foregroundStyle(.white)
@@ -182,28 +228,17 @@ struct ChallengeVideoView: View {
                     Spacer()
 
                     Button {
-                        if videoCaptureManager.isRecording {
-                            videoCaptureManager.stopRecording()
-                        } else {
-                            videoCaptureManager.startRecording()
+                        Task {
+                            try? await videoCaptureManager.saveBufferToDisk()
                         }
                     } label: {
-                        ZStack {
-                            Circle()
-                                .strokeBorder(.white, lineWidth: 4)
-                                .frame(width: 70, height: 70)
-                            Circle()
-                                .fill(videoCaptureManager.isRecording ? .white : .red)
-                                .frame(
-                                    width: videoCaptureManager.isRecording ? 30 : 58,
-                                    height: videoCaptureManager.isRecording ? 30 : 58
-                                )
-                                .clipShape(
-                                    RoundedRectangle(
-                                        cornerRadius: videoCaptureManager.isRecording ? 6 : 29
-                                    )
-                                )
-                        }
+                        Label("Save Last 10s", systemImage: "camera.circle.fill")
+                            .font(.headline)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 14)
+                            .background(.yellow)
+                            .foregroundStyle(.black)
+                            .clipShape(Capsule())
                     }
 
                     Spacer()
@@ -217,11 +252,9 @@ struct ChallengeVideoView: View {
             }
         }
         .onAppear {
-            // Auto-setup camera session for preview
+            // Start continuous capture into circular buffer on appear
             if !videoCaptureManager.isRecording && videoCaptureManager.capturedVideoURL == nil {
                 videoCaptureManager.startRecording()
-                // Small delay then stop to just set up the session for preview
-                // Actually, start recording immediately as per UX plan
             }
         }
     }
@@ -294,7 +327,11 @@ struct ChallengeVideoView: View {
         }
         .fullScreenCover(isPresented: $showResult) {
             if let hawkEyeResult = pipeline.result {
-                TrajectoryReplayView(result: hawkEyeResult)
+                TrajectoryReplayView(
+                    result: hawkEyeResult,
+                    videoURL: videoCaptureManager.capturedVideoURL,
+                    captureFPS: videoCaptureManager.currentFPS
+                )
             }
         }
         .alert("Analysis Error", isPresented: $showErrorAlert) {
