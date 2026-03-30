@@ -8,18 +8,17 @@ A native iOS app (iPhone + iPad) with Apple Watch companion for badminton player
 
 Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time — making scorekeeping seamless during actual play.
 
-## Current Milestone: v1.5 Watch Haptic Reliability
+## Current Milestone: v1.6 Undo Edge Cases & Cross-Game Service Tests
 
-**Goal:** Fix the @MainActor threading gap in WatchMatchViewModel and add haptic feedback for iPhone-initiated score changes on the Watch.
+**Goal:** Fill critical test coverage gaps in the ScoringEngine: undo of match-winning points, undo during deuce, undo clearing mid-game switch state, and cross-game service continuity.
 
 **Target features:**
-- @MainActor annotation on WatchMatchViewModel (compiler-enforced main-thread isolation)
-- Receive-side haptics: click/success/notification for regular points, game ends, and match end
-- No double-haptic: Watch-initiated scores suppress the echo-back haptic
+- 3 new undo edge case tests (match-win undo, deuce undo, mid-switch undo)
+- 2 new cross-game service continuity tests (loser serves in game 2 and game 3)
 
 ## Current State
 
-**Shipped:** v1.5 (2026-03-30)
+**Shipped:** v1.5 (2026-03-30) | **In progress:** v1.6
 **Codebase:** 6,812 LOC Swift, 55 source files, 75 tests passing
 **Stack:** Swift 6, SwiftUI, SwiftData + CloudKit, WatchConnectivity, Core ML, StoreKit 2, ActivityKit, HealthKit
 **Dependencies:** 0 external (100% Apple-native)

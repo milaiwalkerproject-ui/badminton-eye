@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-30)
 
 **Core value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
-**Current focus:** v1.5 — Watch Haptic Reliability (COMPLETE)
+**Current focus:** v1.6 — Undo Edge Cases & Cross-Game Service Tests
 
 ## Current Position
 
-Phase: 18 of 18 (All complete)
-Plan: All plans complete
-Status: Milestone complete
-Last activity: 2026-03-30 — v1.5 Phase 18 executed, build verified, 75 tests passing
+Phase: 19 of 20 (In progress)
+Plan: Executing Phase 19
+Status: In progress
+Last activity: 2026-03-30 — v1.6 milestone started
 
-Progress: [##########] 100%
+Progress: [##########] 0%
 
 ## Performance Metrics
 
@@ -49,6 +49,9 @@ v1.5 decisions:
 - @MainActor on WatchMatchViewModel: explicit isolation matches actual runtime (WatchSessionManager already dispatches to @MainActor before calling onStateReceived)
 - playReceiveHaptic skipped when wasLocallyUpdated: avoids double-haptic when Watch scores locally and iPhone echoes back confirmed state
 
+v1.6 decisions:
+- Not changing winner/loser service rule behavior: requires BWF rule verification; tests document current behavior (loser of prev game serves first)
+
 ### Pending Todos
 
 None.
@@ -60,5 +63,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-30
-Stopped at: v1.5 complete — ready for v1.6 milestone
+Stopped at: Phase 19 in progress — adding undo edge case tests
 Resume file: None

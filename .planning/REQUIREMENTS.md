@@ -1,40 +1,41 @@
-# Requirements: Badminton Eye v1.5 — Watch Haptic Reliability
+# Requirements: Badminton Eye v1.6 — Undo Edge Cases & Cross-Game Service Tests
 
 **Defined:** 2026-03-30
 **Core Value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
 
-## v1.5 Requirements
+## v1.6 Requirements
 
-### Watch Haptic Reliability
+### Undo Edge Cases
 
-- [x] **HAP-W01**: WatchMatchViewModel is annotated @MainActor so all state mutations are main-actor-isolated
-- [x] **HAP-W02**: When the iPhone scores a point and sends state to the Watch, the Watch plays a click haptic for a regular point
-- [x] **HAP-W03**: When the iPhone scores a game-ending point, the Watch plays a success haptic
-- [x] **HAP-W04**: When the iPhone ends the match, the Watch plays a notification haptic
-- [x] **HAP-W05**: When the Watch user scores locally (online or offline), the Watch plays only one haptic (no double-haptic when iPhone echoes state back)
-- [x] **HAP-W06**: Haptics respect the user's haptic toggle (AppStorage "hapticFeedbackEnabled")
+- [ ] **UND-01**: Undo the match-winning point reverts matchPhase to `.inProgress` with correct game state
+- [ ] **UND-02**: Undo at 21-20 (during deuce) reverts to 20-20 and `isDeuce` remains true
+- [ ] **UND-03**: Undo the 11th point in the third game (mid-game switch) clears `hasSwitchedInThirdGame` and `shouldSwitchSidesFlag`
+
+### Cross-Game Service Continuity
+
+- [ ] **SVC-01**: After sideA wins game 1, sideB (the loser) serves first in game 2
+- [ ] **SVC-02**: After sideB wins game 2 (with sideA having won game 1), sideA (the loser of game 2) serves first in game 3
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Unit tests for WatchMatchViewModel haptics | Requires WatchKit, cannot run in SPM test target |
-| Custom haptic patterns | Standard WKHapticType set is sufficient |
+| Changing the winner/loser service rule | Requires BWF rule verification before behavioral change |
+| Doubles cross-game service tests | Covered by existing DoublesScoring tests |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| HAP-W01 | Phase 18 | Complete |
-| HAP-W02 | Phase 18 | Complete |
-| HAP-W03 | Phase 18 | Complete |
-| HAP-W04 | Phase 18 | Complete |
-| HAP-W05 | Phase 18 | Complete |
-| HAP-W06 | Phase 18 | Complete |
+| UND-01 | Phase 19 | Pending |
+| UND-02 | Phase 19 | Pending |
+| UND-03 | Phase 19 | Pending |
+| SVC-01 | Phase 20 | Pending |
+| SVC-02 | Phase 20 | Pending |
 
 **Coverage:**
-- v1.5 requirements: 6 total
-- Mapped to phases: 6
+- v1.6 requirements: 5 total
+- Mapped to phases: 5
 - Unmapped: 0
 
 ---
