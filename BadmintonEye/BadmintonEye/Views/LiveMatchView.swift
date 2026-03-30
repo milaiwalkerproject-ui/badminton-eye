@@ -24,12 +24,21 @@ struct LiveMatchView: View {
         viewModel.state.currentGame.scoreA + viewModel.state.currentGame.scoreB
     }
 
+    /// VoiceOver label for the game info area (A11Y-04).
+    private var gameInfoAccessibilityLabel: String {
+        var label = "Game \(viewModel.state.currentGame.gameNumber)"
+        if !viewModel.state.games.isEmpty {
+            label += ", previous scores: \(completedGameScores)"
+        }
+        return label
+    }
+
     var body: some View {
         ZStack {
             // Half-screen tap zones
             GeometryReader { geometry in
                 HStack(spacing: 0) {
-                    // Side A tap zone
+                    // Side A tap zone (A11Y-02)
                     Button {
                         viewModel.scorePoint(for: .sideA)
                     } label: {
@@ -49,8 +58,10 @@ struct LiveMatchView: View {
                         width: geometry.size.width / 2,
                         height: geometry.size.height
                     )
+                    .accessibilityLabel("Score point for \(viewModel.state.teamANames.first ?? "Team A")")
+                    .accessibilityHint("Double-tap to add a point")
 
-                    // Side B tap zone
+                    // Side B tap zone (A11Y-02)
                     Button {
                         viewModel.scorePoint(for: .sideB)
                     } label: {
@@ -70,6 +81,8 @@ struct LiveMatchView: View {
                         width: geometry.size.width / 2,
                         height: geometry.size.height
                     )
+                    .accessibilityLabel("Score point for \(viewModel.state.teamBNames.first ?? "Team B")")
+                    .accessibilityHint("Double-tap to add a point")
                 }
             }
             .ignoresSafeArea()
@@ -77,7 +90,7 @@ struct LiveMatchView: View {
             // Top bar overlay
             VStack {
                 HStack {
-                    // Undo button
+                    // Undo button (A11Y-03)
                     Button {
                         viewModel.undo()
                     } label: {
@@ -90,10 +103,12 @@ struct LiveMatchView: View {
                     }
                     .disabled(!viewModel.canUndo)
                     .opacity(viewModel.canUndo ? 1.0 : 0.4)
+                    .accessibilityLabel("Undo last point")
+                    .accessibilityHint(viewModel.canUndo ? "Double-tap to undo the last scored point" : "No points to undo")
 
                     Spacer()
 
-                    // Game info
+                    // Game info (A11Y-04)
                     VStack(spacing: 2) {
                         Text("Game \(viewModel.state.currentGame.gameNumber)")
                             .font(.headline)
@@ -109,6 +124,8 @@ struct LiveMatchView: View {
                                 .clipShape(Capsule())
                         }
                     }
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(gameInfoAccessibilityLabel)
 
                     Spacer()
 
@@ -159,7 +176,7 @@ struct LiveMatchView: View {
                         .opacity(subscriptionManager.isPremium ? (challengeCountdown > 0 ? 1.0 : 0.4) : 1.0)
                     }
 
-                    // End match button
+                    // End match button (A11Y-03)
                     Button {
                         showAbandonAlert = true
                     } label: {
@@ -170,6 +187,8 @@ struct LiveMatchView: View {
                             .background(.black.opacity(0.4))
                             .clipShape(Circle())
                     }
+                    .accessibilityLabel("End match")
+                    .accessibilityHint("Double-tap to abandon the current match")
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 8)

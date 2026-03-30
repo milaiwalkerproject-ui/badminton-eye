@@ -9,6 +9,16 @@ struct ScorePanel: View {
     let playerNames: [String]
     let backgroundColor: Color
 
+    /// VoiceOver label describing team, score, and serving status. (A11Y-01)
+    private var accessibilityDescription: String {
+        var parts = [teamName, "\(score) points"]
+        if isServing {
+            let courtName = serviceCourt.map { $0 == .right ? "right court" : "left court" } ?? ""
+            parts.append("serving\(courtName.isEmpty ? "" : " from \(courtName)")")
+        }
+        return parts.joined(separator: ", ")
+    }
+
     var body: some View {
         ZStack {
             backgroundColor
@@ -62,5 +72,7 @@ struct ScorePanel: View {
                 Spacer()
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilityDescription)
     }
 }
