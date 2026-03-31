@@ -7,18 +7,18 @@
 
 ### Doubles Deuce & Cap
 
-- [ ] **DUB-DCE-01**: Doubles deuce activates at 20-20 (isDeuce is true, same threshold as singles)
-- [ ] **DUB-DCE-02**: Doubles 21-20 does NOT win the game in deuce (2-point lead required)
-- [ ] **DUB-DCE-03**: Doubles cap at 30-29 ends the game (cap overrides the 2-point-lead requirement)
+- [x] **DUB-DCE-01**: Doubles deuce activates at 20-20 (isDeuce is true, same threshold as singles)
+- [x] **DUB-DCE-02**: Doubles 21-20 does NOT win the game in deuce (2-point lead required)
+- [x] **DUB-DCE-03**: Doubles cap at 30-29 ends the game (cap overrides the 2-point-lead requirement)
 
 ### Doubles Mid-Game Switch & Undo
 
-- [ ] **DUB-MID-01**: Doubles game-3 mid-switch triggers shouldSwitchSidesFlag at 11 points
-- [ ] **DUB-UND-01**: Undo in doubles during deuce (at 21-20) reverts to 20-20 with correct server restored
+- [x] **DUB-MID-01**: Doubles game-3 mid-switch triggers shouldSwitchSidesFlag at 11 points
+- [x] **DUB-UND-01**: Undo in doubles during deuce (at 21-20) reverts to 20-20 with correct server restored
 
 ### Mixed Doubles Cross-Game Service
 
-- [ ] **MXD-G3-01**: Mixed doubles: loser of game 2 serves first in game 3 (same resetServiceForNewGame path as doubles)
+- [x] **MXD-G3-01**: Mixed doubles: loser of game 2 serves first in game 3 (same resetServiceForNewGame path as doubles)
 
 ## Out of Scope
 
@@ -31,12 +31,12 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DUB-DCE-01 | Phase 23 | Pending |
-| DUB-DCE-02 | Phase 23 | Pending |
-| DUB-DCE-03 | Phase 23 | Pending |
-| DUB-MID-01 | Phase 23 | Pending |
-| DUB-UND-01 | Phase 23 | Pending |
-| MXD-G3-01 | Phase 24 | Pending |
+| DUB-DCE-01 | Phase 23 | Complete |
+| DUB-DCE-02 | Phase 23 | Complete |
+| DUB-DCE-03 | Phase 23 | Complete |
+| DUB-MID-01 | Phase 23 | Complete |
+| DUB-UND-01 | Phase 23 | Complete |
+| MXD-G3-01 | Phase 24 | Complete |
 
 **Coverage:**
 - v1.8 requirements: 6 total

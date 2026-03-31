@@ -20,8 +20,8 @@ Players can effortlessly record badminton match scores from either their iPhone/
 
 ## Current State
 
-**Shipped:** v1.7 (2026-03-30) — v1.8 in progress
-**Codebase:** 6,812 LOC Swift, 55 source files, 84 tests passing
+**Shipped:** v1.8 (2026-03-30)
+**Codebase:** 6,812 LOC Swift, 55 source files, 90 tests passing
 **Stack:** Swift 6, SwiftUI, SwiftData + CloudKit, WatchConnectivity, Core ML, StoreKit 2, ActivityKit, HealthKit
 **Dependencies:** 0 external (100% Apple-native)
 
@@ -57,6 +57,7 @@ Players can effortlessly record badminton match scores from either their iPhone/
 - ✓ @MainActor WatchMatchViewModel with receive-side haptic feedback — v1.5
 - ✓ Undo edge case tests (match-win, deuce, mid-game switch) and cross-game service tests — v1.6
 - ✓ 3×15 cross-game service tests (games 2 and 3) and doubles game-3 service + boundary undo — v1.7
+- ✓ Doubles deuce/cap/mid-switch tests and mixed doubles game-3 service continuity — v1.8
 
 ### Active
 
@@ -104,4 +105,4 @@ None (v1.5 complete)
 | Placeholder Core ML for v1 | Ship full UX flow, train real model separately | ⚠️ Revisit — needs real data before production |
 
 ---
-*Last updated: 2026-03-30 after v1.6 milestone complete*
+*Last updated: 2026-03-30 after v1.8 milestone complete*

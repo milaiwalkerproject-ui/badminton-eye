@@ -10,7 +10,7 @@
 - [x] **v1.5 Watch Haptic Reliability** -- Phase 18 (shipped 2026-03-30)
 - [x] **v1.6 Undo Edge Cases & Cross-Game Service Tests** -- Phases 19-20 (shipped 2026-03-30)
 - [x] **v1.7 3×15 Service Continuity & Doubles Game-3 Tests** -- Phases 21-22 (shipped 2026-03-30)
-- [ ] **v1.8 Doubles & Mixed Deuce/Cap Coverage** -- Phases 23-24 (in progress)
+- [x] **v1.8 Doubles & Mixed Deuce/Cap Coverage** -- Phases 23-24 (shipped 2026-03-30)
 
 ## Phases
 
@@ -352,8 +352,8 @@ Plans:
 
 **Milestone Goal:** Fill remaining deuce/cap and mid-game-switch coverage gaps for doubles and mixed doubles — DeuceAndCapTests previously only exercised singles.
 
-- [ ] **Phase 23: Doubles Deuce, Cap & Mid-Game Switch** - Five tests covering deuce at 20-20, 21-20 not a win, cap at 30-29, mid-game switch at 11, and undo during deuce
-- [ ] **Phase 24: Mixed Doubles Game-3 Service** - One test confirming loser of game 2 serves first in game 3 for mixed doubles
+- [x] **Phase 23: Doubles Deuce, Cap & Mid-Game Switch** - Five tests covering deuce at 20-20, 21-20 not a win, cap at 30-29, mid-game switch at 11, and undo during deuce
+- [x] **Phase 24: Mixed Doubles Game-3 Service** - One test confirming loser of game 2 serves first in game 3 for mixed doubles
 
 ## Phase Details (v1.8)
 
@@ -401,8 +401,8 @@ Plans:
 | 20. Cross-Game Service Tests | v1.6 | 1/1 | Complete | 2026-03-30 |
 | 21. 3×15 Cross-Game Service | v1.7 | 1/1 | Complete | 2026-03-30 |
 | 22. Doubles Game-3 & Boundary Undo | v1.7 | 1/1 | Complete | 2026-03-30 |
-| 23. Doubles Deuce, Cap & Mid-Game Switch | v1.8 | 0/1 | In progress | — |
-| 24. Mixed Doubles Game-3 Service | v1.8 | 0/1 | Pending | — |
+| 23. Doubles Deuce, Cap & Mid-Game Switch | v1.8 | 1/1 | Complete | 2026-03-30 |
+| 24. Mixed Doubles Game-3 Service | v1.8 | 1/1 | Complete | 2026-03-30 |
 
 ---
-*Roadmap updated: 2026-03-30 -- v1.8 started*
+*Roadmap updated: 2026-03-30 -- v1.8 shipped*
