@@ -8,14 +8,15 @@ A native iOS app (iPhone + iPad) with Apple Watch companion for badminton player
 
 Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time — making scorekeeping seamless during actual play.
 
-## Current Milestone: v1.10 — Localize Remaining Views
+## Current Milestone: v1.12 — Localize HeadToHeadView, PlayerProfileView, MatchDetailView & Analytics Charts
 
-**Goal:** Wire existing Localizable.strings keys to the views that currently hardcode English strings, and add new keys for Game Over / Match End flows — enabling the in-app language switcher to work across the full app, not just Settings.
+**Goal:** Complete localization coverage for player stats, player CRUD, analytics charts, and match detail views. Add 21 new keys across all 9 language files.
 
 **Target features:**
-- MatchHistoryView, StatsView, LiveMatchView wire up existing localization keys
-- New keys (game.over, game.continue, match.new, match.games) added to all 9 language files
-- GameEndOverlay and MatchEndView use localized strings for key user-facing text
+- HeadToHeadView uses localized keys for nav title, section headers, and empty state
+- PlayerProfileView uses localized keys for all form labels, toolbar buttons, and delete alert
+- WinRateTrendChart and ScoringPatternsChart use localized card titles and empty states
+- MatchDetailView uses localized keys for nav title, toolbar actions, and summary row
 
 ## Current State
 
@@ -105,4 +106,4 @@ None (v1.5 complete)
 | Placeholder Core ML for v1 | Ship full UX flow, train real model separately | ⚠️ Revisit — needs real data before production |
 
 ---
-*Last updated: 2026-03-31 — v1.10 milestone started*
+*Last updated: 2026-03-31 — v1.12 milestone complete*

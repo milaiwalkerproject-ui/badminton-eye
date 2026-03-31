@@ -1,5 +1,21 @@
 # Milestones
 
+## v1.12 — Localize HeadToHeadView, PlayerProfileView, MatchDetailView & Analytics Charts
+
+**Shipped:** 2026-03-31
+**Phases:** 1 (31-32) | **Requirements:** 7/7 verified
+**Tests:** 95 (unchanged — UI-only changes)
+
+### Key Accomplishments
+
+1. **HeadToHeadView localization** — Navigation title, Opponents section, All Matches section, and empty-state text use `LocalizationManager`; existing `stats.wins`/`stats.losses` reused for W/L labels
+2. **PlayerProfileView localization** — Section headers (Name, Photo), text field placeholder, toolbar Cancel/Save buttons, navigation title (New/Edit Player), photo actions (Choose/Remove), delete button, and alert title all use localized keys
+3. **Analytics chart localization** — WinRateTrendChart card title, empty state, and x-axis label use localized keys; ScoringPatternsChart card title and empty state use localized keys
+4. **MatchDetailView localization** — Navigation title, Share Scorecard / Export menu actions, Games summary row, and format badge (Singles/Doubles/Mixed via existing setup.* keys) all use localized keys
+5. **21 new keys in all 9 languages** — `headtohead.*`, `player.*`, `common.cancel/save`, `chart.*`, `match.details/shareScorecard/export` added to en/ja/zh-Hans/ko/id/ms/hi/th/da with correct native translations
+
+---
+
 ## v1.11 — Wire SettingsView, MatchSetupView & PlayerListView Localization
 
 **Shipped:** 2026-03-31

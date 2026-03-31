@@ -7,25 +7,25 @@
 
 ### HeadToHeadView Localization
 
-- [ ] **H2H-01**: HeadToHeadView navigation title, "Opponents" section header, "All Matches" section header, "No matches yet" empty state all use localized keys; existing `stats.wins` and `stats.losses` keys reused for W/L labels
+- [x] **H2H-01**: HeadToHeadView navigation title, "Opponents" section header, "All Matches" section header, "No matches yet" empty state all use localized keys; existing `stats.wins` and `stats.losses` keys reused for W/L labels
 
 ### PlayerProfileView Localization
 
-- [ ] **PPV-01**: PlayerProfileView section headers ("Name", "Photo") use localized keys; form fields ("Player Name" placeholder) use localized key; toolbar buttons ("Cancel", "Save") use localized keys; navigation title ("New Player" / "Edit Player") uses localized keys
-- [ ] **PPV-02**: PlayerProfileView destructive actions ("Choose Photo", "Remove Photo", "Delete Player") use localized keys; delete confirmation alert title ("Delete Player?") uses localized key
+- [x] **PPV-01**: PlayerProfileView section headers ("Name", "Photo") use localized keys; form fields ("Player Name" placeholder) use localized key; toolbar buttons ("Cancel", "Save") use localized keys; navigation title ("New Player" / "Edit Player") uses localized keys
+- [x] **PPV-02**: PlayerProfileView destructive actions ("Choose Photo", "Remove Photo", "Delete Player") use localized keys; delete confirmation alert title ("Delete Player?") uses localized key
 
 ### Analytics Chart Localization
 
-- [ ] **ANA-01**: WinRateTrendChart card title ("Performance Trend") and empty state ("Not enough data") use localized keys; chart x-axis label ("Match") uses localized key
-- [ ] **ANA-02**: ScoringPatternsChart card title ("Scoring Patterns") and empty state ("Not enough data") use the same localized key as ANA-01 (`chart.notEnoughData`)
+- [x] **ANA-01**: WinRateTrendChart card title ("Performance Trend") and empty state ("Not enough data") use localized keys; chart x-axis label ("Match") uses localized key
+- [x] **ANA-02**: ScoringPatternsChart card title ("Scoring Patterns") and empty state ("Not enough data") use the same localized key as ANA-01 (`chart.notEnoughData`)
 
 ### MatchDetailView Localization
 
-- [ ] **MDV-01**: MatchDetailView navigation title ("Match Details") and toolbar menu actions ("Share Scorecard", "Export...") use localized keys; existing `match.games` key reused for the "Games" summary row
+- [x] **MDV-01**: MatchDetailView navigation title ("Match Details") and toolbar menu actions ("Share Scorecard", "Export...") use localized keys; existing `match.games` key reused for the "Games" summary row; format badge uses existing `setup.singles/doubles/mixed` keys
 
 ### Localization Strings
 
-- [ ] **STR-01**: 21 new keys added to all 9 Localizable.strings files (en, ja, zh-Hans, ko, id, ms, hi, th, da) with correct native translations
+- [x] **STR-01**: 21 new keys added to all 9 Localizable.strings files (en, ja, zh-Hans, ko, id, ms, hi, th, da) with correct native translations
 
 ## Out of Scope
 
@@ -41,13 +41,13 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| H2H-01 | Phase 31 | Pending |
-| PPV-01 | Phase 31 | Pending |
-| PPV-02 | Phase 31 | Pending |
-| ANA-01 | Phase 32 | Pending |
-| ANA-02 | Phase 32 | Pending |
-| MDV-01 | Phase 32 | Pending |
-| STR-01 | Phase 31 | Pending |
+| H2H-01 | Phase 31 | Done |
+| PPV-01 | Phase 31 | Done |
+| PPV-02 | Phase 31 | Done |
+| ANA-01 | Phase 32 | Done |
+| ANA-02 | Phase 32 | Done |
+| MDV-01 | Phase 32 | Done |
+| STR-01 | Phase 31 | Done |
 
 **Coverage:**
 - v1.12 requirements: 7 total
