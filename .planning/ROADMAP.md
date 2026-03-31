@@ -11,7 +11,7 @@
 - [x] **v1.6 Undo Edge Cases & Cross-Game Service Tests** -- Phases 19-20 (shipped 2026-03-30)
 - [x] **v1.7 3×15 Service Continuity & Doubles Game-3 Tests** -- Phases 21-22 (shipped 2026-03-30)
 - [x] **v1.8 Doubles & Mixed Deuce/Cap Coverage** -- Phases 23-24 (shipped 2026-03-30)
-- [ ] **v1.9 3×15 Undo & Mixed Doubles Boundary Tests** -- Phases 25-26 (in progress)
+- [x] **v1.9 3×15 Undo & Mixed Doubles Boundary Tests** -- Phases 25-26 (shipped 2026-03-30)
 
 ## Phases
 
@@ -459,8 +459,8 @@ Plans:
 | 22. Doubles Game-3 & Boundary Undo | v1.7 | 1/1 | Complete | 2026-03-30 |
 | 23. Doubles Deuce, Cap & Mid-Game Switch | v1.8 | 1/1 | Complete | 2026-03-30 |
 | 24. Mixed Doubles Game-3 Service | v1.8 | 1/1 | Complete | 2026-03-30 |
-| 25. 3×15 Undo Edge Cases | v1.9 | 0/1 | In progress | — |
-| 26. Mixed Doubles Undo & Mid-Switch | v1.9 | 0/1 | Pending | — |
+| 25. 3×15 Undo Edge Cases | v1.9 | 1/1 | Complete | 2026-03-30 |
+| 26. Mixed Doubles Undo & Mid-Switch | v1.9 | 1/1 | Complete | 2026-03-30 |
 
 ---
-*Roadmap updated: 2026-03-30 -- v1.9 started*
+*Roadmap updated: 2026-03-30 -- v1.9 shipped*

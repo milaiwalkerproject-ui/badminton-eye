@@ -2,13 +2,17 @@
 
 ## v1.9 — 3×15 Undo & Mixed Doubles Boundary Tests
 
-**In progress:** 2026-03-30
-**Phases:** 2 (25-26) | **Requirements:** 0/5 verified
-**Tests:** 90 → 95 expected
+**Shipped:** 2026-03-30
+**Phases:** 2 (25-26) | **Requirements:** 5/5 verified
+**Tests:** 95 (9 suites, +5 from v1.8)
 
 ### Key Accomplishments
 
-*(in progress)*
+1. **3×15 deuce undo** — Undo at 15-14 in 3×15 reverts to 14-14 with isDeuce preserved
+2. **3×15 mid-switch undo** — Undo of the 8th-point trigger in 5th game clears hasSwitchedInThirdGame and shouldSwitchSidesFlag
+3. **3×15 cross-game undo** — Undo of first point of game 3 restores server, score, and 2-game completed list
+4. **Mixed doubles boundary undo** — Undo of first point of game 2 restores pre-game-end state (server, rotation, scores, game 1 still complete)
+5. **Mixed doubles game-3 mid-switch** — shouldSwitchSidesFlag fires at 11 total points in mixed doubles game 3 (same threshold as standard doubles)
 
 ### Archive
 
