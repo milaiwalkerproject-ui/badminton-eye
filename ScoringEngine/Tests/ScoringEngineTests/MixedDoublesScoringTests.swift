@@ -95,4 +95,28 @@ struct MixedDoublesScoringTests {
         state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
         #expect(state.currentServer == PlayerPosition(side: .sideA, playerIndex: 0))
     }
+
+    // MARK: - Cross-Game Service Continuity (MXD-G3-01)
+
+    @Test("Mixed doubles: loser of game 2 serves first in game 3")
+    func mixedDoublesGame3Service() {
+        var state = MatchState.newMixedMatch()
+        // sideA wins game 1 (21-0) -> sideB (loser) serves in game 2
+        for _ in 0..<21 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        }
+        #expect(state.currentServer.side == .sideB)
+        #expect(state.currentGame.gameNumber == 2)
+
+        // sideB wins game 2 (21-0) -> sideA (loser of game 2) serves in game 3
+        for _ in 0..<21 {
+            state = MatchEngine.apply(event: .scorePoint(.sideB), to: state)
+        }
+        #expect(state.currentGame.gameNumber == 3)
+        #expect(state.currentServer.side == .sideA)
+        #expect(state.servingPlayerIndex == 0)
+        // doublesRotation reset with sideA player 0 as first server
+        #expect(state.doublesRotation[0].side == .sideA)
+        #expect(state.doublesRotation[0].playerIndex == 0)
+    }
 }

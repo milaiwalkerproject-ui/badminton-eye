@@ -208,4 +208,105 @@ struct DoublesScoringTests {
         state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
         #expect(state.teamAPositions == [.left, .right])
     }
+
+    // MARK: - Deuce & Cap (DUB-DCE-01, DUB-DCE-02, DUB-DCE-03)
+
+    @Test("Doubles deuce activates at 20-20")
+    func doublesDeuceAtTwentyAll() {
+        var state = MatchState.newDoublesMatch()
+        for _ in 0..<20 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+            state = MatchEngine.apply(event: .scorePoint(.sideB), to: state)
+        }
+        #expect(state.isDeuce)
+        #expect(state.currentGame.scoreA == 20)
+        #expect(state.currentGame.scoreB == 20)
+    }
+
+    @Test("Doubles 21-20 does NOT win the game in deuce")
+    func doublesTwentyOneTwentyNotWon() {
+        var state = MatchState.newDoublesMatch()
+        for _ in 0..<20 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+            state = MatchEngine.apply(event: .scorePoint(.sideB), to: state)
+        }
+        state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        #expect(state.currentGame.scoreA == 21)
+        #expect(state.currentGame.scoreB == 20)
+        #expect(state.matchPhase == .inProgress)
+        #expect(state.games.isEmpty) // Game not completed
+    }
+
+    @Test("Doubles cap at 30-29 ends game")
+    func doublesCapAtThirtyTwentyNine() {
+        var state = MatchState.newDoublesMatch()
+        for _ in 0..<29 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+            state = MatchEngine.apply(event: .scorePoint(.sideB), to: state)
+        }
+        #expect(state.isAtCap)
+        // 30-29 reaches cap — game over regardless of lead
+        state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        #expect(state.games.count == 1)
+        #expect(state.games[0].scoreA == 30)
+        #expect(state.games[0].scoreB == 29)
+    }
+
+    // MARK: - Mid-Game Switch (DUB-MID-01)
+
+    @Test("Doubles game-3 mid-switch triggers shouldSwitchSidesFlag at 11 points")
+    func doublesGame3MidSwitch() {
+        var state = MatchState.newDoublesMatch()
+        // sideA wins game 1, sideB wins game 2 -> game 3 starts
+        for _ in 0..<21 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        }
+        for _ in 0..<21 {
+            state = MatchEngine.apply(event: .scorePoint(.sideB), to: state)
+        }
+        #expect(state.currentGame.gameNumber == 3)
+
+        // Score to 10-0 — switch should NOT have fired yet
+        for _ in 0..<10 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        }
+        #expect(state.currentGame.hasSwitchedInThirdGame == false)
+        #expect(state.shouldSwitchSidesFlag == false)
+
+        // Score the 11th point — switch fires
+        state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        #expect(state.currentGame.scoreA == 11)
+        #expect(state.shouldSwitchSidesFlag == true)
+        #expect(state.currentGame.hasSwitchedInThirdGame == true)
+
+        // Additional points do NOT fire a second switch
+        state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        #expect(state.shouldSwitchSidesFlag == false)
+    }
+
+    // MARK: - Undo During Deuce (DUB-UND-01)
+
+    @Test("Doubles undo at 21-20 in deuce reverts to 20-20 with correct server")
+    func doublesUndoDuringDeuce() {
+        var state = MatchState.newDoublesMatch()
+        for _ in 0..<20 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+            state = MatchEngine.apply(event: .scorePoint(.sideB), to: state)
+        }
+        #expect(state.isDeuce)
+        let serverAtDeuce = state.currentServer
+
+        // sideA scores to 21-20
+        let twentyOneTwenty = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        #expect(twentyOneTwenty.currentGame.scoreA == 21)
+        #expect(twentyOneTwenty.matchPhase == .inProgress)
+
+        // Undo reverts to 20-20 with the same server as before
+        let undone = MatchEngine.apply(event: .undo, to: twentyOneTwenty)
+        #expect(undone.currentGame.scoreA == 20)
+        #expect(undone.currentGame.scoreB == 20)
+        #expect(undone.isDeuce)
+        #expect(undone.currentServer == serverAtDeuce)
+        #expect(undone.matchPhase == .inProgress)
+    }
 }
