@@ -466,8 +466,8 @@ Plans:
 
 **Milestone Goal:** Wire existing Localizable.strings keys to views that hardcode English, and add new keys for game-over/match-end flows — enabling the language switcher to work across the full app.
 
-- [ ] **Phase 27: Wire Existing Keys** - MatchHistoryView, StatsView, LiveMatchView use existing history/stats/match keys
-- [ ] **Phase 28: New Keys + Game/Match End** - Add game.over/game.continue/match.new/match.games to all 9 language files; wire GameEndOverlay and MatchEndView
+- [x] **Phase 27: Wire Existing Keys** - MatchHistoryView, StatsView, LiveMatchView use existing history/stats/match keys
+- [x] **Phase 28: New Keys + Game/Match End** - Add game.over/game.continue/match.new/match.games to all 9 language files; wire GameEndOverlay and MatchEndView
 
 ## Phase Details (v1.10)
 
@@ -519,8 +519,8 @@ Plans:
 | 24. Mixed Doubles Game-3 Service | v1.8 | 1/1 | Complete | 2026-03-30 |
 | 25. 3×15 Undo Edge Cases | v1.9 | 1/1 | Complete | 2026-03-30 |
 | 26. Mixed Doubles Undo & Mid-Switch | v1.9 | 1/1 | Complete | 2026-03-30 |
-| 27. Wire Existing Localization Keys | v1.10 | — | Pending | — |
-| 28. New Keys + Game/Match End | v1.10 | — | Pending | — |
+| 27. Wire Existing Localization Keys | v1.10 | 1/1 | Complete | 2026-03-31 |
+| 28. New Keys + Game/Match End | v1.10 | 1/1 | Complete | 2026-03-31 |
 
 ---
-*Roadmap updated: 2026-03-31 -- v1.10 started*
+*Roadmap updated: 2026-03-31 -- v1.10 shipped*

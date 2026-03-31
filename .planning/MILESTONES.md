@@ -1,5 +1,23 @@
 # Milestones
 
+## v1.10 — Localize Remaining Views
+
+**Shipped:** 2026-03-31
+**Phases:** 2 (27-28) | **Requirements:** 6/6 verified
+**Tests:** 95 (unchanged — UI-only changes)
+
+### Key Accomplishments
+
+1. **Localization wire-up** — MatchHistoryView, StatsView, and LiveMatchView now call `LocalizationManager.shared` for `history.title`, `history.noMatches`, `stats.title`, `stats.wins`, `stats.losses`, and `match.game` — language switcher in Settings now reflects in these views
+2. **New keys in all 9 languages** — `game.over`, `game.continue`, `match.new`, and `match.games` added to en/ja/zh-Hans/ko/id/ms/hi/th/da Localizable.strings with correct native translations
+3. **Game/match-end localization** — GameEndOverlay and MatchEndView use localized strings for their key user-facing text (game number header, undo/continue buttons, new-match CTA, games tally row)
+
+### Archive
+
+- [v1.10-REQUIREMENTS.md](.planning/REQUIREMENTS.md)
+
+---
+
 ## v1.9 — 3×15 Undo & Mixed Doubles Boundary Tests
 
 **Shipped:** 2026-03-30
