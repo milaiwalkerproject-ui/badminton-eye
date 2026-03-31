@@ -409,8 +409,8 @@ Plans:
 
 **Milestone Goal:** Fill the undo coverage gaps for the 3×15 scoring format and add missing undo/mid-switch tests for mixed doubles — ThreeByFifteenTests has zero undo tests, MixedDoublesScoringTests has no undo or mid-switch coverage.
 
-- [ ] **Phase 25: 3×15 Undo Edge Cases** - Three undo tests for 3×15 format: deuce undo, mid-switch undo in 5th game, cross-game boundary undo
-- [ ] **Phase 26: Mixed Doubles Undo & Mid-Switch** - Undo across game-1 boundary in mixed doubles; game-3 mid-switch at 11 points
+- [x] **Phase 25: 3×15 Undo Edge Cases** - Three undo tests for 3×15 format: deuce undo, mid-switch undo in 5th game, cross-game boundary undo
+- [x] **Phase 26: Mixed Doubles Undo & Mid-Switch** - Undo across game-1 boundary in mixed doubles; game-3 mid-switch at 11 points
 
 ## Phase Details (v1.9)
 
@@ -462,5 +462,65 @@ Plans:
 | 25. 3×15 Undo Edge Cases | v1.9 | 1/1 | Complete | 2026-03-30 |
 | 26. Mixed Doubles Undo & Mid-Switch | v1.9 | 1/1 | Complete | 2026-03-30 |
 
+### v1.10 Localize Remaining Views
+
+**Milestone Goal:** Wire existing Localizable.strings keys to views that hardcode English, and add new keys for game-over/match-end flows — enabling the language switcher to work across the full app.
+
+- [ ] **Phase 27: Wire Existing Keys** - MatchHistoryView, StatsView, LiveMatchView use existing history/stats/match keys
+- [ ] **Phase 28: New Keys + Game/Match End** - Add game.over/game.continue/match.new/match.games to all 9 language files; wire GameEndOverlay and MatchEndView
+
+## Phase Details (v1.10)
+
+### Phase 27: Wire Existing Keys
+**Goal**: MatchHistoryView, StatsView, and LiveMatchView use LocalizationManager for their UI strings instead of hardcoded English
+**Depends on**: Nothing (modifies existing views)
+**Requirements**: LOC-01, LOC-02, LOC-03
+**Success Criteria** (what must be TRUE):
+  1. Switching to Japanese in Settings causes MatchHistoryView to show "試合履歴" as its title
+  2. StatsView shows "勝ち" and "負け" labels when Japanese is active
+  3. LiveMatchView game label reads "ゲーム 1" in Japanese
+
+### Phase 28: New Keys + Game/Match End
+**Goal**: GameEndOverlay and MatchEndView use localized strings; all 9 Localizable.strings files include new game/match-end keys
+**Depends on**: Phase 27 (establishes localization pattern in views)
+**Requirements**: LOC-04, LOC-05, LOC-06
+**Success Criteria** (what must be TRUE):
+  1. All 9 Localizable.strings files contain game.over, game.continue, match.new, match.games keys
+  2. GameEndOverlay "Game Over" title and button labels use localized keys
+  3. MatchEndView "New Match" button and "Games" tally row use localized keys
+
+## Progress (updated)
+
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 1. Scoring Engine | v1.0 | 3/3 | Complete | 2026-03-28 |
+| 2. Apple Watch Companion | v1.0 | 3/3 | Complete | 2026-03-28 |
+| 3. Match Data and Player Profiles | v1.0 | 3/3 | Complete | 2026-03-29 |
+| 4. Cloud Sync and Authentication | v1.0 | 3/3 | Complete | 2026-03-29 |
+| 5. Hawk Eye AI and Premium | v1.0 | 4/4 | Complete | 2026-03-29 |
+| 6. Match Analytics | v1.1 | 2/2 | Complete | 2026-03-29 |
+| 7. Training Pipeline | v1.1 | 2/2 | Complete | 2026-03-29 |
+| 8. 240fps Video Capture | v1.1 | 2/2 | Complete | 2026-03-29 |
+| 9. Real AI Integration | v1.1 | 2/2 | Complete | 2026-03-29 |
+| 10. BWF 3x15 Scoring Format | v1.2 | 1/1 | Complete | 2026-03-29 |
+| 11. Haptic Score Feedback | v1.2 | 1/1 | Complete | 2026-03-29 |
+| 12. Multi-Camera Hawk Eye | v1.2 | 1/1 | Complete | 2026-03-29 |
+| 13. Custom Scoring Builder | v1.3 | 1/1 | Complete | 2026-03-29 |
+| 14. Audio Cross-Correlation Sync | v1.3 | 1/1 | Complete | 2026-03-29 |
+| 15. Live Dual-Camera Capture | v1.3 | 1/1 | Complete | 2026-03-29 |
+| 16. Custom Scoring & Codable Tests | v1.4 | 1/1 | Complete | 2026-03-29 |
+| 17. VoiceOver Accessibility | v1.4 | 1/1 | Complete | 2026-03-29 |
+| 18. Watch Haptic Reliability | v1.5 | 1/1 | Complete | 2026-03-30 |
+| 19. Undo Edge Cases | v1.6 | 1/1 | Complete | 2026-03-30 |
+| 20. Cross-Game Service Tests | v1.6 | 1/1 | Complete | 2026-03-30 |
+| 21. 3×15 Cross-Game Service | v1.7 | 1/1 | Complete | 2026-03-30 |
+| 22. Doubles Game-3 & Boundary Undo | v1.7 | 1/1 | Complete | 2026-03-30 |
+| 23. Doubles Deuce, Cap & Mid-Game Switch | v1.8 | 1/1 | Complete | 2026-03-30 |
+| 24. Mixed Doubles Game-3 Service | v1.8 | 1/1 | Complete | 2026-03-30 |
+| 25. 3×15 Undo Edge Cases | v1.9 | 1/1 | Complete | 2026-03-30 |
+| 26. Mixed Doubles Undo & Mid-Switch | v1.9 | 1/1 | Complete | 2026-03-30 |
+| 27. Wire Existing Localization Keys | v1.10 | — | Pending | — |
+| 28. New Keys + Game/Match End | v1.10 | — | Pending | — |
+
 ---
-*Roadmap updated: 2026-03-30 -- v1.9 shipped*
+*Roadmap updated: 2026-03-31 -- v1.10 started*

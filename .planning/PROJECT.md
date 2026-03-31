@@ -8,14 +8,14 @@ A native iOS app (iPhone + iPad) with Apple Watch companion for badminton player
 
 Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time — making scorekeeping seamless during actual play.
 
-## Current Milestone: v1.9 — 3×15 Undo & Mixed Doubles Boundary Tests
+## Current Milestone: v1.10 — Localize Remaining Views
 
-**Goal:** Fill the undo coverage gaps for the 3×15 scoring format and add missing undo/mid-switch tests for mixed doubles — ThreeByFifteenTests has zero undo tests and MixedDoublesScoringTests has no undo or mid-switch coverage.
+**Goal:** Wire existing Localizable.strings keys to the views that currently hardcode English strings, and add new keys for Game Over / Match End flows — enabling the in-app language switcher to work across the full app, not just Settings.
 
 **Target features:**
-- 3 undo tests for 3×15 (deuce undo at 15-14, mid-switch undo in 5th game, cross-game boundary undo in 3×15)
-- 1 mixed doubles undo-across-game-boundary test
-- 1 mixed doubles game-3 mid-switch test (shouldSwitchSidesFlag at 11 points)
+- MatchHistoryView, StatsView, LiveMatchView wire up existing localization keys
+- New keys (game.over, game.continue, match.new, match.games) added to all 9 language files
+- GameEndOverlay and MatchEndView use localized strings for key user-facing text
 
 ## Current State
 
@@ -105,4 +105,4 @@ None (v1.5 complete)
 | Placeholder Core ML for v1 | Ship full UX flow, train real model separately | ⚠️ Revisit — needs real data before production |
 
 ---
-*Last updated: 2026-03-30 after v1.9 milestone complete*
+*Last updated: 2026-03-31 — v1.10 milestone started*
