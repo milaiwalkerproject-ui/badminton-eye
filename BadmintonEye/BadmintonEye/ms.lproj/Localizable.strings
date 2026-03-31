@@ -70,3 +70,11 @@
 /* Players */
 "players.title" = "Pemain";
 "players.headToHead" = "Rekod Pertemuan";
+
+/* Game End */
+"game.over" = "Permainan Tamat";
+"game.continue" = "Teruskan";
+
+/* Match End */
+"match.new" = "Perlawanan Baru";
+"match.games" = "Set";

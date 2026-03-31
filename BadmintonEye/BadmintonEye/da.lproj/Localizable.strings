@@ -70,3 +70,11 @@
 /* Players */
 "players.title" = "Spillere";
 "players.headToHead" = "Indbyrdes opgør";
+
+/* Game End */
+"game.over" = "Spil slut";
+"game.continue" = "Fortsæt";
+
+/* Match End */
+"match.new" = "Ny kamp";
+"match.games" = "Sæt";

@@ -68,3 +68,11 @@
 /* Players */
 "players.title" = "Players";
 "players.headToHead" = "Head to Head";
+
+/* Game End */
+"game.over" = "Game Over";
+"game.continue" = "Continue";
+
+/* Match End */
+"match.new" = "New Match";
+"match.games" = "Games";

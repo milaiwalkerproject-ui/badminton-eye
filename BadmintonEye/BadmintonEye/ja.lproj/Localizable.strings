@@ -68,3 +68,11 @@
 /* Players */
 "players.title" = "選手";
 "players.headToHead" = "対戦成績";
+
+/* Game End */
+"game.over" = "ゲーム終了";
+"game.continue" = "続ける";
+
+/* Match End */
+"match.new" = "新しい試合";
+"match.games" = "ゲーム";

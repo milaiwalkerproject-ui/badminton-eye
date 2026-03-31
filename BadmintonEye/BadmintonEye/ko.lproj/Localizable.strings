@@ -68,3 +68,11 @@
 /* Players */
 "players.title" = "선수";
 "players.headToHead" = "상대 전적";
+
+/* Game End */
+"game.over" = "게임 종료";
+"game.continue" = "계속";
+
+/* Match End */
+"match.new" = "새 경기";
+"match.games" = "게임 수";

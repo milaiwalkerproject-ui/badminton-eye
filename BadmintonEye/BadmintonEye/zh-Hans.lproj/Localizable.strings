@@ -68,3 +68,11 @@
 /* Players */
 "players.title" = "球员";
 "players.headToHead" = "对战记录";
+
+/* Game End */
+"game.over" = "本局结束";
+"game.continue" = "继续";
+
+/* Match End */
+"match.new" = "新比赛";
+"match.games" = "局数";

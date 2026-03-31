@@ -70,3 +70,11 @@
 /* Players */
 "players.title" = "खिलाड़ी";
 "players.headToHead" = "आमने-सामने";
+
+/* Game End */
+"game.over" = "गेम समाप्त";
+"game.continue" = "जारी रखें";
+
+/* Match End */
+"match.new" = "नया मैच";
+"match.games" = "गेम";

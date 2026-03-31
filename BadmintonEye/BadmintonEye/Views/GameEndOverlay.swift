@@ -4,6 +4,7 @@ import ScoringEngine
 struct GameEndOverlay: View {
     let viewModel: LiveMatchViewModel
     @State private var isVisible = true
+    @State private var localization = LocalizationManager.shared
 
     private var completedGame: GameState? {
         viewModel.justCompletedGame
@@ -24,12 +25,12 @@ struct GameEndOverlay: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 24) {
-                Text("Game Over")
+                Text(localization.localized("game.over"))
                     .font(.largeTitle.bold())
                     .foregroundStyle(.white)
 
                 if let game = completedGame {
-                    Text("Game \(game.gameNumber)")
+                    Text("\(localization.localized("match.game")) \(game.gameNumber)")
                         .font(.title3)
                         .foregroundStyle(.white.opacity(0.8))
 
@@ -54,7 +55,7 @@ struct GameEndOverlay: View {
                     Button {
                         viewModel.undo()
                     } label: {
-                        Label("Undo", systemImage: "arrow.uturn.backward")
+                        Label(localization.localized("match.undo"), systemImage: "arrow.uturn.backward")
                             .font(.headline)
                             .padding(.horizontal, 24)
                             .padding(.vertical, 12)
@@ -66,7 +67,7 @@ struct GameEndOverlay: View {
                     Button {
                         viewModel.showGameEndOverlay = false
                     } label: {
-                        Text("Continue")
+                        Text(localization.localized("game.continue"))
                             .font(.headline)
                             .padding(.horizontal, 24)
                             .padding(.vertical, 12)

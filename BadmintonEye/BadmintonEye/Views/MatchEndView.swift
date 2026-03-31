@@ -5,6 +5,7 @@ struct MatchEndView: View {
     let state: MatchState
     var onNewMatch: (() -> Void)?
     @Environment(\.dismiss) private var dismiss
+    @State private var localization = LocalizationManager.shared
 
     private var winnerText: String {
         guard let winner = state.matchWinner else {
@@ -48,7 +49,7 @@ struct MatchEndView: View {
                 // Game rows
                 ForEach(Array(allGames.enumerated()), id: \.offset) { index, game in
                     HStack {
-                        Text("Game \(index + 1)")
+                        Text("\(localization.localized("match.game")) \(index + 1)")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                             .frame(width: 80, alignment: .leading)
@@ -74,7 +75,7 @@ struct MatchEndView: View {
 
                 // Games won summary
                 HStack {
-                    Text("Games")
+                    Text(localization.localized("match.games"))
                         .font(.subheadline.bold())
                         .frame(width: 80, alignment: .leading)
                     Spacer()
@@ -127,7 +128,7 @@ struct MatchEndView: View {
                     dismiss()
                 }
             } label: {
-                Text("New Match")
+                Text(localization.localized("match.new"))
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)

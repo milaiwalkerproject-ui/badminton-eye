@@ -70,3 +70,11 @@
 /* Players */
 "players.title" = "ผู้เล่น";
 "players.headToHead" = "สถิติเจอกัน";
+
+/* Game End */
+"game.over" = "จบเกม";
+"game.continue" = "ดำเนินการต่อ";
+
+/* Match End */
+"match.new" = "แมตช์ใหม่";
+"match.games" = "เกม";
