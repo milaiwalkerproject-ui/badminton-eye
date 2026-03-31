@@ -1,0 +1,72 @@
+/* Indonesian - Badminton Eye */
+
+/* Settings */
+"settings.title" = "Pengaturan";
+"settings.language" = "Bahasa";
+"settings.language.subtitle" = "Pilih bahasa yang Anda inginkan";
+"settings.haptic" = "Umpan Balik Haptic";
+"settings.haptic.subtitle" = "Getar saat perubahan skor selama pertandingan langsung";
+"settings.scoring" = "Penilaian";
+"settings.premium" = "Premium";
+"settings.about" = "Tentang";
+"settings.version" = "Versi";
+"settings.build" = "Build";
+"settings.restorePurchases" = "Pulihkan Pembelian";
+"settings.signOut" = "Keluar";
+
+/* Premium */
+"premium.active" = "Hawk Eye Premium Aktif";
+"premium.allUnlocked" = "Semua fitur premium telah dibuka";
+"premium.manage" = "Kelola Langganan";
+"premium.upgrade" = "Upgrade ke Premium";
+"premium.unlockHawkEye" = "Buka fitur Hawk Eye AI penilaian garis";
+
+/* iCloud */
+"icloud.title" = "Sinkronisasi iCloud";
+"icloud.signInPrompt" = "Masuk untuk menyinkronkan pertandingan dan pemain di semua perangkat Anda.";
+"icloud.syncActive" = "Sinkronisasi iCloud Aktif";
+"icloud.account" = "Akun";
+
+/* Match Setup */
+"setup.title" = "Badminton Eye";
+"setup.matchFormat" = "Format Pertandingan";
+"setup.singles" = "Tunggal";
+"setup.doubles" = "Ganda";
+"setup.mixed" = "Ganda Campuran";
+"setup.scoring" = "Penilaian";
+"setup.scoringStandard" = "Standar (21 poin, best of 3)";
+"setup.scoring3x15" = "BWF 3×15 (15 poin, best of 5)";
+"setup.customFormat" = "Buat Format Kustom";
+"setup.teamA" = "Tim A";
+"setup.teamB" = "Tim B";
+"setup.startMatch" = "Mulai Pertandingan";
+
+/* Match */
+"match.game" = "Game";
+"match.undo" = "Batalkan";
+"match.endMatch" = "Akhiri Pertandingan";
+"match.serving" = "Servis";
+
+/* Stats */
+"stats.title" = "Statistik";
+"stats.wins" = "Menang";
+"stats.losses" = "Kalah";
+"stats.winRate" = "Rasio Menang";
+"stats.streak" = "Beruntun";
+
+/* Hawk Eye */
+"hawkeye.challenge" = "Tantangan Hawk Eye";
+"hawkeye.analyzing" = "Menganalisis...";
+"hawkeye.inBounds" = "MASUK";
+"hawkeye.outOfBounds" = "KELUAR";
+"hawkeye.uncertain" = "TIDAK PASTI";
+"hawkeye.confidence" = "Keyakinan";
+"hawkeye.addSecondAngle" = "Tambah Sudut Kedua";
+
+/* History */
+"history.title" = "Riwayat Pertandingan";
+"history.noMatches" = "Belum ada pertandingan";
+
+/* Players */
+"players.title" = "Pemain";
+"players.headToHead" = "Rekor Pertemuan";

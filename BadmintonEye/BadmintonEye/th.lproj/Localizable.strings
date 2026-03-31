@@ -1,0 +1,72 @@
+/* Thai - Badminton Eye */
+
+/* Settings */
+"settings.title" = "ตั้งค่า";
+"settings.language" = "ภาษา";
+"settings.language.subtitle" = "เลือกภาษาที่คุณต้องการ";
+"settings.haptic" = "การสั่นตอบสนอง";
+"settings.haptic.subtitle" = "สั่นเมื่อคะแนนเปลี่ยนระหว่างแข่งขันสด";
+"settings.scoring" = "การนับคะแนน";
+"settings.premium" = "พรีเมียม";
+"settings.about" = "เกี่ยวกับ";
+"settings.version" = "เวอร์ชัน";
+"settings.build" = "บิลด์";
+"settings.restorePurchases" = "กู้คืนการซื้อ";
+"settings.signOut" = "ออกจากระบบ";
+
+/* Premium */
+"premium.active" = "Hawk Eye พรีเมียมใช้งานอยู่";
+"premium.allUnlocked" = "ปลดล็อกฟีเจอร์พรีเมียมทั้งหมดแล้ว";
+"premium.manage" = "จัดการการสมัครสมาชิก";
+"premium.upgrade" = "อัปเกรดเป็นพรีเมียม";
+"premium.unlockHawkEye" = "ปลดล็อก Hawk Eye AI ตัดสินเส้น";
+
+/* iCloud */
+"icloud.title" = "ซิงค์ iCloud";
+"icloud.signInPrompt" = "ลงชื่อเข้าใช้เพื่อซิงค์แมตช์และผู้เล่นในทุกอุปกรณ์ของคุณ";
+"icloud.syncActive" = "ซิงค์ iCloud ใช้งานอยู่";
+"icloud.account" = "บัญชี";
+
+/* Match Setup */
+"setup.title" = "แบดมินตัน อาย";
+"setup.matchFormat" = "รูปแบบการแข่งขัน";
+"setup.singles" = "ประเภทเดี่ยว";
+"setup.doubles" = "ประเภทคู่";
+"setup.mixed" = "คู่ผสม";
+"setup.scoring" = "การนับคะแนน";
+"setup.scoringStandard" = "มาตรฐาน (21 คะแนน, ดีที่สุดใน 3 เกม)";
+"setup.scoring3x15" = "BWF 3×15 (15 คะแนน, ดีที่สุดใน 5 เกม)";
+"setup.customFormat" = "สร้างรูปแบบกำหนดเอง";
+"setup.teamA" = "ทีม A";
+"setup.teamB" = "ทีม B";
+"setup.startMatch" = "เริ่มแมตช์";
+
+/* Match */
+"match.game" = "เกม";
+"match.undo" = "เลิกทำ";
+"match.endMatch" = "จบแมตช์";
+"match.serving" = "เสิร์ฟ";
+
+/* Stats */
+"stats.title" = "สถิติ";
+"stats.wins" = "ชนะ";
+"stats.losses" = "แพ้";
+"stats.winRate" = "อัตราชนะ";
+"stats.streak" = "ชนะติดต่อกัน";
+
+/* Hawk Eye */
+"hawkeye.challenge" = "ท้าทาย Hawk Eye";
+"hawkeye.analyzing" = "กำลังวิเคราะห์...";
+"hawkeye.inBounds" = "ในเส้น";
+"hawkeye.outOfBounds" = "ออก";
+"hawkeye.uncertain" = "ไม่แน่ชัด";
+"hawkeye.confidence" = "ความมั่นใจ";
+"hawkeye.addSecondAngle" = "เพิ่มมุมที่สอง";
+
+/* History */
+"history.title" = "ประวัติการแข่งขัน";
+"history.noMatches" = "ยังไม่มีแมตช์";
+
+/* Players */
+"players.title" = "ผู้เล่น";
+"players.headToHead" = "สถิติเจอกัน";

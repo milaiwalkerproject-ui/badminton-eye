@@ -1,0 +1,72 @@
+/* Hindi - Badminton Eye */
+
+/* Settings */
+"settings.title" = "सेटिंग्स";
+"settings.language" = "भाषा";
+"settings.language.subtitle" = "अपनी पसंदीदा भाषा चुनें";
+"settings.haptic" = "हैप्टिक फ़ीडबैक";
+"settings.haptic.subtitle" = "लाइव खेल के दौरान स्कोर बदलने पर वाइब्रेट करें";
+"settings.scoring" = "स्कोरिंग";
+"settings.premium" = "प्रीमियम";
+"settings.about" = "परिचय";
+"settings.version" = "संस्करण";
+"settings.build" = "बिल्ड";
+"settings.restorePurchases" = "खरीदारी पुनर्स्थापित करें";
+"settings.signOut" = "साइन आउट";
+
+/* Premium */
+"premium.active" = "हॉक आई प्रीमियम सक्रिय";
+"premium.allUnlocked" = "सभी प्रीमियम सुविधाएं अनलॉक";
+"premium.manage" = "सदस्यता प्रबंधित करें";
+"premium.upgrade" = "प्रीमियम में अपग्रेड करें";
+"premium.unlockHawkEye" = "हॉक आई AI लाइन कॉलिंग अनलॉक करें";
+
+/* iCloud */
+"icloud.title" = "iCloud सिंक";
+"icloud.signInPrompt" = "अपने सभी डिवाइस पर मैच और खिलाड़ियों को सिंक करने के लिए साइन इन करें।";
+"icloud.syncActive" = "iCloud सिंक सक्रिय";
+"icloud.account" = "खाता";
+
+/* Match Setup */
+"setup.title" = "बैडमिंटन आई";
+"setup.matchFormat" = "मैच फ़ॉर्मेट";
+"setup.singles" = "एकल";
+"setup.doubles" = "युगल";
+"setup.mixed" = "मिश्रित युगल";
+"setup.scoring" = "स्कोरिंग";
+"setup.scoringStandard" = "मानक (21 अंक, 3 में से सर्वश्रेष्ठ)";
+"setup.scoring3x15" = "BWF 3×15 (15 अंक, 5 में से सर्वश्रेष्ठ)";
+"setup.customFormat" = "कस्टम फ़ॉर्मेट बनाएं";
+"setup.teamA" = "टीम A";
+"setup.teamB" = "टीम B";
+"setup.startMatch" = "मैच शुरू करें";
+
+/* Match */
+"match.game" = "गेम";
+"match.undo" = "पूर्ववत करें";
+"match.endMatch" = "मैच समाप्त करें";
+"match.serving" = "सर्विस";
+
+/* Stats */
+"stats.title" = "आंकड़े";
+"stats.wins" = "जीत";
+"stats.losses" = "हार";
+"stats.winRate" = "जीत दर";
+"stats.streak" = "लगातार";
+
+/* Hawk Eye */
+"hawkeye.challenge" = "हॉक आई चैलेंज";
+"hawkeye.analyzing" = "विश्लेषण हो रहा है...";
+"hawkeye.inBounds" = "अंदर";
+"hawkeye.outOfBounds" = "बाहर";
+"hawkeye.uncertain" = "अनिश्चित";
+"hawkeye.confidence" = "विश्वसनीयता";
+"hawkeye.addSecondAngle" = "दूसरा कोण जोड़ें";
+
+/* History */
+"history.title" = "मैच इतिहास";
+"history.noMatches" = "अभी तक कोई मैच नहीं";
+
+/* Players */
+"players.title" = "खिलाड़ी";
+"players.headToHead" = "आमने-सामने";

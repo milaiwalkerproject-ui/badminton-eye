@@ -1,0 +1,72 @@
+/* Danish - Badminton Eye */
+
+/* Settings */
+"settings.title" = "Indstillinger";
+"settings.language" = "Sprog";
+"settings.language.subtitle" = "Vælg dit foretrukne sprog";
+"settings.haptic" = "Haptisk feedback";
+"settings.haptic.subtitle" = "Vibrer ved scoringsændringer under livekamp";
+"settings.scoring" = "Pointgivning";
+"settings.premium" = "Premium";
+"settings.about" = "Om";
+"settings.version" = "Version";
+"settings.build" = "Build";
+"settings.restorePurchases" = "Gendan køb";
+"settings.signOut" = "Log ud";
+
+/* Premium */
+"premium.active" = "Hawk Eye Premium aktiv";
+"premium.allUnlocked" = "Alle premiumfunktioner er låst op";
+"premium.manage" = "Administrer abonnement";
+"premium.upgrade" = "Opgrader til Premium";
+"premium.unlockHawkEye" = "Lås op for Hawk Eye AI linjedømming";
+
+/* iCloud */
+"icloud.title" = "iCloud-synkronisering";
+"icloud.signInPrompt" = "Log ind for at synkronisere kampe og spillere på tværs af dine enheder.";
+"icloud.syncActive" = "iCloud-synkronisering aktiv";
+"icloud.account" = "Konto";
+
+/* Match Setup */
+"setup.title" = "Badminton Eye";
+"setup.matchFormat" = "Kampformat";
+"setup.singles" = "Single";
+"setup.doubles" = "Double";
+"setup.mixed" = "Mixed";
+"setup.scoring" = "Pointgivning";
+"setup.scoringStandard" = "Standard (21 point, bedst af 3)";
+"setup.scoring3x15" = "BWF 3×15 (15 point, bedst af 5)";
+"setup.customFormat" = "Opret brugerdefineret format";
+"setup.teamA" = "Hold A";
+"setup.teamB" = "Hold B";
+"setup.startMatch" = "Start kamp";
+
+/* Match */
+"match.game" = "Sæt";
+"match.undo" = "Fortryd";
+"match.endMatch" = "Afslut kamp";
+"match.serving" = "Server";
+
+/* Stats */
+"stats.title" = "Statistik";
+"stats.wins" = "Sejre";
+"stats.losses" = "Nederlag";
+"stats.winRate" = "Sejrsprocent";
+"stats.streak" = "Stime";
+
+/* Hawk Eye */
+"hawkeye.challenge" = "Hawk Eye-udfordring";
+"hawkeye.analyzing" = "Analyserer...";
+"hawkeye.inBounds" = "INDE";
+"hawkeye.outOfBounds" = "UDE";
+"hawkeye.uncertain" = "USIKKER";
+"hawkeye.confidence" = "Sikkerhed";
+"hawkeye.addSecondAngle" = "Tilføj anden vinkel";
+
+/* History */
+"history.title" = "Kamphistorik";
+"history.noMatches" = "Ingen kampe endnu";
+
+/* Players */
+"players.title" = "Spillere";
+"players.headToHead" = "Indbyrdes opgør";
