@@ -1,46 +1,41 @@
-# Requirements: Badminton Eye v1.8 — Doubles & Mixed Deuce/Cap Coverage
+# Requirements: Badminton Eye v1.9 — 3×15 Undo & Mixed Doubles Boundary Tests
 
 **Defined:** 2026-03-30
 **Core Value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
 
-## v1.8 Requirements
+## v1.9 Requirements
 
-### Doubles Deuce & Cap
+### 3×15 Undo Edge Cases
 
-- [x] **DUB-DCE-01**: Doubles deuce activates at 20-20 (isDeuce is true, same threshold as singles)
-- [x] **DUB-DCE-02**: Doubles 21-20 does NOT win the game in deuce (2-point lead required)
-- [x] **DUB-DCE-03**: Doubles cap at 30-29 ends the game (cap overrides the 2-point-lead requirement)
+- [ ] **THX-UND-01**: Undo at 15-14 (deuce state) in 3×15 reverts to 14-14 with isDeuce true
+- [ ] **THX-UND-02**: Undo the 8th-point mid-game-switch in 3×15 5th game clears hasSwitchedInThirdGame flag and shouldSwitchSidesFlag
+- [ ] **THX-UND-03**: Undo the first point of 3×15 game 3 restores cross-game-boundary state (server, score, completed-game list)
 
-### Doubles Mid-Game Switch & Undo
+### Mixed Doubles Undo & Mid-Switch
 
-- [x] **DUB-MID-01**: Doubles game-3 mid-switch triggers shouldSwitchSidesFlag at 11 points
-- [x] **DUB-UND-01**: Undo in doubles during deuce (at 21-20) reverts to 20-20 with correct server restored
-
-### Mixed Doubles Cross-Game Service
-
-- [x] **MXD-G3-01**: Mixed doubles: loser of game 2 serves first in game 3 (same resetServiceForNewGame path as doubles)
+- [ ] **MXD-UND-01**: Mixed doubles undo of the first point of game 2 restores pre-game-end state (server, rotation, scores, game 1 in games array)
+- [ ] **MXD-MID-01**: Mixed doubles game-3 mid-switch triggers shouldSwitchSidesFlag when total points reach 11 (same threshold as doubles)
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| 3×15 doubles deuce/cap | Same isGameWon code path; already covered via singles 3×15 tests |
-| Custom scoring deuce in doubles | Same isGameWon code path; covered in CustomScoringTests |
+| 3×15 doubles undo tests | 3×15 doubles format uses same undo code path as standard doubles; standard doubles undo already covered |
+| Custom scoring undo in doubles | Same undo code path; standard doubles and custom singles undo already covered |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DUB-DCE-01 | Phase 23 | Complete |
-| DUB-DCE-02 | Phase 23 | Complete |
-| DUB-DCE-03 | Phase 23 | Complete |
-| DUB-MID-01 | Phase 23 | Complete |
-| DUB-UND-01 | Phase 23 | Complete |
-| MXD-G3-01 | Phase 24 | Complete |
+| THX-UND-01 | Phase 25 | Pending |
+| THX-UND-02 | Phase 25 | Pending |
+| THX-UND-03 | Phase 25 | Pending |
+| MXD-UND-01 | Phase 26 | Pending |
+| MXD-MID-01 | Phase 26 | Pending |
 
 **Coverage:**
-- v1.8 requirements: 6 total
-- Mapped to phases: 6
+- v1.9 requirements: 5 total
+- Mapped to phases: 5
 - Unmapped: 0
 
 ---

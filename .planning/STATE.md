@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-30)
 
 **Core value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
-**Current focus:** v1.8 — Doubles & Mixed Deuce/Cap Coverage (COMPLETE)
+**Current focus:** v1.9 — 3×15 Undo & Mixed Doubles Boundary Tests (IN PROGRESS)
 
 ## Current Position
 
-Phase: 24 of 24 (All complete)
-Plan: All plans complete
-Status: Milestone complete
-Last activity: 2026-03-30 — v1.8 Phases 23-24 executed, build verified, 90 tests passing
+Phase: 25 of 26 (in progress)
+Plan: v1.9 milestone active
+Status: In progress
+Last activity: 2026-03-30 — v1.9 started, docs updated
 
-Progress: [##########] 100%
+Progress: [##########] 0%
 
 ## Performance Metrics
 
@@ -69,5 +69,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-30
-Stopped at: v1.8 complete — ready for v1.9 milestone
+Stopped at: v1.9 in progress — Phase 25 (3×15 undo tests) next
 Resume file: None

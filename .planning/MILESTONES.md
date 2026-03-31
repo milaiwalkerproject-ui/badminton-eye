@@ -1,5 +1,21 @@
 # Milestones
 
+## v1.9 — 3×15 Undo & Mixed Doubles Boundary Tests
+
+**In progress:** 2026-03-30
+**Phases:** 2 (25-26) | **Requirements:** 0/5 verified
+**Tests:** 90 → 95 expected
+
+### Key Accomplishments
+
+*(in progress)*
+
+### Archive
+
+- [v1.9-REQUIREMENTS.md](.planning/REQUIREMENTS.md)
+
+---
+
 ## v1.8 — Doubles & Mixed Deuce/Cap Coverage
 
 **Shipped:** 2026-03-30
