@@ -1,0 +1,70 @@
+/* Settings */
+"settings.title" = "Settings";
+"settings.language" = "Language";
+"settings.language.subtitle" = "Choose your preferred language";
+"settings.haptic" = "Haptic Feedback";
+"settings.haptic.subtitle" = "Vibrate on score changes during live play";
+"settings.scoring" = "Scoring";
+"settings.premium" = "Premium";
+"settings.about" = "About";
+"settings.version" = "Version";
+"settings.build" = "Build";
+"settings.restorePurchases" = "Restore Purchases";
+"settings.signOut" = "Sign Out";
+
+/* Premium */
+"premium.active" = "Hawk Eye Premium Active";
+"premium.allUnlocked" = "All premium features unlocked";
+"premium.manage" = "Manage Subscription";
+"premium.upgrade" = "Upgrade to Premium";
+"premium.unlockHawkEye" = "Unlock Hawk Eye AI line calling";
+
+/* iCloud */
+"icloud.title" = "iCloud Sync";
+"icloud.signInPrompt" = "Sign in to sync matches and players across your devices.";
+"icloud.syncActive" = "iCloud Sync Active";
+"icloud.account" = "Account";
+
+/* Match Setup */
+"setup.title" = "Badminton Eye";
+"setup.matchFormat" = "Match Format";
+"setup.singles" = "Singles";
+"setup.doubles" = "Doubles";
+"setup.mixed" = "Mixed";
+"setup.scoring" = "Scoring";
+"setup.scoringStandard" = "Standard (21 pts, best of 3)";
+"setup.scoring3x15" = "BWF 3×15 (15 pts, best of 5)";
+"setup.customFormat" = "Create Custom Format";
+"setup.teamA" = "Team A";
+"setup.teamB" = "Team B";
+"setup.startMatch" = "Start Match";
+
+/* Live Match */
+"match.game" = "Game";
+"match.undo" = "Undo";
+"match.endMatch" = "End Match";
+"match.serving" = "Serving";
+
+/* Stats */
+"stats.title" = "Stats";
+"stats.wins" = "Wins";
+"stats.losses" = "Losses";
+"stats.winRate" = "Win Rate";
+"stats.streak" = "Streak";
+
+/* Hawk Eye */
+"hawkeye.challenge" = "Hawk Eye Challenge";
+"hawkeye.analyzing" = "Analyzing...";
+"hawkeye.inBounds" = "IN";
+"hawkeye.outOfBounds" = "OUT";
+"hawkeye.uncertain" = "UNCERTAIN";
+"hawkeye.confidence" = "Confidence";
+"hawkeye.addSecondAngle" = "Add Second Angle";
+
+/* History */
+"history.title" = "Match History";
+"history.noMatches" = "No matches yet";
+
+/* Players */
+"players.title" = "Players";
+"players.headToHead" = "Head to Head";

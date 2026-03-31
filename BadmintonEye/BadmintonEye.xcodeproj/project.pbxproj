@@ -77,6 +77,7 @@
 		CF1001 /* ScoringFormatBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2001 /* ScoringFormatBuilderView.swift */; };
 		AS1001 /* AudioTemporalSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = AS2001 /* AudioTemporalSync.swift */; };
 		DC1001 /* MultiCamCaptureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2001 /* MultiCamCaptureManager.swift */; };
+		LM1001 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = LM2001 /* LocalizationManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -171,6 +172,7 @@
 		CF2001 /* ScoringFormatBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoringFormatBuilderView.swift; sourceTree = "<group>"; };
 		AS2001 /* AudioTemporalSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioTemporalSync.swift; sourceTree = "<group>"; };
 		DC2001 /* MultiCamCaptureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiCamCaptureManager.swift; sourceTree = "<group>"; };
+		LM2001 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -308,6 +310,7 @@
 				MC2001 /* ResultFusionService.swift */,
 				AS2001 /* AudioTemporalSync.swift */,
 				DC2001 /* MultiCamCaptureManager.swift */,
+				LM2001 /* LocalizationManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -575,6 +578,7 @@
 				CF1001 /* ScoringFormatBuilderView.swift in Sources */,
 				AS1001 /* AudioTemporalSync.swift in Sources */,
 				DC1001 /* MultiCamCaptureManager.swift in Sources */,
+				LM1001 /* LocalizationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

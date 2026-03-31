@@ -7,6 +7,7 @@ struct SettingsView: View {
     private var subscriptionManager = SubscriptionManager.shared
     @State private var showPaywall = false
     @AppStorage("hapticFeedbackEnabled") private var hapticEnabled = true
+    @State private var localization = LocalizationManager.shared
 
     var body: some View {
         List {
@@ -18,11 +19,13 @@ struct SettingsView: View {
 
             premiumSection
 
+            languageSection
+
             hapticSection
 
             aboutSection
         }
-        .navigationTitle("Settings")
+        .navigationTitle(localization.localized("settings.title"))
         .sheet(isPresented: $showPaywall) {
             PaywallView()
         }
@@ -142,6 +145,42 @@ struct SettingsView: View {
             }
         } header: {
             Text("Account")
+        }
+    }
+
+    // MARK: - Language
+
+    private var languageSection: some View {
+        Section {
+            Picker(selection: $localization.currentLanguage) {
+                ForEach(AppLanguage.allCases) { language in
+                    HStack(spacing: 8) {
+                        Text(language.flag)
+                        Text(language.nativeName)
+                        if language != .english {
+                            Text("(\(language.englishName))")
+                                .foregroundStyle(.secondary)
+                                .font(.caption)
+                        }
+                    }
+                    .tag(language)
+                }
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "globe")
+                        .foregroundStyle(.blue)
+                        .font(.title3)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(localization.localized("settings.language"))
+                            .font(.subheadline)
+                        Text("\(localization.currentLanguage.flag) \(localization.currentLanguage.nativeName)")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+        } header: {
+            Text(localization.localized("settings.language"))
         }
     }
 

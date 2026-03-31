@@ -1,0 +1,70 @@
+/* Settings */
+"settings.title" = "설정";
+"settings.language" = "언어";
+"settings.language.subtitle" = "원하는 언어를 선택하세요";
+"settings.haptic" = "햅틱 피드백";
+"settings.haptic.subtitle" = "경기 중 득점 시 진동 알림";
+"settings.scoring" = "채점";
+"settings.premium" = "프리미엄";
+"settings.about" = "정보";
+"settings.version" = "버전";
+"settings.build" = "빌드";
+"settings.restorePurchases" = "구매 복원";
+"settings.signOut" = "로그아웃";
+
+/* Premium */
+"premium.active" = "호크아이 프리미엄 활성화";
+"premium.allUnlocked" = "모든 프리미엄 기능 잠금 해제";
+"premium.manage" = "구독 관리";
+"premium.upgrade" = "프리미엄으로 업그레이드";
+"premium.unlockHawkEye" = "호크아이 AI 라인 판정 잠금 해제";
+
+/* iCloud */
+"icloud.title" = "iCloud 동기화";
+"icloud.signInPrompt" = "로그인하여 기기 간 경기와 선수를 동기화하세요.";
+"icloud.syncActive" = "iCloud 동기화 활성";
+"icloud.account" = "계정";
+
+/* Match Setup */
+"setup.title" = "배드민턴 아이";
+"setup.matchFormat" = "경기 형식";
+"setup.singles" = "단식";
+"setup.doubles" = "복식";
+"setup.mixed" = "혼합복식";
+"setup.scoring" = "채점 방식";
+"setup.scoringStandard" = "표준 (21점, 3세트 중 2승)";
+"setup.scoring3x15" = "BWF 3×15 (15점, 5세트 중 3승)";
+"setup.customFormat" = "사용자 정의 형식 만들기";
+"setup.teamA" = "A팀";
+"setup.teamB" = "B팀";
+"setup.startMatch" = "경기 시작";
+
+/* Live Match */
+"match.game" = "게임";
+"match.undo" = "되돌리기";
+"match.endMatch" = "경기 종료";
+"match.serving" = "서브";
+
+/* Stats */
+"stats.title" = "통계";
+"stats.wins" = "승";
+"stats.losses" = "패";
+"stats.winRate" = "승률";
+"stats.streak" = "연승";
+
+/* Hawk Eye */
+"hawkeye.challenge" = "호크아이 챌린지";
+"hawkeye.analyzing" = "분석 중...";
+"hawkeye.inBounds" = "인";
+"hawkeye.outOfBounds" = "아웃";
+"hawkeye.uncertain" = "불확실";
+"hawkeye.confidence" = "신뢰도";
+"hawkeye.addSecondAngle" = "두 번째 앵글 추가";
+
+/* History */
+"history.title" = "경기 기록";
+"history.noMatches" = "경기 기록 없음";
+
+/* Players */
+"players.title" = "선수";
+"players.headToHead" = "상대 전적";

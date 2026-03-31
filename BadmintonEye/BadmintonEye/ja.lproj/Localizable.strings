@@ -1,0 +1,70 @@
+/* Settings */
+"settings.title" = "設定";
+"settings.language" = "言語";
+"settings.language.subtitle" = "お好みの言語を選択";
+"settings.haptic" = "触覚フィードバック";
+"settings.haptic.subtitle" = "得点時に振動で通知";
+"settings.scoring" = "スコアリング";
+"settings.premium" = "プレミアム";
+"settings.about" = "このアプリについて";
+"settings.version" = "バージョン";
+"settings.build" = "ビルド";
+"settings.restorePurchases" = "購入を復元";
+"settings.signOut" = "サインアウト";
+
+/* Premium */
+"premium.active" = "ホークアイ プレミアム有効";
+"premium.allUnlocked" = "すべてのプレミアム機能がアンロック済み";
+"premium.manage" = "サブスクリプション管理";
+"premium.upgrade" = "プレミアムにアップグレード";
+"premium.unlockHawkEye" = "ホークアイAI判定を解除";
+
+/* iCloud */
+"icloud.title" = "iCloud同期";
+"icloud.signInPrompt" = "サインインしてデバイス間で試合と選手を同期。";
+"icloud.syncActive" = "iCloud同期中";
+"icloud.account" = "アカウント";
+
+/* Match Setup */
+"setup.title" = "バドミントンアイ";
+"setup.matchFormat" = "試合形式";
+"setup.singles" = "シングルス";
+"setup.doubles" = "ダブルス";
+"setup.mixed" = "ミックス";
+"setup.scoring" = "スコアリング";
+"setup.scoringStandard" = "標準 (21点制、3ゲームマッチ)";
+"setup.scoring3x15" = "BWF 3×15 (15点制、5ゲームマッチ)";
+"setup.customFormat" = "カスタム形式を作成";
+"setup.teamA" = "チームA";
+"setup.teamB" = "チームB";
+"setup.startMatch" = "試合開始";
+
+/* Live Match */
+"match.game" = "ゲーム";
+"match.undo" = "元に戻す";
+"match.endMatch" = "試合終了";
+"match.serving" = "サーブ";
+
+/* Stats */
+"stats.title" = "統計";
+"stats.wins" = "勝ち";
+"stats.losses" = "負け";
+"stats.winRate" = "勝率";
+"stats.streak" = "連勝";
+
+/* Hawk Eye */
+"hawkeye.challenge" = "ホークアイチャレンジ";
+"hawkeye.analyzing" = "分析中...";
+"hawkeye.inBounds" = "イン";
+"hawkeye.outOfBounds" = "アウト";
+"hawkeye.uncertain" = "不明";
+"hawkeye.confidence" = "信頼度";
+"hawkeye.addSecondAngle" = "第2アングルを追加";
+
+/* History */
+"history.title" = "試合履歴";
+"history.noMatches" = "試合記録なし";
+
+/* Players */
+"players.title" = "選手";
+"players.headToHead" = "対戦成績";

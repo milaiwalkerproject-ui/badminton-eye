@@ -1,0 +1,70 @@
+/* Settings */
+"settings.title" = "设置";
+"settings.language" = "语言";
+"settings.language.subtitle" = "选择您的首选语言";
+"settings.haptic" = "触觉反馈";
+"settings.haptic.subtitle" = "比赛中得分时振动提醒";
+"settings.scoring" = "计分";
+"settings.premium" = "高级版";
+"settings.about" = "关于";
+"settings.version" = "版本";
+"settings.build" = "构建号";
+"settings.restorePurchases" = "恢复购买";
+"settings.signOut" = "退出登录";
+
+/* Premium */
+"premium.active" = "鹰眼高级版已激活";
+"premium.allUnlocked" = "所有高级功能已解锁";
+"premium.manage" = "管理订阅";
+"premium.upgrade" = "升级至高级版";
+"premium.unlockHawkEye" = "解锁鹰眼AI线判系统";
+
+/* iCloud */
+"icloud.title" = "iCloud 同步";
+"icloud.signInPrompt" = "登录以在您的设备间同步比赛和球员数据。";
+"icloud.syncActive" = "iCloud 同步已开启";
+"icloud.account" = "账户";
+
+/* Match Setup */
+"setup.title" = "羽毛球之眼";
+"setup.matchFormat" = "比赛形式";
+"setup.singles" = "单打";
+"setup.doubles" = "双打";
+"setup.mixed" = "混双";
+"setup.scoring" = "计分规则";
+"setup.scoringStandard" = "标准 (21分制，三局两胜)";
+"setup.scoring3x15" = "BWF 3×15 (15分制，五局三胜)";
+"setup.customFormat" = "创建自定义规则";
+"setup.teamA" = "A队";
+"setup.teamB" = "B队";
+"setup.startMatch" = "开始比赛";
+
+/* Live Match */
+"match.game" = "局";
+"match.undo" = "撤销";
+"match.endMatch" = "结束比赛";
+"match.serving" = "发球";
+
+/* Stats */
+"stats.title" = "统计";
+"stats.wins" = "胜";
+"stats.losses" = "负";
+"stats.winRate" = "胜率";
+"stats.streak" = "连胜";
+
+/* Hawk Eye */
+"hawkeye.challenge" = "鹰眼挑战";
+"hawkeye.analyzing" = "分析中...";
+"hawkeye.inBounds" = "界内";
+"hawkeye.outOfBounds" = "界外";
+"hawkeye.uncertain" = "不确定";
+"hawkeye.confidence" = "置信度";
+"hawkeye.addSecondAngle" = "添加第二视角";
+
+/* History */
+"history.title" = "比赛记录";
+"history.noMatches" = "暂无比赛记录";
+
+/* Players */
+"players.title" = "球员";
+"players.headToHead" = "对战记录";
