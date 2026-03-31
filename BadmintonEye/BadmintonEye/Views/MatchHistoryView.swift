@@ -12,12 +12,13 @@ struct MatchHistoryView: View {
 
     @State private var showDeleteConfirmation = false
     @State private var matchToDelete: PersistedMatch?
+    @State private var localization = LocalizationManager.shared
 
     var body: some View {
         Group {
             if completedMatches.isEmpty {
                 ContentUnavailableView {
-                    Label("No Matches Yet", systemImage: "sportscourt")
+                    Label(localization.localized("history.noMatches"), systemImage: "sportscourt")
                 } description: {
                     Text("Start your first match to see results here.")
                 } actions: {
@@ -30,7 +31,7 @@ struct MatchHistoryView: View {
                 matchList
             }
         }
-        .navigationTitle("Match History")
+        .navigationTitle(localization.localized("history.title"))
         .alert("Delete Match?", isPresented: $showDeleteConfirmation) {
             Button("Delete", role: .destructive) {
                 if let match = matchToDelete {

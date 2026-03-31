@@ -4,6 +4,7 @@ import SwiftData
 struct StatsView: View {
     @Query private var allMatches: [PersistedMatch]
     @State private var viewModel = MatchStatsViewModel()
+    @State private var localization = LocalizationManager.shared
 
     var body: some View {
         Group {
@@ -13,7 +14,7 @@ struct StatsView: View {
                 emptyState
             }
         }
-        .navigationTitle("Stats")
+        .navigationTitle(localization.localized("stats.title"))
         .onAppear {
             viewModel.update(matches: allMatches)
         }
@@ -44,7 +45,7 @@ struct StatsView: View {
                     Text("\(viewModel.totalWins)")
                         .font(.system(size: 44, weight: .bold))
                         .foregroundStyle(.green)
-                    Text("Wins")
+                    Text(localization.localized("stats.wins"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -57,7 +58,7 @@ struct StatsView: View {
                     Text("\(viewModel.totalLosses)")
                         .font(.system(size: 44, weight: .bold))
                         .foregroundStyle(.red)
-                    Text("Losses")
+                    Text(localization.localized("stats.losses"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

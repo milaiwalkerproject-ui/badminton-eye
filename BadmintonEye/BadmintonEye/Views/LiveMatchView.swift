@@ -10,6 +10,7 @@ struct LiveMatchView: View {
     @State private var challengeCountdown: Int = 0
     @State private var challengeTimer: Timer?
     @Environment(\.dismiss) private var dismiss
+    @State private var localization = LocalizationManager.shared
 
     private var subscriptionManager: SubscriptionManager { SubscriptionManager.shared }
 
@@ -110,7 +111,7 @@ struct LiveMatchView: View {
 
                     // Game info (A11Y-04)
                     VStack(spacing: 2) {
-                        Text("Game \(viewModel.state.currentGame.gameNumber)")
+                        Text("\(localization.localized("match.game")) \(viewModel.state.currentGame.gameNumber)")
                             .font(.headline)
                             .foregroundStyle(.white)
 
