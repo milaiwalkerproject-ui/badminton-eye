@@ -1,5 +1,19 @@
 # Milestones
 
+## v1.8 — Doubles & Mixed Deuce/Cap Coverage
+
+**Status:** In progress (2026-03-30)
+**Phases:** 2 (23-24) | **Requirements:** 0/6 verified so far
+
+### Target Accomplishments
+
+1. **Doubles deuce/cap tests** — Three tests verifying deuce at 20-20, 21-20 not a win, and cap at 30-29 in doubles context
+2. **Doubles mid-game switch** — Test verifying shouldSwitchSidesFlag triggers at 11 points in doubles game 3
+3. **Doubles undo during deuce** — Test verifying undo at 21-20 reverts to 20-20 with correct server
+4. **Mixed doubles game-3 service** — Test documenting loser of game 2 serves first in game 3 for mixed doubles
+
+---
+
 ## v1.7 — 3×15 Service Continuity & Doubles Game-3 Tests
 
 **Shipped:** 2026-03-30

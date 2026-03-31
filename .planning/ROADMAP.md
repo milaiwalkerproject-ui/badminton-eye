@@ -10,6 +10,7 @@
 - [x] **v1.5 Watch Haptic Reliability** -- Phase 18 (shipped 2026-03-30)
 - [x] **v1.6 Undo Edge Cases & Cross-Game Service Tests** -- Phases 19-20 (shipped 2026-03-30)
 - [x] **v1.7 3×15 Service Continuity & Doubles Game-3 Tests** -- Phases 21-22 (shipped 2026-03-30)
+- [ ] **v1.8 Doubles & Mixed Deuce/Cap Coverage** -- Phases 23-24 (in progress)
 
 ## Phases
 
@@ -347,5 +348,61 @@ Plans:
 | 21. 3×15 Cross-Game Service | v1.7 | 1/1 | Complete | 2026-03-30 |
 | 22. Doubles Game-3 & Boundary Undo | v1.7 | 1/1 | Complete | 2026-03-30 |
 
+### v1.8 Doubles & Mixed Deuce/Cap Coverage
+
+**Milestone Goal:** Fill remaining deuce/cap and mid-game-switch coverage gaps for doubles and mixed doubles — DeuceAndCapTests previously only exercised singles.
+
+- [ ] **Phase 23: Doubles Deuce, Cap & Mid-Game Switch** - Five tests covering deuce at 20-20, 21-20 not a win, cap at 30-29, mid-game switch at 11, and undo during deuce
+- [ ] **Phase 24: Mixed Doubles Game-3 Service** - One test confirming loser of game 2 serves first in game 3 for mixed doubles
+
+## Phase Details (v1.8)
+
+### Phase 23: Doubles Deuce, Cap & Mid-Game Switch
+**Goal**: DoublesScoringTests has explicit coverage for deuce, cap, mid-game switch, and undo-during-deuce
+**Depends on**: Nothing (tests existing code)
+**Requirements**: DUB-DCE-01, DUB-DCE-02, DUB-DCE-03, DUB-MID-01, DUB-UND-01
+**Success Criteria** (what must be TRUE):
+  1. isDeuce is true at 20-20 in a doubles match
+  2. 21-20 does not complete the game (2-point lead required)
+  3. 30-29 completes the game (cap rule)
+  4. shouldSwitchSidesFlag is true when either side reaches 11 in doubles game 3
+  5. Undo at 21-20 in doubles reverts to 20-20 with the correct server
+
+### Phase 24: Mixed Doubles Game-3 Service
+**Goal**: MixedDoublesScoringTests confirms cross-game service continuity through game 3
+**Depends on**: Nothing (tests existing code)
+**Requirements**: MXD-G3-01
+**Success Criteria** (what must be TRUE):
+  1. After sideA wins game 1 and sideB wins game 2 in mixed doubles, sideA serves first in game 3
+
+## Progress (updated)
+
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 1. Scoring Engine | v1.0 | 3/3 | Complete | 2026-03-28 |
+| 2. Apple Watch Companion | v1.0 | 3/3 | Complete | 2026-03-28 |
+| 3. Match Data and Player Profiles | v1.0 | 3/3 | Complete | 2026-03-29 |
+| 4. Cloud Sync and Authentication | v1.0 | 3/3 | Complete | 2026-03-29 |
+| 5. Hawk Eye AI and Premium | v1.0 | 4/4 | Complete | 2026-03-29 |
+| 6. Match Analytics | v1.1 | 2/2 | Complete | 2026-03-29 |
+| 7. Training Pipeline | v1.1 | 2/2 | Complete | 2026-03-29 |
+| 8. 240fps Video Capture | v1.1 | 2/2 | Complete | 2026-03-29 |
+| 9. Real AI Integration | v1.1 | 2/2 | Complete | 2026-03-29 |
+| 10. BWF 3x15 Scoring Format | v1.2 | 1/1 | Complete | 2026-03-29 |
+| 11. Haptic Score Feedback | v1.2 | 1/1 | Complete | 2026-03-29 |
+| 12. Multi-Camera Hawk Eye | v1.2 | 1/1 | Complete | 2026-03-29 |
+| 13. Custom Scoring Builder | v1.3 | 1/1 | Complete | 2026-03-29 |
+| 14. Audio Cross-Correlation Sync | v1.3 | 1/1 | Complete | 2026-03-29 |
+| 15. Live Dual-Camera Capture | v1.3 | 1/1 | Complete | 2026-03-29 |
+| 16. Custom Scoring & Codable Tests | v1.4 | 1/1 | Complete | 2026-03-29 |
+| 17. VoiceOver Accessibility | v1.4 | 1/1 | Complete | 2026-03-29 |
+| 18. Watch Haptic Reliability | v1.5 | 1/1 | Complete | 2026-03-30 |
+| 19. Undo Edge Cases | v1.6 | 1/1 | Complete | 2026-03-30 |
+| 20. Cross-Game Service Tests | v1.6 | 1/1 | Complete | 2026-03-30 |
+| 21. 3×15 Cross-Game Service | v1.7 | 1/1 | Complete | 2026-03-30 |
+| 22. Doubles Game-3 & Boundary Undo | v1.7 | 1/1 | Complete | 2026-03-30 |
+| 23. Doubles Deuce, Cap & Mid-Game Switch | v1.8 | 0/1 | In progress | — |
+| 24. Mixed Doubles Game-3 Service | v1.8 | 0/1 | Pending | — |
+
 ---
-*Roadmap updated: 2026-03-30 -- v1.7 shipped*
+*Roadmap updated: 2026-03-30 -- v1.8 started*

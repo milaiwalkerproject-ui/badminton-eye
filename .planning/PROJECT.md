@@ -8,18 +8,19 @@ A native iOS app (iPhone + iPad) with Apple Watch companion for badminton player
 
 Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time — making scorekeeping seamless during actual play.
 
-## Current Milestone: v1.7 3×15 Service Continuity & Doubles Game-3 Tests
+## Current Milestone: v1.8 Doubles & Mixed Deuce/Cap Coverage
 
-**Goal:** Close remaining cross-game service test gaps: 3×15 format service in games 2 and 3, doubles game 2→3 service reset, and undo across a game boundary in doubles.
+**Goal:** Fill the remaining deuce/cap and mid-game-switch coverage gaps for doubles and mixed doubles formats — DeuceAndCapTests currently only exercises singles; mixed doubles game-3 service is untested.
 
 **Target features:**
-- 2 new 3×15 cross-game service tests (loser serves in game 2 and game 3 under 3×15)
-- 1 new doubles game-3 service test (loser of game 2 serves in game 3)
-- 1 new doubles boundary-undo test (undo first point of game 2 restores cross-game state)
+- 3 doubles deuce/cap tests (deuce at 20-20, 21-20 not a win, cap at 30-29)
+- 1 doubles mid-game-switch test (shouldSwitchSidesFlag at 11 points in game 3)
+- 1 doubles undo-during-deuce test (restores correct score and server)
+- 1 mixed doubles game-3 service test (loser of game 2 serves first in game 3)
 
 ## Current State
 
-**Shipped:** v1.7 (2026-03-30)
+**Shipped:** v1.7 (2026-03-30) — v1.8 in progress
 **Codebase:** 6,812 LOC Swift, 55 source files, 84 tests passing
 **Stack:** Swift 6, SwiftUI, SwiftData + CloudKit, WatchConnectivity, Core ML, StoreKit 2, ActivityKit, HealthKit
 **Dependencies:** 0 external (100% Apple-native)

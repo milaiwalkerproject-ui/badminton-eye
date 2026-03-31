@@ -1,39 +1,46 @@
-# Requirements: Badminton Eye v1.7 — 3×15 Service Continuity & Doubles Game-3 Tests
+# Requirements: Badminton Eye v1.8 — Doubles & Mixed Deuce/Cap Coverage
 
 **Defined:** 2026-03-30
 **Core Value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
 
-## v1.7 Requirements
+## v1.8 Requirements
 
-### 3×15 Cross-Game Service
+### Doubles Deuce & Cap
 
-- [x] **SVC3X-01**: After sideA wins game 1 in 3×15 format, sideB (loser) serves first in game 2 from the right court
-- [x] **SVC3X-02**: After sideB wins game 2 in 3×15 (with sideA having won game 1), sideA (loser of game 2) serves first in game 3
+- [ ] **DUB-DCE-01**: Doubles deuce activates at 20-20 (isDeuce is true, same threshold as singles)
+- [ ] **DUB-DCE-02**: Doubles 21-20 does NOT win the game in deuce (2-point lead required)
+- [ ] **DUB-DCE-03**: Doubles cap at 30-29 ends the game (cap overrides the 2-point-lead requirement)
 
-### Doubles Game-3 Service
+### Doubles Mid-Game Switch & Undo
 
-- [x] **DBLS3-01**: After sideB wins game 2 in doubles (with sideA winning game 1), sideA (loser of game 2) serves first in game 3 with correctly reset doublesRotation
-- [x] **UNDO-G-01**: Undoing the first point of game 2 in doubles restores the cross-game-boundary state (correct server, rotation, and game 1 still in games array)
+- [ ] **DUB-MID-01**: Doubles game-3 mid-switch triggers shouldSwitchSidesFlag at 11 points
+- [ ] **DUB-UND-01**: Undo in doubles during deuce (at 21-20) reverts to 20-20 with correct server restored
+
+### Mixed Doubles Cross-Game Service
+
+- [ ] **MXD-G3-01**: Mixed doubles: loser of game 2 serves first in game 3 (same resetServiceForNewGame path as doubles)
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Doubles 3×15 cross-game service | Same resetServiceForNewGame code path as singles 3×15 |
-| Mixed doubles game 3 service | Same rotation reset code path as doubles |
+| 3×15 doubles deuce/cap | Same isGameWon code path; already covered via singles 3×15 tests |
+| Custom scoring deuce in doubles | Same isGameWon code path; covered in CustomScoringTests |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SVC3X-01 | Phase 21 | Complete |
-| SVC3X-02 | Phase 21 | Complete |
-| DBLS3-01 | Phase 22 | Complete |
-| UNDO-G-01 | Phase 22 | Complete |
+| DUB-DCE-01 | Phase 23 | Pending |
+| DUB-DCE-02 | Phase 23 | Pending |
+| DUB-DCE-03 | Phase 23 | Pending |
+| DUB-MID-01 | Phase 23 | Pending |
+| DUB-UND-01 | Phase 23 | Pending |
+| MXD-G3-01 | Phase 24 | Pending |
 
 **Coverage:**
-- v1.7 requirements: 4 total
-- Mapped to phases: 4
+- v1.8 requirements: 6 total
+- Mapped to phases: 6
 - Unmapped: 0
 
 ---
