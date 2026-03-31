@@ -80,3 +80,34 @@
 /* Match End */
 "match.new" = "新比赛";
 "match.games" = "局数";
+
+/* Head to Head */
+"headtohead.title" = "球员统计";
+"headtohead.opponents" = "对手";
+"headtohead.allMatches" = "全部比赛";
+
+/* Player Profile */
+"player.sectionName" = "姓名";
+"player.namePlaceholder" = "球员姓名";
+"player.sectionPhoto" = "照片";
+"player.choosePhoto" = "选择照片";
+"player.removePhoto" = "删除照片";
+"player.delete" = "删除球员";
+"player.editTitle" = "编辑球员";
+"player.newTitle" = "新球员";
+"player.deleteAlert" = "删除球员？";
+
+/* Common */
+"common.cancel" = "取消";
+"common.save" = "保存";
+
+/* Charts */
+"chart.performanceTrend" = "表现趋势";
+"chart.scoringPatterns" = "得分规律";
+"chart.notEnoughData" = "数据不足";
+"chart.matchAxis" = "比赛";
+
+/* Match Details */
+"match.details" = "比赛详情";
+"match.shareScorecard" = "分享记分卡";
+"match.export" = "导出...";

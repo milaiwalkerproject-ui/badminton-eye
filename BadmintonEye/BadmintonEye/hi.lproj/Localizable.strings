@@ -82,3 +82,34 @@
 /* Match End */
 "match.new" = "नया मैच";
 "match.games" = "गेम";
+
+/* Head to Head */
+"headtohead.title" = "खिलाड़ी आँकड़े";
+"headtohead.opponents" = "प्रतिद्वंद्वी";
+"headtohead.allMatches" = "सभी मैच";
+
+/* Player Profile */
+"player.sectionName" = "नाम";
+"player.namePlaceholder" = "खिलाड़ी का नाम";
+"player.sectionPhoto" = "फ़ोटो";
+"player.choosePhoto" = "फ़ोटो चुनें";
+"player.removePhoto" = "फ़ोटो हटाएँ";
+"player.delete" = "खिलाड़ी हटाएँ";
+"player.editTitle" = "खिलाड़ी संपादित करें";
+"player.newTitle" = "नया खिलाड़ी";
+"player.deleteAlert" = "खिलाड़ी हटाएँ?";
+
+/* Common */
+"common.cancel" = "रद्द करें";
+"common.save" = "सहेजें";
+
+/* Charts */
+"chart.performanceTrend" = "प्रदर्शन प्रवृत्ति";
+"chart.scoringPatterns" = "स्कोरिंग पैटर्न";
+"chart.notEnoughData" = "पर्याप्त डेटा नहीं";
+"chart.matchAxis" = "मैच";
+
+/* Match Details */
+"match.details" = "मैच विवरण";
+"match.shareScorecard" = "स्कोरकार्ड साझा करें";
+"match.export" = "निर्यात करें...";

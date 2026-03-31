@@ -82,3 +82,34 @@
 /* Match End */
 "match.new" = "Ny kamp";
 "match.games" = "Sæt";
+
+/* Head to Head */
+"headtohead.title" = "Spillerstatistik";
+"headtohead.opponents" = "Modstandere";
+"headtohead.allMatches" = "Alle Kampe";
+
+/* Player Profile */
+"player.sectionName" = "Navn";
+"player.namePlaceholder" = "Spillernavn";
+"player.sectionPhoto" = "Foto";
+"player.choosePhoto" = "Vælg Foto";
+"player.removePhoto" = "Fjern Foto";
+"player.delete" = "Slet Spiller";
+"player.editTitle" = "Rediger Spiller";
+"player.newTitle" = "Ny Spiller";
+"player.deleteAlert" = "Slet Spiller?";
+
+/* Common */
+"common.cancel" = "Annuller";
+"common.save" = "Gem";
+
+/* Charts */
+"chart.performanceTrend" = "Præstationstrend";
+"chart.scoringPatterns" = "Pointmønstre";
+"chart.notEnoughData" = "Ikke nok data";
+"chart.matchAxis" = "Kamp";
+
+/* Match Details */
+"match.details" = "Kampdetaljer";
+"match.shareScorecard" = "Del Scorecard";
+"match.export" = "Eksporter...";

@@ -80,3 +80,34 @@
 /* Match End */
 "match.new" = "새 경기";
 "match.games" = "게임 수";
+
+/* Head to Head */
+"headtohead.title" = "선수 통계";
+"headtohead.opponents" = "상대 선수";
+"headtohead.allMatches" = "전체 경기";
+
+/* Player Profile */
+"player.sectionName" = "이름";
+"player.namePlaceholder" = "선수 이름";
+"player.sectionPhoto" = "사진";
+"player.choosePhoto" = "사진 선택";
+"player.removePhoto" = "사진 제거";
+"player.delete" = "선수 삭제";
+"player.editTitle" = "선수 편집";
+"player.newTitle" = "새 선수";
+"player.deleteAlert" = "선수를 삭제하시겠습니까?";
+
+/* Common */
+"common.cancel" = "취소";
+"common.save" = "저장";
+
+/* Charts */
+"chart.performanceTrend" = "성과 추이";
+"chart.scoringPatterns" = "득점 패턴";
+"chart.notEnoughData" = "데이터 부족";
+"chart.matchAxis" = "경기";
+
+/* Match Details */
+"match.details" = "경기 상세";
+"match.shareScorecard" = "스코어카드 공유";
+"match.export" = "내보내기...";

@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
-**Current focus:** v1.11 complete — Wire SettingsView, MatchSetupView & PlayerListView Localization
+**Current focus:** v1.12 — Localize HeadToHeadView, PlayerProfileView, MatchDetailView & Analytics Charts
 
 ## Current Position
 
-Phase: 30 of 30
-Plan: Phase 30 complete
-Status: Milestone complete
-Last activity: 2026-03-31 — v1.11 complete, all 8 requirements verified
+Phase: 31 of 32
+Plan: Phase 31 in progress
+Status: Executing
+Last activity: 2026-03-31 — v1.12 started
 
-Progress: [##########] 100% (v1.11)
+Progress: [#####.....] 50% (v1.12)
 
 ## Performance Metrics
 
@@ -69,5 +69,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-31
-Stopped at: v1.11 complete — all phases done
+Stopped at: v1.12 Phase 31 — adding localization keys to all 9 language files
 Resume file: None

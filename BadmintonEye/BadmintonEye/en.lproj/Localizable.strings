@@ -80,3 +80,34 @@
 /* Match End */
 "match.new" = "New Match";
 "match.games" = "Games";
+
+/* Head to Head */
+"headtohead.title" = "Player Stats";
+"headtohead.opponents" = "Opponents";
+"headtohead.allMatches" = "All Matches";
+
+/* Player Profile */
+"player.sectionName" = "Name";
+"player.namePlaceholder" = "Player Name";
+"player.sectionPhoto" = "Photo";
+"player.choosePhoto" = "Choose Photo";
+"player.removePhoto" = "Remove Photo";
+"player.delete" = "Delete Player";
+"player.editTitle" = "Edit Player";
+"player.newTitle" = "New Player";
+"player.deleteAlert" = "Delete Player?";
+
+/* Common */
+"common.cancel" = "Cancel";
+"common.save" = "Save";
+
+/* Charts */
+"chart.performanceTrend" = "Performance Trend";
+"chart.scoringPatterns" = "Scoring Patterns";
+"chart.notEnoughData" = "Not enough data";
+"chart.matchAxis" = "Match";
+
+/* Match Details */
+"match.details" = "Match Details";
+"match.shareScorecard" = "Share Scorecard";
+"match.export" = "Export...";

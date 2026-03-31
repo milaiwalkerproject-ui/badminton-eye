@@ -82,3 +82,34 @@
 /* Match End */
 "match.new" = "Pertandingan Baru";
 "match.games" = "Game";
+
+/* Head to Head */
+"headtohead.title" = "Statistik Pemain";
+"headtohead.opponents" = "Lawan";
+"headtohead.allMatches" = "Semua Pertandingan";
+
+/* Player Profile */
+"player.sectionName" = "Nama";
+"player.namePlaceholder" = "Nama Pemain";
+"player.sectionPhoto" = "Foto";
+"player.choosePhoto" = "Pilih Foto";
+"player.removePhoto" = "Hapus Foto";
+"player.delete" = "Hapus Pemain";
+"player.editTitle" = "Edit Pemain";
+"player.newTitle" = "Pemain Baru";
+"player.deleteAlert" = "Hapus Pemain?";
+
+/* Common */
+"common.cancel" = "Batal";
+"common.save" = "Simpan";
+
+/* Charts */
+"chart.performanceTrend" = "Tren Performa";
+"chart.scoringPatterns" = "Pola Skor";
+"chart.notEnoughData" = "Data tidak cukup";
+"chart.matchAxis" = "Pertandingan";
+
+/* Match Details */
+"match.details" = "Detail Pertandingan";
+"match.shareScorecard" = "Bagikan Skor";
+"match.export" = "Ekspor...";

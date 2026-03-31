@@ -82,3 +82,34 @@
 /* Match End */
 "match.new" = "แมตช์ใหม่";
 "match.games" = "เกม";
+
+/* Head to Head */
+"headtohead.title" = "สถิตินักกีฬา";
+"headtohead.opponents" = "คู่แข่ง";
+"headtohead.allMatches" = "ทุกแมตช์";
+
+/* Player Profile */
+"player.sectionName" = "ชื่อ";
+"player.namePlaceholder" = "ชื่อนักกีฬา";
+"player.sectionPhoto" = "รูปภาพ";
+"player.choosePhoto" = "เลือกรูปภาพ";
+"player.removePhoto" = "ลบรูปภาพ";
+"player.delete" = "ลบนักกีฬา";
+"player.editTitle" = "แก้ไขนักกีฬา";
+"player.newTitle" = "นักกีฬาใหม่";
+"player.deleteAlert" = "ลบนักกีฬา?";
+
+/* Common */
+"common.cancel" = "ยกเลิก";
+"common.save" = "บันทึก";
+
+/* Charts */
+"chart.performanceTrend" = "แนวโน้มผลงาน";
+"chart.scoringPatterns" = "รูปแบบการทำคะแนน";
+"chart.notEnoughData" = "ข้อมูลไม่เพียงพอ";
+"chart.matchAxis" = "แมตช์";
+
+/* Match Details */
+"match.details" = "รายละเอียดแมตช์";
+"match.shareScorecard" = "แชร์ใบบันทึกคะแนน";
+"match.export" = "ส่งออก...";

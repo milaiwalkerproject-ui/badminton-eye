@@ -7,6 +7,7 @@ struct MatchDetailView: View {
     @State private var showExportPicker = false
     @State private var showShareSheet = false
     @State private var shareImage: UIImage?
+    @State private var localization = LocalizationManager.shared
 
     private var decodedState: CodableMatchState? {
         guard let data = match.stateJSON else { return nil }
@@ -28,7 +29,7 @@ struct MatchDetailView: View {
             }
             .padding()
         }
-        .navigationTitle("Match Details")
+        .navigationTitle(localization.localized("match.details"))
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Menu {
@@ -36,13 +37,13 @@ struct MatchDetailView: View {
                         shareImage = ScorecardRenderer.renderImage(for: match)
                         if shareImage != nil { showShareSheet = true }
                     } label: {
-                        Label("Share Scorecard", systemImage: "square.and.arrow.up")
+                        Label(localization.localized("match.shareScorecard"), systemImage: "square.and.arrow.up")
                     }
 
                     Button {
                         showExportPicker = true
                     } label: {
-                        Label("Export...", systemImage: "doc.text")
+                        Label(localization.localized("match.export"), systemImage: "doc.text")
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")
@@ -148,7 +149,7 @@ struct MatchDetailView: View {
             }
 
             HStack {
-                Text("Games")
+                Text(localization.localized("match.games"))
                     .font(.subheadline.bold())
                     .frame(width: 80, alignment: .leading)
                 Spacer()
@@ -233,9 +234,9 @@ struct MatchDetailView: View {
     private var formatBadge: String {
         let base: String
         switch match.format {
-        case "doubles": base = "Doubles"
-        case "mixed": base = "Mixed"
-        default: base = "Singles"
+        case "doubles": base = localization.localized("setup.doubles")
+        case "mixed": base = localization.localized("setup.mixed")
+        default: base = localization.localized("setup.singles")
         }
         switch match.scoringSystemRaw {
         case "threeByFifteen": return "\(base) · 3×15"

@@ -10,6 +10,7 @@ struct GameScoreData: Identifiable {
 
 struct ScoringPatternsChart: View {
     var viewModel: MatchStatsViewModel
+    @State private var localization = LocalizationManager.shared
 
     private var chartData: [GameScoreData] {
         let averages = viewModel.perGameAverages()
@@ -23,11 +24,11 @@ struct ScoringPatternsChart: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Scoring Patterns")
+            Text(localization.localized("chart.scoringPatterns"))
                 .font(.headline)
 
             if chartData.isEmpty {
-                Text("Not enough data")
+                Text(localization.localized("chart.notEnoughData"))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .frame(height: 180)

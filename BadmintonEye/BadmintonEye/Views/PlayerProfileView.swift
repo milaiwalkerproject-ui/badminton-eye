@@ -12,19 +12,20 @@ struct PlayerProfileView: View {
     @State private var photoItem: PhotosPickerItem?
     @State private var photoData: Data?
     @State private var showDeleteConfirmation = false
+    @State private var localization = LocalizationManager.shared
 
     private var isEditing: Bool { player != nil }
     private var canSave: Bool { !name.trimmingCharacters(in: .whitespaces).isEmpty }
 
     var body: some View {
         Form {
-            Section("Name") {
-                TextField("Player Name", text: $name)
+            Section(localization.localized("player.sectionName")) {
+                TextField(localization.localized("player.namePlaceholder"), text: $name)
                     .textContentType(.name)
                     .autocorrectionDisabled()
             }
 
-            Section("Photo") {
+            Section(localization.localized("player.sectionPhoto")) {
                 HStack {
                     Spacer()
                     if let photoData, let uiImage = UIImage(data: photoData) {
@@ -53,11 +54,11 @@ struct PlayerProfileView: View {
                     matching: .images,
                     photoLibrary: .shared()
                 ) {
-                    Label("Choose Photo", systemImage: "photo.on.rectangle")
+                    Label(localization.localized("player.choosePhoto"), systemImage: "photo.on.rectangle")
                 }
 
                 if photoData != nil {
-                    Button("Remove Photo", role: .destructive) {
+                    Button(localization.localized("player.removePhoto"), role: .destructive) {
                         photoData = nil
                         photoItem = nil
                     }
@@ -66,20 +67,20 @@ struct PlayerProfileView: View {
 
             if isEditing {
                 Section {
-                    Button("Delete Player", role: .destructive) {
+                    Button(localization.localized("player.delete"), role: .destructive) {
                         showDeleteConfirmation = true
                     }
                 }
             }
         }
-        .navigationTitle(isEditing ? "Edit Player" : "New Player")
+        .navigationTitle(isEditing ? localization.localized("player.editTitle") : localization.localized("player.newTitle"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") { dismiss() }
+                Button(localization.localized("common.cancel")) { dismiss() }
             }
             ToolbarItem(placement: .confirmationAction) {
-                Button("Save") { save() }
+                Button(localization.localized("common.save")) { save() }
                     .disabled(!canSave)
             }
         }
@@ -96,9 +97,9 @@ struct PlayerProfileView: View {
                 }
             }
         }
-        .alert("Delete Player?", isPresented: $showDeleteConfirmation) {
-            Button("Delete", role: .destructive) { deletePlayer() }
-            Button("Cancel", role: .cancel) {}
+        .alert(localization.localized("player.deleteAlert"), isPresented: $showDeleteConfirmation) {
+            Button(localization.localized("player.delete"), role: .destructive) { deletePlayer() }
+            Button(localization.localized("common.cancel"), role: .cancel) {}
         } message: {
             Text("This will permanently remove \(name) from your player list.")
         }

@@ -1,52 +1,57 @@
-# Requirements: Badminton Eye v1.11 — Wire SettingsView, MatchSetupView & PlayerListView Localization
+# Requirements: Badminton Eye v1.12 — Localize HeadToHeadView, PlayerProfileView, MatchDetailView & Analytics Charts
 
 **Defined:** 2026-03-31
 **Core Value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
 
-## v1.11 Requirements
+## v1.12 Requirements
 
-### SettingsView Localization
+### HeadToHeadView Localization
 
-- [x] **SET-01**: SettingsView premium section uses `premium.active`, `premium.allUnlocked`, `premium.manage`, `premium.upgrade`, `premium.unlockHawkEye` instead of hardcoded English strings; section header uses `settings.premium`
-- [x] **SET-02**: SettingsView auth/iCloud sections use `icloud.title`, `icloud.signInPrompt`, `icloud.syncActive`, `icloud.account`, `settings.signOut` instead of hardcoded English strings
-- [x] **SET-03**: SettingsView haptic section uses `settings.scoring` (header), `settings.haptic`, `settings.haptic.subtitle` instead of hardcoded English strings
-- [x] **SET-04**: SettingsView about section uses `settings.about`, `settings.version`, `settings.build`, `settings.restorePurchases` instead of hardcoded English strings
+- [ ] **H2H-01**: HeadToHeadView navigation title, "Opponents" section header, "All Matches" section header, "No matches yet" empty state all use localized keys; existing `stats.wins` and `stats.losses` keys reused for W/L labels
 
-### MatchSetupView Localization
+### PlayerProfileView Localization
 
-- [x] **SUP-01**: MatchSetupView uses `setup.matchFormat`, `setup.singles`, `setup.doubles`, `setup.mixed` for the Match Format section
-- [x] **SUP-02**: MatchSetupView uses `setup.scoring`, `setup.scoringStandard`, `setup.scoring3x15`, `setup.customFormat` for the Scoring section
-- [x] **SUP-03**: MatchSetupView uses `setup.teamA`, `setup.teamB`, `setup.startMatch`; navigation title uses `setup.title`
+- [ ] **PPV-01**: PlayerProfileView section headers ("Name", "Photo") use localized keys; form fields ("Player Name" placeholder) use localized key; toolbar buttons ("Cancel", "Save") use localized keys; navigation title ("New Player" / "Edit Player") uses localized keys
+- [ ] **PPV-02**: PlayerProfileView destructive actions ("Choose Photo", "Remove Photo", "Delete Player") use localized keys; delete confirmation alert title ("Delete Player?") uses localized key
 
-### PlayerListView Localization
+### Analytics Chart Localization
 
-- [x] **PLA-01**: New keys `players.search`, `players.edit`, `players.noPlayers`, `players.addFirst` added to all 9 Localizable.strings files with correct translations; PlayerListView uses `players.title`, `players.search`, `players.edit`, `players.noPlayers`, `players.addFirst`
+- [ ] **ANA-01**: WinRateTrendChart card title ("Performance Trend") and empty state ("Not enough data") use localized keys; chart x-axis label ("Match") uses localized key
+- [ ] **ANA-02**: ScoringPatternsChart card title ("Scoring Patterns") and empty state ("Not enough data") use the same localized key as ANA-01 (`chart.notEnoughData`)
+
+### MatchDetailView Localization
+
+- [ ] **MDV-01**: MatchDetailView navigation title ("Match Details") and toolbar menu actions ("Share Scorecard", "Export...") use localized keys; existing `match.games` key reused for the "Games" summary row
+
+### Localization Strings
+
+- [ ] **STR-01**: 21 new keys added to all 9 Localizable.strings files (en, ja, zh-Hans, ko, id, ms, hi, th, da) with correct native translations
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Custom format display string "Custom (X pts, best of X)" | Requires `%@` format pattern localization; separate milestone |
-| Win rate / streak format strings in HeadToHeadView | Require `%@` format pattern localization; separate milestone |
-| Picker label "Format" / "Scoring System" | Internal to SwiftUI Picker; not user-visible as standalone text |
-| Player placeholder names ("Player 1A" etc.) | Only shown when fields empty; low visibility |
+| Alert message "This will permanently remove \(name)…" | Contains `%@` format string; requires NSLocalizedString with format args |
+| "Game \(index+1)" format strings in MatchDetailView | Requires `%d` format string interpolation |
+| "Matches vs \(opponent)" format string in HeadToHeadView | Requires `%@` format string interpolation |
+| WinRateTrendChart range picker "Last 10/20/50" | Enum rawValues with number interpolation |
+| "Custom (%d pts, best of %d)" | Requires format string arguments |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SET-01 | Phase 29 | Done |
-| SET-02 | Phase 29 | Done |
-| SET-03 | Phase 29 | Done |
-| SET-04 | Phase 29 | Done |
-| SUP-01 | Phase 30 | Done |
-| SUP-02 | Phase 30 | Done |
-| SUP-03 | Phase 30 | Done |
-| PLA-01 | Phase 30 | Done |
+| H2H-01 | Phase 31 | Pending |
+| PPV-01 | Phase 31 | Pending |
+| PPV-02 | Phase 31 | Pending |
+| ANA-01 | Phase 32 | Pending |
+| ANA-02 | Phase 32 | Pending |
+| MDV-01 | Phase 32 | Pending |
+| STR-01 | Phase 31 | Pending |
 
 **Coverage:**
-- v1.11 requirements: 8 total
-- Mapped to phases: 8
+- v1.12 requirements: 7 total
+- Mapped to phases: 7
 - Unmapped: 0
 
 ---

@@ -19,6 +19,7 @@ struct WinRateTrendChart: View {
     var viewModel: MatchStatsViewModel
 
     @State private var selectedRange: TrendRange = .last10
+    @State private var localization = LocalizationManager.shared
 
     private var trendData: [(index: Int, rate: Double)] {
         viewModel.winRateOverLast(selectedRange.matchCount)
@@ -26,7 +27,7 @@ struct WinRateTrendChart: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Performance Trend")
+            Text(localization.localized("chart.performanceTrend"))
                 .font(.headline)
 
             Picker("Range", selection: $selectedRange) {
@@ -37,7 +38,7 @@ struct WinRateTrendChart: View {
             .pickerStyle(.segmented)
 
             if trendData.isEmpty {
-                Text("Not enough data")
+                Text(localization.localized("chart.notEnoughData"))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .frame(height: 200)
@@ -91,7 +92,7 @@ struct WinRateTrendChart: View {
                         }
                     }
                 }
-                .chartXAxisLabel("Match")
+                .chartXAxisLabel(localization.localized("chart.matchAxis"))
                 .frame(height: 200)
             }
         }

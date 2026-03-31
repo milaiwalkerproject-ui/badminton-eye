@@ -7,6 +7,7 @@ struct HeadToHeadView: View {
     @Query private var allMatches: [PersistedMatch]
 
     @State private var selectedOpponent: String?
+    @State private var localization = LocalizationManager.shared
 
     private var playerMatches: [PersistedMatch] {
         allMatches.filter { match in
@@ -77,7 +78,7 @@ struct HeadToHeadView: View {
                             Text("\(overallRecord.wins)")
                                 .font(.system(size: 44, weight: .bold))
                                 .foregroundStyle(.green)
-                            Text("Wins")
+                            Text(localization.localized("stats.wins"))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -90,7 +91,7 @@ struct HeadToHeadView: View {
                             Text("\(overallRecord.losses)")
                                 .font(.system(size: 44, weight: .bold))
                                 .foregroundStyle(.red)
-                            Text("Losses")
+                            Text(localization.localized("stats.losses"))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -117,7 +118,7 @@ struct HeadToHeadView: View {
 
             // Opponent Breakdown
             if !opponentBreakdown.isEmpty && selectedOpponent == nil {
-                Section("Opponents") {
+                Section(localization.localized("headtohead.opponents")) {
                     ForEach(opponentBreakdown, id: \.name) { opponent in
                         Button {
                             selectedOpponent = opponent.name
@@ -139,9 +140,9 @@ struct HeadToHeadView: View {
             }
 
             // Match History
-            Section(selectedOpponent != nil ? "Matches vs \(selectedOpponent!)" : "All Matches") {
+            Section(selectedOpponent != nil ? "Matches vs \(selectedOpponent!)" : localization.localized("headtohead.allMatches")) {
                 if displayedMatches.isEmpty {
-                    Text("No matches yet")
+                    Text(localization.localized("history.noMatches"))
                         .foregroundStyle(.secondary)
                 } else {
                     ForEach(displayedMatches) { match in
@@ -150,7 +151,7 @@ struct HeadToHeadView: View {
                 }
             }
         }
-        .navigationTitle("Player Stats")
+        .navigationTitle(localization.localized("headtohead.title"))
         .navigationBarTitleDisplayMode(.inline)
     }
 

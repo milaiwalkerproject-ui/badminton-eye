@@ -80,3 +80,34 @@
 /* Match End */
 "match.new" = "新しい試合";
 "match.games" = "ゲーム";
+
+/* Head to Head */
+"headtohead.title" = "選手統計";
+"headtohead.opponents" = "対戦相手";
+"headtohead.allMatches" = "全試合";
+
+/* Player Profile */
+"player.sectionName" = "名前";
+"player.namePlaceholder" = "選手名";
+"player.sectionPhoto" = "写真";
+"player.choosePhoto" = "写真を選択";
+"player.removePhoto" = "写真を削除";
+"player.delete" = "選手を削除";
+"player.editTitle" = "選手を編集";
+"player.newTitle" = "新しい選手";
+"player.deleteAlert" = "選手を削除しますか？";
+
+/* Common */
+"common.cancel" = "キャンセル";
+"common.save" = "保存";
+
+/* Charts */
+"chart.performanceTrend" = "パフォーマンス推移";
+"chart.scoringPatterns" = "得点パターン";
+"chart.notEnoughData" = "データが不足しています";
+"chart.matchAxis" = "試合";
+
+/* Match Details */
+"match.details" = "試合詳細";
+"match.shareScorecard" = "スコアカードを共有";
+"match.export" = "エクスポート...";
