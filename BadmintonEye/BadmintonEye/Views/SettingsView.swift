@@ -41,9 +41,9 @@ struct SettingsView: View {
                         .foregroundStyle(.green)
                         .font(.title2)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Hawk Eye Premium Active")
+                        Text(localization.localized("premium.active"))
                             .font(.headline)
-                        Text("All premium features unlocked")
+                        Text(localization.localized("premium.allUnlocked"))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -52,7 +52,7 @@ struct SettingsView: View {
 
                 Link(destination: URL(string: "https://apps.apple.com/account/subscriptions")!) {
                     HStack {
-                        Text("Manage Subscription")
+                        Text(localization.localized("premium.manage"))
                         Spacer()
                         Image(systemName: "arrow.up.right")
                             .font(.caption)
@@ -67,9 +67,9 @@ struct SettingsView: View {
                             .foregroundStyle(.blue)
                             .font(.title2)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("Upgrade to Premium")
+                            Text(localization.localized("premium.upgrade"))
                                 .font(.headline)
-                            Text("Unlock Hawk Eye AI line calling")
+                            Text(localization.localized("premium.unlockHawkEye"))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -78,7 +78,7 @@ struct SettingsView: View {
                 }
             }
         } header: {
-            Text("Premium")
+            Text(localization.localized("settings.premium"))
         }
     }
 
@@ -91,7 +91,7 @@ struct SettingsView: View {
                     .font(.system(size: 40))
                     .foregroundStyle(.blue)
 
-                Text("Sign in to sync matches and players across your devices.")
+                Text(localization.localized("icloud.signInPrompt"))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -106,7 +106,7 @@ struct SettingsView: View {
             }
             .padding(.vertical, 8)
         } header: {
-            Text("iCloud Sync")
+            Text(localization.localized("icloud.title"))
         }
     }
 
@@ -134,17 +134,17 @@ struct SettingsView: View {
             HStack {
                 Image(systemName: "checkmark.icloud.fill")
                     .foregroundStyle(.green)
-                Text("iCloud Sync Active")
+                Text(localization.localized("icloud.syncActive"))
                     .foregroundStyle(.secondary)
             }
 
             Button(role: .destructive) {
                 authManager.signOut()
             } label: {
-                Text("Sign Out")
+                Text(localization.localized("settings.signOut"))
             }
         } header: {
-            Text("Account")
+            Text(localization.localized("icloud.account"))
         }
     }
 
@@ -194,16 +194,16 @@ struct SettingsView: View {
                         .foregroundStyle(.orange)
                         .font(.title3)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Haptic Feedback")
+                        Text(localization.localized("settings.haptic"))
                             .font(.subheadline)
-                        Text("Vibrate on score changes during live play")
+                        Text(localization.localized("settings.haptic.subtitle"))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
                 }
             }
         } header: {
-            Text("Scoring")
+            Text(localization.localized("settings.scoring"))
         }
     }
 
@@ -212,13 +212,13 @@ struct SettingsView: View {
     private var aboutSection: some View {
         Section {
             HStack {
-                Text("Version")
+                Text(localization.localized("settings.version"))
                 Spacer()
                 Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
                     .foregroundStyle(.secondary)
             }
             HStack {
-                Text("Build")
+                Text(localization.localized("settings.build"))
                 Spacer()
                 Text(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1")
                     .foregroundStyle(.secondary)
@@ -229,10 +229,10 @@ struct SettingsView: View {
                     await subscriptionManager.restorePurchases()
                 }
             } label: {
-                Text("Restore Purchases")
+                Text(localization.localized("settings.restorePurchases"))
             }
         } header: {
-            Text("About")
+            Text(localization.localized("settings.about"))
         }
     }
 }

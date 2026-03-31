@@ -69,6 +69,10 @@
 
 /* Players */
 "players.title" = "खिलाड़ी";
+"players.search" = "खिलाड़ी खोजें";
+"players.edit" = "संपादित करें";
+"players.noPlayers" = "कोई खिलाड़ी नहीं";
+"players.addFirst" = "पहले खिलाड़ी को जोड़ने के लिए + टैप करें।";
 "players.headToHead" = "आमने-सामने";
 
 /* Game End */

@@ -69,6 +69,10 @@
 
 /* Players */
 "players.title" = "Pemain";
+"players.search" = "Cari pemain";
+"players.edit" = "Edit";
+"players.noPlayers" = "Tiada pemain";
+"players.addFirst" = "Ketik + untuk menambah pemain pertama.";
 "players.headToHead" = "Rekod Pertemuan";
 
 /* Game End */

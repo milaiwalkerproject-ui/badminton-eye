@@ -67,6 +67,10 @@
 
 /* Players */
 "players.title" = "Players";
+"players.search" = "Search players";
+"players.edit" = "Edit";
+"players.noPlayers" = "No Players";
+"players.addFirst" = "Tap + to add your first player.";
 "players.headToHead" = "Head to Head";
 
 /* Game End */

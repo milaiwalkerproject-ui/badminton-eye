@@ -69,6 +69,10 @@
 
 /* Players */
 "players.title" = "Spillere";
+"players.search" = "Søg spillere";
+"players.edit" = "Rediger";
+"players.noPlayers" = "Ingen spillere";
+"players.addFirst" = "Tryk + for at tilføje din første spiller.";
 "players.headToHead" = "Indbyrdes opgør";
 
 /* Game End */

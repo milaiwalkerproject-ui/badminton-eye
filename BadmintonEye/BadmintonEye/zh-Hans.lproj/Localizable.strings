@@ -67,6 +67,10 @@
 
 /* Players */
 "players.title" = "球员";
+"players.search" = "搜索球员";
+"players.edit" = "编辑";
+"players.noPlayers" = "暂无球员";
+"players.addFirst" = "轻触+添加第一位球员。";
 "players.headToHead" = "对战记录";
 
 /* Game End */

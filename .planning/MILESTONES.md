@@ -1,5 +1,21 @@
 # Milestones
 
+## v1.11 — Wire SettingsView, MatchSetupView & PlayerListView Localization
+
+**Shipped:** 2026-03-31
+**Phases:** 2 (29-30) | **Requirements:** 8/8 verified
+**Tests:** 95 (unchanged — UI-only changes)
+
+### Key Accomplishments
+
+1. **SettingsView localization** — Premium, iCloud, haptic, and about sections now use `LocalizationManager` for all user-visible strings; language switcher reflects in every SettingsView label
+2. **MatchSetupView localization** — Match format, scoring system, team section headers, Start Match button, and navigation title use localized keys; all 9 languages supported
+3. **PlayerListView localization** — Navigation title, search prompt, swipe-action Edit button, and empty-state text use localized keys; 4 new keys (`players.search`, `players.edit`, `players.noPlayers`, `players.addFirst`) added to all 9 Localizable.strings files with correct native translations
+
+---
+
+---
+
 ## v1.10 — Localize Remaining Views
 
 **Shipped:** 2026-03-31

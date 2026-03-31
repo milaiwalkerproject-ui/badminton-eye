@@ -69,6 +69,10 @@
 
 /* Players */
 "players.title" = "ผู้เล่น";
+"players.search" = "ค้นหาผู้เล่น";
+"players.edit" = "แก้ไข";
+"players.noPlayers" = "ไม่มีผู้เล่น";
+"players.addFirst" = "แตะ + เพื่อเพิ่มผู้เล่นคนแรก";
 "players.headToHead" = "สถิติเจอกัน";
 
 /* Game End */

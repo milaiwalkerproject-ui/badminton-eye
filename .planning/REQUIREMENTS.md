@@ -1,44 +1,52 @@
-# Requirements: Badminton Eye v1.10 — Localize Remaining Views
+# Requirements: Badminton Eye v1.11 — Wire SettingsView, MatchSetupView & PlayerListView Localization
 
 **Defined:** 2026-03-31
 **Core Value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
 
-## v1.10 Requirements
+## v1.11 Requirements
 
-### Wire Existing Keys to Views
+### SettingsView Localization
 
-- [x] **LOC-01**: MatchHistoryView uses `history.title` and `history.noMatches` localization keys instead of hardcoded English strings
-- [x] **LOC-02**: StatsView uses `stats.title`, `stats.wins`, and `stats.losses` localization keys instead of hardcoded English strings
-- [x] **LOC-03**: LiveMatchView uses `match.game` localization key for the game number label
+- [x] **SET-01**: SettingsView premium section uses `premium.active`, `premium.allUnlocked`, `premium.manage`, `premium.upgrade`, `premium.unlockHawkEye` instead of hardcoded English strings; section header uses `settings.premium`
+- [x] **SET-02**: SettingsView auth/iCloud sections use `icloud.title`, `icloud.signInPrompt`, `icloud.syncActive`, `icloud.account`, `settings.signOut` instead of hardcoded English strings
+- [x] **SET-03**: SettingsView haptic section uses `settings.scoring` (header), `settings.haptic`, `settings.haptic.subtitle` instead of hardcoded English strings
+- [x] **SET-04**: SettingsView about section uses `settings.about`, `settings.version`, `settings.build`, `settings.restorePurchases` instead of hardcoded English strings
 
-### New Localization Keys
+### MatchSetupView Localization
 
-- [x] **LOC-04**: New keys `game.over`, `game.continue`, `match.new`, and `match.games` added to all 9 Localizable.strings files (en, ja, zh-Hans, ko, id, ms, hi, th, da) with correct translations
-- [x] **LOC-05**: GameEndOverlay uses `game.over`, `match.undo`, and `game.continue` localization keys
-- [x] **LOC-06**: MatchEndView uses `match.new` for the New Match button and `match.games` for the games tally row; game score rows use `match.game` for the "Game N" label
+- [x] **SUP-01**: MatchSetupView uses `setup.matchFormat`, `setup.singles`, `setup.doubles`, `setup.mixed` for the Match Format section
+- [x] **SUP-02**: MatchSetupView uses `setup.scoring`, `setup.scoringStandard`, `setup.scoring3x15`, `setup.customFormat` for the Scoring section
+- [x] **SUP-03**: MatchSetupView uses `setup.teamA`, `setup.teamB`, `setup.startMatch`; navigation title uses `setup.title`
+
+### PlayerListView Localization
+
+- [x] **PLA-01**: New keys `players.search`, `players.edit`, `players.noPlayers`, `players.addFirst` added to all 9 Localizable.strings files with correct translations; PlayerListView uses `players.title`, `players.search`, `players.edit`, `players.noPlayers`, `players.addFirst`
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| MatchSetupView localization | Picker labels use Tag-associated Text which SwiftUI can handle natively; format strings like "Custom (X pts, best of X)" require localization format strings |
-| Win rate / streak format strings | Require `%@` format pattern localization; separate milestone |
-| Date grouping labels (Today, Yesterday) | Handled natively by iOS Calendar/DateFormatter system locale |
+| Custom format display string "Custom (X pts, best of X)" | Requires `%@` format pattern localization; separate milestone |
+| Win rate / streak format strings in HeadToHeadView | Require `%@` format pattern localization; separate milestone |
+| Picker label "Format" / "Scoring System" | Internal to SwiftUI Picker; not user-visible as standalone text |
+| Player placeholder names ("Player 1A" etc.) | Only shown when fields empty; low visibility |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LOC-01 | Phase 27 | Complete |
-| LOC-02 | Phase 27 | Complete |
-| LOC-03 | Phase 27 | Complete |
-| LOC-04 | Phase 28 | Complete |
-| LOC-05 | Phase 28 | Complete |
-| LOC-06 | Phase 28 | Complete |
+| SET-01 | Phase 29 | Done |
+| SET-02 | Phase 29 | Done |
+| SET-03 | Phase 29 | Done |
+| SET-04 | Phase 29 | Done |
+| SUP-01 | Phase 30 | Done |
+| SUP-02 | Phase 30 | Done |
+| SUP-03 | Phase 30 | Done |
+| PLA-01 | Phase 30 | Done |
 
 **Coverage:**
-- v1.10 requirements: 6 total
-- Mapped to phases: 6
+- v1.11 requirements: 8 total
+- Mapped to phases: 8
 - Unmapped: 0
 
 ---

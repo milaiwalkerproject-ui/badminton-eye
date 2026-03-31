@@ -9,6 +9,7 @@ struct PlayerListView: View {
     @State private var searchText = ""
     @State private var showNewPlayerSheet = false
     @State private var playerToEdit: Player?
+    @State private var localization = LocalizationManager.shared
 
     private var filteredPlayers: [Player] {
         if searchText.isEmpty {
@@ -28,15 +29,15 @@ struct PlayerListView: View {
                     playerRow(player)
                 }
                 .swipeActions(edge: .trailing) {
-                    Button("Edit") {
+                    Button(localization.localized("players.edit")) {
                         playerToEdit = player
                     }
                     .tint(.blue)
                 }
             }
         }
-        .searchable(text: $searchText, prompt: "Search players")
-        .navigationTitle("Players")
+        .searchable(text: $searchText, prompt: localization.localized("players.search"))
+        .navigationTitle(localization.localized("players.title"))
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
@@ -61,9 +62,9 @@ struct PlayerListView: View {
                 ContentUnavailableView.search(text: searchText)
             } else if players.isEmpty {
                 ContentUnavailableView(
-                    "No Players",
+                    localization.localized("players.noPlayers"),
                     systemImage: "person.2",
-                    description: Text("Tap + to add your first player.")
+                    description: Text(localization.localized("players.addFirst"))
                 )
             }
         }

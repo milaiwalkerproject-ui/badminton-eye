@@ -19,6 +19,7 @@ struct MatchSetupView: View {
 
     // Picker sheet state
     @State private var showPickerFor: PickerTarget?
+    @State private var localization = LocalizationManager.shared
 
     private enum PickerTarget: Identifiable {
         case playerA, playerB, playerA2, playerB2
@@ -36,19 +37,19 @@ struct MatchSetupView: View {
 
     var body: some View {
         Form {
-            Section("Match Format") {
+            Section(localization.localized("setup.matchFormat")) {
                 Picker("Format", selection: $selectedFormat) {
-                    Text("Singles").tag(MatchFormat.singles)
-                    Text("Doubles").tag(MatchFormat.doubles)
-                    Text("Mixed").tag(MatchFormat.mixed)
+                    Text(localization.localized("setup.singles")).tag(MatchFormat.singles)
+                    Text(localization.localized("setup.doubles")).tag(MatchFormat.doubles)
+                    Text(localization.localized("setup.mixed")).tag(MatchFormat.mixed)
                 }
                 .pickerStyle(.segmented)
             }
 
-            Section("Scoring") {
+            Section(localization.localized("setup.scoring")) {
                 Picker("Scoring System", selection: $selectedScoringSystem) {
-                    Text("Standard (21 pts, best of 3)").tag(ScoringSystem.standard21)
-                    Text("BWF 3×15 (15 pts, best of 5)").tag(ScoringSystem.threeByFifteen)
+                    Text(localization.localized("setup.scoringStandard")).tag(ScoringSystem.standard21)
+                    Text(localization.localized("setup.scoring3x15")).tag(ScoringSystem.threeByFifteen)
                     if let rules = customRules {
                         Text("Custom (\(rules.pointsToWin) pts, best of \(rules.maxGames))")
                             .tag(ScoringSystem.custom(rules))
@@ -58,11 +59,11 @@ struct MatchSetupView: View {
                 Button {
                     showCustomBuilder = true
                 } label: {
-                    Label("Create Custom Format", systemImage: "slider.horizontal.3")
+                    Label(localization.localized("setup.customFormat"), systemImage: "slider.horizontal.3")
                 }
             }
 
-            Section("Team A") {
+            Section(localization.localized("setup.teamA")) {
                 playerField(
                     placeholder: isDoubles ? "Player 1A" : "Player 1",
                     text: $playerAName,
@@ -78,7 +79,7 @@ struct MatchSetupView: View {
                 }
             }
 
-            Section("Team B") {
+            Section(localization.localized("setup.teamB")) {
                 playerField(
                     placeholder: isDoubles ? "Player 2A" : "Player 2",
                     text: $playerBName,
@@ -96,7 +97,7 @@ struct MatchSetupView: View {
 
             Section {
                 Button(action: startMatch) {
-                    Text("Start Match")
+                    Text(localization.localized("setup.startMatch"))
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
@@ -104,7 +105,7 @@ struct MatchSetupView: View {
                 .buttonStyle(.borderedProminent)
             }
         }
-        .navigationTitle("Badminton Eye")
+        .navigationTitle(localization.localized("setup.title"))
         .navigationDestination(isPresented: $navigateToMatch) {
             if let state = matchState {
                 LiveMatchView(

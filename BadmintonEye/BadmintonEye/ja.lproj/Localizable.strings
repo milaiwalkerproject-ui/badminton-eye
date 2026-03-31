@@ -67,6 +67,10 @@
 
 /* Players */
 "players.title" = "選手";
+"players.search" = "選手を検索";
+"players.edit" = "編集";
+"players.noPlayers" = "選手なし";
+"players.addFirst" = "＋をタップして最初の選手を追加。";
 "players.headToHead" = "対戦成績";
 
 /* Game End */
