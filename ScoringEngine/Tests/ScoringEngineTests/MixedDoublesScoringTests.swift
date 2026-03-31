@@ -96,6 +96,67 @@ struct MixedDoublesScoringTests {
         #expect(state.currentServer == PlayerPosition(side: .sideA, playerIndex: 0))
     }
 
+    // MARK: - Undo Across Game Boundary (MXD-UND-01)
+
+    @Test("Mixed doubles: undo first point of game 2 restores cross-game-boundary state")
+    func mixedDoublesUndoFirstPointOfGame2() {
+        var state = MatchState.newMixedMatch()
+        // sideA wins game 1 (21-0) -> sideB (loser) serves in game 2
+        for _ in 0..<21 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        }
+        #expect(state.currentServer.side == .sideB)
+        #expect(state.currentGame.gameNumber == 2)
+        let game2Start = state
+
+        // Score first point of game 2 (sideB serves and scores)
+        let afterFirst = MatchEngine.apply(event: .scorePoint(.sideB), to: game2Start)
+        #expect(afterFirst.currentGame.scoreB == 1)
+
+        // Undo should restore to game2Start state
+        let undone = MatchEngine.apply(event: .undo, to: afterFirst)
+        #expect(undone.currentGame.gameNumber == 2)
+        #expect(undone.currentGame.scoreA == 0)
+        #expect(undone.currentGame.scoreB == 0)
+        #expect(undone.currentServer.side == .sideB)
+        #expect(undone.serviceCourt == .right)
+        #expect(undone.games.count == 1) // Game 1 still complete
+        #expect(undone.doublesRotation.count == 4)
+        #expect(undone.servingPlayerIndex == game2Start.servingPlayerIndex)
+    }
+
+    // MARK: - Game-3 Mid-Switch (MXD-MID-01)
+
+    @Test("Mixed doubles: game-3 mid-switch triggers shouldSwitchSidesFlag at 11 points")
+    func mixedDoublesGame3MidSwitch() {
+        var state = MatchState.newMixedMatch()
+        // sideA wins game 1, sideB wins game 2 -> game 3 starts
+        for _ in 0..<21 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        }
+        for _ in 0..<21 {
+            state = MatchEngine.apply(event: .scorePoint(.sideB), to: state)
+        }
+        #expect(state.currentGame.gameNumber == 3)
+
+        // Score to 10-0 — switch should NOT have fired yet
+        for _ in 0..<10 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        }
+        #expect(state.currentGame.hasSwitchedInThirdGame == false)
+        #expect(state.shouldSwitchSidesFlag == false)
+
+        // Score the 11th point — switch fires
+        state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        #expect(state.currentGame.scoreA == 11)
+        #expect(state.shouldSwitchSidesFlag == true)
+        #expect(state.currentGame.hasSwitchedInThirdGame == true)
+
+        // Additional points do NOT fire a second switch
+        state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        #expect(state.shouldSwitchSidesFlag == false)
+    }
+
     // MARK: - Cross-Game Service Continuity (MXD-G3-01)
 
     @Test("Mixed doubles: loser of game 2 serves first in game 3")

@@ -179,6 +179,92 @@ struct ThreeByFifteenTests {
         #expect(state.serviceCourt == .right)
     }
 
+    // MARK: - Undo Edge Cases (THX-UND-01, THX-UND-02, THX-UND-03)
+
+    @Test("3×15: Undo at 15-14 (deuce) reverts to 14-14 with isDeuce true")
+    func threeByFifteenUndoDuringDeuce() {
+        var state = MatchState.newSinglesMatch(scoringSystem: .threeByFifteen)
+        // Score to 14-14 (deuce threshold)
+        for _ in 0..<14 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+            state = MatchEngine.apply(event: .scorePoint(.sideB), to: state)
+        }
+        #expect(state.isDeuce)
+
+        // sideA scores to 15-14 (not yet won — need 2-point lead)
+        let fifteenFourteen = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        #expect(fifteenFourteen.currentGame.scoreA == 15)
+        #expect(fifteenFourteen.matchPhase == .inProgress)
+
+        // Undo reverts to 14-14 (still in deuce)
+        let undone = MatchEngine.apply(event: .undo, to: fifteenFourteen)
+        #expect(undone.currentGame.scoreA == 14)
+        #expect(undone.currentGame.scoreB == 14)
+        #expect(undone.isDeuce)
+        #expect(undone.matchPhase == .inProgress)
+    }
+
+    @Test("3×15: Undo mid-game-switch point in 5th game clears hasSwitchedInThirdGame and shouldSwitchSidesFlag")
+    func threeByFifteenUndoMidSwitch() {
+        var state = MatchState.newSinglesMatch(scoringSystem: .threeByFifteen)
+        // Get to game 5: A wins games 1,2; B wins games 3,4
+        for _ in 0..<2 {
+            for _ in 0..<15 { state = MatchEngine.apply(event: .scorePoint(.sideA), to: state) }
+        }
+        for _ in 0..<2 {
+            for _ in 0..<15 { state = MatchEngine.apply(event: .scorePoint(.sideB), to: state) }
+        }
+        #expect(state.currentGame.gameNumber == 5)
+
+        // Score to 7-0 (one below the 8-point switch threshold in 3×15)
+        for _ in 0..<7 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        }
+        #expect(state.currentGame.hasSwitchedInThirdGame == false)
+        #expect(state.shouldSwitchSidesFlag == false)
+
+        // Score the 8th point — mid-game switch fires
+        let switched = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        #expect(switched.currentGame.scoreA == 8)
+        #expect(switched.shouldSwitchSidesFlag == true)
+        #expect(switched.currentGame.hasSwitchedInThirdGame == true)
+
+        // Undo should clear the switch flags and restore score to 7
+        let undone = MatchEngine.apply(event: .undo, to: switched)
+        #expect(undone.currentGame.scoreA == 7)
+        #expect(undone.currentGame.hasSwitchedInThirdGame == false)
+        #expect(undone.shouldSwitchSidesFlag == false)
+    }
+
+    @Test("3×15: Undo first point of game 3 restores cross-game-boundary state")
+    func threeByFifteenUndoFirstPointOfGame3() {
+        var state = MatchState.newSinglesMatch(scoringSystem: .threeByFifteen)
+        // sideA wins game 1 (15-0) -> sideB serves in game 2
+        for _ in 0..<15 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        }
+        // sideB wins game 2 (15-0) -> sideA serves in game 3
+        for _ in 0..<15 {
+            state = MatchEngine.apply(event: .scorePoint(.sideB), to: state)
+        }
+        #expect(state.currentGame.gameNumber == 3)
+        #expect(state.currentServer.side == .sideA)
+        let game3Start = state
+
+        // Score first point of game 3 (sideA serves and scores)
+        let afterFirst = MatchEngine.apply(event: .scorePoint(.sideA), to: game3Start)
+        #expect(afterFirst.currentGame.scoreA == 1)
+
+        // Undo should restore to game3Start state
+        let undone = MatchEngine.apply(event: .undo, to: afterFirst)
+        #expect(undone.currentGame.gameNumber == 3)
+        #expect(undone.currentGame.scoreA == 0)
+        #expect(undone.currentGame.scoreB == 0)
+        #expect(undone.currentServer.side == .sideA)
+        #expect(undone.serviceCourt == .right)
+        #expect(undone.games.count == 2) // Games 1 and 2 still complete
+    }
+
     // MARK: - Standard 21 Unchanged
 
     @Test("Standard 21-point mode still works correctly")
