@@ -123,3 +123,9 @@
 "chart.last10" = "Seneste 10";
 "chart.last20" = "Seneste 20";
 "chart.last50" = "Seneste 50";
+
+/* Stats Format Strings */
+"stats.winRateFormat" = "Sejrsprocent %.0f%%";
+"stats.streakFormat" = "%d kamps stime";
+"stats.playMore" = "Spil flere kampe for at låse op for analyse";
+"stats.matchesOf" = "%d af 3 kampe gennemført";

@@ -121,3 +121,9 @@
 "chart.last10" = "최근 10";
 "chart.last20" = "최근 20";
 "chart.last50" = "최근 50";
+
+/* Stats Format Strings */
+"stats.winRateFormat" = "승률 %.0f%%";
+"stats.streakFormat" = "%d 연승 중";
+"stats.playMore" = "더 많은 경기를 플레이하여 분석을 잠금 해제하세요";
+"stats.matchesOf" = "3경기 중 %d경기 완료";

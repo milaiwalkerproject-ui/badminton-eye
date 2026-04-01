@@ -121,3 +121,9 @@
 "chart.last10" = "最近10场";
 "chart.last20" = "最近20场";
 "chart.last50" = "最近50场";
+
+/* Stats Format Strings */
+"stats.winRateFormat" = "胜率 %.0f%%";
+"stats.streakFormat" = "连胜 %d 场";
+"stats.playMore" = "多打几场比赛以解锁分析功能";
+"stats.matchesOf" = "已完成 %d/3 场比赛";

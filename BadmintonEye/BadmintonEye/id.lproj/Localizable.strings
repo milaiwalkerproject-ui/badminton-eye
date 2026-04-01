@@ -123,3 +123,9 @@
 "chart.last10" = "10 Terakhir";
 "chart.last20" = "20 Terakhir";
 "chart.last50" = "50 Terakhir";
+
+/* Stats Format Strings */
+"stats.winRateFormat" = "Rasio Menang %.0f%%";
+"stats.streakFormat" = "Beruntun %d pertandingan";
+"stats.playMore" = "Mainkan lebih banyak pertandingan untuk membuka analitik";
+"stats.matchesOf" = "%d dari 3 pertandingan selesai";

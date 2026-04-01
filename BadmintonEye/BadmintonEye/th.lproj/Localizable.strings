@@ -123,3 +123,9 @@
 "chart.last10" = "10 ล่าสุด";
 "chart.last20" = "20 ล่าสุด";
 "chart.last50" = "50 ล่าสุด";
+
+/* Stats Format Strings */
+"stats.winRateFormat" = "อัตราชนะ %.0f%%";
+"stats.streakFormat" = "ชนะติดต่อกัน %d แมตช์";
+"stats.playMore" = "เล่นแมตช์เพิ่มเติมเพื่อปลดล็อคการวิเคราะห์";
+"stats.matchesOf" = "%d จาก 3 แมตช์เสร็จสิ้น";

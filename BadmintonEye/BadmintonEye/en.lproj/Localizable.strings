@@ -121,3 +121,9 @@
 "chart.last10" = "Last 10";
 "chart.last20" = "Last 20";
 "chart.last50" = "Last 50";
+
+/* Stats Format Strings */
+"stats.winRateFormat" = "%.0f%% win rate";
+"stats.streakFormat" = "%d match streak";
+"stats.playMore" = "Play more matches to unlock analytics";
+"stats.matchesOf" = "%d of 3 matches completed";

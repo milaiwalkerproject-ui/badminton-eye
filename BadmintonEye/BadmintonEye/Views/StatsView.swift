@@ -64,7 +64,7 @@ struct StatsView: View {
                 }
             }
 
-            Text(String(format: "%.0f%% win rate", viewModel.winRate))
+            Text(String(format: localization.localized("stats.winRateFormat"), viewModel.winRate))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
@@ -72,7 +72,7 @@ struct StatsView: View {
                 HStack(spacing: 4) {
                     Image(systemName: "flame.fill")
                         .foregroundStyle(.orange)
-                    Text("\(viewModel.currentWinStreak) match streak")
+                    Text(String(format: localization.localized("stats.streakFormat"), viewModel.currentWinStreak))
                         .font(.subheadline)
                         .fontWeight(.medium)
                 }
@@ -98,11 +98,11 @@ struct StatsView: View {
 
     private var emptyState: some View {
         ContentUnavailableView {
-            Label("Not Enough Data", systemImage: "chart.bar")
+            Label(localization.localized("chart.notEnoughData"), systemImage: "chart.bar")
         } description: {
-            Text("Play more matches to unlock analytics")
+            Text(localization.localized("stats.playMore"))
         } actions: {
-            Text("\(viewModel.completedMatches.count) of 3 matches completed")
+            Text(String(format: localization.localized("stats.matchesOf"), viewModel.completedMatches.count))
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

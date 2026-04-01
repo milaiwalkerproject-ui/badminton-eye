@@ -123,3 +123,9 @@
 "chart.last10" = "पिछले 10";
 "chart.last20" = "पिछले 20";
 "chart.last50" = "पिछले 50";
+
+/* Stats Format Strings */
+"stats.winRateFormat" = "जीत दर %.0f%%";
+"stats.streakFormat" = "%d लगातार जीत";
+"stats.playMore" = "विश्लेषण अनलॉक करने के लिए अधिक मैच खेलें";
+"stats.matchesOf" = "3 में से %d मैच पूर्ण";

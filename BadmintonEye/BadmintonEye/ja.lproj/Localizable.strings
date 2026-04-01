@@ -121,3 +121,9 @@
 "chart.last10" = "直近10試合";
 "chart.last20" = "直近20試合";
 "chart.last50" = "直近50試合";
+
+/* Stats Format Strings */
+"stats.winRateFormat" = "勝率 %.0f%%";
+"stats.streakFormat" = "%d 連勝中";
+"stats.playMore" = "分析をアンロックするためにもっと試合をプレーしてください";
+"stats.matchesOf" = "%d/3 試合完了";
