@@ -5,21 +5,21 @@
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
-**Current focus:** v1.13 — Complete Format String Localizations
+**Current focus:** v1.13 complete — Complete Format String Localizations
 
 ## Current Position
 
-Phase: 33 of 34
-Plan: Phase 33 in progress
-Status: In progress
-Last activity: 2026-03-31 — v1.13 started
+Phase: 34 of 34
+Plan: Phase 34 complete
+Status: Milestone complete
+Last activity: 2026-03-31 — v1.13 complete, all 6 requirements verified
 
-Progress: [##########] 0% (v1.13)
+Progress: [##########] 100% (v1.13)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 25 (16 v1.0 + 8 v1.1 + 1 v1.12)
+- Total plans completed: 26 (16 v1.0 + 8 v1.1 + 1 v1.12 + 1 v1.13)
 - Average duration: —
 - Total execution time: —
 
@@ -60,7 +60,7 @@ v1.7 decisions:
 
 v1.13 decisions:
 - Format string keys use `String(format: localization.localized("key"), arg)` pattern — no changes to LocalizationManager needed
-- TrendRange adds `localizationKey: String` computed property; Picker uses `localization.localized(range.localizationKey)` in view body
+- TrendRange rawValues changed to stable identifiers (last10/20/50); display name sourced via localizationKey property at render time
 
 ### Pending Todos
 
@@ -73,5 +73,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-31
-Stopped at: v1.13 — Phase 33 in progress
+Stopped at: v1.13 complete — all phases done
 Resume file: None

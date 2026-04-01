@@ -525,8 +525,8 @@ Plans:
 | 30. PlayerListView Localization | v1.11 | 1/1 | Complete | 2026-03-31 |
 | 31. HeadToHeadView, PlayerProfileView & STR-01 Keys | v1.12 | 1/1 | Complete | 2026-03-31 |
 | 32. Analytics Charts & MatchDetailView Localization | v1.12 | 1/1 | Complete | 2026-03-31 |
-| 33. Format String Keys + MatchDetailView & HeadToHeadView | v1.13 | 0/1 | In Progress | — |
-| 34. PlayerProfileView Alert & TrendRange Display Names | v1.13 | 0/1 | Pending | — |
+| 33. Format String Keys + MatchDetailView & HeadToHeadView | v1.13 | 1/1 | Complete | 2026-03-31 |
+| 34. PlayerProfileView Alert & TrendRange Display Names | v1.13 | 1/1 | Complete | 2026-03-31 |
 
 ---
 
@@ -534,8 +534,8 @@ Plans:
 
 **Milestone Goal:** Add `game.number`, `headtohead.matchesVs`, `player.deleteMessage`, and `chart.last10/20/50` format string keys to all 9 language files, and wire each view to use them.
 
-- [ ] **Phase 33: Format Keys + MatchDetailView/HeadToHeadView** — Add 6 format string keys to all 9 Localizable.strings; wire MatchDetailView "Game N" rows and HeadToHeadView "Matches vs" header
-- [ ] **Phase 34: PlayerProfileView Alert + TrendRange Labels** — Wire PlayerProfileView delete alert message; add `localizationKey` to `TrendRange` and wire Picker; build + test
+- [x] **Phase 33: Format Keys + MatchDetailView/HeadToHeadView** — Add 6 format string keys to all 9 Localizable.strings; wire MatchDetailView "Game N" rows and HeadToHeadView "Matches vs" header
+- [x] **Phase 34: PlayerProfileView Alert + TrendRange Labels** — Wire PlayerProfileView delete alert message; add `localizationKey` to `TrendRange` and wire Picker; build + test
 
 ## Phase Details (v1.13)
 
@@ -558,4 +558,4 @@ Plans:
   3. All 95 tests pass; build succeeds
 
 ---
-*Roadmap updated: 2026-03-31 -- v1.13 started*
+*Roadmap updated: 2026-03-31 -- v1.13 shipped*

@@ -2,8 +2,19 @@
 
 ## v1.13 — Complete Format String Localizations
 
-**In Progress:** 2026-03-31
-**Phases:** 2 (33-34) | **Requirements:** 0/6 verified
+**Shipped:** 2026-03-31
+**Phases:** 2 (33-34) | **Requirements:** 6/6 verified
+**Tests:** 95 (unchanged — UI-only changes)
+
+### Key Accomplishments
+
+1. **Format string keys in all 9 languages** — Added `game.number`, `headtohead.matchesVs`, `player.deleteMessage`, `chart.last10/20/50` to en/ja/zh-Hans/ko/id/ms/hi/th/da with correct native translations
+2. **MatchDetailView game rows** — Decoded scorecard "Game N" rows and fallback "Game 1/2/3" rows use `String(format: localized("game.number"), N)` — switching to Japanese shows "第1ゲーム" etc.
+3. **HeadToHeadView opponent filter** — "Matches vs [name]" section header uses `String(format: localized("headtohead.matchesVs"), name)` instead of hardcoded English
+4. **PlayerProfileView alert message** — Delete confirmation body uses `String(format: localized("player.deleteMessage"), name)` across all 9 languages
+5. **WinRateTrendChart range picker** — TrendRange rawValues changed to stable identifiers; Picker labels resolved via `localizationKey` property at render time — switching to Chinese shows "最近10场/20场/50场"
+
+---
 
 ---
 

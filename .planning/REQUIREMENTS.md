@@ -7,24 +7,24 @@
 
 ### Format String Keys
 
-- [ ] **FMT-01**: All 9 Localizable.strings files contain `game.number`, `headtohead.matchesVs`, `player.deleteMessage`, `chart.last10`, `chart.last20`, `chart.last50` with correct native translations
+- [x] **FMT-01**: All 9 Localizable.strings files contain `game.number`, `headtohead.matchesVs`, `player.deleteMessage`, `chart.last10`, `chart.last20`, `chart.last50` with correct native translations
 
 ### MatchDetailView
 
-- [ ] **FMT-02**: MatchDetailView decoded scorecard "Game N" rows use `String(format: localization.localized("game.number"), index + 1)` — switching to Japanese shows "第1ゲーム", "第2ゲーム" etc.
-- [ ] **FMT-03**: MatchDetailView fallback scorecard rows ("Game 1", "Game 2", "Game 3") use the same `game.number` format key
+- [x] **FMT-02**: MatchDetailView decoded scorecard "Game N" rows use `String(format: localization.localized("game.number"), index + 1)` — switching to Japanese shows "第1ゲーム", "第2ゲーム" etc.
+- [x] **FMT-03**: MatchDetailView fallback scorecard rows ("Game 1", "Game 2", "Game 3") use the same `game.number` format key
 
 ### HeadToHeadView
 
-- [ ] **FMT-04**: HeadToHeadView "Matches vs [opponent]" section header uses `String(format: localization.localized("headtohead.matchesVs"), selectedOpponent!)` — switching to Danish shows "Kampe mod [name]"
+- [x] **FMT-04**: HeadToHeadView "Matches vs [opponent]" section header uses `String(format: localization.localized("headtohead.matchesVs"), selectedOpponent!)` — switching to Danish shows "Kampe mod [name]"
 
 ### PlayerProfileView
 
-- [ ] **FMT-05**: PlayerProfileView delete alert message uses `String(format: localization.localized("player.deleteMessage"), name)` instead of hardcoded English
+- [x] **FMT-05**: PlayerProfileView delete alert message uses `String(format: localization.localized("player.deleteMessage"), name)` instead of hardcoded English
 
 ### WinRateTrendChart
 
-- [ ] **FMT-06**: WinRateTrendChart range picker labels use localized display names via `TrendRange.localizationKey` — switching to Chinese shows "最近10场", "最近20场", "最近50场"
+- [x] **FMT-06**: WinRateTrendChart range picker labels use localized display names via `TrendRange.localizationKey` — switching to Chinese shows "最近10场", "最近20场", "最近50场"
 
 ## Out of Scope
 
@@ -39,12 +39,12 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FMT-01 | Phase 33 | Pending |
-| FMT-02 | Phase 33 | Pending |
-| FMT-03 | Phase 33 | Pending |
-| FMT-04 | Phase 33 | Pending |
-| FMT-05 | Phase 34 | Pending |
-| FMT-06 | Phase 34 | Pending |
+| FMT-01 | Phase 33 | Done |
+| FMT-02 | Phase 33 | Done |
+| FMT-03 | Phase 33 | Done |
+| FMT-04 | Phase 33 | Done |
+| FMT-05 | Phase 34 | Done |
+| FMT-06 | Phase 34 | Done |
 
 **Coverage:**
 - v1.13 requirements: 6 total
