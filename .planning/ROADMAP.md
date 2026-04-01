@@ -521,6 +521,41 @@ Plans:
 | 26. Mixed Doubles Undo & Mid-Switch | v1.9 | 1/1 | Complete | 2026-03-30 |
 | 27. Wire Existing Localization Keys | v1.10 | 1/1 | Complete | 2026-03-31 |
 | 28. New Keys + Game/Match End | v1.10 | 1/1 | Complete | 2026-03-31 |
+| 29. SettingsView & MatchSetupView Localization | v1.11 | 1/1 | Complete | 2026-03-31 |
+| 30. PlayerListView Localization | v1.11 | 1/1 | Complete | 2026-03-31 |
+| 31. HeadToHeadView, PlayerProfileView & STR-01 Keys | v1.12 | 1/1 | Complete | 2026-03-31 |
+| 32. Analytics Charts & MatchDetailView Localization | v1.12 | 1/1 | Complete | 2026-03-31 |
+| 33. Format String Keys + MatchDetailView & HeadToHeadView | v1.13 | 0/1 | In Progress | — |
+| 34. PlayerProfileView Alert & TrendRange Display Names | v1.13 | 0/1 | Pending | — |
 
 ---
-*Roadmap updated: 2026-03-31 -- v1.10 shipped*
+
+### v1.13 Complete Format String Localizations
+
+**Milestone Goal:** Add `game.number`, `headtohead.matchesVs`, `player.deleteMessage`, and `chart.last10/20/50` format string keys to all 9 language files, and wire each view to use them.
+
+- [ ] **Phase 33: Format Keys + MatchDetailView/HeadToHeadView** — Add 6 format string keys to all 9 Localizable.strings; wire MatchDetailView "Game N" rows and HeadToHeadView "Matches vs" header
+- [ ] **Phase 34: PlayerProfileView Alert + TrendRange Labels** — Wire PlayerProfileView delete alert message; add `localizationKey` to `TrendRange` and wire Picker; build + test
+
+## Phase Details (v1.13)
+
+### Phase 33: Format Keys + MatchDetailView/HeadToHeadView
+**Goal**: All 9 Localizable.strings files contain the 6 new format string keys; MatchDetailView and HeadToHeadView use them
+**Depends on**: Nothing
+**Requirements**: FMT-01, FMT-02, FMT-03, FMT-04
+**Success Criteria**:
+  1. Switching to Japanese: MatchDetailView decoded rows show "第1ゲーム", "第2ゲーム"
+  2. Switching to Japanese: MatchDetailView fallback rows show "第1ゲーム" etc.
+  3. Switching to Danish: HeadToHeadView opponent filter section shows "Kampe mod [name]"
+
+### Phase 34: PlayerProfileView Alert + TrendRange Labels
+**Goal**: PlayerProfileView alert message is localized; WinRateTrendChart range picker uses localized labels; build passes with 95 tests
+**Depends on**: Phase 33 (language file additions)
+**Requirements**: FMT-05, FMT-06
+**Success Criteria**:
+  1. Switching to Chinese: delete alert message shows "这将从您的球员列表中永久删除 [name]。"
+  2. Switching to Japanese: range picker shows "直近10試合", "直近20試合", "直近50試合"
+  3. All 95 tests pass; build succeeds
+
+---
+*Roadmap updated: 2026-03-31 -- v1.13 started*

@@ -1,5 +1,12 @@
 # Milestones
 
+## v1.13 — Complete Format String Localizations
+
+**In Progress:** 2026-03-31
+**Phases:** 2 (33-34) | **Requirements:** 0/6 verified
+
+---
+
 ## v1.12 — Localize HeadToHeadView, PlayerProfileView, MatchDetailView & Analytics Charts
 
 **Shipped:** 2026-03-31

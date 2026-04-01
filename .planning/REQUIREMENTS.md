@@ -1,57 +1,54 @@
-# Requirements: Badminton Eye v1.12 — Localize HeadToHeadView, PlayerProfileView, MatchDetailView & Analytics Charts
+# Requirements: Badminton Eye v1.13 — Complete Format String Localizations
 
 **Defined:** 2026-03-31
 **Core Value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
 
-## v1.12 Requirements
+## v1.13 Requirements
 
-### HeadToHeadView Localization
+### Format String Keys
 
-- [x] **H2H-01**: HeadToHeadView navigation title, "Opponents" section header, "All Matches" section header, "No matches yet" empty state all use localized keys; existing `stats.wins` and `stats.losses` keys reused for W/L labels
+- [ ] **FMT-01**: All 9 Localizable.strings files contain `game.number`, `headtohead.matchesVs`, `player.deleteMessage`, `chart.last10`, `chart.last20`, `chart.last50` with correct native translations
 
-### PlayerProfileView Localization
+### MatchDetailView
 
-- [x] **PPV-01**: PlayerProfileView section headers ("Name", "Photo") use localized keys; form fields ("Player Name" placeholder) use localized key; toolbar buttons ("Cancel", "Save") use localized keys; navigation title ("New Player" / "Edit Player") uses localized keys
-- [x] **PPV-02**: PlayerProfileView destructive actions ("Choose Photo", "Remove Photo", "Delete Player") use localized keys; delete confirmation alert title ("Delete Player?") uses localized key
+- [ ] **FMT-02**: MatchDetailView decoded scorecard "Game N" rows use `String(format: localization.localized("game.number"), index + 1)` — switching to Japanese shows "第1ゲーム", "第2ゲーム" etc.
+- [ ] **FMT-03**: MatchDetailView fallback scorecard rows ("Game 1", "Game 2", "Game 3") use the same `game.number` format key
 
-### Analytics Chart Localization
+### HeadToHeadView
 
-- [x] **ANA-01**: WinRateTrendChart card title ("Performance Trend") and empty state ("Not enough data") use localized keys; chart x-axis label ("Match") uses localized key
-- [x] **ANA-02**: ScoringPatternsChart card title ("Scoring Patterns") and empty state ("Not enough data") use the same localized key as ANA-01 (`chart.notEnoughData`)
+- [ ] **FMT-04**: HeadToHeadView "Matches vs [opponent]" section header uses `String(format: localization.localized("headtohead.matchesVs"), selectedOpponent!)` — switching to Danish shows "Kampe mod [name]"
 
-### MatchDetailView Localization
+### PlayerProfileView
 
-- [x] **MDV-01**: MatchDetailView navigation title ("Match Details") and toolbar menu actions ("Share Scorecard", "Export...") use localized keys; existing `match.games` key reused for the "Games" summary row; format badge uses existing `setup.singles/doubles/mixed` keys
+- [ ] **FMT-05**: PlayerProfileView delete alert message uses `String(format: localization.localized("player.deleteMessage"), name)` instead of hardcoded English
 
-### Localization Strings
+### WinRateTrendChart
 
-- [x] **STR-01**: 21 new keys added to all 9 Localizable.strings files (en, ja, zh-Hans, ko, id, ms, hi, th, da) with correct native translations
+- [ ] **FMT-06**: WinRateTrendChart range picker labels use localized display names via `TrendRange.localizationKey` — switching to Chinese shows "最近10场", "最近20场", "最近50场"
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Alert message "This will permanently remove \(name)…" | Contains `%@` format string; requires NSLocalizedString with format args |
-| "Game \(index+1)" format strings in MatchDetailView | Requires `%d` format string interpolation |
-| "Matches vs \(opponent)" format string in HeadToHeadView | Requires `%@` format string interpolation |
-| WinRateTrendChart range picker "Last 10/20/50" | Enum rawValues with number interpolation |
-| "Custom (%d pts, best of %d)" | Requires format string arguments |
+| "%.0f%% win rate" format string in HeadToHeadView/StatsView | Percentage format with no meaningful translation; stays as-is |
+| "Buffer: %.1fs / 10.0s" in ChallengeVideoView | Technical debug string; not user-facing |
+| "Distance from line: %.1fcm" in TrajectoryReplayView | Technical measurement; stays as-is |
+| "Custom (%d pts, best of %d)" in format badge | Not yet surfaced in MatchDetailView; deferred |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| H2H-01 | Phase 31 | Done |
-| PPV-01 | Phase 31 | Done |
-| PPV-02 | Phase 31 | Done |
-| ANA-01 | Phase 32 | Done |
-| ANA-02 | Phase 32 | Done |
-| MDV-01 | Phase 32 | Done |
-| STR-01 | Phase 31 | Done |
+| FMT-01 | Phase 33 | Pending |
+| FMT-02 | Phase 33 | Pending |
+| FMT-03 | Phase 33 | Pending |
+| FMT-04 | Phase 33 | Pending |
+| FMT-05 | Phase 34 | Pending |
+| FMT-06 | Phase 34 | Pending |
 
 **Coverage:**
-- v1.12 requirements: 7 total
-- Mapped to phases: 7
+- v1.13 requirements: 6 total
+- Mapped to phases: 6
 - Unmapped: 0
 
 ---

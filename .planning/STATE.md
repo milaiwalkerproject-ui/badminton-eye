@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
-**Current focus:** v1.12 complete — Localize HeadToHeadView, PlayerProfileView, MatchDetailView & Analytics Charts
+**Current focus:** v1.13 — Complete Format String Localizations
 
 ## Current Position
 
-Phase: 32 of 32
-Plan: Phase 32 complete
-Status: Milestone complete
-Last activity: 2026-03-31 — v1.12 complete, all 7 requirements verified
+Phase: 33 of 34
+Plan: Phase 33 in progress
+Status: In progress
+Last activity: 2026-03-31 — v1.13 started
 
-Progress: [##########] 100% (v1.12)
+Progress: [##########] 0% (v1.13)
 
 ## Performance Metrics
 
@@ -58,6 +58,10 @@ v1.6 decisions:
 v1.7 decisions:
 - Doubles 3×15 and mixed doubles game-3 service are out of scope: same resetServiceForNewGame code path as singles; standard doubles covers the implementation
 
+v1.13 decisions:
+- Format string keys use `String(format: localization.localized("key"), arg)` pattern — no changes to LocalizationManager needed
+- TrendRange adds `localizationKey: String` computed property; Picker uses `localization.localized(range.localizationKey)` in view body
+
 ### Pending Todos
 
 None.
@@ -69,5 +73,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-31
-Stopped at: v1.12 complete — all phases done
+Stopped at: v1.13 — Phase 33 in progress
 Resume file: None
