@@ -113,3 +113,13 @@
 "match.details" = "मैच विवरण";
 "match.shareScorecard" = "स्कोरकार्ड साझा करें";
 "match.export" = "निर्यात करें...";
+
+/* Format Strings */
+"game.number" = "गेम %d";
+"headtohead.matchesVs" = "%@ के विरुद्ध मैच";
+"player.deleteMessage" = "यह %@ को आपकी खिलाड़ी सूची से स्थायी रूप से हटा देगा।";
+
+/* Chart Range Picker */
+"chart.last10" = "पिछले 10";
+"chart.last20" = "पिछले 20";
+"chart.last50" = "पिछले 50";

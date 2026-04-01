@@ -111,3 +111,13 @@
 "match.details" = "Match Details";
 "match.shareScorecard" = "Share Scorecard";
 "match.export" = "Export...";
+
+/* Format Strings */
+"game.number" = "Game %d";
+"headtohead.matchesVs" = "Matches vs %@";
+"player.deleteMessage" = "This will permanently remove %@ from your player list.";
+
+/* Chart Range Picker */
+"chart.last10" = "Last 10";
+"chart.last20" = "Last 20";
+"chart.last50" = "Last 50";

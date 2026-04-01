@@ -2,15 +2,23 @@ import SwiftUI
 import Charts
 
 enum TrendRange: String, CaseIterable {
-    case last10 = "Last 10"
-    case last20 = "Last 20"
-    case last50 = "Last 50"
+    case last10 = "last10"
+    case last20 = "last20"
+    case last50 = "last50"
 
     var matchCount: Int {
         switch self {
         case .last10: return 10
         case .last20: return 20
         case .last50: return 50
+        }
+    }
+
+    var localizationKey: String {
+        switch self {
+        case .last10: return "chart.last10"
+        case .last20: return "chart.last20"
+        case .last50: return "chart.last50"
         }
     }
 }
@@ -32,7 +40,7 @@ struct WinRateTrendChart: View {
 
             Picker("Range", selection: $selectedRange) {
                 ForEach(TrendRange.allCases, id: \.self) { range in
-                    Text(range.rawValue).tag(range)
+                    Text(localization.localized(range.localizationKey)).tag(range)
                 }
             }
             .pickerStyle(.segmented)

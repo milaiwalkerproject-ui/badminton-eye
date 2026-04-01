@@ -111,3 +111,13 @@
 "match.details" = "試合詳細";
 "match.shareScorecard" = "スコアカードを共有";
 "match.export" = "エクスポート...";
+
+/* Format Strings */
+"game.number" = "第%dゲーム";
+"headtohead.matchesVs" = "%@との試合";
+"player.deleteMessage" = "%@を選手リストから完全に削除します。";
+
+/* Chart Range Picker */
+"chart.last10" = "直近10試合";
+"chart.last20" = "直近20試合";
+"chart.last50" = "直近50試合";

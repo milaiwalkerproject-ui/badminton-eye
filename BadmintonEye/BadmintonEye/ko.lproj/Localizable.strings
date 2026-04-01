@@ -111,3 +111,13 @@
 "match.details" = "경기 상세";
 "match.shareScorecard" = "스코어카드 공유";
 "match.export" = "내보내기...";
+
+/* Format Strings */
+"game.number" = "게임 %d";
+"headtohead.matchesVs" = "%@와의 경기";
+"player.deleteMessage" = "%@을(를) 선수 목록에서 영구적으로 제거합니다.";
+
+/* Chart Range Picker */
+"chart.last10" = "최근 10";
+"chart.last20" = "최근 20";
+"chart.last50" = "최근 50";

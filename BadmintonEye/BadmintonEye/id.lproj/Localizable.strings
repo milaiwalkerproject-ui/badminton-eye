@@ -113,3 +113,13 @@
 "match.details" = "Detail Pertandingan";
 "match.shareScorecard" = "Bagikan Skor";
 "match.export" = "Ekspor...";
+
+/* Format Strings */
+"game.number" = "Game %d";
+"headtohead.matchesVs" = "Pertandingan vs %@";
+"player.deleteMessage" = "Ini akan menghapus %@ dari daftar pemain Anda secara permanen.";
+
+/* Chart Range Picker */
+"chart.last10" = "10 Terakhir";
+"chart.last20" = "20 Terakhir";
+"chart.last50" = "50 Terakhir";

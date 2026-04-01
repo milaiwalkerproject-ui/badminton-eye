@@ -120,7 +120,7 @@ struct MatchDetailView: View {
             // Game rows
             ForEach(Array(state.games.enumerated()), id: \.offset) { index, game in
                 HStack {
-                    Text("Game \(index + 1)")
+                    Text(String(format: localization.localized("game.number"), index + 1))
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .frame(width: 80, alignment: .leading)
@@ -184,14 +184,14 @@ struct MatchDetailView: View {
 
             Divider()
 
-            gameRow("Game 1", scoreA: match.game1ScoreA, scoreB: match.game1ScoreB)
+            gameRow(String(format: localization.localized("game.number"), 1), scoreA: match.game1ScoreA, scoreB: match.game1ScoreB)
 
             if let g2a = match.game2ScoreA, let g2b = match.game2ScoreB {
-                gameRow("Game 2", scoreA: g2a, scoreB: g2b)
+                gameRow(String(format: localization.localized("game.number"), 2), scoreA: g2a, scoreB: g2b)
             }
 
             if let g3a = match.game3ScoreA, let g3b = match.game3ScoreB {
-                gameRow("Game 3", scoreA: g3a, scoreB: g3b)
+                gameRow(String(format: localization.localized("game.number"), 3), scoreA: g3a, scoreB: g3b)
             }
         }
         .padding(24)

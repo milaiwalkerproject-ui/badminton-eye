@@ -140,7 +140,7 @@ struct HeadToHeadView: View {
             }
 
             // Match History
-            Section(selectedOpponent != nil ? "Matches vs \(selectedOpponent!)" : localization.localized("headtohead.allMatches")) {
+            Section(selectedOpponent != nil ? String(format: localization.localized("headtohead.matchesVs"), selectedOpponent!) : localization.localized("headtohead.allMatches")) {
                 if displayedMatches.isEmpty {
                     Text(localization.localized("history.noMatches"))
                         .foregroundStyle(.secondary)

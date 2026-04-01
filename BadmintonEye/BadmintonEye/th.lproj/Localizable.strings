@@ -113,3 +113,13 @@
 "match.details" = "รายละเอียดแมตช์";
 "match.shareScorecard" = "แชร์ใบบันทึกคะแนน";
 "match.export" = "ส่งออก...";
+
+/* Format Strings */
+"game.number" = "เกม %d";
+"headtohead.matchesVs" = "การแข่งขันกับ %@";
+"player.deleteMessage" = "การดำเนินการนี้จะลบ %@ ออกจากรายชื่อผู้เล่นของคุณอย่างถาวร";
+
+/* Chart Range Picker */
+"chart.last10" = "10 ล่าสุด";
+"chart.last20" = "20 ล่าสุด";
+"chart.last50" = "50 ล่าสุด";

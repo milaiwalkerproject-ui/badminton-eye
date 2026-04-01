@@ -101,7 +101,7 @@ struct PlayerProfileView: View {
             Button(localization.localized("player.delete"), role: .destructive) { deletePlayer() }
             Button(localization.localized("common.cancel"), role: .cancel) {}
         } message: {
-            Text("This will permanently remove \(name) from your player list.")
+            Text(String(format: localization.localized("player.deleteMessage"), name))
         }
     }
 

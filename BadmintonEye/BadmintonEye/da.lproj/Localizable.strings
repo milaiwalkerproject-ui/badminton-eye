@@ -113,3 +113,13 @@
 "match.details" = "Kampdetaljer";
 "match.shareScorecard" = "Del Scorecard";
 "match.export" = "Eksporter...";
+
+/* Format Strings */
+"game.number" = "Game %d";
+"headtohead.matchesVs" = "Kampe mod %@";
+"player.deleteMessage" = "Dette vil permanent fjerne %@ fra din spillerliste.";
+
+/* Chart Range Picker */
+"chart.last10" = "Seneste 10";
+"chart.last20" = "Seneste 20";
+"chart.last50" = "Seneste 50";

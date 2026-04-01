@@ -111,3 +111,13 @@
 "match.details" = "比赛详情";
 "match.shareScorecard" = "分享记分卡";
 "match.export" = "导出...";
+
+/* Format Strings */
+"game.number" = "第 %d 局";
+"headtohead.matchesVs" = "对阵 %@ 的比赛";
+"player.deleteMessage" = "这将从您的球员列表中永久删除 %@。";
+
+/* Chart Range Picker */
+"chart.last10" = "最近10场";
+"chart.last20" = "最近20场";
+"chart.last50" = "最近50场";
