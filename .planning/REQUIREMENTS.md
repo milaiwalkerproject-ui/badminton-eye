@@ -1,53 +1,43 @@
-# Requirements: Badminton Eye v1.13 — Complete Format String Localizations
+# Requirements: Badminton Eye v1.14 — Analytics Localization & Accessibility
 
 **Defined:** 2026-03-31
 **Core Value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
 
-## v1.13 Requirements
+## v1.14 Requirements
 
-### Format String Keys
+### Stats Localization
 
-- [x] **FMT-01**: All 9 Localizable.strings files contain `game.number`, `headtohead.matchesVs`, `player.deleteMessage`, `chart.last10`, `chart.last20`, `chart.last50` with correct native translations
+- [ ] **STAT-01**: StatsView win rate label uses `String(format: localization.localized("stats.winRateFormat"), viewModel.winRate)` — switching to Japanese shows "勝率 X%"
+- [ ] **STAT-02**: StatsView streak badge uses `String(format: localization.localized("stats.streakFormat"), viewModel.currentWinStreak)` — switching to Chinese shows "连胜 N 场"
+- [ ] **STAT-03**: StatsView empty state is fully localized: `chart.notEnoughData` key for label, new `stats.playMore` key for description, new `stats.matchesOf` format key for progress line; all 9 language files contain `stats.winRateFormat`, `stats.streakFormat`, `stats.playMore`, `stats.matchesOf`
 
-### MatchDetailView
+### Analytics Accessibility
 
-- [x] **FMT-02**: MatchDetailView decoded scorecard "Game N" rows use `String(format: localization.localized("game.number"), index + 1)` — switching to Japanese shows "第1ゲーム", "第2ゲーム" etc.
-- [x] **FMT-03**: MatchDetailView fallback scorecard rows ("Game 1", "Game 2", "Game 3") use the same `game.number` format key
-
-### HeadToHeadView
-
-- [x] **FMT-04**: HeadToHeadView "Matches vs [opponent]" section header uses `String(format: localization.localized("headtohead.matchesVs"), selectedOpponent!)` — switching to Danish shows "Kampe mod [name]"
-
-### PlayerProfileView
-
-- [x] **FMT-05**: PlayerProfileView delete alert message uses `String(format: localization.localized("player.deleteMessage"), name)` instead of hardcoded English
-
-### WinRateTrendChart
-
-- [x] **FMT-06**: WinRateTrendChart range picker labels use localized display names via `TrendRange.localizationKey` — switching to Chinese shows "最近10场", "最近20场", "最近50场"
+- [ ] **ACC-01**: StatsView summary card has `accessibilityElement(children: .combine)` with a single composed `accessibilityLabel` covering wins, losses, win rate, and streak — VoiceOver reads it as one element
+- [ ] **ACC-02**: WinRateTrendChart `Chart { }` block has `.accessibilityLabel(…)` summarising the selected range and current win rate
+- [ ] **ACC-03**: ScoringPatternsChart `Chart { }` block has `.accessibilityLabel(…)` describing that it shows average points scored and conceded per game
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| "%.0f%% win rate" format string in HeadToHeadView/StatsView | Percentage format with no meaningful translation; stays as-is |
-| "Buffer: %.1fs / 10.0s" in ChallengeVideoView | Technical debug string; not user-facing |
-| "Distance from line: %.1fcm" in TrajectoryReplayView | Technical measurement; stays as-is |
+| "Scored" / "Conceded" chart category label localization | Tied to `chartForegroundStyleScale` key matching; refactor deferred |
+| "Game X" labels inside ScoringPatternsChart | Same issue as above; both labels deferred to v1.15 |
 | "Custom (%d pts, best of %d)" in format badge | Not yet surfaced in MatchDetailView; deferred |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FMT-01 | Phase 33 | Done |
-| FMT-02 | Phase 33 | Done |
-| FMT-03 | Phase 33 | Done |
-| FMT-04 | Phase 33 | Done |
-| FMT-05 | Phase 34 | Done |
-| FMT-06 | Phase 34 | Done |
+| STAT-01 | Phase 35 | Pending |
+| STAT-02 | Phase 35 | Pending |
+| STAT-03 | Phase 35 | Pending |
+| ACC-01 | Phase 36 | Pending |
+| ACC-02 | Phase 36 | Pending |
+| ACC-03 | Phase 36 | Pending |
 
 **Coverage:**
-- v1.13 requirements: 6 total
+- v1.14 requirements: 6 total
 - Mapped to phases: 6
 - Unmapped: 0
 

@@ -8,15 +8,15 @@ A native iOS app (iPhone + iPad) with Apple Watch companion for badminton player
 
 Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time — making scorekeeping seamless during actual play.
 
-## Current Milestone: v1.13 — Complete Format String Localizations
+## Current Milestone: v1.14 — Analytics Localization & Accessibility
 
-**Goal:** Localize the remaining format string interpolations deferred from v1.12: "Game N" rows, "Matches vs [opponent]" section header, delete alert message, and range picker labels. Add 6 new format string keys across all 9 language files.
+**Goal:** Wire the two existing-but-unused `stats.winRate` / `stats.streak` localization keys that have been idle since v1.0, add four new format-string keys for the remaining hardcoded English in StatsView, and give VoiceOver users a meaningful experience on the Stats screen and both analytics charts.
 
 **Target features:**
-- MatchDetailView "Game N" rows (decoded + fallback) use `game.number` format key
-- HeadToHeadView "Matches vs [opponent]" section header uses `headtohead.matchesVs` format key
-- PlayerProfileView delete alert message uses `player.deleteMessage` format key
-- WinRateTrendChart range picker uses localized labels via `chart.last10/20/50` keys
+- StatsView win rate and streak labels use existing localization keys (`stats.winRate`, `stats.streak`)
+- Four new format keys: `stats.winRateFormat`, `stats.streakFormat`, `stats.playMore`, `stats.matchesOf`
+- StatsView empty state is fully localized across all 9 languages
+- VoiceOver accessibility on StatsView summary card, WinRateTrendChart, ScoringPatternsChart
 
 ## Current State
 
@@ -106,4 +106,4 @@ None (v1.5 complete)
 | Placeholder Core ML for v1 | Ship full UX flow, train real model separately | ⚠️ Revisit — needs real data before production |
 
 ---
-*Last updated: 2026-03-31 — v1.13 milestone complete*
+*Last updated: 2026-03-31 — v1.14 milestone in progress*

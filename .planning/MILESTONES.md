@@ -1,5 +1,12 @@
 # Milestones
 
+## v1.14 — Analytics Localization & Accessibility
+
+**In Progress:** 2026-03-31
+**Phases:** 2 (35-36) | **Requirements:** 0/6 verified
+
+---
+
 ## v1.13 — Complete Format String Localizations
 
 **Shipped:** 2026-03-31
