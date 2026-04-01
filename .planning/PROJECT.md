@@ -106,4 +106,4 @@ None (v1.5 complete)
 | Placeholder Core ML for v1 | Ship full UX flow, train real model separately | ⚠️ Revisit — needs real data before production |
 
 ---
-*Last updated: 2026-03-31 — v1.14 milestone in progress*
+*Last updated: 2026-03-31 — v1.14 milestone complete*

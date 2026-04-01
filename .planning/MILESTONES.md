@@ -2,8 +2,17 @@
 
 ## v1.14 — Analytics Localization & Accessibility
 
-**In Progress:** 2026-03-31
-**Phases:** 2 (35-36) | **Requirements:** 0/6 verified
+**Shipped:** 2026-03-31
+**Phases:** 2 (35-36) | **Requirements:** 6/6 verified
+**Tests:** 95 (unchanged — UI-only changes)
+
+### Key Accomplishments
+
+1. **Stats format keys wired** — `stats.winRateFormat` and `stats.streakFormat` now used in StatsView; the two keys that had been translated in all 9 languages since v1.0 but never consumed are now live
+2. **StatsView empty state localized** — New `stats.playMore` and `stats.matchesOf` keys (all 9 languages) replace the last hardcoded English strings in StatsView
+3. **StatsView VoiceOver** — Summary card wrapped in `accessibilityElement(children: .combine)` with a composed label covering wins, losses, win rate, and win streak
+4. **WinRateTrendChart accessibility** — Chart area has `accessibilityLabel` describing the selected range and current win rate in the active language
+5. **ScoringPatternsChart accessibility** — Chart area has `accessibilityLabel` listing average points scored and conceded per game
 
 ---
 

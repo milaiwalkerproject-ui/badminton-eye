@@ -563,8 +563,8 @@ Plans:
 
 **Milestone Goal:** Wire the two existing-but-unused `stats.winRate` / `stats.streak` localization keys, add four new format-string keys for remaining hardcoded English in StatsView, and give VoiceOver users a meaningful experience on the Stats screen and both analytics charts.
 
-- [ ] **Phase 35: Stats Localization Wire-up** — Add 4 new keys to all 9 language files; replace 5 hardcoded strings in StatsView
-- [ ] **Phase 36: Analytics VoiceOver Accessibility** — Accessibility labels on StatsView summary card, WinRateTrendChart, ScoringPatternsChart
+- [x] **Phase 35: Stats Localization Wire-up** — Add 4 new keys to all 9 language files; replace 5 hardcoded strings in StatsView
+- [x] **Phase 36: Analytics VoiceOver Accessibility** — Accessibility labels on StatsView summary card, WinRateTrendChart, ScoringPatternsChart
 
 ## Phase Details (v1.14)
 
@@ -588,4 +588,8 @@ Plans:
   4. All 95 tests pass; build succeeds
 
 ---
-*Roadmap updated: 2026-03-31 — v1.14 in progress*
+| 35. Stats Localization Wire-up | v1.14 | 1/1 | Complete | 2026-03-31 |
+| 36. Analytics VoiceOver Accessibility | v1.14 | 1/1 | Complete | 2026-03-31 |
+
+---
+*Roadmap updated: 2026-03-31 — v1.14 shipped*
