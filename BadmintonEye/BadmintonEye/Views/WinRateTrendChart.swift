@@ -33,6 +33,13 @@ struct WinRateTrendChart: View {
         viewModel.winRateOverLast(selectedRange.matchCount)
     }
 
+    private var chartAccessibilityLabel: String {
+        let rangeName = localization.localized(selectedRange.localizationKey)
+        let currentRate = trendData.last?.rate ?? 0
+        let rateStr = String(format: localization.localized("stats.winRateFormat"), currentRate)
+        return "\(localization.localized("chart.performanceTrend")). \(rangeName). \(rateStr)."
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(localization.localized("chart.performanceTrend"))
@@ -102,6 +109,7 @@ struct WinRateTrendChart: View {
                 }
                 .chartXAxisLabel(localization.localized("chart.matchAxis"))
                 .frame(height: 200)
+                .accessibilityLabel(chartAccessibilityLabel)
             }
         }
         .padding()

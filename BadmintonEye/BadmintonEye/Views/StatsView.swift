@@ -38,6 +38,17 @@ struct StatsView: View {
 
     // MARK: - Summary Card
 
+    private var summaryCardAccessibilityLabel: String {
+        let wins = localization.localized("stats.wins")
+        let losses = localization.localized("stats.losses")
+        let winRateStr = String(format: localization.localized("stats.winRateFormat"), viewModel.winRate)
+        var parts = ["\(viewModel.totalWins) \(wins), \(viewModel.totalLosses) \(losses). \(winRateStr)."]
+        if viewModel.currentWinStreak > 0 {
+            parts.append(String(format: localization.localized("stats.streakFormat"), viewModel.currentWinStreak))
+        }
+        return parts.joined(separator: " ")
+    }
+
     private var summaryCard: some View {
         VStack(spacing: 12) {
             HStack(spacing: 24) {
@@ -92,6 +103,8 @@ struct StatsView: View {
                 .fill(.background)
                 .shadow(color: .black.opacity(0.08), radius: 8, y: 2)
         )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(summaryCardAccessibilityLabel)
     }
 
     // MARK: - Empty State

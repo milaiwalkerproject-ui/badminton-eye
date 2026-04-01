@@ -22,6 +22,17 @@ struct ScoringPatternsChart: View {
         return data
     }
 
+    private var chartAccessibilityLabel: String {
+        let averages = viewModel.perGameAverages()
+        guard !averages.isEmpty else {
+            return localization.localized("chart.scoringPatterns")
+        }
+        let gameSummaries = averages.map { avg in
+            String(format: "Game %d: %.0f scored, %.0f conceded", avg.game, avg.avgScored, avg.avgConceded)
+        }.joined(separator: ". ")
+        return "\(localization.localized("chart.scoringPatterns")). \(gameSummaries)."
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(localization.localized("chart.scoringPatterns"))
@@ -47,6 +58,7 @@ struct ScoringPatternsChart: View {
                     "Conceded": Color.red
                 ])
                 .frame(height: 180)
+                .accessibilityLabel(chartAccessibilityLabel)
             }
         }
         .padding()
