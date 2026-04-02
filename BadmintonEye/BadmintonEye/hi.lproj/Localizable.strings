@@ -129,3 +129,10 @@
 "stats.streakFormat" = "%d लगातार जीत";
 "stats.playMore" = "विश्लेषण अनलॉक करने के लिए अधिक मैच खेलें";
 "stats.matchesOf" = "3 में से %d मैच पूर्ण";
+
+/* Chart Series Labels */
+"chart.scored" = "स्कोर किए";
+"chart.conceded" = "दिए गए";
+
+/* Custom Format Badge */
+"setup.customDetail" = "कस्टम (%d अंक, %d गेम)";

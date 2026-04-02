@@ -127,3 +127,10 @@
 "stats.streakFormat" = "%d 連勝中";
 "stats.playMore" = "分析をアンロックするためにもっと試合をプレーしてください";
 "stats.matchesOf" = "%d/3 試合完了";
+
+/* Chart Series Labels */
+"chart.scored" = "得点";
+"chart.conceded" = "失点";
+
+/* Custom Format Badge */
+"setup.customDetail" = "カスタム（%dpt、%d局）";

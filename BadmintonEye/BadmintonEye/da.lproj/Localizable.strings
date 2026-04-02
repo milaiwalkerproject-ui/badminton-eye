@@ -129,3 +129,10 @@
 "stats.streakFormat" = "%d kamps stime";
 "stats.playMore" = "Spil flere kampe for at låse op for analyse";
 "stats.matchesOf" = "%d af 3 kampe gennemført";
+
+/* Chart Series Labels */
+"chart.scored" = "Scoret";
+"chart.conceded" = "Indkasseret";
+
+/* Custom Format Badge */
+"setup.customDetail" = "Tilpasset (%d pt, bedst af %d)";

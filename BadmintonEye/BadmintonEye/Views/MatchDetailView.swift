@@ -240,7 +240,12 @@ struct MatchDetailView: View {
         }
         switch match.scoringSystemRaw {
         case "threeByFifteen": return "\(base) · 3×15"
-        case "custom": return "\(base) · Custom"
+        case "custom":
+            if let data = match.customRulesJSON,
+               let rules = try? JSONDecoder().decode(ScoringRules.self, from: data) {
+                return "\(base) · " + String(format: localization.localized("setup.customDetail"), rules.pointsToWin, rules.gamesToWin)
+            }
+            return "\(base) · Custom"
         default: return base
         }
     }

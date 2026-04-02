@@ -129,3 +129,10 @@
 "stats.streakFormat" = "Beruntun %d pertandingan";
 "stats.playMore" = "Mainkan lebih banyak pertandingan untuk membuka analitik";
 "stats.matchesOf" = "%d dari 3 pertandingan selesai";
+
+/* Chart Series Labels */
+"chart.scored" = "Skor";
+"chart.conceded" = "Kemasukan";
+
+/* Custom Format Badge */
+"setup.customDetail" = "Kustom (%d poin, %d game)";

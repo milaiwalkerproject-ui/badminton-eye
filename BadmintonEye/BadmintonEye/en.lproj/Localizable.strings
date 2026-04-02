@@ -127,3 +127,10 @@
 "stats.streakFormat" = "%d match streak";
 "stats.playMore" = "Play more matches to unlock analytics";
 "stats.matchesOf" = "%d of 3 matches completed";
+
+/* Chart Series Labels */
+"chart.scored" = "Scored";
+"chart.conceded" = "Conceded";
+
+/* Custom Format Badge */
+"setup.customDetail" = "Custom (%d pts, best of %d)";

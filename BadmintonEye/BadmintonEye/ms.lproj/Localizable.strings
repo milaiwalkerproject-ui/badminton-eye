@@ -129,3 +129,10 @@
 "stats.streakFormat" = "Rentetan %d perlawanan";
 "stats.playMore" = "Main lebih banyak perlawanan untuk membuka kunci analitik";
 "stats.matchesOf" = "%d daripada 3 perlawanan selesai";
+
+/* Chart Series Labels */
+"chart.scored" = "Jaringan";
+"chart.conceded" = "Kemasukan";
+
+/* Custom Format Badge */
+"setup.customDetail" = "Tersuai (%d mata, %d game)";

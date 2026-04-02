@@ -129,3 +129,10 @@
 "stats.streakFormat" = "ชนะติดต่อกัน %d แมตช์";
 "stats.playMore" = "เล่นแมตช์เพิ่มเติมเพื่อปลดล็อคการวิเคราะห์";
 "stats.matchesOf" = "%d จาก 3 แมตช์เสร็จสิ้น";
+
+/* Chart Series Labels */
+"chart.scored" = "ทำคะแนน";
+"chart.conceded" = "เสียคะแนน";
+
+/* Custom Format Badge */
+"setup.customDetail" = "กำหนดเอง (%d แต้ม, %d เกม)";

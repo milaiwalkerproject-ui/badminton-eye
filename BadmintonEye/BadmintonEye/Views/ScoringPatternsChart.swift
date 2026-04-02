@@ -14,10 +14,13 @@ struct ScoringPatternsChart: View {
 
     private var chartData: [GameScoreData] {
         let averages = viewModel.perGameAverages()
+        let scoredLabel = localization.localized("chart.scored")
+        let concededLabel = localization.localized("chart.conceded")
         var data: [GameScoreData] = []
         for avg in averages {
-            data.append(GameScoreData(game: "Game \(avg.game)", type: "Scored", value: avg.avgScored))
-            data.append(GameScoreData(game: "Game \(avg.game)", type: "Conceded", value: avg.avgConceded))
+            let gameLabel = String(format: localization.localized("game.number"), avg.game)
+            data.append(GameScoreData(game: gameLabel, type: scoredLabel, value: avg.avgScored))
+            data.append(GameScoreData(game: gameLabel, type: concededLabel, value: avg.avgConceded))
         }
         return data
     }
@@ -28,7 +31,8 @@ struct ScoringPatternsChart: View {
             return localization.localized("chart.scoringPatterns")
         }
         let gameSummaries = averages.map { avg in
-            String(format: "Game %d: %.0f scored, %.0f conceded", avg.game, avg.avgScored, avg.avgConceded)
+            let gameLabel = String(format: localization.localized("game.number"), avg.game)
+            return String(format: "%@: %.0f %@, %.0f %@", gameLabel, avg.avgScored, localization.localized("chart.scored"), avg.avgConceded, localization.localized("chart.conceded"))
         }.joined(separator: ". ")
         return "\(localization.localized("chart.scoringPatterns")). \(gameSummaries)."
     }
@@ -54,8 +58,8 @@ struct ScoringPatternsChart: View {
                     .position(by: .value("Type", item.type))
                 }
                 .chartForegroundStyleScale([
-                    "Scored": Color.green,
-                    "Conceded": Color.red
+                    localization.localized("chart.scored"): Color.green,
+                    localization.localized("chart.conceded"): Color.red
                 ])
                 .frame(height: 180)
                 .accessibilityLabel(chartAccessibilityLabel)

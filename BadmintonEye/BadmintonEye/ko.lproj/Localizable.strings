@@ -127,3 +127,10 @@
 "stats.streakFormat" = "%d 연승 중";
 "stats.playMore" = "더 많은 경기를 플레이하여 분석을 잠금 해제하세요";
 "stats.matchesOf" = "3경기 중 %d경기 완료";
+
+/* Chart Series Labels */
+"chart.scored" = "득점";
+"chart.conceded" = "실점";
+
+/* Custom Format Badge */
+"setup.customDetail" = "커스텀 (%d점, %d게임)";

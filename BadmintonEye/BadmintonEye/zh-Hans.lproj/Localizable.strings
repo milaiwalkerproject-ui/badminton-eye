@@ -127,3 +127,10 @@
 "stats.streakFormat" = "连胜 %d 场";
 "stats.playMore" = "多打几场比赛以解锁分析功能";
 "stats.matchesOf" = "已完成 %d/3 场比赛";
+
+/* Chart Series Labels */
+"chart.scored" = "得分";
+"chart.conceded" = "失分";
+
+/* Custom Format Badge */
+"setup.customDetail" = "自定义（%d分，%d局）";
