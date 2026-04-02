@@ -2,14 +2,16 @@
 
 ## v1.15 — Chart Labels & Custom Format Badge Localization
 
-**In Progress:** 2026-04-02
-**Phases:** 2 (37-38) | **Requirements:** 0/5 verified
+**Shipped:** 2026-04-02
+**Phases:** 2 (37-38) | **Requirements:** 5/5 verified
+**Tests:** 95 (unchanged — UI-only changes)
 
-### Goals
+### Key Accomplishments
 
-1. **ScoringPatternsChart "Game X" labels** — use `game.number` format key instead of hardcoded `"Game \(n)"`
-2. **ScoringPatternsChart series labels** — "Scored"/"Conceded" use `chart.scored`/`chart.conceded` localization keys; `chartForegroundStyleScale` keys match
-3. **MatchDetailView custom badge** — decode `customRulesJSON` and show `setup.customDetail` format string instead of static "Custom"
+1. **ScoringPatternsChart "Game X" labels** — use `game.number` format key; switching to Japanese shows "第1ゲーム" on x-axis instead of "Game 1"
+2. **ScoringPatternsChart series labels** — "Scored"/"Conceded" replaced by `chart.scored`/`chart.conceded` localized strings in both data and `chartForegroundStyleScale`; green/red colors preserved in all 9 languages
+3. **MatchDetailView custom badge** — decodes `customRulesJSON` to show "Singles · Custom (17 pts, best of 3)" using `setup.customDetail` format key; all 9 languages
+4. **6 new keys across 9 language files** — `chart.scored`, `chart.conceded`, `setup.customDetail` added to en/ja/zh-Hans/ko/id/ms/hi/th/da
 
 ---
 

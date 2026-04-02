@@ -7,14 +7,14 @@
 
 ### ScoringPatternsChart Localization
 
-- [ ] **CHART-01**: ScoringPatternsChart "Game X" x-axis labels use `String(format: localization.localized("game.number"), avg.game)` — switching to Japanese shows "第1ゲーム" etc.
-- [ ] **CHART-02**: ScoringPatternsChart bar series use `chart.scored` / `chart.conceded` localization keys for the type label; `chartForegroundStyleScale` keys match the localized strings so colors remain correct in all languages
-- [ ] **CHART-03**: `chart.scored` and `chart.conceded` keys are present in all 9 Localizable.strings files with correct native translations
+- [x] **CHART-01**: ScoringPatternsChart "Game X" x-axis labels use `String(format: localization.localized("game.number"), avg.game)` — switching to Japanese shows "第1ゲーム" etc.
+- [x] **CHART-02**: ScoringPatternsChart bar series use `chart.scored` / `chart.conceded` localization keys for the type label; `chartForegroundStyleScale` keys match the localized strings so colors remain correct in all languages
+- [x] **CHART-03**: `chart.scored` and `chart.conceded` keys are present in all 9 Localizable.strings files with correct native translations
 
 ### Custom Format Badge
 
-- [ ] **BADGE-01**: MatchDetailView `formatBadge` for `scoringSystemRaw == "custom"` decodes `customRulesJSON` and returns `"\(base) · " + String(format: localization.localized("setup.customDetail"), rules.pointsToWin, rules.gamesToWin)` — e.g. "Singles · Custom (17 pts, best of 3)"
-- [ ] **BADGE-02**: `setup.customDetail` format key is present in all 9 Localizable.strings files with correct native translations
+- [x] **BADGE-01**: MatchDetailView `formatBadge` for `scoringSystemRaw == "custom"` decodes `customRulesJSON` and returns `"\(base) · " + String(format: localization.localized("setup.customDetail"), rules.pointsToWin, rules.gamesToWin)` — e.g. "Singles · Custom (17 pts, best of 3)"
+- [x] **BADGE-02**: `setup.customDetail` format key is present in all 9 Localizable.strings files with correct native translations
 
 ## Out of Scope
 
@@ -27,11 +27,11 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CHART-01 | Phase 37 | Pending |
-| CHART-02 | Phase 37 | Pending |
-| CHART-03 | Phase 37 | Pending |
-| BADGE-01 | Phase 38 | Pending |
-| BADGE-02 | Phase 38 | Pending |
+| CHART-01 | Phase 37 | Done |
+| CHART-02 | Phase 37 | Done |
+| CHART-03 | Phase 37 | Done |
+| BADGE-01 | Phase 38 | Done |
+| BADGE-02 | Phase 38 | Done |
 
 **Coverage:**
 - v1.15 requirements: 5 total
