@@ -8,15 +8,14 @@ A native iOS app (iPhone + iPad) with Apple Watch companion for badminton player
 
 Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time — making scorekeeping seamless during actual play.
 
-## Current Milestone: v1.14 — Analytics Localization & Accessibility
+## Current Milestone: v1.15 — Chart Labels & Custom Format Badge Localization
 
-**Goal:** Wire the two existing-but-unused `stats.winRate` / `stats.streak` localization keys that have been idle since v1.0, add four new format-string keys for the remaining hardcoded English in StatsView, and give VoiceOver users a meaningful experience on the Stats screen and both analytics charts.
+**Goal:** Localize the three items deferred from v1.14: "Game X" x-axis labels in ScoringPatternsChart, "Scored"/"Conceded" series labels in ScoringPatternsChart, and the "Custom" format badge in MatchDetailView (replace with actual parameters from stored ScoringRules).
 
 **Target features:**
-- StatsView win rate and streak labels use existing localization keys (`stats.winRate`, `stats.streak`)
-- Four new format keys: `stats.winRateFormat`, `stats.streakFormat`, `stats.playMore`, `stats.matchesOf`
-- StatsView empty state is fully localized across all 9 languages
-- VoiceOver accessibility on StatsView summary card, WinRateTrendChart, ScoringPatternsChart
+- ScoringPatternsChart x-axis "Game X" labels use `game.number` format key
+- ScoringPatternsChart series labels "Scored"/"Conceded" use new `chart.scored`/`chart.conceded` keys; `chartForegroundStyleScale` keys match
+- MatchDetailView custom format badge shows actual rules parameters using new `setup.customDetail` format key
 
 ## Current State
 
@@ -106,4 +105,4 @@ None (v1.5 complete)
 | Placeholder Core ML for v1 | Ship full UX flow, train real model separately | ⚠️ Revisit — needs real data before production |
 
 ---
-*Last updated: 2026-03-31 — v1.14 milestone complete*
+*Last updated: 2026-04-02 — v1.15 milestone started*

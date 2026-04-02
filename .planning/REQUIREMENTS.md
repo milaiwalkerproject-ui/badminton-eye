@@ -1,45 +1,42 @@
-# Requirements: Badminton Eye v1.14 — Analytics Localization & Accessibility
+# Requirements: Badminton Eye v1.15 — Chart Labels & Custom Format Badge Localization
 
-**Defined:** 2026-03-31
+**Defined:** 2026-04-02
 **Core Value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
 
-## v1.14 Requirements
+## v1.15 Requirements
 
-### Stats Localization
+### ScoringPatternsChart Localization
 
-- [x] **STAT-01**: StatsView win rate label uses `String(format: localization.localized("stats.winRateFormat"), viewModel.winRate)` — switching to Japanese shows "勝率 X%"
-- [x] **STAT-02**: StatsView streak badge uses `String(format: localization.localized("stats.streakFormat"), viewModel.currentWinStreak)` — switching to Chinese shows "连胜 N 场"
-- [x] **STAT-03**: StatsView empty state is fully localized: `chart.notEnoughData` key for label, new `stats.playMore` key for description, new `stats.matchesOf` format key for progress line; all 9 language files contain `stats.winRateFormat`, `stats.streakFormat`, `stats.playMore`, `stats.matchesOf`
+- [ ] **CHART-01**: ScoringPatternsChart "Game X" x-axis labels use `String(format: localization.localized("game.number"), avg.game)` — switching to Japanese shows "第1ゲーム" etc.
+- [ ] **CHART-02**: ScoringPatternsChart bar series use `chart.scored` / `chart.conceded` localization keys for the type label; `chartForegroundStyleScale` keys match the localized strings so colors remain correct in all languages
+- [ ] **CHART-03**: `chart.scored` and `chart.conceded` keys are present in all 9 Localizable.strings files with correct native translations
 
-### Analytics Accessibility
+### Custom Format Badge
 
-- [x] **ACC-01**: StatsView summary card has `accessibilityElement(children: .combine)` with a single composed `accessibilityLabel` covering wins, losses, win rate, and streak — VoiceOver reads it as one element
-- [x] **ACC-02**: WinRateTrendChart `Chart { }` block has `.accessibilityLabel(…)` summarising the selected range and current win rate
-- [x] **ACC-03**: ScoringPatternsChart `Chart { }` block has `.accessibilityLabel(…)` describing that it shows average points scored and conceded per game
+- [ ] **BADGE-01**: MatchDetailView `formatBadge` for `scoringSystemRaw == "custom"` decodes `customRulesJSON` and returns `"\(base) · " + String(format: localization.localized("setup.customDetail"), rules.pointsToWin, rules.gamesToWin)` — e.g. "Singles · Custom (17 pts, best of 3)"
+- [ ] **BADGE-02**: `setup.customDetail` format key is present in all 9 Localizable.strings files with correct native translations
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| "Scored" / "Conceded" chart category label localization | Tied to `chartForegroundStyleScale` key matching; refactor deferred |
-| "Game X" labels inside ScoringPatternsChart | Same issue as above; both labels deferred to v1.15 |
-| "Custom (%d pts, best of %d)" in format badge | Not yet surfaced in MatchDetailView; deferred |
+| chartAccessibilityLabel using localized "scored"/"conceded" in the summary sentence | Low priority; screen reader users understand the numbers in context |
+| Custom format badge when `customRulesJSON` is nil (fallback to "· Custom") | Nil only if data was created before v1.3; safe fallback retained |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| STAT-01 | Phase 35 | Done |
-| STAT-02 | Phase 35 | Done |
-| STAT-03 | Phase 35 | Done |
-| ACC-01 | Phase 36 | Done |
-| ACC-02 | Phase 36 | Done |
-| ACC-03 | Phase 36 | Done |
+| CHART-01 | Phase 37 | Pending |
+| CHART-02 | Phase 37 | Pending |
+| CHART-03 | Phase 37 | Pending |
+| BADGE-01 | Phase 38 | Pending |
+| BADGE-02 | Phase 38 | Pending |
 
 **Coverage:**
-- v1.14 requirements: 6 total
-- Mapped to phases: 6
+- v1.15 requirements: 5 total
+- Mapped to phases: 5
 - Unmapped: 0
 
 ---
-*Requirements defined: 2026-03-31*
+*Requirements defined: 2026-04-02*

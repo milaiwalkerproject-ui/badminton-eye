@@ -1,5 +1,18 @@
 # Milestones
 
+## v1.15 — Chart Labels & Custom Format Badge Localization
+
+**In Progress:** 2026-04-02
+**Phases:** 2 (37-38) | **Requirements:** 0/5 verified
+
+### Goals
+
+1. **ScoringPatternsChart "Game X" labels** — use `game.number` format key instead of hardcoded `"Game \(n)"`
+2. **ScoringPatternsChart series labels** — "Scored"/"Conceded" use `chart.scored`/`chart.conceded` localization keys; `chartForegroundStyleScale` keys match
+3. **MatchDetailView custom badge** — decode `customRulesJSON` and show `setup.customDetail` format string instead of static "Custom"
+
+---
+
 ## v1.14 — Analytics Localization & Accessibility
 
 **Shipped:** 2026-03-31
