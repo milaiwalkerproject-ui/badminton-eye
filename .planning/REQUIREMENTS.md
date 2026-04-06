@@ -7,11 +7,11 @@
 
 ### 3×15 Cross-Game Service Continuity (Games 3→4 and 4→5)
 
-- [ ] **THX-G4-01**: In a 3×15 match, the loser of game 3 serves first in game 4. `currentServer.side` equals the losing side of game 3 immediately after game 4 starts.
-- [ ] **THX-G5-01**: In a 3×15 match, the loser of game 4 serves first in game 5. `currentServer.side` equals the losing side of game 4 immediately after game 5 starts.
-- [ ] **THX-G4-02**: Game 4 in a 3×15 match does NOT trigger a mid-game switch at 8 points (the switch only fires in the final game 5, not game 4).
-- [ ] **THX-UND-04**: Undo of the first point of game 4 fully restores the cross-game-boundary state: `gameNumber == 4`, `scoreA == 0`, `scoreB == 0`, correct server, and 3 completed games in `games`.
-- [ ] **THX-UND-05**: Undo of the first point of game 5 fully restores the cross-game-boundary state: `gameNumber == 5`, `scoreA == 0`, `scoreB == 0`, correct server, and 4 completed games in `games`.
+- [x] **THX-G4-01**: In a 3×15 match, the loser of game 3 serves first in game 4. `currentServer.side` equals the losing side of game 3 immediately after game 4 starts.
+- [x] **THX-G5-01**: In a 3×15 match, the loser of game 4 serves first in game 5. `currentServer.side` equals the losing side of game 4 immediately after game 5 starts.
+- [x] **THX-G4-02**: Game 4 in a 3×15 match does NOT trigger a mid-game switch at 8 points (the switch only fires in the final game 5, not game 4).
+- [x] **THX-UND-04**: Undo of the first point of game 4 fully restores the cross-game-boundary state: `gameNumber == 4`, `scoreA == 0`, `scoreB == 0`, correct server, and 3 completed games in `games`.
+- [x] **THX-UND-05**: Undo of the first point of game 5 fully restores the cross-game-boundary state: `gameNumber == 5`, `scoreA == 0`, `scoreB == 0`, correct server, and 4 completed games in `games`.
 
 ## Out of Scope
 
@@ -24,11 +24,11 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| THX-G4-01 | Phase 40 | Pending |
-| THX-G5-01 | Phase 40 | Pending |
-| THX-G4-02 | Phase 40 | Pending |
-| THX-UND-04 | Phase 40 | Pending |
-| THX-UND-05 | Phase 40 | Pending |
+| THX-G4-01 | Phase 40 | Done |
+| THX-G5-01 | Phase 40 | Done |
+| THX-G4-02 | Phase 40 | Done |
+| THX-UND-04 | Phase 40 | Done |
+| THX-UND-05 | Phase 40 | Done |
 
 **Coverage:**
 - v1.17 requirements: 5 total

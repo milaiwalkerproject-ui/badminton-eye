@@ -2,9 +2,17 @@
 
 ## v1.17 — 3×15 Games 3–4–5 Service Continuity Tests
 
-**Status:** In progress (2026-04-05)
-**Phases:** 1 (40) | **Requirements:** 0/5 verified
-**Tests:** 95 → 100 (target +5 new tests)
+**Shipped:** 2026-04-05
+**Phases:** 1 (40) | **Requirements:** 5/5 verified
+**Tests:** 100 (9 suites, +5 from v1.16)
+
+### Key Accomplishments
+
+1. **Games 3→4 service continuity** — Test verifying loser of game 3 serves first in game 4 in 3×15 format; mirrors the existing game 1→2 and 2→3 service tests
+2. **Games 4→5 service continuity** — Test verifying loser of game 4 serves first in game 5 in 3×15 format; completes the full best-of-5 service chain coverage
+3. **Game 4 no-switch guard** — Test documenting that the mid-game switch does NOT fire at 8 points in game 4 (switch is exclusive to the final game 5)
+4. **Undo game 4 boundary** — Undo of first point of game 4 fully restores `gameNumber == 4`, correct server, and 3 completed games
+5. **Undo game 5 boundary** — Undo of first point of game 5 fully restores `gameNumber == 5`, correct server, and 4 completed games
 
 ---
 
