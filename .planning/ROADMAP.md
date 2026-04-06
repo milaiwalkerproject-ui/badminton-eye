@@ -12,6 +12,7 @@
 - [x] **v1.7 3×15 Service Continuity & Doubles Game-3 Tests** -- Phases 21-22 (shipped 2026-03-30)
 - [x] **v1.8 Doubles & Mixed Deuce/Cap Coverage** -- Phases 23-24 (shipped 2026-03-30)
 - [x] **v1.9 3×15 Undo & Mixed Doubles Boundary Tests** -- Phases 25-26 (shipped 2026-03-30)
+- [ ] **v1.17 3×15 Games 3–4–5 Service Continuity Tests** -- Phase 40 (in progress)
 
 ## Phases
 

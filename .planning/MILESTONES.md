@@ -1,5 +1,13 @@
 # Milestones
 
+## v1.17 — 3×15 Games 3–4–5 Service Continuity Tests
+
+**Status:** In progress (2026-04-05)
+**Phases:** 1 (40) | **Requirements:** 0/5 verified
+**Tests:** 95 → 100 (target +5 new tests)
+
+---
+
 ## v1.16 — Games 4 & 5 in Scoring Analytics
 
 **Shipped:** 2026-04-05

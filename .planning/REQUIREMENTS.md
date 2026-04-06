@@ -1,34 +1,38 @@
-# Requirements: Badminton Eye v1.16 — Games 4 & 5 in Scoring Analytics
+# Requirements: Badminton Eye v1.17 — 3×15 Games 3–4–5 Service Continuity Tests
 
 **Defined:** 2026-04-05
 **Core Value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
 
-## v1.16 Requirements
+## v1.17 Requirements
 
-### Games 4 & 5 in perGameAverages()
+### 3×15 Cross-Game Service Continuity (Games 3→4 and 4→5)
 
-- [x] **ANAL-01**: `perGameAverages()` collects game 4 scored/conceded data from `game4ScoreA` / `game4ScoreB` fields and includes a game 4 entry in the returned array when at least one completed match has game 4 data.
-- [x] **ANAL-02**: `perGameAverages()` collects game 5 scored/conceded data from `game5ScoreA` / `game5ScoreB` fields and includes a game 5 entry in the returned array when at least one completed match has game 5 data.
-- [x] **ANAL-03**: For matches with fewer than 4 or 5 games, the missing game entries are simply absent (no zero-padding). Existing game 1–3 behaviour is unchanged.
+- [ ] **THX-G4-01**: In a 3×15 match, the loser of game 3 serves first in game 4. `currentServer.side` equals the losing side of game 3 immediately after game 4 starts.
+- [ ] **THX-G5-01**: In a 3×15 match, the loser of game 4 serves first in game 5. `currentServer.side` equals the losing side of game 4 immediately after game 5 starts.
+- [ ] **THX-G4-02**: Game 4 in a 3×15 match does NOT trigger a mid-game switch at 8 points (the switch only fires in the final game 5, not game 4).
+- [ ] **THX-UND-04**: Undo of the first point of game 4 fully restores the cross-game-boundary state: `gameNumber == 4`, `scoreA == 0`, `scoreB == 0`, correct server, and 3 completed games in `games`.
+- [ ] **THX-UND-05**: Undo of the first point of game 5 fully restores the cross-game-boundary state: `gameNumber == 5`, `scoreA == 0`, `scoreB == 0`, correct server, and 4 completed games in `games`.
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Updating detectPlayer to include playerBName | Detection is best-effort; selectedPlayerName override handles edge cases |
 | UI changes to ScoringPatternsChart | Already handles any number of games dynamically |
+| Doubles/mixed 3×15 cross-game tests beyond game 3 | Same code path as singles; lower priority |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ANAL-01 | Phase 39 | Done |
-| ANAL-02 | Phase 39 | Done |
-| ANAL-03 | Phase 39 | Done |
+| THX-G4-01 | Phase 40 | Pending |
+| THX-G5-01 | Phase 40 | Pending |
+| THX-G4-02 | Phase 40 | Pending |
+| THX-UND-04 | Phase 40 | Pending |
+| THX-UND-05 | Phase 40 | Pending |
 
 **Coverage:**
-- v1.16 requirements: 3 total
-- Mapped to phases: 3
+- v1.17 requirements: 5 total
+- Mapped to phases: 5
 - Unmapped: 0
 
 ---

@@ -8,13 +8,14 @@ A native iOS app (iPhone + iPad) with Apple Watch companion for badminton player
 
 Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time — making scorekeeping seamless during actual play.
 
-## Current Milestone: v1.16 — Games 4 & 5 in Scoring Analytics
+## Current Milestone: v1.17 — 3×15 Games 3–4–5 Service Continuity Tests
 
-**Goal:** `MatchStatsViewModel.perGameAverages()` was only returning data for games 1–3. For 3×15 format (best-of-5), games 4 and 5 scores were stored in `PersistedMatch` since v1.2 but silently dropped in analytics. This milestone fixes the gap so all played games appear in the Scoring Patterns chart.
+**Goal:** Add test coverage for the 3×15 cross-game service transitions that were unverified after v1.16 surfaced game 4 & 5 data in analytics. Games 3→4 and 4→5 service hand-off and undo behavior are documented but not explicitly tested.
 
 **Target features:**
-- `perGameAverages()` includes game 4 and game 5 data when present in completed matches
-- `ScoringPatternsChart` shows bars for games 4 and 5 in 3×15 matches (chart already handles any number of games)
+- Tests verifying loser-serves rule at games 3→4 and 4→5 in 3×15
+- Test documenting that game 4 does NOT trigger a mid-game switch (only game 5 does)
+- Undo tests for the first point of games 4 and 5 (cross-game-boundary restoration)
 
 ## Current State
 
@@ -104,4 +105,4 @@ None (v1.5 complete)
 | Placeholder Core ML for v1 | Ship full UX flow, train real model separately | ⚠️ Revisit — needs real data before production |
 
 ---
-*Last updated: 2026-04-05 — v1.16 milestone complete*
+*Last updated: 2026-04-05 — v1.17 milestone started*
