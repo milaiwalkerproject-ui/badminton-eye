@@ -265,6 +265,109 @@ struct ThreeByFifteenTests {
         #expect(undone.games.count == 2) // Games 1 and 2 still complete
     }
 
+    // MARK: - Cross-Game Service Continuity Games 3→4 and 4→5 (THX-G4-01, THX-G5-01)
+
+    @Test("3×15: Loser of game 3 serves first in game 4")
+    func threeByFifteenLoserServesInGame4() {
+        var state = MatchState.newSinglesMatch(scoringSystem: .threeByFifteen)
+        // A wins game 1 → B serves in game 2
+        for _ in 0..<15 { state = MatchEngine.apply(event: .scorePoint(.sideA), to: state) }
+        // B wins game 2 → A serves in game 3
+        for _ in 0..<15 { state = MatchEngine.apply(event: .scorePoint(.sideB), to: state) }
+        // A wins game 3 → B (loser) serves in game 4
+        for _ in 0..<15 { state = MatchEngine.apply(event: .scorePoint(.sideA), to: state) }
+        #expect(state.currentGame.gameNumber == 4)
+        #expect(state.currentServer.side == .sideB)
+        #expect(state.serviceCourt == .right)
+        #expect(state.games.count == 3)
+    }
+
+    @Test("3×15: Loser of game 4 serves first in game 5")
+    func threeByFifteenLoserServesInGame5() {
+        var state = MatchState.newSinglesMatch(scoringSystem: .threeByFifteen)
+        // A wins games 1 & 3; B wins games 2 & 4 → A (loser of game 4) serves in game 5
+        for _ in 0..<15 { state = MatchEngine.apply(event: .scorePoint(.sideA), to: state) }
+        for _ in 0..<15 { state = MatchEngine.apply(event: .scorePoint(.sideB), to: state) }
+        for _ in 0..<15 { state = MatchEngine.apply(event: .scorePoint(.sideA), to: state) }
+        for _ in 0..<15 { state = MatchEngine.apply(event: .scorePoint(.sideB), to: state) }
+        #expect(state.currentGame.gameNumber == 5)
+        // Loser of game 4 was sideA (B won game 4)
+        #expect(state.currentServer.side == .sideA)
+        #expect(state.serviceCourt == .right)
+        #expect(state.games.count == 4)
+    }
+
+    // MARK: - Game 4 Does NOT Trigger Mid-Game Switch (THX-G4-02)
+
+    @Test("3×15: Game 4 does NOT trigger mid-game switch at 8 points")
+    func threeByFifteenGame4NoMidSwitch() {
+        var state = MatchState.newSinglesMatch(scoringSystem: .threeByFifteen)
+        // Get to game 4: A wins 1, 3; B wins 2
+        for _ in 0..<15 { state = MatchEngine.apply(event: .scorePoint(.sideA), to: state) }
+        for _ in 0..<15 { state = MatchEngine.apply(event: .scorePoint(.sideB), to: state) }
+        for _ in 0..<15 { state = MatchEngine.apply(event: .scorePoint(.sideA), to: state) }
+        #expect(state.currentGame.gameNumber == 4)
+
+        // Score 8 points in game 4 — switch should NOT fire (only fires in game 5)
+        for _ in 0..<8 { state = MatchEngine.apply(event: .scorePoint(.sideA), to: state) }
+        #expect(state.currentGame.scoreA == 8)
+        #expect(state.shouldSwitchSidesFlag == false)
+        #expect(state.currentGame.hasSwitchedInThirdGame == false)
+    }
+
+    // MARK: - Undo Edge Cases Games 4 and 5 (THX-UND-04, THX-UND-05)
+
+    @Test("3×15: Undo first point of game 4 restores cross-game-boundary state")
+    func threeByFifteenUndoFirstPointOfGame4() {
+        var state = MatchState.newSinglesMatch(scoringSystem: .threeByFifteen)
+        // A wins game 1 → B serves game 2; B wins game 2 → A serves game 3; A wins game 3 → B serves game 4
+        for _ in 0..<15 { state = MatchEngine.apply(event: .scorePoint(.sideA), to: state) }
+        for _ in 0..<15 { state = MatchEngine.apply(event: .scorePoint(.sideB), to: state) }
+        for _ in 0..<15 { state = MatchEngine.apply(event: .scorePoint(.sideA), to: state) }
+        #expect(state.currentGame.gameNumber == 4)
+        #expect(state.currentServer.side == .sideB)
+        let game4Start = state
+
+        // Score first point of game 4
+        let afterFirst = MatchEngine.apply(event: .scorePoint(.sideB), to: game4Start)
+        #expect(afterFirst.currentGame.scoreB == 1)
+
+        // Undo should restore to game4Start state
+        let undone = MatchEngine.apply(event: .undo, to: afterFirst)
+        #expect(undone.currentGame.gameNumber == 4)
+        #expect(undone.currentGame.scoreA == 0)
+        #expect(undone.currentGame.scoreB == 0)
+        #expect(undone.currentServer.side == .sideB)
+        #expect(undone.serviceCourt == .right)
+        #expect(undone.games.count == 3) // Games 1, 2, and 3 still complete
+    }
+
+    @Test("3×15: Undo first point of game 5 restores cross-game-boundary state")
+    func threeByFifteenUndoFirstPointOfGame5() {
+        var state = MatchState.newSinglesMatch(scoringSystem: .threeByFifteen)
+        // A wins games 1 & 3; B wins games 2 & 4 → game 5 starts, A serves
+        for _ in 0..<15 { state = MatchEngine.apply(event: .scorePoint(.sideA), to: state) }
+        for _ in 0..<15 { state = MatchEngine.apply(event: .scorePoint(.sideB), to: state) }
+        for _ in 0..<15 { state = MatchEngine.apply(event: .scorePoint(.sideA), to: state) }
+        for _ in 0..<15 { state = MatchEngine.apply(event: .scorePoint(.sideB), to: state) }
+        #expect(state.currentGame.gameNumber == 5)
+        #expect(state.currentServer.side == .sideA)
+        let game5Start = state
+
+        // Score first point of game 5 (sideA serves and scores)
+        let afterFirst = MatchEngine.apply(event: .scorePoint(.sideA), to: game5Start)
+        #expect(afterFirst.currentGame.scoreA == 1)
+
+        // Undo should restore to game5Start state
+        let undone = MatchEngine.apply(event: .undo, to: afterFirst)
+        #expect(undone.currentGame.gameNumber == 5)
+        #expect(undone.currentGame.scoreA == 0)
+        #expect(undone.currentGame.scoreB == 0)
+        #expect(undone.currentServer.side == .sideA)
+        #expect(undone.serviceCourt == .right)
+        #expect(undone.games.count == 4) // Games 1–4 still complete
+    }
+
     // MARK: - Standard 21 Unchanged
 
     @Test("Standard 21-point mode still works correctly")
