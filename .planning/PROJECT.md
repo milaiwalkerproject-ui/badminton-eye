@@ -8,14 +8,13 @@ A native iOS app (iPhone + iPad) with Apple Watch companion for badminton player
 
 Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time — making scorekeeping seamless during actual play.
 
-## Current Milestone: v1.15 — Chart Labels & Custom Format Badge Localization
+## Current Milestone: v1.16 — Games 4 & 5 in Scoring Analytics
 
-**Goal:** Localize the three items deferred from v1.14: "Game X" x-axis labels in ScoringPatternsChart, "Scored"/"Conceded" series labels in ScoringPatternsChart, and the "Custom" format badge in MatchDetailView (replace with actual parameters from stored ScoringRules).
+**Goal:** `MatchStatsViewModel.perGameAverages()` was only returning data for games 1–3. For 3×15 format (best-of-5), games 4 and 5 scores were stored in `PersistedMatch` since v1.2 but silently dropped in analytics. This milestone fixes the gap so all played games appear in the Scoring Patterns chart.
 
 **Target features:**
-- ScoringPatternsChart x-axis "Game X" labels use `game.number` format key
-- ScoringPatternsChart series labels "Scored"/"Conceded" use new `chart.scored`/`chart.conceded` keys; `chartForegroundStyleScale` keys match
-- MatchDetailView custom format badge shows actual rules parameters using new `setup.customDetail` format key
+- `perGameAverages()` includes game 4 and game 5 data when present in completed matches
+- `ScoringPatternsChart` shows bars for games 4 and 5 in 3×15 matches (chart already handles any number of games)
 
 ## Current State
 
@@ -105,4 +104,4 @@ None (v1.5 complete)
 | Placeholder Core ML for v1 | Ship full UX flow, train real model separately | ⚠️ Revisit — needs real data before production |
 
 ---
-*Last updated: 2026-04-02 — v1.15 milestone complete*
+*Last updated: 2026-04-05 — v1.16 milestone started*

@@ -1,5 +1,15 @@
 # Milestones
 
+## v1.16 — Games 4 & 5 in Scoring Analytics
+
+**In progress:** 2026-04-05
+**Phases:** 1 (39) | **Requirements:** 0/3 verified
+
+### Goal
+`MatchStatsViewModel.perGameAverages()` only returned data for games 1–3. For 3×15 format (best-of-5), games 4 and 5 were stored but dropped in analytics. Fix includes all games played.
+
+---
+
 ## v1.15 — Chart Labels & Custom Format Badge Localization
 
 **Shipped:** 2026-04-02

@@ -1,42 +1,35 @@
-# Requirements: Badminton Eye v1.15 — Chart Labels & Custom Format Badge Localization
+# Requirements: Badminton Eye v1.16 — Games 4 & 5 in Scoring Analytics
 
-**Defined:** 2026-04-02
+**Defined:** 2026-04-05
 **Core Value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
 
-## v1.15 Requirements
+## v1.16 Requirements
 
-### ScoringPatternsChart Localization
+### Games 4 & 5 in perGameAverages()
 
-- [x] **CHART-01**: ScoringPatternsChart "Game X" x-axis labels use `String(format: localization.localized("game.number"), avg.game)` — switching to Japanese shows "第1ゲーム" etc.
-- [x] **CHART-02**: ScoringPatternsChart bar series use `chart.scored` / `chart.conceded` localization keys for the type label; `chartForegroundStyleScale` keys match the localized strings so colors remain correct in all languages
-- [x] **CHART-03**: `chart.scored` and `chart.conceded` keys are present in all 9 Localizable.strings files with correct native translations
-
-### Custom Format Badge
-
-- [x] **BADGE-01**: MatchDetailView `formatBadge` for `scoringSystemRaw == "custom"` decodes `customRulesJSON` and returns `"\(base) · " + String(format: localization.localized("setup.customDetail"), rules.pointsToWin, rules.gamesToWin)` — e.g. "Singles · Custom (17 pts, best of 3)"
-- [x] **BADGE-02**: `setup.customDetail` format key is present in all 9 Localizable.strings files with correct native translations
+- [ ] **ANAL-01**: `perGameAverages()` collects game 4 scored/conceded data from `game4ScoreA` / `game4ScoreB` fields and includes a game 4 entry in the returned array when at least one completed match has game 4 data.
+- [ ] **ANAL-02**: `perGameAverages()` collects game 5 scored/conceded data from `game5ScoreA` / `game5ScoreB` fields and includes a game 5 entry in the returned array when at least one completed match has game 5 data.
+- [ ] **ANAL-03**: For matches with fewer than 4 or 5 games, the missing game entries are simply absent (no zero-padding). Existing game 1–3 behaviour is unchanged.
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| chartAccessibilityLabel using localized "scored"/"conceded" in the summary sentence | Low priority; screen reader users understand the numbers in context |
-| Custom format badge when `customRulesJSON` is nil (fallback to "· Custom") | Nil only if data was created before v1.3; safe fallback retained |
+| Updating detectPlayer to include playerBName | Detection is best-effort; selectedPlayerName override handles edge cases |
+| UI changes to ScoringPatternsChart | Already handles any number of games dynamically |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CHART-01 | Phase 37 | Done |
-| CHART-02 | Phase 37 | Done |
-| CHART-03 | Phase 37 | Done |
-| BADGE-01 | Phase 38 | Done |
-| BADGE-02 | Phase 38 | Done |
+| ANAL-01 | Phase 39 | Pending |
+| ANAL-02 | Phase 39 | Pending |
+| ANAL-03 | Phase 39 | Pending |
 
 **Coverage:**
-- v1.15 requirements: 5 total
-- Mapped to phases: 5
+- v1.16 requirements: 3 total
+- Mapped to phases: 3
 - Unmapped: 0
 
 ---
-*Requirements defined: 2026-04-02*
+*Requirements defined: 2026-04-05*
