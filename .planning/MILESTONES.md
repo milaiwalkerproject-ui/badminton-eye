@@ -2,11 +2,15 @@
 
 ## v1.16 — Games 4 & 5 in Scoring Analytics
 
-**In progress:** 2026-04-05
-**Phases:** 1 (39) | **Requirements:** 0/3 verified
+**Shipped:** 2026-04-05
+**Phases:** 1 (39) | **Requirements:** 3/3 verified
+**Tests:** 95 (unchanged — logic-only change in ViewModel)
 
-### Goal
-`MatchStatsViewModel.perGameAverages()` only returned data for games 1–3. For 3×15 format (best-of-5), games 4 and 5 were stored but dropped in analytics. Fix includes all games played.
+### Key Accomplishments
+
+1. **perGameAverages() extended** — Adds `game4Scored`/`game4Conceded` and `game5Scored`/`game5Conceded` arrays with the same optional-unwrap pattern as games 2 and 3. Games 4 and 5 now appear as bars in `ScoringPatternsChart` for 3×15 best-of-5 matches.
+2. **Zero-padding avoided** — Matches without a 4th or 5th game contribute nothing; the entries only appear when at least one completed match has that game's data.
+3. **No chart changes needed** — `ScoringPatternsChart` already iterates over any number of `perGameAverages()` entries; localized game labels (`game.number` format key) already handle any game number.
 
 ---
 

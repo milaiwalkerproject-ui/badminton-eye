@@ -72,6 +72,10 @@ class MatchStatsViewModel {
         var game2Conceded: [Int] = []
         var game3Scored: [Int] = []
         var game3Conceded: [Int] = []
+        var game4Scored: [Int] = []
+        var game4Conceded: [Int] = []
+        var game5Scored: [Int] = []
+        var game5Conceded: [Int] = []
 
         for match in completedMatches {
             let isSideA = isOnSideA(match, player: player)
@@ -90,6 +94,18 @@ class MatchStatsViewModel {
             if let s3a = match.game3ScoreA, let s3b = match.game3ScoreB {
                 game3Scored.append(isSideA ? s3a : s3b)
                 game3Conceded.append(isSideA ? s3b : s3a)
+            }
+
+            // Game 4 (3×15 best-of-5)
+            if let s4a = match.game4ScoreA, let s4b = match.game4ScoreB {
+                game4Scored.append(isSideA ? s4a : s4b)
+                game4Conceded.append(isSideA ? s4b : s4a)
+            }
+
+            // Game 5 (3×15 best-of-5)
+            if let s5a = match.game5ScoreA, let s5b = match.game5ScoreB {
+                game5Scored.append(isSideA ? s5a : s5b)
+                game5Conceded.append(isSideA ? s5b : s5a)
             }
         }
 
@@ -114,6 +130,20 @@ class MatchStatsViewModel {
                 game: 3,
                 avgScored: average(game3Scored),
                 avgConceded: average(game3Conceded)
+            ))
+        }
+        if !game4Scored.isEmpty {
+            results.append((
+                game: 4,
+                avgScored: average(game4Scored),
+                avgConceded: average(game4Conceded)
+            ))
+        }
+        if !game5Scored.isEmpty {
+            results.append((
+                game: 5,
+                avgScored: average(game5Scored),
+                avgConceded: average(game5Conceded)
             ))
         }
 
