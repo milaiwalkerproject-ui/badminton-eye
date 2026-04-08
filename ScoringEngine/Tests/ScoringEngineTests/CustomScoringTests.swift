@@ -268,4 +268,105 @@ struct CustomScoringTests {
         #expect(state.matchPhase == .complete)
         #expect(state.matchWinner == .sideA)
     }
+
+    // MARK: - TEST-07: Custom mid-game switch (CST-MID-01)
+
+    @Test("Custom: mid-game switch fires at midGameSwitchPoint in final game")
+    func customMidGameSwitchFiresInFinalGame() {
+        // 11-point best-of-3 with midGameSwitchPoint=6
+        let rules = ScoringRules(
+            pointsToWin: 11, deuceThreshold: 10, capScore: 15,
+            gamesToWin: 2, maxGames: 3, midGameSwitchPoint: 6
+        )
+        var state = MatchState.newSinglesMatch(scoringSystem: .custom(rules))
+        // Reach game 3: A wins game 1, B wins game 2
+        for _ in 0..<11 { state = MatchEngine.apply(event: .scorePoint(.sideA), to: state) }
+        for _ in 0..<11 { state = MatchEngine.apply(event: .scorePoint(.sideB), to: state) }
+        #expect(state.currentGame.gameNumber == 3)
+
+        // Score 5 points (one below the switch point of 6)
+        for _ in 0..<5 { state = MatchEngine.apply(event: .scorePoint(.sideA), to: state) }
+        #expect(state.currentGame.hasSwitchedInThirdGame == false)
+        #expect(state.shouldSwitchSidesFlag == false)
+
+        // Score the 6th point — switch fires
+        state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        #expect(state.currentGame.scoreA == 6)
+        #expect(state.shouldSwitchSidesFlag == true)
+        #expect(state.currentGame.hasSwitchedInThirdGame == true)
+    }
+
+    // MARK: - TEST-08: Custom mid-game switch fires only once (CST-MID-02)
+
+    @Test("Custom: mid-game switch fires only once in final game")
+    func customMidGameSwitchFiresOnlyOnce() {
+        let rules = ScoringRules(
+            pointsToWin: 11, deuceThreshold: 10, capScore: 15,
+            gamesToWin: 2, maxGames: 3, midGameSwitchPoint: 6
+        )
+        var state = MatchState.newSinglesMatch(scoringSystem: .custom(rules))
+        // Reach game 3
+        for _ in 0..<11 { state = MatchEngine.apply(event: .scorePoint(.sideA), to: state) }
+        for _ in 0..<11 { state = MatchEngine.apply(event: .scorePoint(.sideB), to: state) }
+        // Score through the switch point (6 points)
+        for _ in 0..<6 { state = MatchEngine.apply(event: .scorePoint(.sideA), to: state) }
+        #expect(state.currentGame.hasSwitchedInThirdGame == true)
+
+        // Additional points should NOT re-fire the switch
+        state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        #expect(state.shouldSwitchSidesFlag == false)
+
+        state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        #expect(state.shouldSwitchSidesFlag == false)
+    }
+
+    // MARK: - TEST-09: Custom mid-game switch does NOT fire in non-final games (CST-MID-03)
+
+    @Test("Custom: mid-game switch does NOT fire in non-final games")
+    func customMidGameSwitchNotInNonFinalGame() {
+        let rules = ScoringRules(
+            pointsToWin: 11, deuceThreshold: 10, capScore: 15,
+            gamesToWin: 2, maxGames: 3, midGameSwitchPoint: 6
+        )
+        var state = MatchState.newSinglesMatch(scoringSystem: .custom(rules))
+        // Score 6 points in game 1 (non-final game) — switch should NOT fire
+        for _ in 0..<6 { state = MatchEngine.apply(event: .scorePoint(.sideA), to: state) }
+        #expect(state.currentGame.gameNumber == 1)
+        #expect(state.currentGame.scoreA == 6)
+        #expect(state.currentGame.hasSwitchedInThirdGame == false)
+        #expect(state.shouldSwitchSidesFlag == false)
+    }
+
+    // MARK: - TEST-10: isValid rejects capScore <= pointsToWin (CST-VAL-04)
+
+    @Test("capScore equal to pointsToWin is invalid")
+    func capScoreEqualToPointsToWinInvalid() {
+        let rules = ScoringRules(
+            pointsToWin: 11, deuceThreshold: 10, capScore: 11,
+            gamesToWin: 2, maxGames: 3, midGameSwitchPoint: 6
+        )
+        #expect(!rules.isValid)
+    }
+
+    // MARK: - TEST-11: isValid rejects midGameSwitchPoint == 0 (CST-VAL-05)
+
+    @Test("midGameSwitchPoint of zero is invalid")
+    func midGameSwitchPointZeroInvalid() {
+        let rules = ScoringRules(
+            pointsToWin: 11, deuceThreshold: 10, capScore: 15,
+            gamesToWin: 2, maxGames: 3, midGameSwitchPoint: 0
+        )
+        #expect(!rules.isValid)
+    }
+
+    // MARK: - TEST-12: isValid accepts minimal best-of-1 format (CST-VAL-06)
+
+    @Test("Minimal best-of-1 custom format is valid")
+    func minimalBestOfOneValid() {
+        let rules = ScoringRules(
+            pointsToWin: 7, deuceThreshold: 6, capScore: 10,
+            gamesToWin: 1, maxGames: 1, midGameSwitchPoint: 4
+        )
+        #expect(rules.isValid)
+    }
 }
