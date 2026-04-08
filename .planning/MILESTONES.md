@@ -1,5 +1,22 @@
 # Milestones
 
+## v1.18 — Custom Scoring Mid-Switch & Validation Edge Cases
+
+**Shipped:** 2026-04-08
+**Phases:** 1 (41) | **Requirements:** 6/6 verified
+**Tests:** 106 (9 suites, +6 from v1.17)
+
+### Key Accomplishments
+
+1. **Custom mid-game switch fires at midGameSwitchPoint in final game** — Test verifying that a custom-rules match (11-point best-of-3, switch at 6) fires `shouldSwitchSidesFlag` and `hasSwitchedInThirdGame` exactly at the configured threshold in game 3
+2. **Custom mid-game switch fires only once** — Test verifying that scoring beyond `midGameSwitchPoint` in the custom final game does NOT re-trigger the switch flag
+3. **Custom mid-game switch does NOT fire in non-final games** — Test documenting that game 1 (non-final) never sets `hasSwitchedInThirdGame` regardless of score
+4. **isValid rejects capScore <= pointsToWin** — Test covering the `deuceThreshold < capScore` boundary (capScore=11 equals pointsToWin=11, invalid)
+5. **isValid rejects midGameSwitchPoint == 0** — Test covering the `midGameSwitchPoint > 0` boundary
+6. **isValid accepts minimal best-of-1** — Test confirming gamesToWin=1, maxGames=1 passes validation
+
+---
+
 ## v1.17 — 3×15 Games 3–4–5 Service Continuity Tests
 
 **Shipped:** 2026-04-05

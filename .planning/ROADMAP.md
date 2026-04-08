@@ -13,6 +13,7 @@
 - [x] **v1.8 Doubles & Mixed Deuce/Cap Coverage** -- Phases 23-24 (shipped 2026-03-30)
 - [x] **v1.9 3×15 Undo & Mixed Doubles Boundary Tests** -- Phases 25-26 (shipped 2026-03-30)
 - [x] **v1.17 3×15 Games 3–4–5 Service Continuity Tests** -- Phase 40 (shipped 2026-04-05)
+- [x] **v1.18 Custom Scoring Mid-Switch & Validation Edge Cases** -- Phase 41 (shipped 2026-04-08)
 
 ## Phases
 

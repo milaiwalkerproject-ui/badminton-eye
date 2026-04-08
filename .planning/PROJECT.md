@@ -8,14 +8,17 @@ A native iOS app (iPhone + iPad) with Apple Watch companion for badminton player
 
 Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time — making scorekeeping seamless during actual play.
 
-## Current Milestone: v1.17 — 3×15 Games 3–4–5 Service Continuity Tests
+## Current Milestone: v1.18 — Custom Scoring Mid-Switch & Validation Edge Cases
 
-**Goal:** Add test coverage for the 3×15 cross-game service transitions that were unverified after v1.16 surfaced game 4 & 5 data in analytics. Games 3→4 and 4→5 service hand-off and undo behavior are documented but not explicitly tested.
+**Goal:** Fill the remaining gaps in CustomScoringTests: the custom mid-game switch behavior (fires in the final game at midGameSwitchPoint) is never exercised by tests, and several ScoringRules.isValid boundary conditions are untested.
 
 **Target features:**
-- Tests verifying loser-serves rule at games 3→4 and 4→5 in 3×15
-- Test documenting that game 4 does NOT trigger a mid-game switch (only game 5 does)
-- Undo tests for the first point of games 4 and 5 (cross-game-boundary restoration)
+- Test that mid-game switch fires at midGameSwitchPoint in the final game of a custom-rules match
+- Test that mid-game switch only fires once in a custom-rules final game
+- Test that mid-game switch does NOT fire in non-final games of a custom-rules match
+- Test isValid rejects capScore <= pointsToWin
+- Test isValid rejects midGameSwitchPoint of zero
+- Test isValid accepts a minimal 1-game best-of-1 custom format
 
 ## Current State
 
@@ -105,4 +108,4 @@ None (v1.5 complete)
 | Placeholder Core ML for v1 | Ship full UX flow, train real model separately | ⚠️ Revisit — needs real data before production |
 
 ---
-*Last updated: 2026-04-05 — v1.17 milestone complete*
+*Last updated: 2026-04-08 — v1.18 milestone complete*
