@@ -8,6 +8,7 @@ struct SettingsView: View {
     @State private var showPaywall = false
     @AppStorage("hapticFeedbackEnabled") private var hapticEnabled = true
     @State private var localization = LocalizationManager.shared
+    @State private var showDeleteAccountAlert = false
 
     var body: some View {
         List {
@@ -142,6 +143,33 @@ struct SettingsView: View {
                 authManager.signOut()
             } label: {
                 Text(localization.localized("settings.signOut"))
+            }
+
+            // Guideline 5.1.1(v) — account deletion must be available in-app
+            Button(role: .destructive) {
+                showDeleteAccountAlert = true
+            } label: {
+                HStack {
+                    if authManager.isDeletingAccount {
+                        ProgressView()
+                            .padding(.trailing, 4)
+                    }
+                    Text(localization.localized("settings.deleteAccount"))
+                }
+            }
+            .disabled(authManager.isDeletingAccount)
+            .alert(
+                localization.localized("settings.deleteAccount.alert"),
+                isPresented: $showDeleteAccountAlert
+            ) {
+                Button(localization.localized("settings.deleteAccount.confirm"), role: .destructive) {
+                    Task {
+                        try? await authManager.deleteAccount()
+                    }
+                }
+                Button(localization.localized("common.cancel"), role: .cancel) {}
+            } message: {
+                Text(localization.localized("settings.deleteAccount.message"))
             }
         } header: {
             Text(localization.localized("icloud.account"))
