@@ -200,10 +200,22 @@ struct PaywallView: View {
     // MARK: - Terms
 
     private var termsFooter: some View {
-        Text("Payment will be charged to your Apple ID account. Subscription automatically renews unless cancelled at least 24 hours before the end of the current period.")
+        VStack(spacing: 8) {
+            Text("Payment will be charged to your Apple ID account. Subscription automatically renews unless cancelled at least 24 hours before the end of the current period.")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+
+            HStack(spacing: 16) {
+                Link("Terms of Service",
+                     destination: URL(string: "https://badmintoneye.app/terms")!)
+                Text("\u{00B7}")
+                    .foregroundStyle(.secondary)
+                Link("Privacy Policy",
+                     destination: URL(string: "https://badmintoneye.app/privacy")!)
+            }
             .font(.caption2)
-            .foregroundStyle(.secondary)
-            .multilineTextAlignment(.center)
-            .padding(.horizontal)
+        }
+        .padding(.horizontal)
     }
 }
