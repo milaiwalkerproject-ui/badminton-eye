@@ -7,6 +7,7 @@ struct SettingsView: View {
     private var subscriptionManager = SubscriptionManager.shared
     @State private var showPaywall = false
     @AppStorage("hapticFeedbackEnabled") private var hapticEnabled = true
+    @AppStorage("voiceAnnouncementsEnabled") private var voiceAnnouncementsEnabled = false
     @State private var localization = LocalizationManager.shared
 
     var body: some View {
@@ -22,6 +23,8 @@ struct SettingsView: View {
             languageSection
 
             hapticSection
+
+            voiceSection
 
             aboutSection
         }
@@ -204,6 +207,29 @@ struct SettingsView: View {
             }
         } header: {
             Text(localization.localized("settings.scoring"))
+        }
+    }
+
+    // MARK: - Voice Announcements
+
+    private var voiceSection: some View {
+        Section {
+            Toggle(isOn: $voiceAnnouncementsEnabled) {
+                HStack(spacing: 12) {
+                    Image(systemName: "speaker.wave.2.fill")
+                        .foregroundStyle(.purple)
+                        .font(.title3)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(localization.localized("settings.voiceAnnouncements"))
+                            .font(.subheadline)
+                        Text(localization.localized("settings.voiceAnnouncements.subtitle"))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+        } header: {
+            Text(localization.localized("settings.audio"))
         }
     }
 
