@@ -40,6 +40,33 @@ final class HawkEyePipeline: @unchecked Sendable {
         self.detector = detector
     }
 
+    /// Returns the best available pipeline:
+    /// `CoreMLShuttleDetector` if the trained TrackNetV3 model is bundled,
+    /// otherwise the parabolic-arc `PlaceholderShuttleDetector` for demo
+    /// builds where the .mlpackage hasn't been added yet.
+    ///
+    /// Call this from view code instead of branching on the bundle URL
+    /// at every call-site.
+    static func makeWithBestAvailableDetector() -> HawkEyePipeline {
+        let modelName = CoreMLShuttleDetector.defaultModelName
+        let hasCompiled = Bundle.main.url(forResource: modelName, withExtension: "mlmodelc") != nil
+        let hasRaw = Bundle.main.url(forResource: modelName, withExtension: "mlmodel") != nil
+        let hasPackage = Bundle.main.url(forResource: modelName, withExtension: "mlpackage") != nil
+        if hasCompiled || hasRaw || hasPackage {
+            return HawkEyePipeline(detector: CoreMLShuttleDetector())
+        }
+        return HawkEyePipeline(detector: PlaceholderShuttleDetector())
+    }
+
+    /// Convenience: is the trained model bundled with this build, or
+    /// are we in demo mode? Views use this to show a "demo" badge.
+    static var hasTrainedModel: Bool {
+        let modelName = CoreMLShuttleDetector.defaultModelName
+        return Bundle.main.url(forResource: modelName, withExtension: "mlmodelc") != nil
+            || Bundle.main.url(forResource: modelName, withExtension: "mlmodel") != nil
+            || Bundle.main.url(forResource: modelName, withExtension: "mlpackage") != nil
+    }
+
     // MARK: - Analysis
 
     /// Runs the full Hawk Eye analysis pipeline on a captured video.
@@ -50,6 +77,13 @@ final class HawkEyePipeline: @unchecked Sendable {
         progress = 0.0
         result = nil
         errorMessage = nil
+
+        // Reset any per-session detector state (e.g. CoreMLShuttleDetector's
+        // sliding frame buffer) so observations from a previous video
+        // don't leak into this one.
+        if let resettable = detector as? CoreMLShuttleDetector {
+            resettable.reset()
+        }
 
         // Validate calibration
         guard let corners = calibration.corners, corners.count == 4 else {
