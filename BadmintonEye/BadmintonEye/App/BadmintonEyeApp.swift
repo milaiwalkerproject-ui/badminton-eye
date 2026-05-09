@@ -5,10 +5,15 @@ import SwiftData
 struct BadmintonEyeApp: App {
     @State private var authManager = AuthManager.shared
     @State private var subscriptionManager = SubscriptionManager.shared
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if hasCompletedOnboarding {
+                ContentView()
+            } else {
+                OnboardingView()
+            }
         }
         .modelContainer(makeModelContainer())
     }
