@@ -6,6 +6,7 @@ struct MatchEndView: View {
     var onNewMatch: (() -> Void)?
     @Environment(\.dismiss) private var dismiss
     @State private var localization = LocalizationManager.shared
+    @State private var showShareCard = false
 
     private var winnerText: String {
         guard let winner = state.matchWinner else {
@@ -120,6 +121,20 @@ struct MatchEndView: View {
 
             Spacer()
 
+            // Share Result button
+            Button {
+                showShareCard = true
+            } label: {
+                Label(localization.localized("match.share"), systemImage: "square.and.arrow.up")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(Color(red: 0.106, green: 0.369, blue: 0.125))
+                    .foregroundStyle(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+            .padding(.horizontal, 24)
+
             // New Match button
             Button {
                 if let onNewMatch {
@@ -140,5 +155,8 @@ struct MatchEndView: View {
             .padding(.bottom, 32)
         }
         .navigationBarBackButtonHidden(true)
+        .sheet(isPresented: $showShareCard) {
+            ShareCardSheet(state: state, matchDate: Date())
+        }
     }
 }
