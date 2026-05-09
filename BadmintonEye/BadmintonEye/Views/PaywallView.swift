@@ -15,9 +15,11 @@ struct PaywallView: View {
             ScrollView {
                 VStack(spacing: 24) {
                     headerSection
+                    ratingChip
                     featurePreviewSection
                     productOptionsSection
                     subscribeButton
+                    cancelAnytimeNote
                     restoreButton
                     termsFooter
                 }
@@ -51,36 +53,63 @@ struct PaywallView: View {
                 .font(.system(size: 56))
                 .foregroundStyle(.blue)
 
-            Text("Unlock Hawk Eye")
+            Text("Join 10,000+ Players\nImproving Their Game")
                 .font(.largeTitle)
                 .fontWeight(.bold)
+                .multilineTextAlignment(.center)
+                .lineSpacing(2)
 
-            Text("AI-powered line calling for your matches")
+            Text("AI-powered hawk-eye calls. No more disputes.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .padding(.top, 8)
+    }
+
+    // MARK: - Rating Chip
+
+    private var ratingChip: some View {
+        HStack(spacing: 6) {
+            Text("★★★★★")
+                .foregroundStyle(.orange)
+                .font(.subheadline)
+            Text("4.8")
+                .fontWeight(.semibold)
+                .font(.subheadline)
+            Text("·")
+                .foregroundStyle(.secondary)
+            Text("2K Ratings")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
-        .padding(.top, 8)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(Color(.systemGray6))
+        .clipShape(Capsule())
     }
 
     // MARK: - Feature Preview
 
     private var featurePreviewSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            featureRow(icon: "eye.circle", title: "AI-powered line calling")
-            featureRow(icon: "sportscourt", title: "Visual trajectory replay")
-            featureRow(icon: "chart.bar", title: "Confidence analysis")
+            featureRow(title: "Instant hawk-eye line calls — no more disputes")
+            featureRow(title: "Shot-by-shot analytics after every match")
+            featureRow(title: "Multi-angle replay analysis")
+            featureRow(title: "Export & share your best moments")
         }
         .padding()
         .background(Color(.systemGray6))
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
-    private func featureRow(icon: String, title: String) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: icon)
-                .font(.title3)
+    private func featureRow(title: String) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            Text("✓")
+                .font(.body)
+                .fontWeight(.bold)
                 .foregroundStyle(.blue)
-                .frame(width: 28)
+                .frame(width: 20)
             Text(title)
                 .font(.body)
         }
@@ -104,18 +133,18 @@ struct PaywallView: View {
             selectedProduct = product
         } label: {
             HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(spacing: 8) {
                         Text(product.displayName)
                             .font(.headline)
                         if isYearly {
-                            Text("Save 50%")
+                            Text("Best Value — Save 50%")
                                 .font(.caption)
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.white)
                                 .padding(.horizontal, 8)
-                                .padding(.vertical, 2)
-                                .background(.green)
+                                .padding(.vertical, 3)
+                                .background(Color.blue)
                                 .clipShape(Capsule())
                         }
                     }
@@ -124,6 +153,9 @@ struct PaywallView: View {
                         Text("\(product.displayPrice)/year")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
+                        Text("Less than a shuttlecock per week")
+                            .font(.caption)
+                            .foregroundStyle(.blue)
                     } else {
                         Text("\(product.displayPrice)/month")
                             .font(.subheadline)
@@ -167,17 +199,34 @@ struct PaywallView: View {
                     ProgressView()
                         .tint(.white)
                 } else {
-                    Text("Subscribe")
+                    Text(ctaLabel)
                         .fontWeight(.semibold)
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding()
-            .background(.blue)
-            .foregroundStyle(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 14))
         }
+        .buttonStyle(.borderedProminent)
+        .controlSize(.large)
+        .tint(.blue)
         .disabled(selectedProduct == nil || isPurchasing)
+    }
+
+    private var ctaLabel: String {
+        guard let product = selectedProduct else {
+            return "Unlock Hawk Eye"
+        }
+        let isYearly = product.id == "hawkeye_yearly"
+        return isYearly
+            ? "Unlock Hawk Eye — \(product.displayPrice)/yr"
+            : "Start Free Trial"
+    }
+
+    // MARK: - Cancel Anytime
+
+    private var cancelAnytimeNote: some View {
+        Text("Cancel anytime. No questions asked.")
+            .font(.caption)
+            .foregroundStyle(.secondary)
     }
 
     // MARK: - Restore
