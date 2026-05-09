@@ -23,6 +23,7 @@ struct MatchDetailView: View {
                 // Scorecard
                 if let state = decodedState {
                     decodedScorecard(state)
+                    rallyAnalyticsSection(state)
                 } else {
                     fallbackScorecard
                 }
@@ -96,6 +97,58 @@ struct MatchDetailView: View {
                     .foregroundStyle(.green)
             }
         }
+    }
+
+    // MARK: - Rally Analytics Section
+
+    private func rallyAnalyticsSection(_ state: CodableMatchState) -> some View {
+        let matchState = state.toMatchState()
+        guard let analytics = matchState.rallyAnalytics else { return AnyView(EmptyView()) }
+        return AnyView(
+            VStack(alignment: .leading, spacing: 12) {
+                Text(localization.localized("analytics.rallyTitle"))
+                    .font(.headline)
+
+                HStack(spacing: 16) {
+                    analyticsCell(
+                        title: localization.localized("analytics.matchDuration"),
+                        value: formatInterval(analytics.matchDuration)
+                    )
+                    Divider()
+                    analyticsCell(
+                        title: localization.localized("analytics.avgRally"),
+                        value: formatInterval(analytics.averageRallyLength)
+                    )
+                    Divider()
+                    analyticsCell(
+                        title: localization.localized("analytics.longestRally"),
+                        value: formatInterval(analytics.longestRally)
+                    )
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .padding(24)
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+        )
+    }
+
+    private func analyticsCell(title: String, value: String) -> some View {
+        VStack(spacing: 4) {
+            Text(value)
+                .font(.title3.bold())
+            Text(title)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func formatInterval(_ interval: TimeInterval) -> String {
+        let seconds = Int(interval)
+        if seconds < 60 { return "\(seconds)s" }
+        return "\(seconds / 60)m \(seconds % 60)s"
     }
 
     // MARK: - Decoded Scorecard

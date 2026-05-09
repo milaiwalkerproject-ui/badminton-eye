@@ -1,5 +1,7 @@
 // MatchEngine.swift — Pure state transition function
 
+import Foundation
+
 public enum MatchEngine {
     /// Pure function: (MatchState, MatchEvent) -> MatchState
     public static func apply(event: MatchEvent, to state: MatchState) -> MatchState {
@@ -25,13 +27,15 @@ public enum MatchEngine {
         next.previousState = state
         next.shouldSwitchSidesFlag = false
 
-        // Increment score
+        // Increment score and record timestamp for analytics
+        let pointTime = Date()
         switch side {
         case .sideA:
             next.currentGame.scoreA += 1
         case .sideB:
             next.currentGame.scoreB += 1
         }
+        next.currentGame.pointTimestamps.append(pointTime)
 
         // Update service for singles
         if next.format == .singles {
