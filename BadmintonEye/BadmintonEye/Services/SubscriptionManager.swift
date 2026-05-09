@@ -13,6 +13,8 @@ final class SubscriptionManager: @unchecked Sendable {
     var isPremium: Bool = false
     var currentSubscription: Product.SubscriptionInfo.Status?
     var availableProducts: [Product] = []
+    /// Whether the current Apple ID has not yet redeemed the introductory offer on the yearly plan.
+    var isEligibleForTrial: Bool = false
 
     // MARK: - Private
 
