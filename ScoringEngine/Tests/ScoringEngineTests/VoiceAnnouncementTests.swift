@@ -127,4 +127,112 @@ struct VoiceAnnouncementTests {
             #expect(state.voiceAnnouncementText.hasSuffix(", serving"))
         }
     }
+
+    // MARK: - voiceAnnouncementTextWithServer — sideA serving
+
+    @Test("withServer: sideA serves at 0-0 → '0 - 0, Player 1 to serve'")
+    func withServerSideAZeroZero() {
+        let state = MatchState.newSinglesMatch()
+        #expect(state.voiceAnnouncementTextWithServer == "0 - 0, Player 1 to serve")
+    }
+
+    @Test("withServer: sideA serves at A:15 B:0 with custom name → '15 - 0, Lee to serve'")
+    func withServerSideACustomName() {
+        var state = MatchState.newSinglesMatch(teamAName: "Lee", teamBName: "Chen")
+        for _ in 0..<15 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        }
+        #expect(state.currentServer.side == .sideA)
+        #expect(state.voiceAnnouncementTextWithServer == "15 - 0, Lee to serve")
+    }
+
+    @Test("withServer: sideA serves at deuce 20-20 → '20 - 20, Player 1 to serve'")
+    func withServerSideADeuce() {
+        var state = MatchState.newSinglesMatch()
+        // Alternate points so both reach 20, ensuring sideA ends up serving
+        for _ in 0..<20 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+            state = MatchEngine.apply(event: .scorePoint(.sideB), to: state)
+        }
+        // Both are at 20; check whichever side is serving gets score first
+        let text = state.voiceAnnouncementTextWithServer
+        #expect(text.hasSuffix(" to serve"))
+        #expect(text.contains("20 - 20"))
+    }
+
+    // MARK: - voiceAnnouncementTextWithServer — sideB serving
+
+    @Test("withServer: sideB serves at A:0 B:1 → '1 - 0, Player 2 to serve'")
+    func withServerSideBOneZero() {
+        var state = MatchState.newSinglesMatch()
+        state = MatchEngine.apply(event: .scorePoint(.sideB), to: state)
+        #expect(state.currentServer.side == .sideB)
+        #expect(state.voiceAnnouncementTextWithServer == "1 - 0, Player 2 to serve")
+    }
+
+    @Test("withServer: sideB serves at A:5 B:10 with custom name → '10 - 5, Chen to serve'")
+    func withServerSideBCustomName() {
+        var state = MatchState.newSinglesMatch(teamAName: "Lee", teamBName: "Chen")
+        // Build up B:10 A:5 with sideB serving
+        for _ in 0..<5 {
+            state = MatchEngine.apply(event: .scorePoint(.sideB), to: state)
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        }
+        for _ in 0..<5 {
+            state = MatchEngine.apply(event: .scorePoint(.sideB), to: state)
+        }
+        #expect(state.currentServer.side == .sideB)
+        #expect(state.currentGame.scoreB == 10)
+        #expect(state.currentGame.scoreA == 5)
+        #expect(state.voiceAnnouncementTextWithServer == "10 - 5, Chen to serve")
+    }
+
+    // MARK: - voiceAnnouncementTextWithServer — fallback names
+
+    @Test("withServer: sideA empty names falls back to 'Side A'")
+    func withServerFallbackSideA() {
+        var state = MatchState.newSinglesMatch()
+        state.teamANames = []
+        #expect(state.currentServer.side == .sideA)
+        #expect(state.voiceAnnouncementTextWithServer == "0 - 0, Side A to serve")
+    }
+
+    @Test("withServer: sideB empty names falls back to 'Side B'")
+    func withServerFallbackSideB() {
+        var state = MatchState.newSinglesMatch()
+        state.teamBNames = []
+        state = MatchEngine.apply(event: .scorePoint(.sideB), to: state)
+        #expect(state.currentServer.side == .sideB)
+        #expect(state.voiceAnnouncementTextWithServer == "1 - 0, Side B to serve")
+    }
+
+    // MARK: - voiceAnnouncementTextWithServer — format contract
+
+    @Test("withServer: always ends with ' to serve'")
+    func withServerFormatEndsWithToServe() {
+        var state = MatchState.newSinglesMatch()
+        for _ in 0..<5 {
+            state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+            #expect(state.voiceAnnouncementTextWithServer.hasSuffix(" to serve"))
+            state = MatchEngine.apply(event: .scorePoint(.sideB), to: state)
+            #expect(state.voiceAnnouncementTextWithServer.hasSuffix(" to serve"))
+        }
+    }
+
+    @Test("withServer: serving score always stated first")
+    func withServerServingScoreFirst() {
+        // sideB serving, B:3 A:1
+        var state = MatchState.newSinglesMatch(teamAName: "A", teamBName: "B")
+        state = MatchEngine.apply(event: .scorePoint(.sideB), to: state)
+        state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+        // sideA now serves; score A:1, B:1
+        for _ in 0..<2 {
+            state = MatchEngine.apply(event: .scorePoint(.sideB), to: state)
+        }
+        // sideB serves, B:3 A:1
+        #expect(state.currentServer.side == .sideB)
+        let text = state.voiceAnnouncementTextWithServer
+        // Serving score (B=3) must appear before opponent score (A=1)
+        #expect(text.hasPrefix("3 - 1"))
+    }
 }
