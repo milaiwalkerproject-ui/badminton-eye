@@ -1,5 +1,6 @@
 import Foundation
 import AuthenticationServices
+import SwiftData
 
 /// Manages Apple Sign-In state and credential lifecycle.
 /// Singleton accessed via `AuthManager.shared`.
@@ -13,6 +14,10 @@ final class AuthManager: NSObject, @unchecked Sendable {
     var isSignedIn: Bool = false
     var userName: String?
     var userEmail: String?
+    /// Set to `true` while `deleteAccount` is running.
+    var isDeletingAccount: Bool = false
+    /// Non-nil when account deletion completes with an error.
+    var deletionError: Error?
 
     // MARK: - Private
 
