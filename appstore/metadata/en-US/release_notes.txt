@@ -1,0 +1,29 @@
+BadmintonEye 2.0 — our biggest update yet.
+
+WHAT'S NEW
+
+Onboarding & Accounts
+Sign in with Apple to unlock iCloud sync across all your devices. Your match history, player profiles, and calibration settings follow you seamlessly. New users get a guided first-run experience that has you scoring your first match in under a minute.
+
+Redesigned Paywall & Subscription Management
+The Hawk Eye Pro upgrade screen has been rebuilt from the ground up — clearer pricing, an honest feature comparison, and a prominent yearly plan that saves you 50%. Terms of Service and Privacy Policy are now directly accessible from the paywall, satisfying App Store guideline 3.1.2(a).
+
+Share Card Export
+Tap the share button at the end of any match to generate a polished scorecard image — perfect for team chats, social posts, or keeping a personal record. The renderer handles singles and doubles layouts automatically.
+
+Custom Scoring Formats
+Build your own game format in the new Scoring Format Builder: set target points, enable or disable deuce, choose service rules, and save the format for reuse. Mid-match format switching now works correctly across all game phases.
+
+IMPROVEMENTS
+- Court calibration profiles are preserved across app restarts
+- Watch companion app now requests HealthKit read/write permissions correctly via the WatchKit entitlement
+- Scoring patterns chart is smoother on devices with ProMotion displays
+- VoiceOver labels updated for the live-match tap zones and game info header
+
+BUG FIXES
+- Fixed a crash in ResultFusionService when a second-angle video contained no detectable frames
+- Fixed service-rotation edge cases in 3x15 game formats when switching sides at games 3, 4, and 5
+- Fixed an issue where abandoned matches could appear in the in-progress restore flow after relaunch
+- Fixed layout clipping on the Match End scorecard on smaller iPhone screen sizes
+
+As always, thank you for playing — and for every piece of feedback that made this release possible.
