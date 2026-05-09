@@ -42,7 +42,12 @@
           "familyShareable" : false,
           "groupNumber" : 1,
           "internalID" : "hawkeye_yearly_001",
-          "introductoryOffer" : null,
+          "introductoryOffer" : {
+            "duration" : "P7D",
+            "identifier" : "hawkeye_yearly_7day_trial",
+            "offerMode" : "freeTrial",
+            "price" : "0.00"
+          },
           "localizations" : [
             {
               "description" : "Yearly access to Hawk Eye AI features",
@@ -50,12 +55,6 @@
               "locale" : "en_US"
             }
           ],
-          "introductoryOffer" : {
-            "duration" : "P7D",
-            "identifier" : "hawkeye_yearly_7day_trial",
-            "offerMode" : "freeTrial",
-            "price" : "0.00"
-          },
           "productID" : "hawkeye_yearly",
           "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "Hawk Eye Yearly",
