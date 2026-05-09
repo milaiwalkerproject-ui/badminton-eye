@@ -13,10 +13,6 @@ final class AuthManager: NSObject, @unchecked Sendable {
     var isSignedIn: Bool = false
     var userName: String?
     var userEmail: String?
-    /// Set to `true` while `deleteAccount` is running.
-    var isDeletingAccount: Bool = false
-    /// Non-nil when account deletion completes with an error.
-    var deletionError: Error?
 
     // MARK: - Private
 
@@ -77,44 +73,6 @@ final class AuthManager: NSObject, @unchecked Sendable {
         userIdentifier = nil
         userName = nil
         userEmail = nil
-        isSignedIn = false
-    }
-
-    // MARK: - Account Deletion (Guideline 5.1.1(v))
-
-    /// Permanently deletes the user's account credentials and signs out.
-    ///
-    /// Callers must delete SwiftData records via `ModelContext` **before** invoking
-    /// this method (CloudKit sync then removes the corresponding remote copies
-    /// automatically via `NSPersistentCloudKitContainer`).
-    ///
-    /// Performs:
-    /// 1. Wipes **all** app `UserDefaults` (auth credentials + stored preferences).
-    /// 2. Clears in-memory auth state.
-    /// 3. Sets `isSignedIn = false`.
-    ///
-    /// Note: Apple ID federated credential revocation is user-initiated via
-    /// Settings → Apple ID → Password & Security → Sign in with Apple.
-    @MainActor
-    func deleteAccount() async {
-        guard userIdentifier != nil else { return }
-
-        isDeletingAccount = true
-        defer { isDeletingAccount = false }
-
-        // 1. Wipe all app UserDefaults (auth credentials + app preferences)
-        if let bundleId = Bundle.main.bundleIdentifier {
-            UserDefaults.standard.removePersistentDomain(forName: bundleId)
-            UserDefaults.standard.synchronize()
-        }
-
-        // 2. Clear in-memory auth state
-        userIdentifier = nil
-        userName = nil
-        userEmail = nil
-        deletionError = nil
-
-        // 3. Sign out
         isSignedIn = false
     }
 
