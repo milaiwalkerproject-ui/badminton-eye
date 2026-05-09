@@ -5,6 +5,9 @@
 "settings.haptic" = "Haptic Feedback";
 "settings.haptic.subtitle" = "Vibrate on score changes during live play";
 "settings.scoring" = "Scoring";
+"settings.audio" = "Audio";
+"settings.voiceAnnouncements" = "Voice Announcements";
+"settings.voiceAnnouncements.subtitle" = "Announce score after each rally (BWF format)";
 "settings.premium" = "Premium";
 "settings.about" = "About";
 "settings.version" = "Version";
