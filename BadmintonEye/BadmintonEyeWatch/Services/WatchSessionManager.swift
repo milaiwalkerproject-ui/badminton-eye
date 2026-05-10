@@ -8,6 +8,8 @@ private let logger = Logger(subsystem: "com.badmintoneye.app.watchkitapp", categ
 /// watchOS-side WCSessionDelegate singleton.
 /// Receives match state from iPhone and delivers to WatchMatchViewModel.
 /// Sends scoring intents back to iPhone when user taps score buttons.
+///
+/// `session` defaults to `WCSession.default`; inject a `MockWCSession` in tests.
 final class WatchSessionManager: NSObject, WCSessionDelegate, @unchecked Sendable {
 
     static let shared = WatchSessionManager()
@@ -15,13 +17,19 @@ final class WatchSessionManager: NSObject, WCSessionDelegate, @unchecked Sendabl
     /// Called when a SyncPayload arrives from the iPhone.
     var onStateReceived: ((SyncPayload) -> Void)?
 
-    private override init() {
+    /// The underlying WCSession abstraction. Swappable in tests.
+    private let session: WCSessionProtocol
+
+    init(session: WCSessionProtocol = WCSession.default) {
+        self.session = session
         super.init()
     }
 
     // MARK: - Activation
 
     func activate() {
+        // Delegate must be set on WCSession.default (not the protocol) because
+        // the system-callback wiring requires the concrete WCSession.
         WCSession.default.delegate = self
         WCSession.default.activate()
     }
@@ -37,16 +45,16 @@ final class WatchSessionManager: NSObject, WCSessionDelegate, @unchecked Sendabl
             "timestamp": Date().timeIntervalSince1970
         ]
 
-        if WCSession.default.isReachable {
-            WCSession.default.sendMessage(dict, replyHandler: nil) { error in
+        if session.isReachable {
+            session.sendMessage(dict, replyHandler: nil) { [weak self] error in
                 // sendMessage failed mid-flight (session became unreachable after isReachable check).
                 // Log the failure and fall back to applicationContext for guaranteed delivery.
                 logger.error("sendMessage failed: \(error.localizedDescription, privacy: .public) — retrying via updateApplicationContext")
-                try? WCSession.default.updateApplicationContext(dict)
+                try? self?.session.updateApplicationContext(dict)
             }
         } else {
             // Not reachable — go straight to applicationContext for guaranteed delivery.
-            try? WCSession.default.updateApplicationContext(dict)
+            try? session.updateApplicationContext(dict)
         }
     }
 

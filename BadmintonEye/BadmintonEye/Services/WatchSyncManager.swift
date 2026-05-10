@@ -5,6 +5,8 @@ import ScoringEngine
 /// iOS-side WCSessionDelegate singleton.
 /// Sends match state to the Watch via dual transport (applicationContext + message).
 /// Receives scoring intents from the Watch and forwards via callback.
+///
+/// `session` defaults to `WCSession.default`; inject a `MockWCSession` in tests.
 final class WatchSyncManager: NSObject, WCSessionDelegate, @unchecked Sendable {
 
     static let shared = WatchSyncManager()
@@ -12,7 +14,11 @@ final class WatchSyncManager: NSObject, WCSessionDelegate, @unchecked Sendable {
     /// Called when the Watch sends a scoring intent (scorePoint for a side).
     var onScoringIntentReceived: ((Side) -> Void)?
 
-    private override init() {
+    /// The underlying WCSession abstraction. Swappable in tests.
+    private let session: WCSessionProtocol
+
+    init(session: WCSessionProtocol = WCSession.default) {
+        self.session = session
         super.init()
     }
 
@@ -20,6 +26,8 @@ final class WatchSyncManager: NSObject, WCSessionDelegate, @unchecked Sendable {
 
     func activate() {
         guard WCSession.isSupported() else { return }
+        // Delegate must be set on WCSession.default (not the protocol) because
+        // the system-callback wiring requires the concrete WCSession.
         WCSession.default.delegate = self
         WCSession.default.activate()
     }
@@ -27,17 +35,17 @@ final class WatchSyncManager: NSObject, WCSessionDelegate, @unchecked Sendable {
     // MARK: - Sending State to Watch
 
     func sendStateUpdate(_ state: MatchState, isActive: Bool) {
-        guard WCSession.default.activationState == .activated else { return }
+        guard session.activationState == .activated else { return }
 
         let payload = SyncPayload(from: state, isActive: isActive)
         guard let dict = payload.toDictionary() else { return }
 
         // Guaranteed delivery (persisted, delivered on next launch)
-        try? WCSession.default.updateApplicationContext(dict)
+        try? session.updateApplicationContext(dict)
 
         // Fast path (immediate if reachable, non-fatal if not)
-        if WCSession.default.isReachable {
-            WCSession.default.sendMessage(dict, replyHandler: nil) { _ in }
+        if session.isReachable {
+            session.sendMessage(dict, replyHandler: nil) { _ in }
         }
     }
 
