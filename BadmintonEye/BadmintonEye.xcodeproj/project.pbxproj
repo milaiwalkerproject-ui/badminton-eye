@@ -780,6 +780,7 @@
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Badminton Eye needs camera access for court calibration and challenge video recording.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Badminton Eye needs microphone access for challenge video recording.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Badminton Eye needs photo library access to select challenge videos.";
@@ -816,6 +817,7 @@
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Badminton Eye needs camera access for court calibration and challenge video recording.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Badminton Eye needs microphone access for challenge video recording.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Badminton Eye needs photo library access to select challenge videos.";
