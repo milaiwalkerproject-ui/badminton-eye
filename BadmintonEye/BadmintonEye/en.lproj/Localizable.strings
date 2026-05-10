@@ -137,3 +137,9 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "Custom (%d pts, best of %d)";
+
+/* Camera Recording */
+"recording.camera.accessRequired.title" = "Camera Access Required";
+"recording.camera.accessRequired.message" = "Badminton Eye needs camera access to record your match. Enable it in Settings.";
+"recording.camera.openSettings" = "Open Settings";
+"recording.rec.accessibilityLabel" = "Recording in progress";
