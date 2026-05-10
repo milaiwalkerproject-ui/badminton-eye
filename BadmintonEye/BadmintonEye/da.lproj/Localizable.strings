@@ -136,3 +136,14 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "Tilpasset (%d pt, bedst af %d)";
+
+/* Account Deletion (App Store Guideline 5.1.1(v)) */
+"settings.deleteAccount" = "Slet konto";
+"settings.deleteAccount.alert" = "Slet konto?";
+"settings.deleteAccount.confirm" = "Slet konto";
+"settings.deleteAccount.message" = "Dette vil permanent slette al din kamphistorik og kontodata fra denne enhed. Denne handling kan ikke fortrydes.";
+"settings.deleteAccount.footer" = "Sletning af din konto fjerner alle kampdata fra denne enhed. For at tilbagekalde dit Apple ID-token skal du gå til Indstillinger → Apple ID → Adgangskode og sikkerhed → Log ind med Apple.";
+"account.deleted.title" = "Konto slettet";
+"account.deleted.message" = "Al din kamphistorik og kontodata er fjernet fra denne enhed.";
+"account.deleted.appleNote" = "For at tilbagekalde appens adgang fuldstændigt skal du besøge Indstillinger → Apple ID → Adgangskode og sikkerhed → Log ind med Apple.";
+"account.deleted.getStarted" = "Kom i gang";

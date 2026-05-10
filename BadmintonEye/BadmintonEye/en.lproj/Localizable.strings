@@ -134,3 +134,14 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "Custom (%d pts, best of %d)";
+
+/* Account Deletion (App Store Guideline 5.1.1(v)) */
+"settings.deleteAccount" = "Delete Account";
+"settings.deleteAccount.alert" = "Delete Account?";
+"settings.deleteAccount.confirm" = "Delete Account";
+"settings.deleteAccount.message" = "This will permanently delete all your match history and account data from this device. This action cannot be undone.";
+"settings.deleteAccount.footer" = "Deleting your account removes all match data from this device. To revoke your Apple ID token, go to Settings → Apple ID → Sign-In & Security → Sign in with Apple.";
+"account.deleted.title" = "Account Deleted";
+"account.deleted.message" = "All your match history and account data have been removed from this device.";
+"account.deleted.appleNote" = "To fully revoke app access, visit Settings → Apple ID → Sign-In & Security → Sign in with Apple.";
+"account.deleted.getStarted" = "Get Started";

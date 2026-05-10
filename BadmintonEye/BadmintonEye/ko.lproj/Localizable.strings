@@ -134,3 +134,14 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "커스텀 (%d점, %d게임)";
+
+/* Account Deletion (App Store Guideline 5.1.1(v)) */
+"settings.deleteAccount" = "계정 삭제";
+"settings.deleteAccount.alert" = "계정을 삭제하시겠습니까?";
+"settings.deleteAccount.confirm" = "계정 삭제";
+"settings.deleteAccount.message" = "이 기기에서 모든 경기 기록과 계정 데이터가 영구적으로 삭제됩니다. 이 작업은 취소할 수 없습니다.";
+"settings.deleteAccount.footer" = "계정을 삭제하면 이 기기에서 모든 경기 데이터가 삭제됩니다. Apple ID 토큰을 취소하려면 설정 → Apple ID → 암호 및 보안 → Apple로 로그인으로 이동하세요.";
+"account.deleted.title" = "계정이 삭제되었습니다";
+"account.deleted.message" = "모든 경기 기록과 계정 데이터가 이 기기에서 삭제되었습니다.";
+"account.deleted.appleNote" = "앱 접근을 완전히 취소하려면 설정 → Apple ID → 암호 및 보안 → Apple로 로그인을 방문하세요.";
+"account.deleted.getStarted" = "시작하기";

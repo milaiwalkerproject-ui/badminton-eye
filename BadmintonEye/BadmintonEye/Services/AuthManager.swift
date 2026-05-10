@@ -1,5 +1,6 @@
 import Foundation
 import AuthenticationServices
+import SwiftData
 #if canImport(CloudKit)
 import CloudKit
 #endif
@@ -20,6 +21,8 @@ final class AuthManager: NSObject, @unchecked Sendable {
     var isDeletingAccount: Bool = false
     /// Non-nil when account deletion completes with an error.
     var deletionError: Error?
+    /// Set to `true` after successful account deletion to present the farewell screen.
+    var accountDeleted: Bool = false
 
     // MARK: - Private
 
@@ -85,17 +88,21 @@ final class AuthManager: NSObject, @unchecked Sendable {
 
     // MARK: - Account Deletion (Guideline 5.1.1(v))
 
-    /// Permanently deletes the user's account and associated CloudKit data.
+    /// Permanently deletes the user's account and all locally stored data.
     ///
-    /// Performs the following cleanup:
-    /// 1. Deletes the user's CloudKit leaderboard profile (best-effort).
-    /// 2. Wipes locally stored credentials and profile data.
-    /// 3. Sets signed-out state.
+    /// Performs the following cleanup in order:
+    /// 1. Deletes all `PersistedMatch` records from SwiftData.
+    /// 2. Wipes the entire app UserDefaults domain (all keys, not just auth keys).
+    /// 3. Clears in-memory credential state and signs out.
     ///
-    /// Apple ID federated token revocation must be done by the user at
-    /// Settings → Apple ID → Sign-In & Security → Sign in with Apple.
+    /// - Parameter context: The SwiftData `ModelContext` to use for the batch delete.
+    ///
+    /// - Note on Apple ID token revocation: This app has no server component, so the
+    ///   Apple REST token-revocation endpoint (`https://appleid.apple.com/auth/revoke`)
+    ///   cannot be called from the client. The user must revoke the app's Apple ID access
+    ///   manually via Settings → [Your Name] → Sign-In & Security → Sign in with Apple.
     @MainActor
-    func deleteAccount() async throws {
+    func deleteAccount(context: ModelContext) async throws {
         guard userIdentifier != nil else { return }
 
         isDeletingAccount = true
@@ -103,23 +110,25 @@ final class AuthManager: NSObject, @unchecked Sendable {
         defer { isDeletingAccount = false }
 
         do {
-            // 1. Delete CloudKit profile (best-effort — ignore if absent or offline)
-            // TODO: Uncomment when leaderboard module is fully integrated.
-            // let remote = CloudKitLeaderboardRemoteStore(
-            //     containerIdentifier: LeaderboardCloudKitConfig.containerIdentifier
-            // )
-            // try await remote.deleteRecord(id: userIdentifier!)
+            // 1. Purge all SwiftData match records (batch delete)
+            try context.delete(model: PersistedMatch.self)
+            try context.save()
 
-            // 2. Wipe local credential state
-            UserDefaults.standard.removeObject(forKey: userIdentifierKey)
-            UserDefaults.standard.removeObject(forKey: userNameKey)
-            UserDefaults.standard.removeObject(forKey: userEmailKey)
+            // 2. Wipe entire app UserDefaults domain — removes ALL app keys,
+            //    not just the 3 auth keys, ensuring complete data removal.
+            if let bundleID = Bundle.main.bundleIdentifier {
+                UserDefaults.standard.removePersistentDomain(forName: bundleID)
+            }
+            UserDefaults.standard.synchronize()
+
+            // 3. Clear in-memory state and sign out
             userIdentifier = nil
             userName = nil
             userEmail = nil
-
-            // 3. Sign out
             isSignedIn = false
+
+            // Signal farewell screen
+            accountDeleted = true
         } catch {
             deletionError = error
             throw error

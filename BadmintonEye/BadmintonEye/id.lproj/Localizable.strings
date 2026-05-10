@@ -136,3 +136,14 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "Kustom (%d poin, %d game)";
+
+/* Account Deletion (App Store Guideline 5.1.1(v)) */
+"settings.deleteAccount" = "Hapus Akun";
+"settings.deleteAccount.alert" = "Hapus Akun?";
+"settings.deleteAccount.confirm" = "Hapus Akun";
+"settings.deleteAccount.message" = "Ini akan menghapus semua riwayat pertandingan dan data akun Anda dari perangkat ini secara permanen. Tindakan ini tidak dapat dibatalkan.";
+"settings.deleteAccount.footer" = "Menghapus akun Anda akan menghapus semua data pertandingan dari perangkat ini. Untuk mencabut token Apple ID, buka Pengaturan → Apple ID → Kata Sandi & Keamanan → Masuk dengan Apple.";
+"account.deleted.title" = "Akun Dihapus";
+"account.deleted.message" = "Semua riwayat pertandingan dan data akun Anda telah dihapus dari perangkat ini.";
+"account.deleted.appleNote" = "Untuk mencabut akses aplikasi sepenuhnya, kunjungi Pengaturan → Apple ID → Kata Sandi & Keamanan → Masuk dengan Apple.";
+"account.deleted.getStarted" = "Mulai";

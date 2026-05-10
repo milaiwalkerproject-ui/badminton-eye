@@ -134,3 +134,14 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "カスタム（%dpt、%d局）";
+
+/* Account Deletion (App Store Guideline 5.1.1(v)) */
+"settings.deleteAccount" = "アカウントを削除";
+"settings.deleteAccount.alert" = "アカウントを削除しますか？";
+"settings.deleteAccount.confirm" = "アカウントを削除";
+"settings.deleteAccount.message" = "このデバイスからすべての試合履歴とアカウントデータが完全に削除されます。この操作は元に戻せません。";
+"settings.deleteAccount.footer" = "アカウントを削除すると、このデバイスからすべての試合データが削除されます。Apple IDトークンを取り消すには、設定 → Apple ID → パスワードとセキュリティ → Apple でサインイン にアクセスしてください。";
+"account.deleted.title" = "アカウントが削除されました";
+"account.deleted.message" = "すべての試合履歴とアカウントデータがこのデバイスから削除されました。";
+"account.deleted.appleNote" = "アプリのアクセスを完全に取り消すには、設定 → Apple ID → パスワードとセキュリティ → Apple でサインイン にアクセスしてください。";
+"account.deleted.getStarted" = "はじめる";

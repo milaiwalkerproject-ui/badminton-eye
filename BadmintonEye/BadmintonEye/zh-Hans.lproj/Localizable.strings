@@ -134,3 +134,14 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "自定义（%d分，%d局）";
+
+/* Account Deletion (App Store Guideline 5.1.1(v)) */
+"settings.deleteAccount" = "删除账户";
+"settings.deleteAccount.alert" = "删除账户？";
+"settings.deleteAccount.confirm" = "删除账户";
+"settings.deleteAccount.message" = "这将永久删除您在本设备上的所有比赛记录和账户数据，此操作无法撤销。";
+"settings.deleteAccount.footer" = "删除账户将从本设备中删除所有比赛数据。如需撤销 Apple ID 令牌，请前往设置 → Apple ID → 密码与安全性 → 使用 Apple ID 登录。";
+"account.deleted.title" = "账户已删除";
+"account.deleted.message" = "您的所有比赛记录和账户数据已从本设备中删除。";
+"account.deleted.appleNote" = "如需完全撤销应用权限，请前往设置 → Apple ID → 密码与安全性 → 使用 Apple ID 登录。";
+"account.deleted.getStarted" = "开始使用";

@@ -136,3 +136,14 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "Tersuai (%d mata, %d game)";
+
+/* Account Deletion (App Store Guideline 5.1.1(v)) */
+"settings.deleteAccount" = "Padam Akaun";
+"settings.deleteAccount.alert" = "Padam Akaun?";
+"settings.deleteAccount.confirm" = "Padam Akaun";
+"settings.deleteAccount.message" = "Ini akan memadam semua sejarah perlawanan dan data akaun anda daripada peranti ini secara kekal. Tindakan ini tidak boleh dibuat asal.";
+"settings.deleteAccount.footer" = "Memadamkan akaun anda akan membuang semua data perlawanan daripada peranti ini. Untuk membatalkan token Apple ID, pergi ke Tetapan → Apple ID → Kata Laluan & Keselamatan → Daftar masuk dengan Apple.";
+"account.deleted.title" = "Akaun Dipadamkan";
+"account.deleted.message" = "Semua sejarah perlawanan dan data akaun anda telah dibuang daripada peranti ini.";
+"account.deleted.appleNote" = "Untuk membatalkan akses aplikasi sepenuhnya, lawati Tetapan → Apple ID → Kata Laluan & Keselamatan → Daftar masuk dengan Apple.";
+"account.deleted.getStarted" = "Mulakan";

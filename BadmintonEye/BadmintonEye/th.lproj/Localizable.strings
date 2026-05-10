@@ -136,3 +136,14 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "กำหนดเอง (%d แต้ม, %d เกม)";
+
+/* Account Deletion (App Store Guideline 5.1.1(v)) */
+"settings.deleteAccount" = "ลบบัญชี";
+"settings.deleteAccount.alert" = "ลบบัญชีใช่ไหม?";
+"settings.deleteAccount.confirm" = "ลบบัญชี";
+"settings.deleteAccount.message" = "การดำเนินการนี้จะลบประวัติแมตช์และข้อมูลบัญชีทั้งหมดออกจากอุปกรณ์นี้อย่างถาวร ไม่สามารถยกเลิกได้";
+"settings.deleteAccount.footer" = "การลบบัญชีจะลบข้อมูลแมตช์ทั้งหมดออกจากอุปกรณ์นี้ หากต้องการเพิกถอนโทเค็น Apple ID ให้ไปที่ การตั้งค่า → Apple ID → รหัสผ่านและความปลอดภัย → ลงชื่อเข้าใช้ด้วย Apple";
+"account.deleted.title" = "ลบบัญชีแล้ว";
+"account.deleted.message" = "ประวัติแมตช์และข้อมูลบัญชีทั้งหมดของคุณถูกลบออกจากอุปกรณ์นี้แล้ว";
+"account.deleted.appleNote" = "หากต้องการเพิกถอนการเข้าถึงแอปทั้งหมด ให้ไปที่ การตั้งค่า → Apple ID → รหัสผ่านและความปลอดภัย → ลงชื่อเข้าใช้ด้วย Apple";
+"account.deleted.getStarted" = "เริ่มต้น";
