@@ -78,6 +78,7 @@
 		AS1001 /* AudioTemporalSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = AS2001 /* AudioTemporalSync.swift */; };
 		DC1001 /* MultiCamCaptureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2001 /* MultiCamCaptureManager.swift */; };
 		LM1001 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = LM2001 /* LocalizationManager.swift */; };
+		IL1001 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = IL4001 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -173,6 +174,15 @@
 		AS2001 /* AudioTemporalSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioTemporalSync.swift; sourceTree = "<group>"; };
 		DC2001 /* MultiCamCaptureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiCamCaptureManager.swift; sourceTree = "<group>"; };
 		LM2001 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
+		IL2001 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		IL2002 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		IL2003 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		IL2004 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/Localizable.strings; sourceTree = "<group>"; };
+		IL2005 /* ms */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ms; path = ms.lproj/Localizable.strings; sourceTree = "<group>"; };
+		IL2006 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
+		IL2007 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/Localizable.strings; sourceTree = "<group>"; };
+		IL2008 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/Localizable.strings; sourceTree = "<group>"; };
+		IL2009 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -230,6 +240,7 @@
 				A2000A /* Assets.xcassets */,
 				A20018 /* BadmintonEye.entitlements */,
 				A2001D /* Configuration.storekit */,
+				IL4001 /* Localizable.strings */,
 			);
 			path = BadmintonEye;
 			sourceTree = "<group>";
@@ -484,6 +495,14 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
+				ja,
+				da,
+				ms,
+				ko,
+				id,
+				th,
+				hi,
 			);
 			mainGroup = A40000;
 			packageReferences = (
@@ -507,6 +526,7 @@
 			files = (
 				A1000A /* Assets.xcassets in Resources */,
 				A1001D /* Configuration.storekit in Resources */,
+				IL1001 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -617,6 +637,25 @@
 			targetProxy = L30001 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		IL4001 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				IL2001 /* en */,
+				IL2002 /* zh-Hans */,
+				IL2003 /* ja */,
+				IL2004 /* da */,
+				IL2005 /* ms */,
+				IL2006 /* ko */,
+				IL2007 /* id */,
+				IL2008 /* th */,
+				IL2009 /* hi */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		AE0001 /* Debug */ = {
