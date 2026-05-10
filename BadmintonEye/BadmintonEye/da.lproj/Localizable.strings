@@ -7,6 +7,9 @@
 "settings.haptic" = "Haptisk feedback";
 "settings.haptic.subtitle" = "Vibrer ved scoringsændringer under livekamp";
 "settings.scoring" = "Pointgivning";
+"settings.audio" = "Lyd";
+"settings.voiceAnnouncements" = "Stemmemeddelelser";
+"settings.voiceAnnouncements.subtitle" = "Annoncér score efter hvert rally (BWF-format)";
 "settings.premium" = "Premium";
 "settings.about" = "Om";
 "settings.version" = "Version";
