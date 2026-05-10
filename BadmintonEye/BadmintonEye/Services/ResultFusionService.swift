@@ -6,9 +6,12 @@ struct ResultFusionService {
 
     /// Fuse independent Hawk Eye results into a single combined result.
     /// Uses weighted average based on per-angle confidence.
-    static func fuse(_ results: [HawkEyeResult]) -> HawkEyeResult {
+    ///
+    /// Returns `nil` when the input array is empty (no data to fuse).
+    /// Single-element arrays return the element unchanged (fast path).
+    static func fuse(_ results: [HawkEyeResult]) -> HawkEyeResult? {
         guard !results.isEmpty else {
-            fatalError("ResultFusionService.fuse requires at least one result")
+            return nil
         }
         guard results.count > 1 else {
             return results[0]
