@@ -139,3 +139,9 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "กำหนดเอง (%d แต้ม, %d เกม)";
+
+/* Camera Recording */
+"recording.camera.accessRequired.title" = "ต้องการสิทธิ์เข้าถึงกล้อง";
+"recording.camera.accessRequired.message" = "Badminton Eye ต้องการสิทธิ์เข้าถึงกล้องเพื่อบันทึกการแข่งขันของคุณ เปิดใช้งานในการตั้งค่า";
+"recording.camera.openSettings" = "เปิดการตั้งค่า";
+"recording.rec.accessibilityLabel" = "กำลังบันทึก";

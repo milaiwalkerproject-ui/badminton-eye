@@ -139,3 +139,9 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "Kustom (%d poin, %d game)";
+
+/* Camera Recording */
+"recording.camera.accessRequired.title" = "Akses Kamera Diperlukan";
+"recording.camera.accessRequired.message" = "Badminton Eye membutuhkan akses kamera untuk merekam pertandingan Anda. Aktifkan di Pengaturan.";
+"recording.camera.openSettings" = "Buka Pengaturan";
+"recording.rec.accessibilityLabel" = "Perekaman sedang berlangsung";

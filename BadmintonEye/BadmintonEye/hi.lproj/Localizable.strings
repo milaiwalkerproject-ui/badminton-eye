@@ -139,3 +139,9 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "कस्टम (%d अंक, %d गेम)";
+
+/* Camera Recording */
+"recording.camera.accessRequired.title" = "कैमरा एक्सेस आवश्यक";
+"recording.camera.accessRequired.message" = "Badminton Eye को आपका मैच रिकॉर्ड करने के लिए कैमरा एक्सेस चाहिए। सेटिंग्स में इसे सक्षम करें।";
+"recording.camera.openSettings" = "सेटिंग्स खोलें";
+"recording.rec.accessibilityLabel" = "रिकॉर्डिंग जारी है";

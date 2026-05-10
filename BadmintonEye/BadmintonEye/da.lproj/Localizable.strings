@@ -139,3 +139,9 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "Tilpasset (%d pt, bedst af %d)";
+
+/* Camera Recording */
+"recording.camera.accessRequired.title" = "Kameraadgang krævet";
+"recording.camera.accessRequired.message" = "Badminton Eye har brug for kameraadgang for at optage din kamp. Aktiver det i Indstillinger.";
+"recording.camera.openSettings" = "Åbn indstillinger";
+"recording.rec.accessibilityLabel" = "Optagelse i gang";

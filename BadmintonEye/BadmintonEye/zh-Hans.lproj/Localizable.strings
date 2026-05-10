@@ -137,3 +137,9 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "自定义（%d分，%d局）";
+
+/* Camera Recording */
+"recording.camera.accessRequired.title" = "需要相机访问权限";
+"recording.camera.accessRequired.message" = "Badminton Eye 需要相机访问权限才能录制您的比赛。请在设置中启用。";
+"recording.camera.openSettings" = "打开设置";
+"recording.rec.accessibilityLabel" = "录制中";
