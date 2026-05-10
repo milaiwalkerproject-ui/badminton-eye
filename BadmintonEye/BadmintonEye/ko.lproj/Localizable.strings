@@ -5,6 +5,9 @@
 "settings.haptic" = "햅틱 피드백";
 "settings.haptic.subtitle" = "경기 중 득점 시 진동 알림";
 "settings.scoring" = "채점";
+"settings.audio" = "오디오";
+"settings.voiceAnnouncements" = "음성 알림";
+"settings.voiceAnnouncements.subtitle" = "각 랠리 후 점수 알림 (BWF 형식)";
 "settings.premium" = "프리미엄";
 "settings.about" = "정보";
 "settings.version" = "버전";

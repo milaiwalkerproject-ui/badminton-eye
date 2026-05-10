@@ -7,6 +7,9 @@
 "settings.haptic" = "Umpan Balik Haptic";
 "settings.haptic.subtitle" = "Getar saat perubahan skor selama pertandingan langsung";
 "settings.scoring" = "Penilaian";
+"settings.audio" = "Audio";
+"settings.voiceAnnouncements" = "Pengumuman Suara";
+"settings.voiceAnnouncements.subtitle" = "Umumkan skor setelah setiap reli (format BWF)";
 "settings.premium" = "Premium";
 "settings.about" = "Tentang";
 "settings.version" = "Versi";
