@@ -5,27 +5,53 @@ import SwiftData
 struct BadmintonEyeApp: App {
     @State private var authManager = AuthManager.shared
     @State private var subscriptionManager = SubscriptionManager.shared
+    @State private var showStorageError = false
+    @State private var storageErrorMessage = ""
+
+    private let container: ModelContainer
+
+    init() {
+        let isSignedIn = AuthManager.shared.isSignedIn
+        let config: ModelConfiguration = isSignedIn
+            ? ModelConfiguration(cloudKitDatabase: .automatic)
+            : ModelConfiguration()
+
+        do {
+            container = try ModelContainer(
+                for: PersistedMatch.self, Player.self, CalibrationProfile.self,
+                configurations: config
+            )
+        } catch let primaryError {
+            // Primary store failed — fall back to an in-memory container so the
+            // app never crashes, and surface a friendly alert to the user.
+            let fallbackConfig = ModelConfiguration(isStoredInMemoryOnly: true)
+            if let fallback = try? ModelContainer(
+                for: PersistedMatch.self, Player.self, CalibrationProfile.self,
+                configurations: fallbackConfig
+            ) {
+                container = fallback
+                _showStorageError = State(initialValue: true)
+                _storageErrorMessage = State(initialValue: primaryError.localizedDescription)
+            } else {
+                // In-memory creation cannot fail for valid schema; guard anyway.
+                fatalError("Unable to create in-memory ModelContainer: \(primaryError)")
+            }
+        }
+    }
 
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .alert("Storage Unavailable", isPresented: $showStorageError) {
+                    Button("OK", role: .cancel) {}
+                } message: {
+                    Text(
+                        "Your data could not be loaded from persistent storage " +
+                        "and will not be saved this session.\n\n\(storageErrorMessage)"
+                    )
+                }
         }
-        .modelContainer(makeModelContainer())
-    }
-
-    private func makeModelContainer() -> ModelContainer {
-        let config: ModelConfiguration
-        if authManager.isSignedIn {
-            config = ModelConfiguration(
-                cloudKitDatabase: .automatic
-            )
-        } else {
-            config = ModelConfiguration()
-        }
-        return try! ModelContainer(
-            for: PersistedMatch.self, Player.self, CalibrationProfile.self,
-            configurations: config
-        )
+        .modelContainer(container)
     }
 }
 
