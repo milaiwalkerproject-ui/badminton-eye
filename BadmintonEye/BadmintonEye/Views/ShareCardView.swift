@@ -8,6 +8,8 @@ struct ShareCardView: View {
     let state: MatchState
     let matchDate: Date
 
+    @State private var localization = LocalizationManager.shared
+
     private var teamALabel: String {
         state.teamANames.joined(separator: " & ")
             .isEmpty ? "Team A" : state.teamANames.joined(separator: " & ")
@@ -32,9 +34,9 @@ struct ShareCardView: View {
 
     private var formatLabel: String {
         switch state.format {
-        case .singles: return "Singles"
-        case .doubles: return "Doubles"
-        case .mixed:   return "Mixed Doubles"
+        case .singles: return localization.localized("share.format.singles")
+        case .doubles: return localization.localized("share.format.doubles")
+        case .mixed:   return localization.localized("share.format.mixed")
         }
     }
 
@@ -61,7 +63,7 @@ struct ShareCardView: View {
                     .frame(maxWidth: .infinity)
                     .foregroundStyle(winnerLabel == teamALabel ? .primary : .secondary)
 
-                Text("vs")
+                Text(localization.localized("share.vs"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
@@ -81,7 +83,7 @@ struct ShareCardView: View {
             VStack(spacing: 8) {
                 ForEach(Array(state.games.enumerated()), id: \.offset) { index, game in
                     HStack {
-                        Text("Game \(index + 1)")
+                        Text(String(format: localization.localized("game.number"), index + 1))
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                             .frame(width: 70, alignment: .leading)
@@ -107,7 +109,7 @@ struct ShareCardView: View {
 
             // Winner banner
             if let winner = winnerLabel {
-                Text("\(winner) wins!")
+                Text("\(winner) \(localization.localized("share.wins"))")
                     .font(.headline.bold())
                     .foregroundStyle(Color(red: 0.106, green: 0.369, blue: 0.125))
                     .padding(.vertical, 10)
@@ -130,7 +132,7 @@ struct ShareCardView: View {
             .padding(.bottom, 10)
 
             // Branded footer
-            Text("Tracked with BadmintonEye")
+            Text(localization.localized("share.trackedWith"))
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: .infinity)
@@ -164,6 +166,7 @@ struct ShareCardSheet: View {
     @State private var shareItems: [Any] = []
     @State private var showShareSheet = false
     @State private var isRendering = false
+    @State private var localization = LocalizationManager.shared
 
     var body: some View {
         NavigationStack {
@@ -181,7 +184,7 @@ struct ShareCardSheet: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
                 } else {
-                    Label("Share Image", systemImage: "square.and.arrow.up")
+                    Label(localization.localized("share.shareImage"), systemImage: "square.and.arrow.up")
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
@@ -193,11 +196,11 @@ struct ShareCardSheet: View {
             .padding(.bottom, 32)
             .disabled(isRendering)
         }
-        .navigationTitle("Share Result")
+        .navigationTitle(localization.localized("share.title"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Close") { dismiss() }
+                Button(localization.localized("common.cancel")) { dismiss() }
             }
         }
         .sheet(isPresented: $showShareSheet) {

@@ -136,3 +136,13 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "Tersuai (%d mata, %d game)";
+
+/* Share Card */
+"share.format.singles" = "Singles";
+"share.format.doubles" = "Doubles";
+"share.format.mixed" = "Mixed Doubles";
+"share.wins" = "wins!";
+"share.vs" = "vs";
+"share.trackedWith" = "Tracked with BadmintonEye";
+"share.title" = "Share Result";
+"share.shareImage" = "Share Image";

@@ -134,3 +134,13 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "自定义（%d分，%d局）";
+
+/* Share Card */
+"share.format.singles" = "Singles";
+"share.format.doubles" = "Doubles";
+"share.format.mixed" = "Mixed Doubles";
+"share.wins" = "wins!";
+"share.vs" = "vs";
+"share.trackedWith" = "Tracked with BadmintonEye";
+"share.title" = "Share Result";
+"share.shareImage" = "Share Image";
