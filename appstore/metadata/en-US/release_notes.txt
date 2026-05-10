@@ -25,5 +25,7 @@ BUG FIXES
 - Fixed service-rotation edge cases in 3x15 game formats when switching sides at games 3, 4, and 5
 - Fixed an issue where abandoned matches could appear in the in-progress restore flow after relaunch
 - Fixed layout clipping on the Match End scorecard on smaller iPhone screen sizes
+- Fixed a crash that could occur when syncing match data to Apple Watch with non-ASCII player names or large payloads; the app now encodes safely and degrades gracefully on failure
+- Improved WCSession reliability: score updates that previously could be silently lost when Watch connectivity was interrupted are now retried automatically via background context, with a double-delivery safeguard to prevent duplicate scores
 
 As always, thank you for playing — and for every piece of feedback that made this release possible.
