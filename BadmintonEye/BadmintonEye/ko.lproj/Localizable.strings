@@ -151,3 +151,7 @@
 "paywall.privacy" = "개인정보 처리방침";
 "paywall.perYear" = "/년";
 "paywall.perMonth" = "/월";
+"paywall.subscribe.yearly" = "7일 무료 체험 시작";
+"paywall.subscribe.monthly" = "구독";
+"paywall.then" = "이후";
+"paywall.iapDisclaimer" = "결제는 Apple ID 계정에 청구됩니다. 현재 기간 종료 최소 24시간 전에 취소하지 않으면 구독이 자동 갱신됩니다.";

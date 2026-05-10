@@ -153,3 +153,7 @@
 "paywall.privacy" = "Privatlivspolitik";
 "paywall.perYear" = "/år";
 "paywall.perMonth" = "/måned";
+"paywall.subscribe.yearly" = "Start 7-dages gratis prøveperiode";
+"paywall.subscribe.monthly" = "Abonner";
+"paywall.then" = "derefter";
+"paywall.iapDisclaimer" = "Betaling trækkes fra din Apple ID-konto. Abonnementet fornyes automatisk, medmindre det annulleres mindst 24 timer inden udløbet af den aktuelle periode.";

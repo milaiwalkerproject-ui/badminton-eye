@@ -153,3 +153,7 @@
 "paywall.privacy" = "นโยบายความเป็นส่วนตัว";
 "paywall.perYear" = "/ปี";
 "paywall.perMonth" = "/เดือน";
+"paywall.subscribe.yearly" = "เริ่มทดลองใช้ฟรี 7 วัน";
+"paywall.subscribe.monthly" = "สมัครสมาชิก";
+"paywall.then" = "จากนั้น";
+"paywall.iapDisclaimer" = "การชำระเงินจะถูกเรียกเก็บจากบัญชี Apple ID ของคุณ การสมัครสมาชิกจะต่ออายุอัตโนมัติหากไม่ยกเลิกอย่างน้อย 24 ชั่วโมงก่อนสิ้นสุดรอบระยะเวลาปัจจุบัน";

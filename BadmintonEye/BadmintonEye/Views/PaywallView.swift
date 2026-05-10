@@ -191,12 +191,14 @@ struct PaywallView: View {
 
     private var ctaLabel: String {
         guard let product = selectedProduct else {
-            return localization.localized("paywall.subscribe")
+            return localization.localized("paywall.subscribe.yearly")
         }
         let isYearly = product.id == "hawkeye_yearly"
         return isYearly
-            ? "\(localization.localized("paywall.subscribe")) — \(product.displayPrice)/yr"
-            : localization.localized("paywall.subscribe")
+            // "Start 7-Day Free Trial — then $X.XX/yr"
+            ? "\(localization.localized("paywall.subscribe.yearly")) — \(localization.localized("paywall.then")) \(product.displayPrice)\(localization.localized("paywall.perYear"))"
+            // "Subscribe — $X.XX/mo"
+            : "\(localization.localized("paywall.subscribe.monthly")) — \(product.displayPrice)\(localization.localized("paywall.perMonth"))"
     }
 
     // MARK: - Cancel Anytime
@@ -228,7 +230,7 @@ struct PaywallView: View {
 
     private var termsFooter: some View {
         VStack(spacing: 8) {
-            Text("Payment will be charged to your Apple ID account. Subscription automatically renews unless cancelled at least 24 hours before the end of the current period.")
+            Text(localization.localized("paywall.iapDisclaimer"))
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)

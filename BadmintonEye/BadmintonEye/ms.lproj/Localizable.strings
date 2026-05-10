@@ -153,3 +153,7 @@
 "paywall.privacy" = "Dasar Privasi";
 "paywall.perYear" = "/tahun";
 "paywall.perMonth" = "/bulan";
+"paywall.subscribe.yearly" = "Mulakan Percubaan Percuma 7 Hari";
+"paywall.subscribe.monthly" = "Langgan";
+"paywall.then" = "kemudian";
+"paywall.iapDisclaimer" = "Pembayaran akan dikenakan pada akaun Apple ID anda. Langganan diperbaharui secara automatik melainkan dibatalkan sekurang-kurangnya 24 jam sebelum tamat tempoh semasa.";

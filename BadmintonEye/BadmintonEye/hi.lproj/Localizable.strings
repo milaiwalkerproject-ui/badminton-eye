@@ -153,3 +153,7 @@
 "paywall.privacy" = "गोपनीयता नीति";
 "paywall.perYear" = "/वर्ष";
 "paywall.perMonth" = "/माह";
+"paywall.subscribe.yearly" = "7-दिन का मुफ़्त ट्रायल शुरू करें";
+"paywall.subscribe.monthly" = "सदस्यता लें";
+"paywall.then" = "फिर";
+"paywall.iapDisclaimer" = "भुगतान आपके Apple ID खाते से लिया जाएगा। सदस्यता स्वचालित रूप से नवीनीकृत होती है जब तक कि वर्तमान अवधि समाप्त होने से कम से कम 24 घंटे पहले रद्द न की जाए।";

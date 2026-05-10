@@ -110,4 +110,47 @@ final class PaywallViewTests: XCTestCase {
             )
         }
     }
+
+    // MARK: - CTA Label Correctness (Guideline 2.3.1 + Bait-and-Switch guard)
+
+    func testYearlySubscribeKeyExists() {
+        let value = NSLocalizedString("paywall.subscribe.yearly", bundle: Bundle.main, comment: "")
+        XCTAssertFalse(value.isEmpty, "paywall.subscribe.yearly must not be empty")
+        XCTAssertNotEqual(value, "paywall.subscribe.yearly",
+                          "paywall.subscribe.yearly must be defined in Localizable.strings")
+    }
+
+    func testMonthlySubscribeKeyExists() {
+        let value = NSLocalizedString("paywall.subscribe.monthly", bundle: Bundle.main, comment: "")
+        XCTAssertFalse(value.isEmpty, "paywall.subscribe.monthly must not be empty")
+        XCTAssertNotEqual(value, "paywall.subscribe.monthly",
+                          "paywall.subscribe.monthly must be defined in Localizable.strings")
+    }
+
+    func testMonthlySubscribeKeyDoesNotMentionFreeTrial() {
+        // Monthly product has no introductory offer — CTA must not say "Free Trial"
+        let monthly = NSLocalizedString("paywall.subscribe.monthly", bundle: Bundle.main, comment: "")
+        let lowercased = monthly.lowercased()
+        XCTAssertFalse(
+            lowercased.contains("trial") || lowercased.contains("free"),
+            "paywall.subscribe.monthly must NOT mention 'free trial' — monthly plan has no intro offer. Got: '\(monthly)'"
+        )
+    }
+
+    func testYearlySubscribeKeyMentionsTrial() {
+        // Yearly product has a 7-day free trial — CTA should communicate the offer
+        let yearly = NSLocalizedString("paywall.subscribe.yearly", bundle: Bundle.main, comment: "")
+        let lowercased = yearly.lowercased()
+        XCTAssertTrue(
+            lowercased.contains("trial") || lowercased.contains("free") || lowercased.contains("7"),
+            "paywall.subscribe.yearly should communicate the free trial offer. Got: '\(yearly)'"
+        )
+    }
+
+    func testIAPDisclaimerKeyExists() {
+        let value = NSLocalizedString("paywall.iapDisclaimer", bundle: Bundle.main, comment: "")
+        XCTAssertFalse(value.isEmpty, "paywall.iapDisclaimer must not be empty")
+        XCTAssertNotEqual(value, "paywall.iapDisclaimer",
+                          "paywall.iapDisclaimer must be defined in Localizable.strings")
+    }
 }

@@ -151,3 +151,7 @@
 "paywall.privacy" = "プライバシーポリシー";
 "paywall.perYear" = "/年";
 "paywall.perMonth" = "/月";
+"paywall.subscribe.yearly" = "7日間無料トライアルを開始";
+"paywall.subscribe.monthly" = "登録する";
+"paywall.then" = "その後";
+"paywall.iapDisclaimer" = "お支払いはApple IDアカウントに請求されます。現在の期間終了の少なくとも24時間前にキャンセルしない限り、サブスクリプションは自動的に更新されます。";

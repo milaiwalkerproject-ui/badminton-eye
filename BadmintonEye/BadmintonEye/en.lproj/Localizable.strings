@@ -151,3 +151,7 @@
 "paywall.privacy" = "Privacy Policy";
 "paywall.perYear" = "/year";
 "paywall.perMonth" = "/month";
+"paywall.subscribe.yearly" = "Start 7-Day Free Trial";
+"paywall.subscribe.monthly" = "Subscribe";
+"paywall.then" = "then";
+"paywall.iapDisclaimer" = "Payment will be charged to your Apple ID account. Subscription automatically renews unless cancelled at least 24 hours before the end of the current period.";

@@ -151,3 +151,7 @@
 "paywall.privacy" = "隐私政策";
 "paywall.perYear" = "/年";
 "paywall.perMonth" = "/月";
+"paywall.subscribe.yearly" = "开始7天免费试用";
+"paywall.subscribe.monthly" = "订阅";
+"paywall.then" = "之后";
+"paywall.iapDisclaimer" = "费用将从您的Apple ID账户中扣除。除非在当前周期结束前至少24小时取消，否则订阅将自动续订。";

@@ -153,3 +153,7 @@
 "paywall.privacy" = "Kebijakan Privasi";
 "paywall.perYear" = "/tahun";
 "paywall.perMonth" = "/bulan";
+"paywall.subscribe.yearly" = "Mulai Uji Coba Gratis 7 Hari";
+"paywall.subscribe.monthly" = "Berlangganan";
+"paywall.then" = "lalu";
+"paywall.iapDisclaimer" = "Pembayaran akan dibebankan ke akun Apple ID Anda. Langganan diperbarui secara otomatis kecuali dibatalkan setidaknya 24 jam sebelum akhir periode saat ini.";
