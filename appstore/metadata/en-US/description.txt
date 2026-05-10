@@ -7,12 +7,14 @@ Live Scoring
 - Supports all formats: singles, doubles, 21-point, 15-point, and custom scoring rules
 - Automatic service rotation and let detection keep you accurate without thinking
 - Apple Watch companion app so a courtside scorer can track without touching your phone
+- Live Score widget shows the current game score on your Lock Screen or Home Screen — always in view
 
 AI Hawk-Eye Line Calls
 - Record a disputed shot and let on-device AI analyse the shuttle's trajectory
 - Multi-angle fusion: import a second camera angle for even higher confidence readings
 - Visual trajectory replay shows exactly where the shuttle landed
 - Challenge system mirrors official tournament challenge rules
+- All analysis runs entirely on-device — your footage never leaves your phone
 
 Shot Analytics & Match Insights
 - Win-rate trend charts track your improvement over weeks and months
@@ -25,6 +27,11 @@ Match History & Scorecards
 - Crash recovery restores an in-progress match if your device restarts
 - Export shareable scorecards as images for WhatsApp groups or social media
 - iCloud sync keeps your history across all your Apple devices when signed in
+- Offline scoring works without a network connection; scores sync to Watch automatically when connectivity returns
+
+Custom Scoring Formats
+- Build your own game format: set target points, enable or disable deuce, choose service rules
+- Save custom formats for reuse across any match
 
 Multi-Angle Replay
 - Import video from any second angle and BadmintonEye fuses both analyses
@@ -40,7 +47,7 @@ SUBSCRIPTION — HAWK EYE PRO
 
 Free: unlimited live scoring, full match history, player profiles, and statistics.
 
-Hawk Eye Pro (monthly or yearly, save 50% annually): unlocks AI line-call analysis, multi-angle fusion, visual trajectory replay, challenge system, and priority scorecard export.
+Hawk Eye Pro (monthly or yearly, save 50% annually): unlocks AI line-call analysis, multi-angle fusion, visual trajectory replay, challenge system, Live Score widget, and priority scorecard export. Try free for 7 days — no charge until the trial ends.
 
 Payment is charged to your Apple ID. Subscription renews automatically unless cancelled at least 24 hours before the end of the current period. Manage or cancel anytime in your Apple ID account settings.
 

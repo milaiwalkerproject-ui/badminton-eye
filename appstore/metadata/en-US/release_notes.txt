@@ -2,6 +2,15 @@ BadmintonEye 2.0 — our biggest update yet.
 
 WHAT'S NEW
 
+Live Score Widget
+See the current game score on your Lock Screen or Home Screen without opening the app. The widget updates live during a match and supports both small and medium sizes.
+
+7-Day Free Trial for Hawk Eye Pro
+New subscribers get a full 7-day free trial before any charge. Try AI line calls, multi-angle analysis, and the Live Score widget at no cost — cancel anytime from your Apple ID settings.
+
+Offline Watch Sync
+Score a match without a Wi-Fi or cellular connection and the Apple Watch stays in sync. Any score intents recorded offline are replayed to the Watch automatically when connectivity returns.
+
 Onboarding & Accounts
 Sign in with Apple to unlock iCloud sync across all your devices. Your match history, player profiles, and calibration settings follow you seamlessly. New users get a guided first-run experience that has you scoring your first match in under a minute.
 
