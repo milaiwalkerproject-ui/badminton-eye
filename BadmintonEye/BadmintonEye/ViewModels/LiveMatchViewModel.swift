@@ -1,9 +1,10 @@
-import ActivityKit
+@preconcurrency import ActivityKit
 import Foundation
 import SwiftData
 import ScoringEngine
 
 @Observable
+@MainActor
 final class LiveMatchViewModel {
     private(set) var state: MatchState
     private var persistedMatch: PersistedMatch
@@ -115,7 +116,7 @@ final class LiveMatchViewModel {
         // Defer persistence and Watch sync — these are not on the critical render path.
         // Running them after the current run loop iteration lets SwiftUI commit the
         // new score to the screen before we spend ~1-2 ms encoding JSON.
-        Task { @MainActor [weak self] in
+        Task { [weak self] in
             self?.persistState()
         }
     }
