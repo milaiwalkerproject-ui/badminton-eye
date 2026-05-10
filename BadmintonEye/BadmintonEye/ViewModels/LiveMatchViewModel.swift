@@ -3,6 +3,7 @@ import Foundation
 import SwiftData
 import ScoringEngine
 
+@MainActor
 @Observable
 final class LiveMatchViewModel {
     private(set) var state: MatchState
@@ -98,10 +99,11 @@ final class LiveMatchViewModel {
             }
         }
 
-        // Haptic feedback — async to avoid blocking the scoring tap
+        // Haptic feedback — enqueued after the current synchronous block so SwiftUI
+        // can commit the new score first; inherits @MainActor from the class.
         let matchComplete = state.matchPhase == .complete
         let gamePoint = state.isDeuce || state.isAtCap
-        Task { @MainActor in
+        Task {
             let haptics = HapticFeedbackService.shared
             if matchComplete {
                 haptics.playMatchComplete()
@@ -115,7 +117,7 @@ final class LiveMatchViewModel {
         // Defer persistence and Watch sync — these are not on the critical render path.
         // Running them after the current run loop iteration lets SwiftUI commit the
         // new score to the screen before we spend ~1-2 ms encoding JSON.
-        Task { @MainActor [weak self] in
+        Task { [weak self] in
             self?.persistState()
         }
     }
@@ -149,7 +151,7 @@ final class LiveMatchViewModel {
         }
         updateGameScores()
 
-        // Watch sync: dispatch to avoid blocking SwiftUI rendering
+        // Watch sync: detached so it runs off the main actor and doesn't block SwiftUI.
         let snapState = state
         let snapActive = snapState.matchPhase == .inProgress
         Task.detached(priority: .utility) {
@@ -189,7 +191,9 @@ final class LiveMatchViewModel {
         let won = state.gamesWon
         let gameNum = state.games.count + (state.matchPhase == .inProgress ? 1 : 0)
         let server = state.currentServer.side.rawValue
-        Task {
+        // Use Task.detached so that Activity<> (non-Sendable) is only ever
+        // accessed from a nonisolated context, satisfying Swift 6 strict concurrency.
+        Task.detached(priority: .userInitiated) {
             let cs = MatchActivityAttributes.ContentState(
                 scoreA: scoreA, scoreB: scoreB, gameNumber: gameNum,
                 gamesWonA: won.sideA, gamesWonB: won.sideB,
@@ -208,7 +212,9 @@ final class LiveMatchViewModel {
         let gameNum = state.games.count
         let server = state.currentServer.side.rawValue
         currentActivityID = nil
-        Task {
+        // Use Task.detached so that Activity<> (non-Sendable) is only ever
+        // accessed from a nonisolated context, satisfying Swift 6 strict concurrency.
+        Task.detached(priority: .userInitiated) {
             let cs = MatchActivityAttributes.ContentState(
                 scoreA: scoreA, scoreB: scoreB, gameNumber: gameNum,
                 gamesWonA: won.sideA, gamesWonB: won.sideB,
