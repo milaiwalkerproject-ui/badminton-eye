@@ -5,27 +5,30 @@ struct OnboardingView: View {
 
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @State private var currentPage = 0
+    @State private var localization = LocalizationManager.shared
 
-    private let pages: [OnboardingPage] = [
-        OnboardingPage(
-            icon: "sportscourt.fill",
-            iconColor: .blue,
-            title: "Track Every Point",
-            description: "Score matches in real time with one tap. Live scoring keeps both sides, serves, and game history perfectly in sync — even on your Apple Watch."
-        ),
-        OnboardingPage(
-            icon: "chart.bar.xaxis",
-            iconColor: .indigo,
-            title: "Analyse Your Game",
-            description: "Browse shot statistics, rally lengths, and full match history. Spot trends in your win rate and see exactly where points are won and lost."
-        ),
-        OnboardingPage(
-            icon: "trophy.fill",
-            iconColor: .orange,
-            title: "Level Up",
-            description: "Unlock AI-powered Hawk Eye line calling, trajectory replay, and confidence analysis. Train smarter and compete with precision."
-        ),
-    ]
+    private var pages: [OnboardingPage] {
+        [
+            OnboardingPage(
+                icon: "sportscourt.fill",
+                iconColor: .blue,
+                title: localization.localized("onboarding.page1.title"),
+                description: localization.localized("onboarding.page1.description")
+            ),
+            OnboardingPage(
+                icon: "chart.bar.xaxis",
+                iconColor: .indigo,
+                title: localization.localized("onboarding.page2.title"),
+                description: localization.localized("onboarding.page2.description")
+            ),
+            OnboardingPage(
+                icon: "trophy.fill",
+                iconColor: .orange,
+                title: localization.localized("onboarding.page3.title"),
+                description: localization.localized("onboarding.page3.description")
+            ),
+        ]
+    }
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -42,7 +45,7 @@ struct OnboardingView: View {
             if currentPage < pages.count - 1 {
                 HStack {
                     Spacer()
-                    Button("Skip") {
+                    Button(localization.localized("common.skip")) {
                         hasCompletedOnboarding = true
                     }
                     .font(.subheadline)
@@ -121,7 +124,7 @@ struct OnboardingView: View {
                     currentPage += 1
                 }
             } label: {
-                Text("Next")
+                Text(localization.localized("common.continue"))
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -133,7 +136,7 @@ struct OnboardingView: View {
             Button {
                 hasCompletedOnboarding = true
             } label: {
-                Text("Get Started")
+                Text(localization.localized("onboarding.getStarted"))
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity)
                     .padding()

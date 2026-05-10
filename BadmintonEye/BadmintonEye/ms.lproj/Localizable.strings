@@ -136,3 +136,14 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "Tersuai (%d mata, %d game)";
+
+/* Onboarding */
+"onboarding.page1.title" = "Track Every Point";
+"onboarding.page1.description" = "Score matches in real time with one tap. Live scoring keeps both sides, serves, and game history perfectly in sync — even on your Apple Watch.";
+"onboarding.page2.title" = "Analyse Your Game";
+"onboarding.page2.description" = "Browse shot statistics, rally lengths, and full match history. Spot trends in your win rate and see exactly where points are won and lost.";
+"onboarding.page3.title" = "Level Up";
+"onboarding.page3.description" = "Unlock AI-powered Hawk Eye line calling, trajectory replay, and confidence analysis. Train smarter and compete with precision.";
+"onboarding.getStarted" = "Get Started";
+"common.skip" = "Skip";
+"common.continue" = "Continue";
