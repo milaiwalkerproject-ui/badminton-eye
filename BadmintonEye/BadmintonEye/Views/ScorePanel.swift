@@ -1,6 +1,13 @@
 import SwiftUI
 import ScoringEngine
 
+/// Full-height score panel for one side of the match.
+///
+/// Layout (task 585418ae — score visibility):
+/// Score numerals are pinned to the upper portion of the panel so they
+/// are immediately visible at a glance. A small top inset provides safe-area
+/// breathing room; the remaining space below expands naturally so tapping
+/// anywhere on the full half-screen scores a point.
 struct ScorePanel: View {
     let score: Int
     let teamName: String
@@ -24,8 +31,10 @@ struct ScorePanel: View {
             backgroundColor
                 .ignoresSafeArea()
 
-            VStack(spacing: 12) {
-                Spacer()
+            VStack(spacing: 8) {
+                // Small top spacer for safe-area breathing room.
+                // maxHeight keeps the score in the upper ~40 % of the panel.
+                Spacer().frame(maxHeight: 64)
 
                 // Server indicator
                 if isServing {
@@ -44,23 +53,22 @@ struct ScorePanel: View {
                     .background(.black.opacity(0.3))
                     .clipShape(Capsule())
                 } else {
-                    // Placeholder to keep layout stable
+                    // Invisible placeholder preserves vertical rhythm
                     HStack(spacing: 6) {
-                        Image(systemName: "circle.fill")
-                            .font(.system(size: 14))
-                        Text("R")
-                            .font(.caption.bold())
+                        Image(systemName: "circle.fill").font(.system(size: 14))
+                        Text("R").font(.caption.bold())
                     }
                     .hidden()
                 }
 
-                // Score
+                // Score — large, bold, high-contrast (task 585418ae: ≥48 pt bold)
                 Text("\(score)")
-                    .font(.system(size: 120, weight: .bold, design: .rounded))
+                    .font(.system(size: 96, weight: .black, design: .rounded))
                     .foregroundStyle(.white)
-                    .minimumScaleFactor(0.5)
+                    .minimumScaleFactor(0.4)
+                    .shadow(color: .black.opacity(0.35), radius: 4, x: 0, y: 2)
 
-                // Team/player names
+                // Team / player names below score
                 VStack(spacing: 2) {
                     ForEach(playerNames, id: \.self) { name in
                         Text(name)
@@ -69,6 +77,7 @@ struct ScorePanel: View {
                     }
                 }
 
+                // Fills the remaining lower 60 % of the panel — tap zone stays full-height
                 Spacer()
             }
         }
