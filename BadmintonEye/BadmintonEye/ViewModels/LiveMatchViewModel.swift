@@ -79,6 +79,13 @@ final class LiveMatchViewModel {
         startLiveActivity()
     }
 
+    // MARK: - Scoring
+
+    /// Apply a point for the given side.
+    ///
+    /// Performance: state mutation is synchronous for immediate UI response;
+    /// persistence and Watch sync are dispatched asynchronously to keep the
+    /// scoring tap at sub-frame latency.
     func scorePoint(for side: Side) {
         guard state.matchPhase == .inProgress else { return }
         let previousGameCount = state.games.count
@@ -91,7 +98,7 @@ final class LiveMatchViewModel {
             }
         }
 
-        // Haptic feedback
+        // Haptic feedback — async to avoid blocking the scoring tap
         let matchComplete = state.matchPhase == .complete
         let gamePoint = state.isDeuce || state.isAtCap
         Task { @MainActor in
@@ -105,7 +112,12 @@ final class LiveMatchViewModel {
             }
         }
 
-        persistState()
+        // Defer persistence and Watch sync — these are not on the critical render path.
+        // Running them after the current run loop iteration lets SwiftUI commit the
+        // new score to the screen before we spend ~1-2 ms encoding JSON.
+        Task { @MainActor [weak self] in
+            self?.persistState()
+        }
     }
 
     func undo() {
@@ -119,6 +131,8 @@ final class LiveMatchViewModel {
         state = MatchEngine.apply(event: .abandon, to: state)
         persistState()
     }
+
+    // MARK: - Private
 
     private func persistState() {
         let encoder = JSONEncoder()
@@ -134,7 +148,13 @@ final class LiveMatchViewModel {
             persistedMatch.winnerSide = winner.rawValue
         }
         updateGameScores()
-        WatchSyncManager.shared.sendStateUpdate(state, isActive: state.matchPhase == .inProgress)
+
+        // Watch sync: dispatch to avoid blocking SwiftUI rendering
+        let snapState = state
+        let snapActive = snapState.matchPhase == .inProgress
+        Task.detached(priority: .utility) {
+            WatchSyncManager.shared.sendStateUpdate(snapState, isActive: snapActive)
+        }
 
         if state.matchPhase == .inProgress {
             updateLiveActivity()

@@ -8,7 +8,8 @@ struct LiveMatchView: View {
     @State private var showChallengeSheet = false
     @State private var showPaywall = false
     @State private var challengeCountdown: Int = 0
-    @State private var challengeTimer: Timer?
+    /// Cancellation token for the challenge countdown task.
+    @State private var challengeCountdownTask: Task<Void, Never>?
     @Environment(\.dismiss) private var dismiss
     @State private var localization = LocalizationManager.shared
 
@@ -225,6 +226,9 @@ struct LiveMatchView: View {
                 startChallengeCountdown()
             }
         }
+        .onDisappear {
+            challengeCountdownTask?.cancel()
+        }
         .navigationDestination(
             isPresented: Binding(
                 get: { viewModel.state.matchPhase == .complete },
@@ -245,19 +249,21 @@ struct LiveMatchView: View {
 
     // MARK: - Challenge Countdown
 
-    /// Resets the challenge countdown to 10 seconds after each point scored.
+    /// Resets the challenge countdown to 10 seconds after each point.
+    /// Uses structured concurrency instead of Timer to avoid main-thread
+    /// timer callbacks that can delay SwiftUI layout passes.
     private func startChallengeCountdown() {
-        challengeTimer?.invalidate()
+        challengeCountdownTask?.cancel()
         challengeCountdown = 10
 
-        challengeTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            Task { @MainActor in
-                if challengeCountdown > 0 {
+        challengeCountdownTask = Task { @MainActor in
+            do {
+                while challengeCountdown > 0 {
+                    try await Task.sleep(for: .seconds(1))
                     challengeCountdown -= 1
-                } else {
-                    challengeTimer?.invalidate()
-                    challengeTimer = nil
                 }
+            } catch {
+                // Task was cancelled (new point scored or view disappeared) — expected
             }
         }
     }
