@@ -1,6 +1,9 @@
 import Foundation
+import os.log
 import WatchConnectivity
 import ScoringEngine
+
+private let logger = Logger(subsystem: "com.badmintoneye.app.watchkitapp", category: "WatchSessionManager")
 
 /// watchOS-side WCSessionDelegate singleton.
 /// Receives match state from iPhone and delivers to WatchMatchViewModel.
@@ -26,7 +29,7 @@ final class WatchSessionManager: NSObject, WCSessionDelegate, @unchecked Sendabl
     // MARK: - Sending Scoring Intents to iPhone
 
     /// Send a scoring intent to the iPhone. Uses sendMessage for immediate delivery
-    /// when reachable, and updateApplicationContext as fallback.
+    /// when reachable, and updateApplicationContext as fallback for guaranteed delivery.
     func sendScoringIntent(side: Side) {
         let dict: [String: Any] = [
             "action": "scorePoint",
@@ -35,11 +38,16 @@ final class WatchSessionManager: NSObject, WCSessionDelegate, @unchecked Sendabl
         ]
 
         if WCSession.default.isReachable {
-            WCSession.default.sendMessage(dict, replyHandler: nil, errorHandler: nil)
+            WCSession.default.sendMessage(dict, replyHandler: nil) { error in
+                // sendMessage failed mid-flight (session became unreachable after isReachable check).
+                // Log the failure and fall back to applicationContext for guaranteed delivery.
+                logger.error("sendMessage failed: \(error.localizedDescription, privacy: .public) — retrying via updateApplicationContext")
+                try? WCSession.default.updateApplicationContext(dict)
+            }
+        } else {
+            // Not reachable — go straight to applicationContext for guaranteed delivery.
+            try? WCSession.default.updateApplicationContext(dict)
         }
-
-        // Also send via applicationContext as fallback
-        try? WCSession.default.updateApplicationContext(dict)
     }
 
     // MARK: - WCSessionDelegate
