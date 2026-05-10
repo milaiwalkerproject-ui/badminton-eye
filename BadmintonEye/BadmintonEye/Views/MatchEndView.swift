@@ -1,11 +1,17 @@
 import SwiftUI
 import ScoringEngine
+import StoreKit
 
 struct MatchEndView: View {
     let state: MatchState
     var onNewMatch: (() -> Void)?
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.requestReview) private var requestReview
     @State private var localization = LocalizationManager.shared
+
+    // MARK: - Review prompt (triggered after every 5th completed match)
+    @AppStorage("completedMatchCount") private var completedMatchCount: Int = 0
+    @AppStorage("lastReviewPromptDate") private var lastReviewPromptDate: Double = 0
 
     private var winnerText: String {
         guard let winner = state.matchWinner else {
@@ -140,5 +146,25 @@ struct MatchEndView: View {
             .padding(.bottom, 32)
         }
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            maybeRequestReview()
+        }
+    }
+
+    // MARK: - Private
+
+    private func maybeRequestReview() {
+        guard state.matchPhase == .complete else { return }
+
+        completedMatchCount += 1
+
+        // Prompt every 5 completed matches, but not more than once every 30 days
+        guard completedMatchCount % 5 == 0 else { return }
+
+        let thirtyDaysAgo = Date().addingTimeInterval(-30 * 24 * 60 * 60).timeIntervalSince1970
+        guard lastReviewPromptDate < thirtyDaysAgo else { return }
+
+        lastReviewPromptDate = Date().timeIntervalSince1970
+        requestReview()
     }
 }
