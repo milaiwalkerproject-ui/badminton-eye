@@ -33,7 +33,8 @@ final class GameRecordingService: NSObject {
     private(set) var isRecording: Bool = false
 
     /// Set when a permission denial occurs so the UI can surface an alert.
-    private(set) var permissionDenied: Bool = false
+    /// Mutable so the alert binding can reset it to false on dismissal.
+    var permissionDenied: Bool = false
 
     /// URL of the most recently completed recording, available for preview.
     private(set) var lastRecordingURL: URL?
