@@ -81,6 +81,7 @@
 		PR1001 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = PR2001 /* PrivacyInfo.xcprivacy */; };
 		IL1001 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = IL4001 /* Localizable.strings */; };
 		UT10001 /* BadmintonEyeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20001 /* BadmintonEyeTests.swift */; };
+		UT10002 /* LiveMatchPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20003 /* LiveMatchPerformanceTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -195,6 +196,7 @@
 		IL2009 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/Localizable.strings; sourceTree = "<group>"; };
 		UT20001 /* BadmintonEyeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadmintonEyeTests.swift; sourceTree = "<group>"; };
 		UT20002 /* BadmintonEyeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BadmintonEyeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		UT20003 /* LiveMatchPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveMatchPerformanceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -372,6 +374,7 @@
 			isa = PBXGroup;
 			children = (
 				UT20001 /* BadmintonEyeTests.swift */,
+				UT20003 /* LiveMatchPerformanceTests.swift */,
 			);
 			path = BadmintonEyeTests;
 			sourceTree = "<group>";
@@ -686,6 +689,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				UT10001 /* BadmintonEyeTests.swift in Sources */,
+				UT10002 /* LiveMatchPerformanceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
