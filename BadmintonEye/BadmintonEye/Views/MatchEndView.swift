@@ -9,9 +9,12 @@ struct MatchEndView: View {
     @Environment(\.requestReview) private var requestReview
     @State private var localization = LocalizationManager.shared
 
-    // MARK: - Review prompt (triggered after every 5th completed match)
-    @AppStorage("completedMatchCount") private var completedMatchCount: Int = 0
-    @AppStorage("lastReviewPromptDate") private var lastReviewPromptDate: Double = 0
+    // MARK: - Review prompt
+    // A stable UUID is generated once per view instance (per match presentation).
+    // ReviewPromptCoordinator deduplicates by matchSessionID, so onAppear
+    // firing multiple times for the same view does NOT multi-count.
+    @State private var matchSessionID = UUID().uuidString
+    private var reviewCoordinator = ReviewPromptCoordinator()
 
     private var winnerText: String {
         guard let winner = state.matchWinner else {
@@ -154,17 +157,12 @@ struct MatchEndView: View {
     // MARK: - Private
 
     private func maybeRequestReview() {
-        guard state.matchPhase == .complete else { return }
-
-        completedMatchCount += 1
-
-        // Prompt every 5 completed matches, but not more than once every 30 days
-        guard completedMatchCount % 5 == 0 else { return }
-
-        let thirtyDaysAgo = Date().addingTimeInterval(-30 * 24 * 60 * 60).timeIntervalSince1970
-        guard lastReviewPromptDate < thirtyDaysAgo else { return }
-
-        lastReviewPromptDate = Date().timeIntervalSince1970
-        requestReview()
+        var coordinator = reviewCoordinator
+        let isComplete = state.matchPhase == .complete
+        let shouldPrompt = coordinator.process(matchID: matchSessionID,
+                                               isComplete: isComplete)
+        if shouldPrompt {
+            requestReview()
+        }
     }
 }
