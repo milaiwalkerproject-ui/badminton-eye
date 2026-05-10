@@ -136,3 +136,20 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "Kustom (%d poin, %d game)";
+
+/* Paywall */
+"paywall.headline" = "Tingkatkan Permainan Bulu Tangkis Anda";
+"paywall.subtitle" = "Panggilan hawk-eye bertenaga AI. Tidak ada lagi perselisihan.";
+"paywall.feature.hawkeye" = "Panggilan garis hawk-eye instan — tidak ada lagi perselisihan";
+"paywall.feature.analytics" = "Analitik per pukulan setelah setiap pertandingan";
+"paywall.feature.replay" = "Analisis replay multi-sudut";
+"paywall.feature.share" = "Ekspor & bagikan momen terbaik Anda";
+"paywall.bestValue" = "Nilai Terbaik — Hemat 50%";
+"paywall.weeklyValue" = "Kurang dari harga satu kok per minggu";
+"paywall.subscribe" = "Mulai Uji Coba Gratis";
+"paywall.cancelAnytime" = "Batalkan Kapan Saja";
+"paywall.restore" = "Pulihkan Pembelian";
+"paywall.terms" = "Ketentuan Penggunaan";
+"paywall.privacy" = "Kebijakan Privasi";
+"paywall.perYear" = "/tahun";
+"paywall.perMonth" = "/bulan";

@@ -6,6 +6,7 @@ struct PaywallView: View {
 
     @Environment(\.dismiss) private var dismiss
     private var subscriptionManager = SubscriptionManager.shared
+    @State private var localization = LocalizationManager.shared
 
     @State private var selectedProduct: Product?
     @State private var isPurchasing = false
@@ -15,7 +16,6 @@ struct PaywallView: View {
             ScrollView {
                 VStack(spacing: 24) {
                     headerSection
-                    ratingChip
                     featurePreviewSection
                     productOptionsSection
                     subscribeButton
@@ -53,13 +53,13 @@ struct PaywallView: View {
                 .font(.system(size: 56))
                 .foregroundStyle(.blue)
 
-            Text("Join 10,000+ Players\nImproving Their Game")
+            Text(localization.localized("paywall.headline"))
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .multilineTextAlignment(.center)
                 .lineSpacing(2)
 
-            Text("AI-powered hawk-eye calls. No more disputes.")
+            Text(localization.localized("paywall.subtitle"))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -67,36 +67,14 @@ struct PaywallView: View {
         .padding(.top, 8)
     }
 
-    // MARK: - Rating Chip
-
-    private var ratingChip: some View {
-        HStack(spacing: 6) {
-            Text("★★★★★")
-                .foregroundStyle(.orange)
-                .font(.subheadline)
-            Text("4.8")
-                .fontWeight(.semibold)
-                .font(.subheadline)
-            Text("·")
-                .foregroundStyle(.secondary)
-            Text("2K Ratings")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .background(Color(.systemGray6))
-        .clipShape(Capsule())
-    }
-
     // MARK: - Feature Preview
 
     private var featurePreviewSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            featureRow(title: "Instant hawk-eye line calls — no more disputes")
-            featureRow(title: "Shot-by-shot analytics after every match")
-            featureRow(title: "Multi-angle replay analysis")
-            featureRow(title: "Export & share your best moments")
+            featureRow(title: localization.localized("paywall.feature.hawkeye"))
+            featureRow(title: localization.localized("paywall.feature.analytics"))
+            featureRow(title: localization.localized("paywall.feature.replay"))
+            featureRow(title: localization.localized("paywall.feature.share"))
         }
         .padding()
         .background(Color(.systemGray6))
@@ -138,7 +116,7 @@ struct PaywallView: View {
                         Text(product.displayName)
                             .font(.headline)
                         if isYearly {
-                            Text("Best Value — Save 50%")
+                            Text(localization.localized("paywall.bestValue"))
                                 .font(.caption)
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.white)
@@ -150,14 +128,14 @@ struct PaywallView: View {
                     }
 
                     if isYearly {
-                        Text("\(product.displayPrice)/year")
+                        Text("\(product.displayPrice)\(localization.localized("paywall.perYear"))")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
-                        Text("Less than a shuttlecock per week")
+                        Text(localization.localized("paywall.weeklyValue"))
                             .font(.caption)
                             .foregroundStyle(.blue)
                     } else {
-                        Text("\(product.displayPrice)/month")
+                        Text("\(product.displayPrice)\(localization.localized("paywall.perMonth"))")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
@@ -213,18 +191,18 @@ struct PaywallView: View {
 
     private var ctaLabel: String {
         guard let product = selectedProduct else {
-            return "Unlock Hawk Eye"
+            return localization.localized("paywall.subscribe")
         }
         let isYearly = product.id == "hawkeye_yearly"
         return isYearly
-            ? "Unlock Hawk Eye — \(product.displayPrice)/yr"
-            : "Start Free Trial"
+            ? "\(localization.localized("paywall.subscribe")) — \(product.displayPrice)/yr"
+            : localization.localized("paywall.subscribe")
     }
 
     // MARK: - Cancel Anytime
 
     private var cancelAnytimeNote: some View {
-        Text("Cancel anytime. No questions asked.")
+        Text(localization.localized("paywall.cancelAnytime"))
             .font(.caption)
             .foregroundStyle(.secondary)
     }
@@ -240,7 +218,7 @@ struct PaywallView: View {
                 }
             }
         } label: {
-            Text("Restore Purchases")
+            Text(localization.localized("paywall.restore"))
                 .font(.subheadline)
                 .foregroundStyle(.blue)
         }
@@ -256,11 +234,11 @@ struct PaywallView: View {
                 .multilineTextAlignment(.center)
 
             HStack(spacing: 16) {
-                Link("Terms of Service",
+                Link(localization.localized("paywall.terms"),
                      destination: URL(string: "https://badmintoneye.app/terms")!)
                 Text("\u{00B7}")
                     .foregroundStyle(.secondary)
-                Link("Privacy Policy",
+                Link(localization.localized("paywall.privacy"),
                      destination: URL(string: "https://badmintoneye.app/privacy")!)
             }
             .font(.caption2)

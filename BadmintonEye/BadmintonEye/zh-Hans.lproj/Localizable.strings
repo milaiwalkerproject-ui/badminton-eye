@@ -134,3 +134,20 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "自定义（%d分，%d局）";
+
+/* Paywall */
+"paywall.headline" = "提升您的羽毛球水平";
+"paywall.subtitle" = "AI鹰眼判线，告别争议。";
+"paywall.feature.hawkeye" = "即时鹰眼判线 — 不再有争议";
+"paywall.feature.analytics" = "每场比赛逐球分析";
+"paywall.feature.replay" = "多角度回放分析";
+"paywall.feature.share" = "导出并分享您的精彩时刻";
+"paywall.bestValue" = "超值优惠 — 节省50%";
+"paywall.weeklyValue" = "每周不到一个羽毛球的费用";
+"paywall.subscribe" = "开始免费试用";
+"paywall.cancelAnytime" = "随时取消";
+"paywall.restore" = "恢复购买";
+"paywall.terms" = "使用条款";
+"paywall.privacy" = "隐私政策";
+"paywall.perYear" = "/年";
+"paywall.perMonth" = "/月";

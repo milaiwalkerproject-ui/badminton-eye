@@ -134,3 +134,20 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "カスタム（%dpt、%d局）";
+
+/* Paywall */
+"paywall.headline" = "バドミントンのレベルを上げよう";
+"paywall.subtitle" = "AIホークアイ判定で、審判の争いはもうなし。";
+"paywall.feature.hawkeye" = "即時ホークアイ判定 — もう議論しない";
+"paywall.feature.analytics" = "試合ごとにショット分析";
+"paywall.feature.replay" = "マルチアングル・リプレイ分析";
+"paywall.feature.share" = "ベストシーンをエクスポート＆シェア";
+"paywall.bestValue" = "お得 — 50%オフ";
+"paywall.weeklyValue" = "1週間のコストはシャトル1個以下";
+"paywall.subscribe" = "無料トライアルを開始";
+"paywall.cancelAnytime" = "いつでもキャンセル可能";
+"paywall.restore" = "購入を復元";
+"paywall.terms" = "利用規約";
+"paywall.privacy" = "プライバシーポリシー";
+"paywall.perYear" = "/年";
+"paywall.perMonth" = "/月";

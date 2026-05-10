@@ -134,3 +134,20 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "Custom (%d pts, best of %d)";
+
+/* Paywall */
+"paywall.headline" = "Elevate Your Badminton Game";
+"paywall.subtitle" = "AI-powered hawk-eye calls. No more disputes.";
+"paywall.feature.hawkeye" = "Instant hawk-eye line calls — no more disputes";
+"paywall.feature.analytics" = "Shot-by-shot analytics after every match";
+"paywall.feature.replay" = "Multi-angle replay analysis";
+"paywall.feature.share" = "Export & share your best moments";
+"paywall.bestValue" = "Best Value — Save 50%";
+"paywall.weeklyValue" = "Less than a shuttlecock per week";
+"paywall.subscribe" = "Start Free Trial";
+"paywall.cancelAnytime" = "Cancel Anytime";
+"paywall.restore" = "Restore Purchases";
+"paywall.terms" = "Terms of Use";
+"paywall.privacy" = "Privacy Policy";
+"paywall.perYear" = "/year";
+"paywall.perMonth" = "/month";

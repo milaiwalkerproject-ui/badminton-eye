@@ -136,3 +136,20 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "Tersuai (%d mata, %d game)";
+
+/* Paywall */
+"paywall.headline" = "Tingkatkan Permainan Badminton Anda";
+"paywall.subtitle" = "Panggilan hawk-eye berkuasa AI. Tiada lagi pertikaian.";
+"paywall.feature.hawkeye" = "Panggilan garisan hawk-eye segera — tiada lagi pertikaian";
+"paywall.feature.analytics" = "Analitik setiap pukulan selepas setiap perlawanan";
+"paywall.feature.replay" = "Analisis ulang tayang pelbagai sudut";
+"paywall.feature.share" = "Eksport & kongsi detik terbaik anda";
+"paywall.bestValue" = "Nilai Terbaik — Jimat 50%";
+"paywall.weeklyValue" = "Kurang daripada harga sebiji kok seminggu";
+"paywall.subscribe" = "Mulakan Percubaan Percuma";
+"paywall.cancelAnytime" = "Batal Bila-bila Masa";
+"paywall.restore" = "Pulihkan Pembelian";
+"paywall.terms" = "Terma Penggunaan";
+"paywall.privacy" = "Dasar Privasi";
+"paywall.perYear" = "/tahun";
+"paywall.perMonth" = "/bulan";

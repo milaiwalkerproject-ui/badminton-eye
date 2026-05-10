@@ -136,3 +136,20 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "Tilpasset (%d pt, bedst af %d)";
+
+/* Paywall */
+"paywall.headline" = "Løft dit badmintonspil";
+"paywall.subtitle" = "AI-drevet hawk-eye-dømning. Ingen flere uenigheder.";
+"paywall.feature.hawkeye" = "Øjeblikkelig hawk-eye-linjedømning — ingen uenigheder";
+"paywall.feature.analytics" = "Slag-for-slag analyse efter hver kamp";
+"paywall.feature.replay" = "Multi-vinkels replay-analyse";
+"paywall.feature.share" = "Eksporter og del dine bedste øjeblikke";
+"paywall.bestValue" = "Bedste værdi — Spar 50%";
+"paywall.weeklyValue" = "Mindre end prisen på en fjerbolde per uge";
+"paywall.subscribe" = "Start gratis prøveperiode";
+"paywall.cancelAnytime" = "Annuller når som helst";
+"paywall.restore" = "Gendan køb";
+"paywall.terms" = "Brugsbetingelser";
+"paywall.privacy" = "Privatlivspolitik";
+"paywall.perYear" = "/år";
+"paywall.perMonth" = "/måned";

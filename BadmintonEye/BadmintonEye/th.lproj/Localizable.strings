@@ -136,3 +136,20 @@
 
 /* Custom Format Badge */
 "setup.customDetail" = "กำหนดเอง (%d แต้ม, %d เกม)";
+
+/* Paywall */
+"paywall.headline" = "ยกระดับเกมแบดมินตันของคุณ";
+"paywall.subtitle" = "การเรียก hawk-eye ด้วย AI ไม่มีการโต้เถียงอีกต่อไป";
+"paywall.feature.hawkeye" = "การเรียกเส้น hawk-eye ทันที — ไม่มีการโต้เถียง";
+"paywall.feature.analytics" = "วิเคราะห์ทุกช็อตหลังจบแมตช์";
+"paywall.feature.replay" = "วิเคราะห์รีเพลย์หลายมุม";
+"paywall.feature.share" = "ส่งออกและแชร์ช่วงเวลาที่ดีที่สุดของคุณ";
+"paywall.bestValue" = "คุ้มค่าที่สุด — ประหยัด 50%";
+"paywall.weeklyValue" = "น้อยกว่าราคาลูกขนไก่หนึ่งลูกต่อสัปดาห์";
+"paywall.subscribe" = "เริ่มทดลองใช้ฟรี";
+"paywall.cancelAnytime" = "ยกเลิกได้ทุกเมื่อ";
+"paywall.restore" = "กู้คืนการซื้อ";
+"paywall.terms" = "ข้อกำหนดการใช้งาน";
+"paywall.privacy" = "นโยบายความเป็นส่วนตัว";
+"paywall.perYear" = "/ปี";
+"paywall.perMonth" = "/เดือน";
