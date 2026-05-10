@@ -1,0 +1,47 @@
+Stop arguing about line calls. BadmintonEye brings professional-grade Hawk-Eye AI line-calling technology to every player — from club nights to serious tournaments. Score effortlessly, settle disputes with confidence, and uncover the patterns that will take your game to the next level.
+
+KEY FEATURES
+
+Live Scoring
+- Tap-to-score interface built for one-handed use during play
+- Supports all formats: singles, doubles, 21-point, 15-point, and custom scoring rules
+- Automatic service rotation and let detection keep you accurate without thinking
+- Apple Watch companion app so a courtside scorer can track without touching your phone
+
+AI Hawk-Eye Line Calls
+- Record a disputed shot and let on-device AI analyse the shuttle's trajectory
+- Multi-angle fusion: import a second camera angle for even higher confidence readings
+- Visual trajectory replay shows exactly where the shuttle landed
+- Challenge system mirrors official tournament challenge rules
+
+Shot Analytics & Match Insights
+- Win-rate trend charts track your improvement over weeks and months
+- Scoring patterns chart reveals your strongest and weakest game phases
+- Head-to-head records against every opponent you've logged
+- Per-player profiles with full historical statistics
+
+Match History & Scorecards
+- Every match is saved automatically — never lose a score again
+- Crash recovery restores an in-progress match if your device restarts
+- Export shareable scorecards as images for WhatsApp groups or social media
+- iCloud sync keeps your history across all your Apple devices when signed in
+
+Multi-Angle Replay
+- Import video from any second angle and BadmintonEye fuses both analyses
+- Confidence percentage tells you exactly how certain the AI verdict is
+- Review trajectory frame-by-frame with the visual replay tool
+
+Built for Competitive Players
+- Court calibration profiles save your regular venue settings
+- Localisation support for international badminton communities
+- Accessible design with full VoiceOver support
+
+SUBSCRIPTION — HAWK EYE PRO
+
+Free: unlimited live scoring, full match history, player profiles, and statistics.
+
+Hawk Eye Pro (monthly or yearly, save 50% annually): unlocks AI line-call analysis, multi-angle fusion, visual trajectory replay, challenge system, and priority scorecard export.
+
+Payment is charged to your Apple ID. Subscription renews automatically unless cancelled at least 24 hours before the end of the current period. Manage or cancel anytime in your Apple ID account settings.
+
+Ready to see the game differently? Download BadmintonEye and never miss a call again.

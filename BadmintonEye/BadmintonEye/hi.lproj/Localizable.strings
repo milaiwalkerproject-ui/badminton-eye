@@ -7,6 +7,9 @@
 "settings.haptic" = "हैप्टिक फ़ीडबैक";
 "settings.haptic.subtitle" = "लाइव खेल के दौरान स्कोर बदलने पर वाइब्रेट करें";
 "settings.scoring" = "स्कोरिंग";
+"settings.audio" = "ऑडियो";
+"settings.voiceAnnouncements" = "वॉयस अनाउंसमेंट";
+"settings.voiceAnnouncements.subtitle" = "प्रत्येक रैली के बाद स्कोर की घोषणा करें (BWF प्रारूप)";
 "settings.premium" = "प्रीमियम";
 "settings.about" = "परिचय";
 "settings.version" = "संस्करण";

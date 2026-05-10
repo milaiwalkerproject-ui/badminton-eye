@@ -5,6 +5,9 @@
 "settings.haptic" = "触覚フィードバック";
 "settings.haptic.subtitle" = "得点時に振動で通知";
 "settings.scoring" = "スコアリング";
+"settings.audio" = "オーディオ";
+"settings.voiceAnnouncements" = "音声アナウンス";
+"settings.voiceAnnouncements.subtitle" = "各ラリー後にスコアをアナウンス（BWF形式）";
 "settings.premium" = "プレミアム";
 "settings.about" = "このアプリについて";
 "settings.version" = "バージョン";

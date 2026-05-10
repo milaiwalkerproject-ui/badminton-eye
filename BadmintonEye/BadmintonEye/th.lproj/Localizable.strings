@@ -7,6 +7,9 @@
 "settings.haptic" = "การสั่นตอบสนอง";
 "settings.haptic.subtitle" = "สั่นเมื่อคะแนนเปลี่ยนระหว่างแข่งขันสด";
 "settings.scoring" = "การนับคะแนน";
+"settings.audio" = "เสียง";
+"settings.voiceAnnouncements" = "ประกาศด้วยเสียง";
+"settings.voiceAnnouncements.subtitle" = "ประกาศคะแนนหลังจากแต่ละแรลลี่ (รูปแบบ BWF)";
 "settings.premium" = "พรีเมียม";
 "settings.about" = "เกี่ยวกับ";
 "settings.version" = "เวอร์ชัน";

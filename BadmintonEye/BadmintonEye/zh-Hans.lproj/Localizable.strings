@@ -5,6 +5,9 @@
 "settings.haptic" = "触觉反馈";
 "settings.haptic.subtitle" = "比赛中得分时振动提醒";
 "settings.scoring" = "计分";
+"settings.audio" = "音频";
+"settings.voiceAnnouncements" = "语音播报";
+"settings.voiceAnnouncements.subtitle" = "每次得分后播报（BWF格式）";
 "settings.premium" = "高级版";
 "settings.about" = "关于";
 "settings.version" = "版本";
