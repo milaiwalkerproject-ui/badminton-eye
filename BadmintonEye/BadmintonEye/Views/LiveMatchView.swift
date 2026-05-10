@@ -11,7 +11,10 @@ struct LiveMatchView: View {
     /// Cancellation token for the challenge countdown task.
     @State private var challengeCountdownTask: Task<Void, Never>?
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
     @State private var localization = LocalizationManager.shared
+    /// Game recording — auto-starts when the match view appears.
+    @State private var recorder = GameRecordingService()
 
     private var subscriptionManager: SubscriptionManager { SubscriptionManager.shared }
 
@@ -107,6 +110,11 @@ struct LiveMatchView: View {
                     .opacity(viewModel.canUndo ? 1.0 : 0.4)
                     .accessibilityLabel("Undo last point")
                     .accessibilityHint(viewModel.canUndo ? "Double-tap to undo the last scored point" : "No points to undo")
+
+                    // REC badge — visible while recording is active
+                    if recorder.isRecording {
+                        RecBadge()
+                    }
 
                     Spacer()
 
@@ -225,9 +233,27 @@ struct LiveMatchView: View {
             if viewModel.state.matchPhase == .inProgress && currentTotalScore > 0 {
                 startChallengeCountdown()
             }
+            // Auto-start recording when view appears
+            Task {
+                await recorder.startMatchRecording()
+            }
         }
         .onDisappear {
             challengeCountdownTask?.cancel()
+            // Stop recording when view leaves screen (background / navigation)
+            Task {
+                await recorder.stopMatchRecording()
+            }
+        }
+        .alert("Camera Access Required", isPresented: $recorder.permissionDenied) {
+            Button("Open Settings") {
+                if let url = URL(string: "app-settings:") {
+                    openURL(url)
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Badminton Eye needs camera access to record your match. Enable it in Settings.")
         }
         .navigationDestination(
             isPresented: Binding(
@@ -266,5 +292,35 @@ struct LiveMatchView: View {
                 // Task was cancelled (new point scored or view disappeared) — expected
             }
         }
+    }
+}
+
+// MARK: - RecBadge
+
+/// Pulsing red REC indicator shown in the top-left corner of LiveMatchView
+/// while GameRecordingService is actively recording.
+private struct RecBadge: View {
+    @State private var pulse: Bool = false
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Circle()
+                .fill(Color.red)
+                .frame(width: 8, height: 8)
+                .scaleEffect(pulse ? 1.3 : 0.9)
+                .animation(
+                    .easeInOut(duration: 0.8).repeatForever(autoreverses: true),
+                    value: pulse
+                )
+            Text("REC")
+                .font(.caption.bold())
+                .foregroundStyle(.white)
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(Color.red.opacity(0.75))
+        .clipShape(Capsule())
+        .onAppear { pulse = true }
+        .accessibilityLabel("Recording in progress")
     }
 }
