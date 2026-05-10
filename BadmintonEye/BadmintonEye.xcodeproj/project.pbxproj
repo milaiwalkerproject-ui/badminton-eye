@@ -80,6 +80,7 @@
 		LM1001 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = LM2001 /* LocalizationManager.swift */; };
 		PR1001 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = PR2001 /* PrivacyInfo.xcprivacy */; };
 		IL1001 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = IL4001 /* Localizable.strings */; };
+		UT10001 /* BadmintonEyeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20001 /* BadmintonEyeTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +90,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = L60001;
 			remoteInfo = BadmintonEyeLiveActivity;
+		};
+		UTC0001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AB0001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A60001;
+			remoteInfo = BadmintonEye;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -185,6 +193,8 @@
 		IL2007 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/Localizable.strings; sourceTree = "<group>"; };
 		IL2008 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/Localizable.strings; sourceTree = "<group>"; };
 		IL2009 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/Localizable.strings; sourceTree = "<group>"; };
+		UT20001 /* BadmintonEyeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadmintonEyeTests.swift; sourceTree = "<group>"; };
+		UT20002 /* BadmintonEyeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BadmintonEyeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -217,6 +227,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		UT30001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -226,6 +243,7 @@
 				A40001 /* BadmintonEye */,
 				L40001 /* BadmintonEyeLiveActivity */,
 				W40001 /* BadmintonEyeWatch */,
+				UT40001 /* BadmintonEyeTests */,
 				A40099 /* Products */,
 				W40099 /* Frameworks */,
 			);
@@ -345,8 +363,17 @@
 				A2000C /* BadmintonEye.app */,
 				L20004 /* BadmintonEyeLiveActivity.appex */,
 				W20008 /* BadmintonEyeWatch.app */,
+				UT20002 /* BadmintonEyeTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		UT40001 /* BadmintonEyeTests */ = {
+			isa = PBXGroup;
+			children = (
+				UT20001 /* BadmintonEyeTests.swift */,
+			);
+			path = BadmintonEyeTests;
 			sourceTree = "<group>";
 		};
 		W40001 /* BadmintonEyeWatch */ = {
@@ -470,6 +497,23 @@
 			productReference = L20004 /* BadmintonEyeLiveActivity.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		UT60001 /* BadmintonEyeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = UT70001 /* Build configuration list for PBXNativeTarget "BadmintonEyeTests" */;
+			buildPhases = (
+				UT80001 /* Sources */,
+				UT30001 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				UTD0001 /* PBXTargetDependency */,
+			);
+			name = BadmintonEyeTests;
+			productName = BadmintonEyeTests;
+			productReference = UT20002 /* BadmintonEyeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -488,6 +532,10 @@
 					};
 					W60001 = {
 						CreatedOnToolsVersion = 16.0;
+					};
+					UT60001 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = A60001;
 					};
 				};
 			};
@@ -518,6 +566,7 @@
 				A60001 /* BadmintonEye */,
 				L60001 /* BadmintonEyeLiveActivity */,
 				W60001 /* BadmintonEyeWatch */,
+				UT60001 /* BadmintonEyeTests */,
 			);
 		};
 /* End PBXProject section */
@@ -632,6 +681,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		UT80001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				UT10001 /* BadmintonEyeTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -639,6 +696,11 @@
 			isa = PBXTargetDependency;
 			target = L60001 /* BadmintonEyeLiveActivity */;
 			targetProxy = L30001 /* PBXContainerItemProxy */;
+		};
+		UTD0001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A60001 /* BadmintonEye */;
+			targetProxy = UTC0001 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -886,6 +948,44 @@
 			};
 			name = Release;
 		};
+		UTE0001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 2.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.badmintoneye.app.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BadmintonEye.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BadmintonEye";
+			};
+			name = Debug;
+		};
+		UTE0002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 2.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.badmintoneye.app.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BadmintonEye.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BadmintonEye";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -921,6 +1021,15 @@
 			buildConfigurations = (
 				LE0001 /* Debug */,
 				LE0002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		UT70001 /* Build configuration list for PBXNativeTarget "BadmintonEyeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				UTE0001 /* Debug */,
+				UTE0002 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
