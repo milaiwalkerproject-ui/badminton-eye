@@ -147,3 +147,6 @@
 "account.deleted.message" = "Al din kamphistorik og kontodata er fjernet fra denne enhed.";
 "account.deleted.appleNote" = "For at tilbagekalde appens adgang fuldstændigt skal du besøge Indstillinger → Apple ID → Adgangskode og sikkerhed → Log ind med Apple.";
 "account.deleted.getStarted" = "Kom i gang";
+"common.ok" = "OK";
+"settings.deleteAccount.error.title" = "Sletning mislykkedes";
+"settings.deleteAccount.error.message" = "Nogle data kunne ikke slettes. Prøv igen eller kontakt support.";

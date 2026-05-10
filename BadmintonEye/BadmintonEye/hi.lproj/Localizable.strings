@@ -147,3 +147,6 @@
 "account.deleted.message" = "आपका सभी मैच इतिहास और खाता डेटा इस डिवाइस से हटा दिया गया है।";
 "account.deleted.appleNote" = "ऐप का एक्सेस पूरी तरह रद्द करने के लिए सेटिंग्स → Apple ID → पासवर्ड और सुरक्षा → Apple से साइन इन पर जाएं।";
 "account.deleted.getStarted" = "शुरू करें";
+"common.ok" = "ठीक है";
+"settings.deleteAccount.error.title" = "हटाना विफल हुआ";
+"settings.deleteAccount.error.message" = "कुछ डेटा हटाया नहीं जा सका। कृपया पुनः प्रयास करें या सहायता से संपर्क करें।";

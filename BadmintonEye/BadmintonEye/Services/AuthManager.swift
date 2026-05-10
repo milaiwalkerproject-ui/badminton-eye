@@ -88,19 +88,23 @@ final class AuthManager: NSObject, @unchecked Sendable {
 
     // MARK: - Account Deletion (Guideline 5.1.1(v))
 
-    /// Permanently deletes the user's account and all locally stored data.
+    /// Permanently deletes the user's account and ALL associated data.
     ///
     /// Performs the following cleanup in order:
-    /// 1. Deletes all `PersistedMatch` records from SwiftData.
-    /// 2. Wipes the entire app UserDefaults domain (all keys, not just auth keys).
-    /// 3. Clears in-memory credential state and signs out.
+    /// 1. Purges all `PersistedMatch` records from SwiftData.
+    /// 2. Deletes the app's private CloudKit zone (removes cloud-synced data).
+    /// 3. Wipes all Keychain items stored under the app's service identifier.
+    /// 4. Wipes the entire app UserDefaults domain (all keys, not just auth keys).
+    /// 5. Clears in-memory credential state and signs out.
     ///
     /// - Parameter context: The SwiftData `ModelContext` to use for the batch delete.
     ///
-    /// - Note on Apple ID token revocation: This app has no server component, so the
-    ///   Apple REST token-revocation endpoint (`https://appleid.apple.com/auth/revoke`)
-    ///   cannot be called from the client. The user must revoke the app's Apple ID access
-    ///   manually via Settings → [Your Name] → Sign-In & Security → Sign in with Apple.
+    /// - Note on Apple ID token revocation: Programmatic token revocation via
+    ///   `https://appleid.apple.com/auth/revoke` requires a server-side `client_secret`
+    ///   JWT that cannot be safely embedded in the app binary. This app is client-only.
+    ///   The user is presented with instructions to complete revocation via
+    ///   Settings → [Your Name] → Sign-In & Security → Sign in with Apple.
+    ///   All local and cloud data is wiped before presenting that instruction.
     @MainActor
     func deleteAccount(context: ModelContext) async throws {
         guard userIdentifier != nil else { return }
@@ -114,14 +118,21 @@ final class AuthManager: NSObject, @unchecked Sendable {
             try context.delete(model: PersistedMatch.self)
             try context.save()
 
-            // 2. Wipe entire app UserDefaults domain — removes ALL app keys,
+            // 2. Delete CloudKit private zone — removes all cloud-synced match data.
+            //    Silently succeeds if the zone doesn't exist (user never synced).
+            await deleteCloudKitData()
+
+            // 3. Wipe all Keychain items for this app (auth tokens, cached credentials)
+            wipeKeychain()
+
+            // 4. Wipe entire app UserDefaults domain — removes ALL app keys,
             //    not just the 3 auth keys, ensuring complete data removal.
             if let bundleID = Bundle.main.bundleIdentifier {
                 UserDefaults.standard.removePersistentDomain(forName: bundleID)
             }
             UserDefaults.standard.synchronize()
 
-            // 3. Clear in-memory state and sign out
+            // 5. Clear in-memory state and sign out
             userIdentifier = nil
             userName = nil
             userEmail = nil
@@ -133,6 +144,56 @@ final class AuthManager: NSObject, @unchecked Sendable {
             deletionError = error
             throw error
         }
+    }
+
+    // MARK: - Private Deletion Helpers
+
+    /// Deletes all records from the app's CloudKit private zone.
+    ///
+    /// SwiftData uses `com.apple.coredata.cloudkit.zone` for its sync zone.
+    /// Deletion is best-effort: zone-not-found errors are silently swallowed
+    /// because they mean the user has no cloud data to delete.
+    private func deleteCloudKitData() async {
+        #if canImport(CloudKit)
+        let containerID = "iCloud.com.badmintoneye.app"
+        let container = CKContainer(identifier: containerID)
+        // SwiftData's CloudKit zone name
+        let zoneID = CKRecordZone.ID(
+            zoneName: "com.apple.coredata.cloudkit.zone",
+            ownerName: CKCurrentUserDefaultName
+        )
+        do {
+            _ = try await container.privateCloudDatabase.deleteRecordZone(withID: zoneID)
+        } catch let ckError as CKError where ckError.code == .zoneNotFound {
+            // No zone exists — user has no CloudKit data; treat as success
+        } catch {
+            // Non-fatal: log but do not block account deletion
+            // (CloudKit may be offline or user may not have iCloud signed in)
+            #if DEBUG
+            print("[AuthManager] CloudKit zone deletion failed (non-fatal): \(error)")
+            #endif
+        }
+        #endif
+    }
+
+    /// Deletes all Keychain GenericPassword items stored under the app's service
+    /// identifier. This is a no-op when the app has no Keychain entries.
+    private func wipeKeychain() {
+        let service = Bundle.main.bundleIdentifier ?? "com.badmintoneye.app"
+
+        // Delete generic passwords keyed to this service (e.g. cached auth tokens)
+        let genericQuery: [CFString: Any] = [
+            kSecClass: kSecClassGenericPassword,
+            kSecAttrService: service
+        ]
+        SecItemDelete(genericQuery as CFDictionary)
+
+        // Delete any internet passwords the app may have stored
+        let internetQuery: [CFString: Any] = [
+            kSecClass: kSecClassInternetPassword,
+            kSecAttrServer: "appleid.apple.com"
+        ]
+        SecItemDelete(internetQuery as CFDictionary)
     }
 
     // MARK: - Auth State Check

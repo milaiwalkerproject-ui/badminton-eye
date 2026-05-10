@@ -8,9 +8,12 @@
 //   - SwiftData batch delete via in-memory ModelContainer
 //   - Guard: no-op when not signed in
 //   - Error state is nil on success
+//   - Keychain wipe: items stored under app service are removed
+//   - CloudKit deletion: deleteAccount completes even when CKContainer is offline
 
 import XCTest
 import SwiftData
+import Security
 @testable import BadmintonEye
 
 @MainActor
@@ -143,5 +146,85 @@ final class AccountDeletionTests: XCTestCase {
 
         XCTAssertNil(manager.deletionError,
                      "deletionError must be nil after successful deleteAccount")
+    }
+
+    // MARK: - Keychain Wipe
+
+    /// Seeds a GenericPassword Keychain item under the app's service, then
+    /// verifies it is gone after deleteAccount runs.
+    func testDeleteAccountWipesKeychainItems() async throws {
+        let service = "com.badmintoneye.app"
+
+        // Seed a Keychain item
+        let addQuery: [CFString: Any] = [
+            kSecClass: kSecClassGenericPassword,
+            kSecAttrService: service,
+            kSecAttrAccount: "testKeychainItem",
+            kSecValueData: "fake-token".data(using: .utf8)!
+        ]
+        // Remove any previous entry from a prior test run
+        SecItemDelete(addQuery as CFDictionary)
+        let addStatus = SecItemAdd(addQuery as CFDictionary, nil)
+        XCTAssertEqual(addStatus, errSecSuccess, "Keychain seed should succeed")
+
+        // Verify item is present before deletion
+        let checkQuery: [CFString: Any] = [
+            kSecClass: kSecClassGenericPassword,
+            kSecAttrService: service,
+            kSecReturnData: true,
+            kSecMatchLimit: kSecMatchLimitOne
+        ]
+        var result: AnyObject?
+        let statusBefore = SecItemCopyMatching(checkQuery as CFDictionary, &result)
+        XCTAssertEqual(statusBefore, errSecSuccess, "Item must exist before deleteAccount")
+
+        // Run account deletion
+        seedAuthState()
+        let context = try makeInMemoryContext()
+        try await AuthManager.shared.deleteAccount(context: context)
+
+        // Verify item has been wiped
+        let statusAfter = SecItemCopyMatching(checkQuery as CFDictionary, &result)
+        XCTAssertEqual(statusAfter, errSecItemNotFound,
+                       "Keychain item must be deleted by deleteAccount (wipeKeychain)")
+    }
+
+    // MARK: - CloudKit Offline Resilience
+
+    /// Verifies that deleteAccount completes successfully even when CloudKit
+    /// is unavailable (offline / no iCloud account) — CKError must not propagate.
+    func testDeleteAccountSucceedsWhenCloudKitUnavailable() async throws {
+        // Simulate no iCloud sign-in: deleteCloudKitData should not throw.
+        // The CloudKit zone delete is best-effort; if CKError.notAuthenticated
+        // or CKError.zoneNotFound occurs, deleteAccount still completes.
+        seedAuthState()
+        let context = try makeInMemoryContext()
+        let manager = AuthManager.shared
+        manager.accountDeleted = false
+
+        // Should not throw even on a simulator without iCloud configured
+        await XCTAssertNoThrowAsync(try await manager.deleteAccount(context: context))
+
+        XCTAssertTrue(manager.accountDeleted,
+                      "accountDeleted must be true even if CloudKit was unavailable")
+        XCTAssertFalse(manager.isSignedIn,
+                       "User must be signed out even if CloudKit was unavailable")
+    }
+}
+
+// MARK: - XCTest Async Helpers
+
+extension XCTestCase {
+    func XCTAssertNoThrowAsync(
+        _ expression: @autoclosure () async throws -> some Any,
+        _ message: @autoclosure () -> String = "",
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async {
+        do {
+            _ = try await expression()
+        } catch {
+            XCTFail("Unexpected throw: \(error). \(message())", file: file, line: line)
+        }
     }
 }

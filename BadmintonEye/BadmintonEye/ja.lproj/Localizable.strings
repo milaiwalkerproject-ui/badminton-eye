@@ -145,3 +145,6 @@
 "account.deleted.message" = "すべての試合履歴とアカウントデータがこのデバイスから削除されました。";
 "account.deleted.appleNote" = "アプリのアクセスを完全に取り消すには、設定 → Apple ID → パスワードとセキュリティ → Apple でサインイン にアクセスしてください。";
 "account.deleted.getStarted" = "はじめる";
+"common.ok" = "OK";
+"settings.deleteAccount.error.title" = "削除に失敗しました";
+"settings.deleteAccount.error.message" = "一部のデータを削除できませんでした。もう一度お試しいただくか、サポートにお問い合わせください。";

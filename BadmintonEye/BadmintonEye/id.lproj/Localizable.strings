@@ -147,3 +147,6 @@
 "account.deleted.message" = "Semua riwayat pertandingan dan data akun Anda telah dihapus dari perangkat ini.";
 "account.deleted.appleNote" = "Untuk mencabut akses aplikasi sepenuhnya, kunjungi Pengaturan → Apple ID → Kata Sandi & Keamanan → Masuk dengan Apple.";
 "account.deleted.getStarted" = "Mulai";
+"common.ok" = "OK";
+"settings.deleteAccount.error.title" = "Penghapusan Gagal";
+"settings.deleteAccount.error.message" = "Beberapa data tidak dapat dihapus. Coba lagi atau hubungi dukungan.";

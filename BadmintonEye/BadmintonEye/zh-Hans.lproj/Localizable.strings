@@ -145,3 +145,6 @@
 "account.deleted.message" = "您的所有比赛记录和账户数据已从本设备中删除。";
 "account.deleted.appleNote" = "如需完全撤销应用权限，请前往设置 → Apple ID → 密码与安全性 → 使用 Apple ID 登录。";
 "account.deleted.getStarted" = "开始使用";
+"common.ok" = "好";
+"settings.deleteAccount.error.title" = "删除失败";
+"settings.deleteAccount.error.message" = "部分数据无法删除，请重试或联系支持。";

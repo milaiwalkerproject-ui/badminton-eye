@@ -145,3 +145,6 @@
 "account.deleted.message" = "All your match history and account data have been removed from this device.";
 "account.deleted.appleNote" = "To fully revoke app access, visit Settings → Apple ID → Sign-In & Security → Sign in with Apple.";
 "account.deleted.getStarted" = "Get Started";
+"common.ok" = "OK";
+"settings.deleteAccount.error.title" = "Deletion Failed";
+"settings.deleteAccount.error.message" = "Some data could not be deleted. Please try again or contact support.";

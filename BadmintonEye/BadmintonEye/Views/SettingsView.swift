@@ -9,6 +9,7 @@ struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var showPaywall = false
     @State private var showDeleteAccountAlert = false
+    @State private var showDeletionErrorAlert = false
     @AppStorage("hapticFeedbackEnabled") private var hapticEnabled = true
     @AppStorage("voiceAnnouncementsEnabled") private var voiceAnnouncementsEnabled = false
     @State private var localization = LocalizationManager.shared
@@ -47,12 +48,24 @@ struct SettingsView: View {
             Button(localization.localized("settings.deleteAccount.confirm"),
                    role: .destructive) {
                 Task {
-                    try? await authManager.deleteAccount(context: modelContext)
+                    do {
+                        try await authManager.deleteAccount(context: modelContext)
+                    } catch {
+                        showDeletionErrorAlert = true
+                    }
                 }
             }
             Button(localization.localized("common.cancel"), role: .cancel) {}
         } message: {
             Text(localization.localized("settings.deleteAccount.message"))
+        }
+        .alert(
+            localization.localized("settings.deleteAccount.error.title"),
+            isPresented: $showDeletionErrorAlert
+        ) {
+            Button(localization.localized("common.ok"), role: .cancel) {}
+        } message: {
+            Text(localization.localized("settings.deleteAccount.error.message"))
         }
     }
 

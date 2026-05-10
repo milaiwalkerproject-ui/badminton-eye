@@ -147,3 +147,6 @@
 "account.deleted.message" = "Semua sejarah perlawanan dan data akaun anda telah dibuang daripada peranti ini.";
 "account.deleted.appleNote" = "Untuk membatalkan akses aplikasi sepenuhnya, lawati Tetapan → Apple ID → Kata Laluan & Keselamatan → Daftar masuk dengan Apple.";
 "account.deleted.getStarted" = "Mulakan";
+"common.ok" = "OK";
+"settings.deleteAccount.error.title" = "Pemadaman Gagal";
+"settings.deleteAccount.error.message" = "Sesetengah data tidak dapat dipadam. Sila cuba lagi atau hubungi sokongan.";

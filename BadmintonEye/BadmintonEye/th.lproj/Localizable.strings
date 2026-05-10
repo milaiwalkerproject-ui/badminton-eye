@@ -147,3 +147,6 @@
 "account.deleted.message" = "ประวัติแมตช์และข้อมูลบัญชีทั้งหมดของคุณถูกลบออกจากอุปกรณ์นี้แล้ว";
 "account.deleted.appleNote" = "หากต้องการเพิกถอนการเข้าถึงแอปทั้งหมด ให้ไปที่ การตั้งค่า → Apple ID → รหัสผ่านและความปลอดภัย → ลงชื่อเข้าใช้ด้วย Apple";
 "account.deleted.getStarted" = "เริ่มต้น";
+"common.ok" = "ตกลง";
+"settings.deleteAccount.error.title" = "การลบล้มเหลว";
+"settings.deleteAccount.error.message" = "ไม่สามารถลบข้อมูลบางส่วนได้ กรุณาลองใหม่หรือติดต่อฝ่ายสนับสนุน";
