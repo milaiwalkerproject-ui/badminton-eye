@@ -15,8 +15,10 @@ struct SyncPayload: Codable {
     }
 
     /// Encode to dictionary for WatchConnectivity transport.
-    func toDictionary() -> [String: Any] {
-        let data = try! JSONEncoder().encode(self)
+    /// Returns `nil` when encoding fails so the transport layer can degrade
+    /// gracefully instead of crashing the app.
+    func toDictionary() -> [String: Any]? {
+        guard let data = try? JSONEncoder().encode(self) else { return nil }
         return ["syncPayload": data]
     }
 

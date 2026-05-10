@@ -30,7 +30,7 @@ final class WatchSyncManager: NSObject, WCSessionDelegate, @unchecked Sendable {
         guard WCSession.default.activationState == .activated else { return }
 
         let payload = SyncPayload(from: state, isActive: isActive)
-        let dict = payload.toDictionary()
+        guard let dict = payload.toDictionary() else { return }
 
         // Guaranteed delivery (persisted, delivered on next launch)
         try? WCSession.default.updateApplicationContext(dict)
