@@ -52,7 +52,17 @@ struct WatchScoringView: View {
             )
         }
         .overlay(alignment: .topTrailing) {
-            if viewModel.isOffline {
+            if viewModel.needsOfflineSync {
+                // Offline delta queued — syncing to iPhone
+                HStack(spacing: 3) {
+                    Image(systemName: "arrow.triangle.2.circlepath")
+                        .font(.caption2)
+                    Text("+\(viewModel.offlineDelta)")
+                        .font(.caption2.bold())
+                }
+                .foregroundStyle(.orange)
+                .padding(4)
+            } else if viewModel.isOffline {
                 Image(systemName: "wifi.slash")
                     .font(.caption2)
                     .foregroundStyle(.yellow)

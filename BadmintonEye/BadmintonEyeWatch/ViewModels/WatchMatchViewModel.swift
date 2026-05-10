@@ -7,13 +7,32 @@ import ScoringEngine
 /// Supports offline scoring via local MatchEngine when iPhone is unreachable.
 /// Persists state to UserDefaults after every point for SIGKILL protection.
 /// iPhone-authoritative: adopts iPhone state on reconnection.
+///
+/// Offline reconciliation (task 8a82ba0f):
+/// When the Watch scores locally while offline, intents are queued in
+/// `pendingIntents`. On the next iPhone state update, the queue is replayed
+/// via sendScoringIntent so iPhone can apply the delta authoritatively.
+/// iPhone echoes back the merged state, which the Watch then adopts.
 @Observable
 @MainActor
 final class WatchMatchViewModel {
 
+    // MARK: - Types
+
+    /// A scoring intent queued while the Watch was offline.
+    private struct PendingIntent: Codable {
+        let side: Side
+        let timestamp: Date
+    }
+
+    // MARK: - State
+
     private(set) var state: MatchState?
     private(set) var isOffline: Bool = false
     private var localEngine: Bool = false
+    /// Scoring intents accumulated while the Watch was offline.
+    private var pendingIntents: [PendingIntent] = []
+
     private let workoutManager = WorkoutManager.shared
 
     // MARK: - Computed Properties
@@ -27,6 +46,11 @@ final class WatchMatchViewModel {
     var isMatchActive: Bool { state != nil && state?.matchPhase == .inProgress }
     var completedGames: [GameState] { state?.games ?? [] }
 
+    /// True when local-only scoring events are queued and awaiting iPhone sync.
+    var needsOfflineSync: Bool { !pendingIntents.isEmpty }
+    /// How many local-only points are awaiting relay to iPhone.
+    var offlineDelta: Int { pendingIntents.count }
+
     // MARK: - Init
 
     init() {
@@ -39,8 +63,8 @@ final class WatchMatchViewModel {
     // MARK: - Scoring
 
     /// Score a point for the given side. Sends intent to iPhone if reachable,
-    /// otherwise uses local MatchEngine for immediate UI feedback.
-    /// Always persists to UserDefaults.
+    /// otherwise uses local MatchEngine for immediate UI feedback and queues
+    /// the intent for relay when connectivity is restored.
     func scorePoint(for side: Side) {
         guard let currentState = state, currentState.matchPhase == .inProgress else { return }
 
@@ -48,9 +72,10 @@ final class WatchMatchViewModel {
             // Online: send intent to iPhone for authoritative processing
             WatchSessionManager.shared.sendScoringIntent(side: side)
         } else {
-            // Offline: score locally
+            // Offline: score locally and queue intent for relay on reconnect
             isOffline = true
             localEngine = true
+            pendingIntents.append(PendingIntent(side: side, timestamp: Date()))
         }
 
         // Always apply locally for immediate UI update
@@ -74,14 +99,28 @@ final class WatchMatchViewModel {
 
     // MARK: - Receiving State from iPhone
 
-    /// iPhone-authoritative: adopt the iPhone's state unconditionally.
-    /// Auto-starts workout when match becomes active, ends when match finishes.
-    /// Plays haptic only for iPhone-initiated changes (when !localEngine at receive time)
-    /// to avoid double-haptic when the Watch scored locally and iPhone echoes back.
+    /// iPhone-authoritative: adopt the iPhone's state on reconnection.
+    ///
+    /// Offline reconciliation: if the Watch accumulated local-only scoring
+    /// intents while offline, they are replayed to iPhone before adopting its
+    /// state. iPhone will process the queued delta and echo back the merged
+    /// authoritative state, which we then adopt on the next call.
     func receiveStateFromiPhone(_ payload: SyncPayload) {
         let wasActive = state?.matchPhase == .inProgress
         let previousGamesCount = state?.games.count ?? 0
         let wasLocallyUpdated = localEngine
+
+        // Offline reconciliation: replay queued intents so iPhone can apply
+        // the delta authoritatively before we adopt its state.
+        if wasLocallyUpdated && !pendingIntents.isEmpty {
+            if WCSession.default.isReachable {
+                replayPendingIntents()
+                // Adopt iPhone baseline; the next echo will carry the merged state.
+            } else {
+                // Still not reachable — keep local state and wait for next iPhone push.
+                return
+            }
+        }
 
         state = payload.matchState.toMatchState()
         localEngine = false
@@ -125,6 +164,11 @@ final class WatchMatchViewModel {
             UserDefaults.standard.set(data, forKey: "watchMatchState")
         }
         UserDefaults.standard.set(isOffline, forKey: "watchIsOffline")
+
+        // Persist pending offline intents so they survive SIGKILL.
+        if let intentData = try? JSONEncoder().encode(pendingIntents) {
+            UserDefaults.standard.set(intentData, forKey: "watchPendingIntents")
+        }
     }
 
     /// Restore state from UserDefaults on launch.
@@ -144,15 +188,33 @@ final class WatchMatchViewModel {
         if isOffline {
             localEngine = true
         }
+
+        // Restore pending offline intents.
+        if let intentData = UserDefaults.standard.data(forKey: "watchPendingIntents"),
+           let intents = try? JSONDecoder().decode([PendingIntent].self, from: intentData) {
+            pendingIntents = intents
+        }
     }
 
     /// Clear persisted state (called when match ends or is dismissed).
     func clearLocalPersistence() {
         UserDefaults.standard.removeObject(forKey: "watchMatchState")
         UserDefaults.standard.removeObject(forKey: "watchIsOffline")
+        UserDefaults.standard.removeObject(forKey: "watchPendingIntents")
     }
 
-    // MARK: - Private Haptics
+    // MARK: - Private
+
+    /// Relay queued offline intents to iPhone in chronological order.
+    /// Clears the queue immediately so the next iPhone echo is adopted normally.
+    private func replayPendingIntents() {
+        let intents = pendingIntents
+        pendingIntents = []
+        UserDefaults.standard.removeObject(forKey: "watchPendingIntents")
+        for intent in intents {
+            WatchSessionManager.shared.sendScoringIntent(side: intent.side)
+        }
+    }
 
     private var hapticEnabled: Bool {
         UserDefaults.standard.object(forKey: "hapticFeedbackEnabled") as? Bool ?? true
