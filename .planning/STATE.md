@@ -9,12 +9,33 @@ See: .planning/PROJECT.md (updated 2026-04-05)
 
 ## Current Position
 
-Phase: 41 of 41
-Plan: Phase 41 complete
-Status: Milestone complete
-Last activity: 2026-04-08 — v1.18 complete, all 6 requirements verified, 106 tests passing
+Phase: v2.0 App Store Release
+Plan: Active — App Store submission pipeline
+Status: In progress — PRs #1-17 merged to main; PRs #18-27 under CTO review
+Last activity: 2026-05-10 — v2.0 release pipeline (screenshots, CI, Watch sync, WidgetKit, PaywallV2)
 
-Progress: [##########] 100% (v1.18)
+Progress: [#########-] 90% (v2.0 — pending App Store submission)
+
+## v2.0 Features Shipped (PRs #1-17 merged)
+
+| PR | Feature |
+|----|---------|
+| #1  | L10n: register all .lproj/Localizable.strings in project.pbxproj |
+| #2  | L10n: add missing voice-announcement keys to all 8 non-English locales |
+| #3  | Privacy: add PrivacyInfo.xcprivacy manifest |
+| #4  | Crash: safe ModelContainer init with in-memory fallback |
+| #5  | Crash: safe JSONEncoder in SyncPayload (no try!) |
+| #6  | Crash: eliminate fatalError in ResultFusionService |
+| #7  | Release: bump CURRENT_PROJECT_VERSION to 2 |
+| #8  | Watch: log and recover from WCSession sendMessage failures |
+| #9  | Tests: add BadmintonEyeTests XCTest target |
+| #10 | Docs: update v2.0 release notes |
+| #11 | Watch: relay offline scoring intents on iPhone reconnect |
+| #12 | Perf: defer persist/Watch sync; reposition score (>=48pt mid-top) |
+| #13 | Infoplist: add ITSAppUsesNonExemptEncryption=NO |
+| #14 | AppStore: App Store reviewer demo credentials |
+| #15 | StoreKit: 7-day free trial introductory offer on yearly subscription |
+| #17 | Tests: add LiveMatchPerformanceTests scoring throughput baseline |
 
 ## Performance Metrics
 

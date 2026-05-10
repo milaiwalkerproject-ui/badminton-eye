@@ -2,6 +2,16 @@
 
 ## Milestones
 
+- [ ] **v2.0 App Store Release** -- In progress (target: 2026-05)
+  - Score display redesign (>=48pt bold mid-top)
+  - Watch offline sync with reconnect replay
+  - PrivacyInfo.xcprivacy manifest
+  - 8-locale localization + voice announcements
+  - Camera recording (AVCaptureSession)
+  - WidgetKit live-score widget
+  - Free trial (7-day introductory offer)
+  - App Store submission pipeline
+
 - [x] **v1.0 MVP** -- Phases 1-5 (shipped 2026-03-29)
 - [x] **v1.1 Hawk Eye Pro + Analytics** -- Phases 6-9 (shipped 2026-03-29)
 - [x] **v1.2 Haptic Scoring, BWF 3x15 & Multi-Camera** -- Phases 10-12 (shipped 2026-03-29)
