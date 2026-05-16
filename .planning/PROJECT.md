@@ -8,24 +8,53 @@ A native iOS app (iPhone + iPad) with Apple Watch companion for badminton player
 
 Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time — making scorekeeping seamless during actual play.
 
-## Current Milestone: v1.18 — Custom Scoring Mid-Switch & Validation Edge Cases
+## Current Milestone: MVP — Installable iPhone Prototype with Auto-Suggest Scoring
 
-**Goal:** Fill the remaining gaps in CustomScoringTests: the custom mid-game switch behavior (fires in the final game at midGameSwitchPoint) is never exercised by tests, and several ScoringRules.isValid boundary conditions are untested.
+**Pivot (2026-05-16):** Previous milestones (v1.x test coverage, v2.0 App Store prep) are paused. Goal is now a working iPhone prototype installable via Xcode on a **free Apple ID**, with **automatic point-winner suggestion** from a court-side camera that the user confirms.
 
-**Target features:**
-- Test that mid-game switch fires at midGameSwitchPoint in the final game of a custom-rules match
-- Test that mid-game switch only fires once in a custom-rules final game
-- Test that mid-game switch does NOT fire in non-final games of a custom-rules match
-- Test isValid rejects capScore <= pointsToWin
-- Test isValid rejects midGameSwitchPoint of zero
-- Test isValid accepts a minimal 1-game best-of-1 custom format
+**Why pivot:** The original product was a manual scorekeeper with an optional Hawk Eye challenge. The user's definition of an acceptable MVP requires the app to suggest who won each rally — manual-only is not good enough. Everything that depends on a paid developer account is cut so the prototype can be installed and iterated on without App Store friction.
+
+**Acceptance criteria:**
+1. Plug iPhone into Mac → Run in Xcode with a free Apple ID → app launches.
+2. Start a singles match, calibrate the court by tapping the 4 corners in the camera view.
+3. Play real rallies. User taps "Rally Ended" after each rally; within ~2 seconds the app suggests a winner with a confidence indication and a 1-tap override.
+4. Confirmed points update the score via the existing `ScoringEngine` (BWF rules).
+5. Finished matches appear in local match history (SwiftData, no CloudKit).
+6. Suggestion accuracy is "useful, not perfect" — target ~70% on the camera setup used for testing; wrong suggestions are easy to override in <1s.
+
+**In scope:**
+- Manual scoring on iPhone (existing — kept as always-works fallback)
+- Continuous court-side capture during a match (extends the new `GameRecordingService`)
+- Real shuttle detector: drop in a pretrained model (TrackNetV3 / public YOLO shuttlecock), Core ML export, swap into `CoreMLShuttleDetector` via the existing `ShuttleDetecting` protocol
+- Rally-end → trajectory → landing-on-calibrated-court → side proposal → confirm/override UI
+- Local-only `SwiftData` match history
+
+**Out of scope (cut for MVP):**
+- Apple Watch companion (paid-only provisioning)
+- CloudKit sync (paid-only)
+- Apple Sign In + `AuthManager` (paid-only) — replace with no-account mode
+- Live Activity / Dynamic Island (paid-only entitlement)
+- Subscription paywall + StoreKit IAP (no on-device IAP on free Apple ID) — auto-suggest is always on
+- Continuous rally-end *detection* (user taps; auto rally-end is a separate research problem)
+- Multi-angle / dual-camera (single court-side camera only)
+- TestFlight / App Store submission
+
+**Phases:**
+- **A — Strip down for free Apple ID install.** Feature-flag or remove CloudKit, Watch target, Live Activity, Sign-in-with-Apple, StoreKit gating. Verify build runs on a tethered iPhone with a free Apple ID.
+- **B — Continuous capture wired into live match.** Extend `GameRecordingService` so the camera runs alongside scoring; show calibration UX (`CourtCalibrationView`) before match starts.
+- **C — Real shuttle detector.**
+  - C1: Drop in a public pretrained shuttle model (TrackNetV3 or YOLO shuttlecock), convert to Core ML, replace `PlaceholderShuttleDetector` behind `CoreMLShuttleDetector`.
+  - C2: Validate on 1–2 short rallies from the actual phone-on-tripod setup; only collect user footage if accuracy is unusable. Public YouTube self-filmed footage is also fair game for fine-tuning.
+- **D — Rally-end suggestion loop.** "Rally Ended" button on `LiveMatchView` → analyze last few seconds of buffered video → trajectory + landing position on calibrated court → propose winner with confidence → confirm/override UI → award point via `ScoringEngine`.
+- **E — On-device validation.** Real match session on physical iPhone; iterate on UX, model, thresholds.
 
 ## Current State
 
-**Shipped:** v1.9 (2026-03-30)
-**Codebase:** 6,812 LOC Swift, 55 source files, 95 tests passing
-**Stack:** Swift 6, SwiftUI, SwiftData + CloudKit, WatchConnectivity, Core ML, StoreKit 2, ActivityKit, HealthKit
-**Dependencies:** 0 external (100% Apple-native)
+**Shipped:** v2.0-pending (App Store prep complete on `main`, submission paused for this pivot)
+**Codebase:** ~7k LOC Swift, ~106 tests passing
+**Stack:** Swift 6, SwiftUI, SwiftData, WatchConnectivity, Core ML, ActivityKit, HealthKit *(CloudKit + StoreKit + Watch + Live Activity will be feature-flagged off in Phase A)*
+**Dependencies:** 0 external Swift; Python (YOLO) under `hawkeye/` and `scripts/training/` for ML training
+**Existing assets that accelerate the MVP:** `GameRecordingService` (auto-starts camera on match start, PR #31), `CourtCalibrationView`, `CircularFrameBuffer`, `ShuttleDetecting` protocol with `PlaceholderShuttleDetector`, `TrajectoryCalculator`, `ResultFusionService`, the `hawkeye/` Python pipeline.
 
 ## Requirements
 
@@ -108,4 +137,4 @@ None (v1.5 complete)
 | Placeholder Core ML for v1 | Ship full UX flow, train real model separately | ⚠️ Revisit — needs real data before production |
 
 ---
-*Last updated: 2026-04-08 — v1.18 milestone complete*
+*Last updated: 2026-05-16 — pivoted to MVP / auto-suggest scoring milestone. Prior v1.x and v2.0 history preserved above.*

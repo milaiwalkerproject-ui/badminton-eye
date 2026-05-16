@@ -2,21 +2,23 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-04-05)
+See: .planning/PROJECT.md (updated 2026-05-16 — MVP pivot)
 
-**Core value:** Players can effortlessly record badminton match scores from either their iPhone/iPad or Apple Watch, with both devices synced in real-time.
-**Current focus:** v1.18 — Custom Scoring Mid-Switch & Validation Edge Cases
+**Current focus:** MVP — Installable iPhone Prototype with Auto-Suggest Scoring
+**Driver:** Claude Code `/goal` command (not GSD). GSD `.planning/` history is preserved for context but not actively driving phases.
 
 ## Current Position
 
-Phase: v2.0 App Store Release
-Plan: Active — App Store submission pipeline
-Status: In progress — PRs #1-17 merged to main; PRs #18-27 under CTO review
-Last activity: 2026-05-10 — v2.0 release pipeline (screenshots, CI, Watch sync, WidgetKit, PaywallV2)
+Phase: MVP-A — Strip down for free Apple ID install (code complete, awaiting on-device install confirmation)
+Plan: See PROJECT.md → Phases A–E
+Status: Phase A code landed. Added `AppMode.freeAppleIDMode` (default ON) in `BadmintonEyeApp.swift`; gated CloudKit binding in the SwiftData container, `AuthManager.checkAuthState`/`handleSignInResult`, every public StoreKit entry point on `SubscriptionManager`, and `startLiveActivity` on `LiveMatchViewModel`. Stripped `BadmintonEye.entitlements` of `applesignin`, `icloud-services`, `icloud-container-identifiers` (revert via git to flip back to paid mode). Watch + LiveActivity targets are untouched at the project-file level. Simulator build (iPhone 17) succeeds; `ScoringEngine` package tests pass 143/143. The shared BadmintonEye scheme has no Testables configured on `main` (pre-existing project-file hygiene gap — 5 test files on disk, only one wired into the target), so iOS-side `xcodebuild test` cannot run from the shared scheme; deferred to a later phase as it's outside Phase A scope.
+Last activity: 2026-05-16 — Phase A complete pending physical-device install verification
 
-Progress: [#########-] 90% (v2.0 — pending App Store submission)
+Progress: [#---------] 10% on MVP milestone — awaiting human checkpoint A
 
-## v2.0 Features Shipped (PRs #1-17 merged)
+## v2.0 history (paused, preserved for context)
+
+### Features shipped before pivot
 
 | PR | Feature |
 |----|---------|
