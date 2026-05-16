@@ -167,6 +167,7 @@ final class LiveMatchViewModel {
     // MARK: - Live Activity
 
     private func startLiveActivity() {
+        if AppMode.freeAppleIDMode { return }
         guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
         let attributes = MatchActivityAttributes(
             teamAName: state.teamANames.first ?? "Side A",

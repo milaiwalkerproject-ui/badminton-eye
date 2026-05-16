@@ -22,6 +22,13 @@ final class SubscriptionManager: @unchecked Sendable {
     private var updateListenerTask: Task<Void, Error>?
 
     private init() {
+        if AppMode.freeAppleIDMode {
+            // Free Apple IDs cannot use StoreKit IAP. Treat the user as
+            // premium so the MVP exercises the Hawk Eye / auto-suggest flow
+            // without a paywall, and skip every StoreKit call.
+            isPremium = true
+            return
+        }
         updateListenerTask = listenForTransactions()
         Task {
             await loadProducts()
@@ -37,6 +44,7 @@ final class SubscriptionManager: @unchecked Sendable {
 
     /// Fetches subscription products from the App Store.
     func loadProducts() async {
+        if AppMode.freeAppleIDMode { return }
         do {
             let products = try await Product.products(for: productIDs)
             await MainActor.run {
@@ -52,6 +60,7 @@ final class SubscriptionManager: @unchecked Sendable {
     /// Initiates a purchase for the given product.
     /// - Returns: The verified transaction on success, nil if cancelled or pending.
     func purchase(_ product: Product) async throws -> Transaction? {
+        if AppMode.freeAppleIDMode { return nil }
         let result = try await product.purchase()
 
         switch result {
@@ -76,6 +85,7 @@ final class SubscriptionManager: @unchecked Sendable {
 
     /// Syncs with the App Store and refreshes subscription status.
     func restorePurchases() async {
+        if AppMode.freeAppleIDMode { return }
         do {
             try await AppStore.sync()
         } catch {
@@ -88,6 +98,7 @@ final class SubscriptionManager: @unchecked Sendable {
 
     /// Checks current entitlements to determine premium status.
     func updateSubscriptionStatus() async {
+        if AppMode.freeAppleIDMode { return }
         var foundActive = false
 
         for await result in Transaction.currentEntitlements {

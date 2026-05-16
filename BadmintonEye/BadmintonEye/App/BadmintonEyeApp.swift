@@ -1,6 +1,15 @@
 import SwiftUI
 import SwiftData
 
+/// Global app-mode flags. Lets the same codebase build either as the full
+/// paid-developer-account product (Watch, CloudKit, Sign in with Apple, IAP,
+/// Live Activity) or as a free-Apple-ID prototype with those capabilities
+/// inert. Flip `freeAppleIDMode` to `false` to restore full functionality.
+/// See `.planning/PROJECT.md` → "Current Milestone: MVP".
+enum AppMode {
+    static let freeAppleIDMode: Bool = true
+}
+
 @main
 struct BadmintonEyeApp: App {
     @State private var authManager = AuthManager.shared
@@ -12,7 +21,8 @@ struct BadmintonEyeApp: App {
 
     init() {
         let isSignedIn = AuthManager.shared.isSignedIn
-        let config: ModelConfiguration = isSignedIn
+        let useCloudKit = isSignedIn && !AppMode.freeAppleIDMode
+        let config: ModelConfiguration = useCloudKit
             ? ModelConfiguration(cloudKitDatabase: .automatic)
             : ModelConfiguration()
 
@@ -169,8 +179,10 @@ struct ContentView: View {
                 )
                 hasCheckedRestore = true
             }
-            WatchSyncManager.shared.activate()
-            AuthManager.shared.checkAuthState()
+            if !AppMode.freeAppleIDMode {
+                WatchSyncManager.shared.activate()
+                AuthManager.shared.checkAuthState()
+            }
         }
     }
 }

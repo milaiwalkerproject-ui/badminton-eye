@@ -23,7 +23,9 @@ final class AuthManager: NSObject, @unchecked Sendable {
 
     private override init() {
         super.init()
-        checkAuthState()
+        if !AppMode.freeAppleIDMode {
+            checkAuthState()
+        }
     }
 
     // MARK: - Sign In
@@ -31,6 +33,9 @@ final class AuthManager: NSObject, @unchecked Sendable {
     /// Presents the system Sign in with Apple sheet.
     /// Call from a SwiftUI `SignInWithAppleButton` onRequest/onCompletion flow.
     func handleSignInResult(_ result: Result<ASAuthorization, Error>) {
+        // Sign in with Apple requires the `applesignin` entitlement, which is
+        // unavailable on a free Apple ID. Free-mode users stay anonymous.
+        if AppMode.freeAppleIDMode { return }
         switch result {
         case .success(let authorization):
             guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential else {
@@ -81,6 +86,10 @@ final class AuthManager: NSObject, @unchecked Sendable {
     /// Verifies the saved Apple ID credential is still valid.
     /// Called on init and on app foreground.
     func checkAuthState() {
+        if AppMode.freeAppleIDMode {
+            isSignedIn = false
+            return
+        }
         guard let uid = UserDefaults.standard.string(forKey: userIdentifierKey) else {
             isSignedIn = false
             return
