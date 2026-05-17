@@ -16,6 +16,8 @@ struct MatchSetupView: View {
     @State private var playerB2Name: String = ""
     @State private var navigateToMatch = false
     @State private var matchState: MatchState?
+    @State private var showCalibration = false
+    @State private var pendingCalibration: CalibrationProfile?
 
     // Picker sheet state
     @State private var showPickerFor: PickerTarget?
@@ -113,14 +115,23 @@ struct MatchSetupView: View {
                 LiveMatchView(
                     viewModel: LiveMatchViewModel(
                         state: state,
+                        calibration: pendingCalibration,
                         modelContext: modelContext
                     ),
                     onMatchEnd: {
                         navigateToMatch = false
                         matchState = nil
+                        pendingCalibration = nil
                     }
                 )
                 .navigationBarBackButtonHidden(true)
+            }
+        }
+        .fullScreenCover(isPresented: $showCalibration) {
+            CourtCalibrationView { profile in
+                pendingCalibration = profile
+                showCalibration = false
+                navigateToMatch = true
             }
         }
         .sheet(isPresented: $showCustomBuilder) {
@@ -265,7 +276,9 @@ struct MatchSetupView: View {
             )
         }
         matchState = state
-        navigateToMatch = true
+        // Defer LiveMatchView push until the user completes calibration.
+        // The calibration sheet's confirm callback flips navigateToMatch.
+        showCalibration = true
     }
 
     /// Auto-creates Player records for any entered names not already in the database

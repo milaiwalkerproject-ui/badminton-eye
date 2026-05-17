@@ -13,6 +13,9 @@ final class CalibrationProfile {
     var imageWidth: Double = 0
     var imageHeight: Double = 0
 
+    @Relationship(inverse: \PersistedMatch.calibration)
+    var match: PersistedMatch?
+
     init() {}
 
     // MARK: - Computed Corners

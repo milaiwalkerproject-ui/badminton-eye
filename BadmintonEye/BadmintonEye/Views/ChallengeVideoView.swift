@@ -6,6 +6,7 @@ import AVKit
 /// Video capture/selection UI presented as sheet from the Challenge button.
 struct ChallengeVideoView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
     @Query private var calibrations: [CalibrationProfile]
 
     @State private var videoCaptureManager = VideoCaptureManager()
@@ -53,7 +54,10 @@ struct ChallengeVideoView: View {
                 }
             }
             .fullScreenCover(isPresented: $showCalibration) {
-                CourtCalibrationView()
+                CourtCalibrationView { profile in
+                    modelContext.insert(profile)
+                    try? modelContext.save()
+                }
             }
             .onChange(of: pipeline.isAnalyzing) { _, isAnalyzing in
                 if isAnalyzing {

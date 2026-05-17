@@ -12,6 +12,13 @@ final class LiveMatchViewModel {
 
     private var currentActivityID: String?
 
+    // Phase B: continuous capture during a live match.
+    // The buffer keeps the last ~10s of frames for post-rally analysis;
+    // the recorder owns the AVCaptureSession that feeds it.
+    // Both are non-observed (@ObservationIgnored) — UI doesn't render them.
+    @ObservationIgnored let frameBuffer: CircularFrameBuffer
+    @ObservationIgnored let recorder: GameRecordingService
+
     var canUndo: Bool { state.previousState != nil }
     var isMatchOver: Bool {
         state.matchPhase == .complete || state.matchPhase == .abandoned
@@ -43,15 +50,26 @@ final class LiveMatchViewModel {
         self.persistedMatch = persistedMatch
         self.modelContext = modelContext
         self.showGameEndOverlay = false
+        let buffer = CircularFrameBuffer(capacity: 10.0)
+        self.frameBuffer = buffer
+        self.recorder = GameRecordingService(frameBuffer: buffer)
         WatchSyncManager.shared.onScoringIntentReceived = { [weak self] side in
             self?.scorePoint(for: side)
         }
         startLiveActivity()
+        startContinuousCapture()
     }
 
-    init(state: MatchState, modelContext: ModelContext) {
+    init(
+        state: MatchState,
+        calibration: CalibrationProfile? = nil,
+        modelContext: ModelContext
+    ) {
         self.state = state
         self.modelContext = modelContext
+        let buffer = CircularFrameBuffer(capacity: 10.0)
+        self.frameBuffer = buffer
+        self.recorder = GameRecordingService(frameBuffer: buffer)
 
         // Create persisted match
         let match = PersistedMatch()
@@ -71,6 +89,10 @@ final class LiveMatchViewModel {
             match.playerB2Name = state.teamBNames.count > 1
                 ? state.teamBNames[1] : nil
         }
+        if let calibration {
+            modelContext.insert(calibration)
+            match.calibration = calibration
+        }
         modelContext.insert(match)
         self.persistedMatch = match
         persistState()
@@ -78,6 +100,7 @@ final class LiveMatchViewModel {
             self?.scorePoint(for: side)
         }
         startLiveActivity()
+        startContinuousCapture()
     }
 
     // MARK: - Scoring
@@ -131,6 +154,18 @@ final class LiveMatchViewModel {
     func abandonMatch() {
         state = MatchEngine.apply(event: .abandon, to: state)
         persistState()
+        stopContinuousCapture()
+    }
+
+    // MARK: - Continuous capture
+
+    private func startContinuousCapture() {
+        guard state.matchPhase == .inProgress else { return }
+        Task { await recorder.startMatchRecording() }
+    }
+
+    private func stopContinuousCapture() {
+        Task { await recorder.stopMatchRecording() }
     }
 
     // MARK: - Private
@@ -161,6 +196,7 @@ final class LiveMatchViewModel {
             updateLiveActivity()
         } else if state.matchPhase == .complete || state.matchPhase == .abandoned {
             endLiveActivity()
+            stopContinuousCapture()
         }
     }
 
