@@ -7,7 +7,7 @@ import SwiftData
 /// inert. Flip `freeAppleIDMode` to `false` to restore full functionality.
 /// See `.planning/PROJECT.md` → "Current Milestone: MVP".
 enum AppMode {
-    static let freeAppleIDMode: Bool = true
+    static let freeAppleIDMode: Bool = false
 }
 
 @main
