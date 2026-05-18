@@ -78,6 +78,11 @@
 		CF1001 /* ScoringFormatBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2001 /* ScoringFormatBuilderView.swift */; };
 		AS1001 /* AudioTemporalSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = AS2001 /* AudioTemporalSync.swift */; };
 		DC1001 /* MultiCamCaptureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2001 /* MultiCamCaptureManager.swift */; };
+		GR1001 /* GameRecordingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = GR2001 /* GameRecordingService.swift */; };
+		RS1001 /* RallySuggestionFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = RS2001 /* RallySuggestionFlow.swift */; };
+		TN1001 /* TrackNetV3.mlpackage in Resources */ = {isa = PBXBuildFile; fileRef = TN2001 /* TrackNetV3.mlpackage */; };
+		TD1001 /* TrackNetShuttleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = TD2001 /* TrackNetShuttleDetector.swift */; };
+		LC1001 /* LiveCameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = LC2001 /* LiveCameraPreview.swift */; };
 		LM1001 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = LM2001 /* LocalizationManager.swift */; };
 		PR1001 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = PR2001 /* PrivacyInfo.xcprivacy */; };
 		IL1001 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = IL4001 /* Localizable.strings */; };
@@ -114,7 +119,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				L10005 /* BadmintonEyeLiveActivity.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -190,6 +194,11 @@
 		CF2001 /* ScoringFormatBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoringFormatBuilderView.swift; sourceTree = "<group>"; };
 		AS2001 /* AudioTemporalSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioTemporalSync.swift; sourceTree = "<group>"; };
 		DC2001 /* MultiCamCaptureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiCamCaptureManager.swift; sourceTree = "<group>"; };
+		GR2001 /* GameRecordingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameRecordingService.swift; sourceTree = "<group>"; };
+		RS2001 /* RallySuggestionFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RallySuggestionFlow.swift; sourceTree = "<group>"; };
+		TN2001 /* TrackNetV3.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = Resources/TrackNetV3.mlpackage; sourceTree = "<group>"; };
+		TD2001 /* TrackNetShuttleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackNetShuttleDetector.swift; sourceTree = "<group>"; };
+		LC2001 /* LiveCameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCameraPreview.swift; sourceTree = "<group>"; };
 		LM2001 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
 		PR2001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		IL2001 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -274,6 +283,7 @@
 				A2001D /* Configuration.storekit */,
 				PR2001 /* PrivacyInfo.xcprivacy */,
 				IL4001 /* Localizable.strings */,
+				TN2001 /* TrackNetV3.mlpackage */,
 			);
 			path = BadmintonEye;
 			sourceTree = "<group>";
@@ -313,6 +323,7 @@
 				DS0002 /* DesignSystem.swift */,
 				A20005 /* MatchSetupView.swift */,
 				A20006 /* LiveMatchView.swift */,
+				LC2001 /* LiveCameraPreview.swift */,
 				A20007 /* ScorePanel.swift */,
 				A20008 /* GameEndOverlay.swift */,
 				A20009 /* MatchEndView.swift */,
@@ -356,6 +367,9 @@
 				MC2001 /* ResultFusionService.swift */,
 				AS2001 /* AudioTemporalSync.swift */,
 				DC2001 /* MultiCamCaptureManager.swift */,
+				GR2001 /* GameRecordingService.swift */,
+				RS2001 /* RallySuggestionFlow.swift */,
+				TD2001 /* TrackNetShuttleDetector.swift */,
 				LM2001 /* LocalizationManager.swift */,
 			);
 			path = Services;
@@ -467,7 +481,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				L30003 /* PBXTargetDependency */,
 			);
 			name = BadmintonEye;
 			packageProductDependencies = (
@@ -597,6 +610,7 @@
 				A1001D /* Configuration.storekit in Resources */,
 				PR1001 /* PrivacyInfo.xcprivacy in Resources */,
 				IL1001 /* Localizable.strings in Resources */,
+				TN1001 /* TrackNetV3.mlpackage in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -670,6 +684,10 @@
 				CF1001 /* ScoringFormatBuilderView.swift in Sources */,
 				AS1001 /* AudioTemporalSync.swift in Sources */,
 				DC1001 /* MultiCamCaptureManager.swift in Sources */,
+				GR1001 /* GameRecordingService.swift in Sources */,
+				RS1001 /* RallySuggestionFlow.swift in Sources */,
+				TD1001 /* TrackNetShuttleDetector.swift in Sources */,
+				LC1001 /* LiveCameraPreview.swift in Sources */,
 				LM1001 /* LocalizationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -800,6 +818,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = BadmintonEye/BadmintonEye.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4ATCU5B9J2;
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;
@@ -808,6 +827,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "Badminton Eye needs camera access for court calibration and challenge video recording.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Badminton Eye needs microphone access for challenge video recording.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Badminton Eye needs photo library access to select challenge videos.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Badminton Eye saves recorded match videos to your photo library.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -837,6 +857,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = BadmintonEye/BadmintonEye.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4ATCU5B9J2;
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;
@@ -845,6 +866,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "Badminton Eye needs camera access for court calibration and challenge video recording.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Badminton Eye needs microphone access for challenge video recording.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Badminton Eye needs photo library access to select challenge videos.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Badminton Eye saves recorded match videos to your photo library.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -873,6 +895,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4ATCU5B9J2;
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;
@@ -900,6 +923,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4ATCU5B9J2;
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;
@@ -926,6 +950,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4ATCU5B9J2;
 				CURRENT_PROJECT_VERSION = 2;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = BadmintonEyeLiveActivity;
@@ -952,6 +977,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4ATCU5B9J2;
 				CURRENT_PROJECT_VERSION = 2;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = BadmintonEyeLiveActivity;
@@ -979,6 +1005,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4ATCU5B9J2;
 				CURRENT_PROJECT_VERSION = 2;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -998,6 +1025,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4ATCU5B9J2;
 				CURRENT_PROJECT_VERSION = 2;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;

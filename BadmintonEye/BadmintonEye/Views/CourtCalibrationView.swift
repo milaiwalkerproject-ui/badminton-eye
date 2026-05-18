@@ -31,9 +31,14 @@ struct CameraPreviewView: UIViewRepresentable {
 // MARK: - Court Calibration View
 
 /// Full-screen camera overlay where user taps 4 court corners to calibrate.
+/// On confirm, hands back an unsaved `CalibrationProfile` via `onConfirm`;
+/// the caller decides whether to insert it into a model context and on which
+/// match it lives. Calling `dismiss()` without confirming returns nothing.
 struct CourtCalibrationView: View {
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+
+    /// Caller receives the populated (but not yet inserted) profile.
+    var onConfirm: (CalibrationProfile) -> Void
 
     @State private var captureSession = AVCaptureSession()
     @State private var corners: [CGPoint] = []
@@ -202,9 +207,8 @@ struct CourtCalibrationView: View {
         let profile = CalibrationProfile()
         profile.venueName = venueName.trimmingCharacters(in: .whitespaces)
         profile.setCorners(corners, imageSize: viewSize)
-        modelContext.insert(profile)
-        try? modelContext.save()
         stopSession()
+        onConfirm(profile)
         dismiss()
     }
 }

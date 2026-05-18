@@ -39,5 +39,9 @@ final class PersistedMatch {
     // Winner side ("sideA" or "sideB"), set on match completion for efficient list rendering
     var winnerSide: String?
 
+    // Court calibration captured at match start. Optional so existing rows
+    // (and matches started without calibration) still load.
+    var calibration: CalibrationProfile?
+
     init() {}
 }

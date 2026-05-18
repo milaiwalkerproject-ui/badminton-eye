@@ -41,11 +41,34 @@ final class GameRecordingService: NSObject {
     /// Non-fatal error description (e.g. session config failure).
     private(set) var recordingError: String?
 
+    // MARK: - Public injection points
+
+    /// Optional rolling-window buffer fed by a parallel video data output.
+    /// Inject via `init(frameBuffer:)` to keep the last N seconds of frames
+    /// available for post-rally analysis (Hawk Eye auto-suggest).
+    /// `nonisolated` because the AVFoundation sample-buffer callback runs on
+    /// `sampleQueue`, not on the main actor. `CircularFrameBuffer` is
+    /// `@unchecked Sendable` and internally locked, so cross-actor access is
+    /// safe.
+    nonisolated let frameBuffer: CircularFrameBuffer?
+
+    // MARK: - Init
+
+    init(frameBuffer: CircularFrameBuffer? = nil) {
+        self.frameBuffer = frameBuffer
+        super.init()
+    }
+
     // MARK: - Private
 
     private var captureSession: AVCaptureSession?
     private var movieFileOutput: AVCaptureMovieFileOutput?
+    private var videoDataOutput: AVCaptureVideoDataOutput?
     private var activeOutputURL: URL?
+    private let sampleQueue = DispatchQueue(
+        label: "com.badmintoneye.GameRecordingService.sample",
+        qos: .userInitiated
+    )
 
     // MARK: - Simulator detection
 
@@ -145,6 +168,20 @@ final class GameRecordingService: NSObject {
         }
         session.addOutput(fileOutput)
 
+        // Optional video data output that tees individual frames into the
+        // injected CircularFrameBuffer for Hawk Eye auto-suggest analysis.
+        // Skipped silently if no buffer was injected — keeps callers that
+        // only want a saved match video unchanged.
+        if frameBuffer != nil {
+            let dataOutput = AVCaptureVideoDataOutput()
+            dataOutput.alwaysDiscardsLateVideoFrames = true
+            dataOutput.setSampleBufferDelegate(self, queue: sampleQueue)
+            if session.canAddOutput(dataOutput) {
+                session.addOutput(dataOutput)
+                videoDataOutput = dataOutput
+            }
+        }
+
         session.commitConfiguration()
         captureSession = session
         movieFileOutput = fileOutput
@@ -194,7 +231,11 @@ final class GameRecordingService: NSObject {
         guard status == .authorized || status == .limited else { return }
 
         do {
-            try await PHPhotoLibrary.shared().performChanges {
+            // performChanges runs the closure on its own PHPhotoLibrary
+            // queue, so the closure must be @Sendable. Without this, Swift 6
+            // strict-concurrency traps with SIGTRAP because the enclosing
+            // class is @MainActor.
+            try await PHPhotoLibrary.shared().performChanges { @Sendable in
                 PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
             }
             await MainActor.run {
@@ -243,6 +284,18 @@ extension GameRecordingService: AVCaptureFileOutputRecordingDelegate {
             // Save to Photos
             await self.saveToPhotosLibrary(url: outputFileURL)
         }
+    }
+}
+
+// MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
+
+extension GameRecordingService: AVCaptureVideoDataOutputSampleBufferDelegate {
+    nonisolated func captureOutput(
+        _ output: AVCaptureOutput,
+        didOutput sampleBuffer: CMSampleBuffer,
+        from connection: AVCaptureConnection
+    ) {
+        frameBuffer?.append(sampleBuffer)
     }
 }
 

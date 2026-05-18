@@ -16,6 +16,9 @@ struct MatchSetupView: View {
     @State private var playerB2Name: String = ""
     @State private var navigateToMatch = false
     @State private var matchState: MatchState?
+    @State private var pendingCalibration: CalibrationProfile?
+    // Calibration gate is deferred — Phase D will reintroduce when the
+    // auto-suggest pipeline actually consumes the 4 corner points.
 
     // Picker sheet state
     @State private var showPickerFor: PickerTarget?
@@ -113,11 +116,13 @@ struct MatchSetupView: View {
                 LiveMatchView(
                     viewModel: LiveMatchViewModel(
                         state: state,
+                        calibration: pendingCalibration,
                         modelContext: modelContext
                     ),
                     onMatchEnd: {
                         navigateToMatch = false
                         matchState = nil
+                        pendingCalibration = nil
                     }
                 )
                 .navigationBarBackButtonHidden(true)
