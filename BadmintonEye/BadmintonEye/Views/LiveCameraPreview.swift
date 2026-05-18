@@ -107,9 +107,6 @@ struct LiveCameraPreview: UIViewRepresentable {
             session.beginConfiguration()
             session.sessionPreset = .hd1280x720
 
-            // Back wide-angle camera. Fail silently if unavailable so the
-            // preview just shows black instead of crashing — UI is robust
-            // to that (parent provides its own black backdrop).
             if let device = AVCaptureDevice.default(
                 .builtInWideAngleCamera,
                 for: .video,
@@ -120,6 +117,41 @@ struct LiveCameraPreview: UIViewRepresentable {
             }
 
             session.commitConfiguration()
+
+            // Orient the preview to match the device's current UI rotation
+            // so a portrait-held phone shows an upright image instead of
+            // the sensor's native landscape.
+            DispatchQueue.main.async { [weak self] in
+                self?.applyCurrentRotation()
+            }
+        }
+
+        // MARK: - Rotation handling
+
+        private func applyCurrentRotation() {
+            guard let connection = previewLayer.connection else { return }
+            let angle = currentInterfaceRotationAngle()
+            if connection.isVideoRotationAngleSupported(angle) {
+                connection.videoRotationAngle = angle
+            }
+        }
+
+        private func currentInterfaceRotationAngle() -> CGFloat {
+            let scene = UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .first
+            switch scene?.interfaceOrientation ?? .portrait {
+            case .portrait:           return 90
+            case .portraitUpsideDown: return 270
+            case .landscapeLeft:      return 180
+            case .landscapeRight:     return 0
+            default:                  return 90
+            }
+        }
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            applyCurrentRotation()
         }
     }
 }

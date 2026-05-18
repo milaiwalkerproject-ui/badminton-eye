@@ -102,50 +102,39 @@ struct LiveMatchView: View {
 
     // MARK: - Portrait layout
     //
-    // Stack top→bottom: top HUD, score row (tap-to-score), camera tile,
-    // Rally Ended capsule. Camera tile is the visual focus but takes
-    // ~36% of the vertical so the two score tap targets remain large
-    // enough for fast scoring during a real match.
+    // Apple-Sports inspired stack:
+    //   1. Floating top HUD (undo · game pill · challenge · close)
+    //   2. Unified scoreboard card — both teams in one rounded card with
+    //      gradient backdrops per side; tapping a side scores a point.
+    //   3. Hero camera viewfinder filling the rest of the screen.
+    //   4. Rally Ended primary action pinned over the camera at the bottom.
     @ViewBuilder
     private func portraitLayout(in size: CGSize) -> some View {
-        let cameraHeight = size.height * 0.36
-
         ZStack {
-            Color(.systemBackground).ignoresSafeArea()
+            // Dark canvas reads as cinematic and prevents stark white
+            // banding between the colorful scoreboard and the camera.
+            Color.black.ignoresSafeArea()
 
-            VStack(spacing: 0) {
+            VStack(spacing: BE.Space.m) {
                 topHUD
                     .padding(.horizontal, BE.Space.m)
                     .padding(.top, BE.Space.s)
 
-                // Score tap zones — side-by-side, top portion of the screen.
-                HStack(spacing: 0) {
-                    sideAScoreButton
-                    sideBScoreButton
-                }
-                .padding(.horizontal, BE.Space.s)
-                .padding(.vertical, BE.Space.s)
-
-                // Live camera tile.
-                LiveCameraPreview()
-                    .frame(height: cameraHeight)
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
-                    )
-                    .overlay(alignment: .topLeading) {
-                        cameraBadge
-                            .padding(BE.Space.s)
-                    }
-                    .shadow(color: .black.opacity(0.18), radius: 12, y: 4)
+                scoreboardCard
                     .padding(.horizontal, BE.Space.m)
 
-                Spacer(minLength: BE.Space.s)
+                // Hero camera viewfinder fills the remaining space.
+                cameraTile
+                    .padding(.horizontal, BE.Space.m)
+                    .padding(.bottom, BE.Space.m)
+            }
 
-                if viewModel.state.matchPhase == .inProgress {
+            // Rally Ended pinned above the camera bottom edge.
+            if viewModel.state.matchPhase == .inProgress {
+                VStack {
+                    Spacer()
                     rallyEndedButton
-                        .padding(.bottom, BE.Space.m)
+                        .padding(.bottom, BE.Space.l + BE.Space.s)
                 }
             }
 
@@ -153,6 +142,102 @@ struct LiveMatchView: View {
                 GameEndOverlay(viewModel: viewModel)
             }
         }
+    }
+
+    // MARK: - Scoreboard card (portrait)
+
+    private var scoreboardCard: some View {
+        HStack(spacing: 0) {
+            scoreboardSide(
+                isA: true,
+                score: viewModel.state.currentGame.scoreA,
+                name: viewModel.state.teamANames.first ?? "Team A",
+                isServing: viewModel.state.currentServer.side == .sideA,
+                gradient: BE.TeamA.gradient
+            )
+            scoreboardSide(
+                isA: false,
+                score: viewModel.state.currentGame.scoreB,
+                name: viewModel.state.teamBNames.first ?? "Team B",
+                isServing: viewModel.state.currentServer.side == .sideB,
+                gradient: BE.TeamB.gradient
+            )
+        }
+        .frame(height: 140)
+        .clipShape(BE.card(22))
+        .overlay(BE.card(22).strokeBorder(Color.white.opacity(0.08), lineWidth: 0.5))
+        .shadow(color: .black.opacity(0.35), radius: 16, y: 6)
+    }
+
+    private func scoreboardSide(
+        isA: Bool,
+        score: Int,
+        name: String,
+        isServing: Bool,
+        gradient: LinearGradient
+    ) -> some View {
+        Button {
+            viewModel.scorePoint(for: isA ? .sideA : .sideB)
+        } label: {
+            ZStack {
+                gradient
+                LinearGradient(
+                    colors: [Color.white.opacity(0.16), .clear],
+                    startPoint: .top, endPoint: .center
+                )
+                .blendMode(.plusLighter)
+
+                VStack(spacing: 6) {
+                    HStack(spacing: 5) {
+                        if isServing {
+                            Circle()
+                                .fill(BE.serveAccent)
+                                .frame(width: 7, height: 7)
+                                .shadow(color: BE.serveAccent.opacity(0.7), radius: 5)
+                        }
+                        Text(name)
+                            .font(.system(.footnote, design: .rounded).weight(.semibold))
+                            .foregroundStyle(.white.opacity(0.92))
+                            .lineLimit(1)
+                    }
+
+                    Text("\(score)")
+                        .font(.system(size: 72, weight: .heavy, design: .rounded))
+                        .monospacedDigit()
+                        .foregroundStyle(.white)
+                        .shadow(color: .black.opacity(0.25), radius: 8, y: 3)
+                        .contentTransition(.numericText(value: Double(score)))
+                        .animation(BE.pop, value: score)
+                }
+                .padding(.vertical, BE.Space.s)
+            }
+        }
+        .buttonStyle(.plain)
+        .contentShape(Rectangle())
+        .frame(maxWidth: .infinity)
+        .accessibilityLabel("Score point for \(name)")
+        .accessibilityValue("\(score)\(isServing ? ", serving" : "")")
+    }
+
+    // MARK: - Camera tile
+
+    private var cameraTile: some View {
+        ZStack {
+            LiveCameraPreview()
+                .clipShape(BE.card(20))
+
+            VStack {
+                HStack {
+                    cameraBadge
+                    Spacer()
+                }
+                .padding(BE.Space.m)
+                Spacer()
+            }
+        }
+        .overlay(BE.card(20).strokeBorder(Color.white.opacity(0.08), lineWidth: 0.5))
+        .shadow(color: .black.opacity(0.4), radius: 18, y: 8)
+        .frame(maxHeight: .infinity)
     }
 
     // MARK: - Landscape layout
@@ -332,31 +417,47 @@ struct LiveMatchView: View {
     /// preview is live (not a still). Pure visual cue — there's no
     /// actual disk recording in this build.
     private var cameraBadge: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 5) {
             Circle()
-                .fill(.red)
-                .frame(width: 8, height: 8)
+                .fill(Color.red)
+                .frame(width: 7, height: 7)
+                .shadow(color: Color.red.opacity(0.6), radius: 4)
             Text("LIVE")
                 .font(.system(.caption2, design: .rounded).weight(.bold))
+                .tracking(0.8)
                 .foregroundStyle(.white)
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 4)
-        .background(.black.opacity(0.55), in: Capsule())
+        .padding(.horizontal, 9)
+        .padding(.vertical, 5)
+        .background(.ultraThinMaterial, in: Capsule(style: .continuous))
+        .overlay(Capsule(style: .continuous).strokeBorder(Color.white.opacity(0.15), lineWidth: 0.5))
     }
 
     private var rallyEndedButton: some View {
         Button {
             showRallySuggestion = true
         } label: {
-            Label("Rally Ended", systemImage: "checkmark.circle.fill")
-                .font(.headline)
-                .foregroundStyle(.white)
-                .padding(.horizontal, 24)
-                .padding(.vertical, 14)
-                .background(.blue)
-                .clipShape(Capsule())
-                .shadow(radius: 4, y: 2)
+            HStack(spacing: 8) {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 18, weight: .bold))
+                Text("Rally Ended")
+                    .font(.system(.headline, design: .rounded).weight(.semibold))
+            }
+            .foregroundStyle(.white)
+            .padding(.horizontal, 28)
+            .padding(.vertical, 16)
+            .background(
+                Capsule(style: .continuous)
+                    .fill(LinearGradient(
+                        colors: [BE.serveAccent.opacity(0.95), Color.orange],
+                        startPoint: .topLeading, endPoint: .bottomTrailing
+                    ))
+            )
+            .overlay(
+                Capsule(style: .continuous)
+                    .strokeBorder(Color.white.opacity(0.25), lineWidth: 0.5)
+            )
+            .shadow(color: BE.serveAccent.opacity(0.45), radius: 18, y: 8)
         }
         .accessibilityHint("Auto-suggest the rally winner")
     }
