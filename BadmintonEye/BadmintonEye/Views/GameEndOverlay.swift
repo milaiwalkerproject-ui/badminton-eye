@@ -3,64 +3,70 @@ import ScoringEngine
 
 struct GameEndOverlay: View {
     let viewModel: LiveMatchViewModel
-    @State private var isVisible = true
     @State private var localization = LocalizationManager.shared
 
-    private var completedGame: GameState? {
-        viewModel.justCompletedGame
-    }
+    private var completedGame: GameState? { viewModel.justCompletedGame }
 
     private var winnerName: String {
         guard let game = completedGame else { return "" }
-        if game.scoreA > game.scoreB {
-            return viewModel.state.teamANames.first ?? "Team A"
-        } else {
-            return viewModel.state.teamBNames.first ?? "Team B"
-        }
+        return game.scoreA > game.scoreB
+            ? (viewModel.state.teamANames.first ?? "Team A")
+            : (viewModel.state.teamBNames.first ?? "Team B")
+    }
+
+    private var winnerIsA: Bool {
+        guard let g = completedGame else { return true }
+        return g.scoreA > g.scoreB
     }
 
     var body: some View {
         ZStack {
-            Color.black.opacity(0.7)
+            // Blurred backdrop reveals the live match underneath — feels iOS-native.
+            Rectangle()
+                .fill(.ultraThinMaterial)
                 .ignoresSafeArea()
+                .overlay(Color.black.opacity(0.15).ignoresSafeArea())
 
-            VStack(spacing: 24) {
+            VStack(spacing: BE.Space.l) {
                 Text(localization.localized("game.over"))
-                    .font(.largeTitle.bold())
-                    .foregroundStyle(.white)
+                    .font(BE.eyebrow)
+                    .tracking(2)
+                    .foregroundStyle(.white.opacity(0.7))
 
                 if let game = completedGame {
                     Text("\(localization.localized("match.game")) \(game.gameNumber)")
-                        .font(.title3)
-                        .foregroundStyle(.white.opacity(0.8))
+                        .font(.system(.title3, design: .rounded).weight(.semibold))
+                        .foregroundStyle(.white)
 
-                    HStack(spacing: 20) {
-                        Text("\(game.scoreA)")
-                            .font(.system(size: 64, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
-                        Text("-")
-                            .font(.system(size: 48, weight: .light))
-                            .foregroundStyle(.white.opacity(0.6))
-                        Text("\(game.scoreB)")
-                            .font(.system(size: 64, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
+                    HStack(spacing: BE.Space.l) {
+                        scoreColumn(game.scoreA, dimmed: !winnerIsA, accent: BE.TeamA.accent)
+                        Text("–")
+                            .font(.system(size: 40, weight: .light, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.45))
+                        scoreColumn(game.scoreB, dimmed: winnerIsA, accent: BE.TeamB.accent)
                     }
 
-                    Text("\(winnerName) wins!")
-                        .font(.title2)
-                        .foregroundStyle(.yellow)
+                    Label {
+                        Text("\(winnerName) wins the game")
+                            .font(.system(.title3, design: .rounded).weight(.semibold))
+                    } icon: {
+                        Image(systemName: "trophy.fill")
+                    }
+                    .foregroundStyle(BE.serveAccent)
+                    .padding(.horizontal, BE.Space.m)
+                    .padding(.vertical, BE.Space.s)
+                    .background(.ultraThinMaterial, in: Capsule(style: .continuous))
                 }
 
-                HStack(spacing: 20) {
+                HStack(spacing: BE.Space.m) {
                     Button {
                         viewModel.undo()
                     } label: {
                         Label(localization.localized("match.undo"), systemImage: "arrow.uturn.backward")
-                            .font(.headline)
-                            .padding(.horizontal, 24)
-                            .padding(.vertical, 12)
-                            .background(.white.opacity(0.2))
-                            .clipShape(Capsule())
+                            .font(.system(.headline, design: .rounded).weight(.semibold))
+                            .padding(.horizontal, BE.Space.l)
+                            .padding(.vertical, 14)
+                            .background(.ultraThinMaterial, in: Capsule(style: .continuous))
                             .foregroundStyle(.white)
                     }
 
@@ -68,16 +74,19 @@ struct GameEndOverlay: View {
                         viewModel.showGameEndOverlay = false
                     } label: {
                         Text(localization.localized("game.continue"))
-                            .font(.headline)
-                            .padding(.horizontal, 24)
-                            .padding(.vertical, 12)
-                            .background(.yellow)
-                            .clipShape(Capsule())
+                            .font(.system(.headline, design: .rounded).weight(.semibold))
+                            .padding(.horizontal, BE.Space.l)
+                            .padding(.vertical, 14)
+                            .background(
+                                Capsule(style: .continuous)
+                                    .fill(.white)
+                            )
                             .foregroundStyle(.black)
                     }
                 }
             }
-            .padding(32)
+            .padding(BE.Space.xl)
+            .transition(.scale(scale: 0.92).combined(with: .opacity))
         }
         .task {
             try? await Task.sleep(for: .seconds(3))
@@ -85,5 +94,13 @@ struct GameEndOverlay: View {
                 viewModel.showGameEndOverlay = false
             }
         }
+    }
+
+    private func scoreColumn(_ score: Int, dimmed: Bool, accent: Color) -> some View {
+        Text("\(score)")
+            .font(.system(size: 76, weight: .heavy, design: .rounded))
+            .monospacedDigit()
+            .foregroundStyle(dimmed ? .white.opacity(0.55) : .white)
+            .shadow(color: dimmed ? .clear : accent.opacity(0.6), radius: 14)
     }
 }

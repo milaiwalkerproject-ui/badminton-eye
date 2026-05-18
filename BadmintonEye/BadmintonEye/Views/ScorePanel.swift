@@ -3,20 +3,18 @@ import ScoringEngine
 
 /// Full-height score panel for one side of the match.
 ///
-/// Layout (task 585418ae — score visibility):
-/// Score numerals are pinned to the upper portion of the panel so they
-/// are immediately visible at a glance. A small top inset provides safe-area
-/// breathing room; the remaining space below expands naturally so tapping
-/// anywhere on the full half-screen scores a point.
+/// Visual language: full-bleed brand gradient with a subtle top highlight,
+/// SF-Rounded score numeral that animates on increment, and a glass-pill
+/// service indicator. Tapping anywhere on the panel scores a point.
 struct ScorePanel: View {
     let score: Int
     let teamName: String
     let isServing: Bool
     let serviceCourt: Court?
     let playerNames: [String]
-    let backgroundColor: Color
+    /// Brand gradient for this side.
+    let gradient: LinearGradient
 
-    /// VoiceOver label describing team, score, and serving status. (A11Y-01)
     private var accessibilityDescription: String {
         var parts = [teamName, "\(score) points"]
         if isServing {
@@ -28,56 +26,71 @@ struct ScorePanel: View {
 
     var body: some View {
         ZStack {
-            backgroundColor
+            gradient
                 .ignoresSafeArea()
+                .overlay(
+                    LinearGradient(
+                        colors: [Color.white.opacity(0.18), .clear],
+                        startPoint: .top,
+                        endPoint: .center
+                    )
+                    .blendMode(.plusLighter)
+                    .ignoresSafeArea()
+                )
 
-            VStack(spacing: 8) {
-                // Small top spacer for safe-area breathing room.
-                // maxHeight keeps the score in the upper ~40 % of the panel.
-                Spacer().frame(maxHeight: 64)
+            VStack(spacing: BE.Space.m) {
+                Spacer().frame(maxHeight: 110)
 
-                // Server indicator
-                if isServing {
-                    HStack(spacing: 6) {
-                        Image(systemName: "circle.fill")
-                            .font(.system(size: 14))
-                            .foregroundStyle(.yellow)
-                        if let court = serviceCourt {
-                            Text(court == .right ? "R" : "L")
-                                .font(.caption.bold())
-                                .foregroundStyle(.yellow)
+                Group {
+                    if isServing {
+                        HStack(spacing: 6) {
+                            Circle()
+                                .fill(BE.serveAccent)
+                                .frame(width: 8, height: 8)
+                                .shadow(color: BE.serveAccent.opacity(0.7), radius: 6)
+                            Text("SERVING")
+                                .font(BE.eyebrow)
+                                .tracking(1.2)
+                                .foregroundStyle(.white)
+                            if let court = serviceCourt {
+                                Text(court == .right ? "R" : "L")
+                                    .font(BE.eyebrow)
+                                    .foregroundStyle(BE.serveAccent)
+                            }
                         }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(.ultraThinMaterial, in: Capsule(style: .continuous))
+                        .overlay(
+                            Capsule(style: .continuous)
+                                .strokeBorder(Color.white.opacity(0.25), lineWidth: 0.5)
+                        )
+                        .transition(.scale.combined(with: .opacity))
+                    } else {
+                        Capsule().fill(.clear).frame(width: 100, height: 26)
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 4)
-                    .background(.black.opacity(0.3))
-                    .clipShape(Capsule())
-                } else {
-                    // Invisible placeholder preserves vertical rhythm
-                    HStack(spacing: 6) {
-                        Image(systemName: "circle.fill").font(.system(size: 14))
-                        Text("R").font(.caption.bold())
-                    }
-                    .hidden()
                 }
+                .animation(BE.pop, value: isServing)
 
-                // Score — large, bold, high-contrast (task 585418ae: ≥48 pt bold)
                 Text("\(score)")
-                    .font(.system(size: 96, weight: .black, design: .rounded))
+                    .font(BE.scoreNumeral())
+                    .monospacedDigit()
                     .foregroundStyle(.white)
-                    .minimumScaleFactor(0.4)
-                    .shadow(color: .black.opacity(0.35), radius: 4, x: 0, y: 2)
+                    .minimumScaleFactor(0.35)
+                    .shadow(color: .black.opacity(0.25), radius: 12, y: 6)
+                    .contentTransition(.numericText(value: Double(score)))
+                    .animation(BE.pop, value: score)
 
-                // Team / player names below score
                 VStack(spacing: 2) {
                     ForEach(playerNames, id: \.self) { name in
                         Text(name)
-                            .font(.headline)
-                            .foregroundStyle(.white.opacity(0.9))
+                            .font(.system(.headline, design: .rounded).weight(.medium))
+                            .foregroundStyle(.white.opacity(0.92))
                     }
                 }
+                .padding(.horizontal, BE.Space.m)
+                .multilineTextAlignment(.center)
 
-                // Fills the remaining lower 60 % of the panel — tap zone stays full-height
                 Spacer()
             }
         }

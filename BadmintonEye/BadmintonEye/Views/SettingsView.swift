@@ -19,19 +19,14 @@ struct SettingsView: View {
             }
 
             premiumSection
-
-            languageSection
-
-            hapticSection
-
-            voiceSection
-
+            preferencesSection
             aboutSection
         }
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
         .navigationTitle(localization.localized("settings.title"))
-        .sheet(isPresented: $showPaywall) {
-            PaywallView()
-        }
+        .sheet(isPresented: $showPaywall) { PaywallView() }
     }
 
     // MARK: - Premium
@@ -39,49 +34,51 @@ struct SettingsView: View {
     private var premiumSection: some View {
         Section {
             if subscriptionManager.isPremium {
-                HStack(spacing: 12) {
-                    Image(systemName: "checkmark.seal.fill")
-                        .foregroundStyle(.green)
-                        .font(.title2)
+                HStack(spacing: BE.Space.m) {
+                    SettingsIconTile(systemName: "checkmark.seal.fill", tint: .green)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(localization.localized("premium.active"))
-                            .font(.headline)
+                            .font(.system(.body, design: .rounded).weight(.semibold))
                         Text(localization.localized("premium.allUnlocked"))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
                 }
-                .padding(.vertical, 4)
+                .padding(.vertical, 2)
 
                 Link(destination: URL(string: "https://apps.apple.com/account/subscriptions")!) {
-                    HStack {
+                    HStack(spacing: BE.Space.m) {
+                        SettingsIconTile(systemName: "creditcard.fill", tint: .indigo)
                         Text(localization.localized("premium.manage"))
+                            .foregroundStyle(.primary)
                         Spacer()
                         Image(systemName: "arrow.up.right")
                             .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
                 }
             } else {
-                Button {
-                    showPaywall = true
-                } label: {
-                    HStack(spacing: 12) {
-                        Image(systemName: "eye.trianglebadge.exclamationmark")
-                            .foregroundStyle(.blue)
-                            .font(.title2)
+                Button { showPaywall = true } label: {
+                    HStack(spacing: BE.Space.m) {
+                        SettingsIconTile(systemName: "eye.trianglebadge.exclamationmark", tint: .blue)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(localization.localized("premium.upgrade"))
-                                .font(.headline)
+                                .font(.system(.body, design: .rounded).weight(.semibold))
+                                .foregroundStyle(.primary)
                             Text(localization.localized("premium.unlockHawkEye"))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption.bold())
+                            .foregroundStyle(Color(.tertiaryLabel))
                     }
-                    .padding(.vertical, 4)
+                    .padding(.vertical, 2)
                 }
             }
         } header: {
-            Text(localization.localized("settings.premium"))
+            sectionHeader(localization.localized("settings.premium"))
         }
     }
 
@@ -89,15 +86,17 @@ struct SettingsView: View {
 
     private var signInSection: some View {
         Section {
-            VStack(spacing: 16) {
+            VStack(spacing: BE.Space.m) {
                 Image(systemName: "icloud")
-                    .font(.system(size: 40))
+                    .font(.system(size: 40, weight: .light))
                     .foregroundStyle(.blue)
+                    .padding(.top, BE.Space.s)
 
                 Text(localization.localized("icloud.signInPrompt"))
-                    .font(.subheadline)
+                    .font(.system(.subheadline, design: .rounded))
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
+                    .padding(.horizontal, BE.Space.s)
 
                 SignInWithAppleButton(.signIn) { request in
                     request.requestedScopes = [.fullName, .email]
@@ -106,10 +105,12 @@ struct SettingsView: View {
                 }
                 .signInWithAppleButtonStyle(.black)
                 .frame(height: 50)
+                .clipShape(BE.card(12))
             }
-            .padding(.vertical, 8)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, BE.Space.s)
         } header: {
-            Text(localization.localized("icloud.title"))
+            sectionHeader(localization.localized("icloud.title"))
         }
     }
 
@@ -117,14 +118,14 @@ struct SettingsView: View {
 
     private var signedInSection: some View {
         Section {
-            HStack(spacing: 12) {
+            HStack(spacing: BE.Space.m) {
                 Image(systemName: "person.crop.circle.fill")
-                    .font(.system(size: 36))
-                    .foregroundStyle(.blue)
+                    .font(.system(size: 42))
+                    .foregroundStyle(.blue.gradient)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(authManager.userName ?? "Apple User")
-                        .font(.headline)
+                        .font(.system(.headline, design: .rounded))
                     if let email = authManager.userEmail {
                         Text(email)
                             .font(.caption)
@@ -134,94 +135,63 @@ struct SettingsView: View {
             }
             .padding(.vertical, 4)
 
-            HStack {
-                Image(systemName: "checkmark.icloud.fill")
-                    .foregroundStyle(.green)
+            HStack(spacing: BE.Space.m) {
+                SettingsIconTile(systemName: "checkmark.icloud.fill", tint: .green)
                 Text(localization.localized("icloud.syncActive"))
-                    .foregroundStyle(.secondary)
             }
 
             Button(role: .destructive) {
                 authManager.signOut()
             } label: {
-                Text(localization.localized("settings.signOut"))
+                HStack(spacing: BE.Space.m) {
+                    SettingsIconTile(systemName: "rectangle.portrait.and.arrow.right", tint: .red)
+                    Text(localization.localized("settings.signOut"))
+                }
             }
         } header: {
-            Text(localization.localized("icloud.account"))
+            sectionHeader(localization.localized("icloud.account"))
         }
     }
 
-    // MARK: - Language
+    // MARK: - Preferences (language / haptic / voice unified)
 
-    private var languageSection: some View {
+    private var preferencesSection: some View {
         Section {
+            // Language
             Picker(selection: $localization.currentLanguage) {
                 ForEach(AppLanguage.allCases) { language in
                     HStack(spacing: 8) {
                         Text(language.flag)
                         Text(language.nativeName)
-                        if language != .english {
-                            Text("(\(language.englishName))")
-                                .foregroundStyle(.secondary)
-                                .font(.caption)
-                        }
                     }
                     .tag(language)
                 }
             } label: {
-                HStack(spacing: 12) {
-                    Image(systemName: "globe")
-                        .foregroundStyle(.blue)
-                        .font(.title3)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(localization.localized("settings.language"))
-                            .font(.subheadline)
-                        Text("\(localization.currentLanguage.flag) \(localization.currentLanguage.nativeName)")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
+                HStack(spacing: BE.Space.m) {
+                    SettingsIconTile(systemName: "globe", tint: .blue)
+                    Text(localization.localized("settings.language"))
                 }
             }
-        } header: {
-            Text(localization.localized("settings.language"))
-        }
-    }
 
-    // MARK: - Haptic Feedback
-
-    private var hapticSection: some View {
-        Section {
+            // Haptics
             Toggle(isOn: $hapticEnabled) {
-                HStack(spacing: 12) {
-                    Image(systemName: "hand.tap.fill")
-                        .foregroundStyle(.orange)
-                        .font(.title3)
-                    VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: BE.Space.m) {
+                    SettingsIconTile(systemName: "hand.tap.fill", tint: .orange)
+                    VStack(alignment: .leading, spacing: 1) {
                         Text(localization.localized("settings.haptic"))
-                            .font(.subheadline)
                         Text(localization.localized("settings.haptic.subtitle"))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
                 }
             }
-        } header: {
-            Text(localization.localized("settings.scoring"))
-        }
-    }
 
-    // MARK: - Voice Announcements
-
-    private var voiceSection: some View {
-        Section {
+            // Voice
             Toggle(isOn: $voiceAnnouncementsEnabled) {
-                HStack(spacing: 12) {
-                    Image(systemName: "speaker.wave.2.fill")
-                        .foregroundStyle(.purple)
-                        .font(.title3)
-                    VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: BE.Space.m) {
+                    SettingsIconTile(systemName: "speaker.wave.2.fill", tint: .purple)
+                    VStack(alignment: .leading, spacing: 1) {
                         Text(localization.localized("settings.voiceAnnouncements"))
-                            .font(.subheadline)
                         Text(localization.localized("settings.voiceAnnouncements.subtitle"))
                             .font(.caption)
                             .foregroundStyle(.secondary)
@@ -229,7 +199,7 @@ struct SettingsView: View {
                 }
             }
         } header: {
-            Text(localization.localized("settings.audio"))
+            sectionHeader("Preferences")
         }
     }
 
@@ -237,28 +207,44 @@ struct SettingsView: View {
 
     private var aboutSection: some View {
         Section {
-            HStack {
+            HStack(spacing: BE.Space.m) {
+                SettingsIconTile(systemName: "info.circle.fill", tint: Color(.systemGray))
                 Text(localization.localized("settings.version"))
                 Spacer()
                 Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
                     .foregroundStyle(.secondary)
+                    .monospacedDigit()
             }
-            HStack {
+            HStack(spacing: BE.Space.m) {
+                SettingsIconTile(systemName: "hammer.fill", tint: Color(.systemGray2))
                 Text(localization.localized("settings.build"))
                 Spacer()
                 Text(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1")
                     .foregroundStyle(.secondary)
+                    .monospacedDigit()
             }
 
             Button {
-                Task {
-                    await subscriptionManager.restorePurchases()
-                }
+                Task { await subscriptionManager.restorePurchases() }
             } label: {
-                Text(localization.localized("settings.restorePurchases"))
+                HStack(spacing: BE.Space.m) {
+                    SettingsIconTile(systemName: "arrow.clockwise", tint: .teal)
+                    Text(localization.localized("settings.restorePurchases"))
+                        .foregroundStyle(.primary)
+                }
             }
         } header: {
-            Text(localization.localized("settings.about"))
+            sectionHeader(localization.localized("settings.about"))
         }
+    }
+
+    // MARK: - Section header
+
+    private func sectionHeader(_ text: String) -> some View {
+        Text(text)
+            .font(.system(.footnote, design: .rounded).weight(.semibold))
+            .foregroundStyle(.secondary)
+            .textCase(.uppercase)
+            .tracking(0.5)
     }
 }

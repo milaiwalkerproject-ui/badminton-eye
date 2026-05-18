@@ -19,6 +19,7 @@
 		A10005 /* MatchSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20005 /* MatchSetupView.swift */; };
 		A10006 /* LiveMatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20006 /* LiveMatchView.swift */; };
 		A10007 /* ScorePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20007 /* ScorePanel.swift */; };
+		DS0001 /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = DS0002 /* DesignSystem.swift */; };
 		A10008 /* GameEndOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20008 /* GameEndOverlay.swift */; };
 		A10009 /* MatchEndView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20009 /* MatchEndView.swift */; };
 		A1000A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2000A /* Assets.xcassets */; };
@@ -132,6 +133,7 @@
 		A20005 /* MatchSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchSetupView.swift; sourceTree = "<group>"; };
 		A20006 /* LiveMatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveMatchView.swift; sourceTree = "<group>"; };
 		A20007 /* ScorePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScorePanel.swift; sourceTree = "<group>"; };
+		DS0002 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
 		A20008 /* GameEndOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameEndOverlay.swift; sourceTree = "<group>"; };
 		A20009 /* MatchEndView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchEndView.swift; sourceTree = "<group>"; };
 		A2000A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -308,6 +310,7 @@
 		A40005 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				DS0002 /* DesignSystem.swift */,
 				A20005 /* MatchSetupView.swift */,
 				A20006 /* LiveMatchView.swift */,
 				A20007 /* ScorePanel.swift */,
@@ -627,6 +630,7 @@
 				A10005 /* MatchSetupView.swift in Sources */,
 				A10006 /* LiveMatchView.swift in Sources */,
 				A10007 /* ScorePanel.swift in Sources */,
+				DS0001 /* DesignSystem.swift in Sources */,
 				A10008 /* GameEndOverlay.swift in Sources */,
 				A10009 /* MatchEndView.swift in Sources */,
 				WP1001 /* WCSessionProtocol.swift in Sources (iOS) */,

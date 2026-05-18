@@ -36,74 +36,76 @@ struct MatchSetupView: View {
     }
 
     var body: some View {
-        Form {
-            Section(localization.localized("setup.matchFormat")) {
-                Picker("Format", selection: $selectedFormat) {
-                    Text(localization.localized("setup.singles")).tag(MatchFormat.singles)
-                    Text(localization.localized("setup.doubles")).tag(MatchFormat.doubles)
-                    Text(localization.localized("setup.mixed")).tag(MatchFormat.mixed)
-                }
-                .pickerStyle(.segmented)
-            }
-
-            Section(localization.localized("setup.scoring")) {
-                Picker("Scoring System", selection: $selectedScoringSystem) {
-                    Text(localization.localized("setup.scoringStandard")).tag(ScoringSystem.standard21)
-                    Text(localization.localized("setup.scoring3x15")).tag(ScoringSystem.threeByFifteen)
-                    if let rules = customRules {
-                        Text("Custom (\(rules.pointsToWin) pts, best of \(rules.maxGames))")
-                            .tag(ScoringSystem.custom(rules))
+        ZStack(alignment: .bottom) {
+            Form {
+                Section {
+                    Picker("Format", selection: $selectedFormat) {
+                        Text(localization.localized("setup.singles")).tag(MatchFormat.singles)
+                        Text(localization.localized("setup.doubles")).tag(MatchFormat.doubles)
+                        Text(localization.localized("setup.mixed")).tag(MatchFormat.mixed)
                     }
+                    .pickerStyle(.segmented)
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(top: BE.Space.s, leading: 0, bottom: BE.Space.s, trailing: 0))
+                } header: {
+                    setupHeader(localization.localized("setup.matchFormat"))
                 }
 
-                Button {
-                    showCustomBuilder = true
-                } label: {
-                    Label(localization.localized("setup.customFormat"), systemImage: "slider.horizontal.3")
+                Section {
+                    Picker("Scoring System", selection: $selectedScoringSystem) {
+                        Text(localization.localized("setup.scoringStandard")).tag(ScoringSystem.standard21)
+                        Text(localization.localized("setup.scoring3x15")).tag(ScoringSystem.threeByFifteen)
+                        if let rules = customRules {
+                            Text("Custom (\(rules.pointsToWin) pts, best of \(rules.maxGames))")
+                                .tag(ScoringSystem.custom(rules))
+                        }
+                    }
+
+                    Button { showCustomBuilder = true } label: {
+                        HStack(spacing: BE.Space.m) {
+                            SettingsIconTile(systemName: "slider.horizontal.3", tint: .indigo)
+                            Text(localization.localized("setup.customFormat"))
+                                .foregroundStyle(.primary)
+                        }
+                    }
+                } header: {
+                    setupHeader(localization.localized("setup.scoring"))
                 }
-            }
 
-            Section(localization.localized("setup.teamA")) {
-                playerField(
-                    placeholder: isDoubles ? "Player 1A" : "Player 1",
-                    text: $playerAName,
-                    target: .playerA
-                )
-
-                if isDoubles {
+                Section {
                     playerField(
-                        placeholder: "Player 1B",
-                        text: $playerA2Name,
-                        target: .playerA2
+                        placeholder: isDoubles ? "Player 1A" : "Player 1",
+                        text: $playerAName, target: .playerA
                     )
+                    if isDoubles {
+                        playerField(placeholder: "Player 1B", text: $playerA2Name, target: .playerA2)
+                    }
+                } header: {
+                    teamHeader(localization.localized("setup.teamA"), accent: BE.TeamA.top)
                 }
-            }
 
-            Section(localization.localized("setup.teamB")) {
-                playerField(
-                    placeholder: isDoubles ? "Player 2A" : "Player 2",
-                    text: $playerBName,
-                    target: .playerB
-                )
-
-                if isDoubles {
+                Section {
                     playerField(
-                        placeholder: "Player 2B",
-                        text: $playerB2Name,
-                        target: .playerB2
+                        placeholder: isDoubles ? "Player 2A" : "Player 2",
+                        text: $playerBName, target: .playerB
                     )
+                    if isDoubles {
+                        playerField(placeholder: "Player 2B", text: $playerB2Name, target: .playerB2)
+                    }
+                } header: {
+                    teamHeader(localization.localized("setup.teamB"), accent: BE.TeamB.top)
                 }
-            }
 
-            Section {
-                Button(action: startMatch) {
-                    Text(localization.localized("setup.startMatch"))
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
-                }
-                .buttonStyle(.borderedProminent)
+                // Bottom inset so floating CTA never covers the last row
+                Section { Color.clear.frame(height: 70).listRowBackground(Color.clear) }
             }
+            .scrollContentBackground(.hidden)
+            .background(Color(.systemGroupedBackground).ignoresSafeArea())
+
+            // Floating Start CTA
+            startMatchCTA
+                .padding(.horizontal, BE.Space.m)
+                .padding(.bottom, BE.Space.m)
         }
         .navigationTitle(localization.localized("setup.title"))
         .navigationDestination(isPresented: $navigateToMatch) {
@@ -137,6 +139,44 @@ struct MatchSetupView: View {
                     excludeNames: excludeNames
                 )
             }
+        }
+    }
+
+    // MARK: - Section headers
+
+    private func setupHeader(_ text: String) -> some View {
+        Text(text)
+            .font(.system(.footnote, design: .rounded).weight(.semibold))
+            .foregroundStyle(.secondary)
+            .textCase(.uppercase)
+            .tracking(0.5)
+    }
+
+    private func teamHeader(_ text: String, accent: Color) -> some View {
+        HStack(spacing: 6) {
+            Circle().fill(accent).frame(width: 8, height: 8)
+            Text(text)
+                .font(.system(.footnote, design: .rounded).weight(.semibold))
+                .textCase(.uppercase)
+                .tracking(0.5)
+        }
+        .foregroundStyle(.secondary)
+    }
+
+    // MARK: - Start CTA
+
+    private var startMatchCTA: some View {
+        Button(action: startMatch) {
+            HStack(spacing: BE.Space.s) {
+                Image(systemName: "play.fill")
+                Text(localization.localized("setup.startMatch"))
+            }
+            .font(.system(.headline, design: .rounded).weight(.semibold))
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(BE.card(16).fill(Color.accentColor))
+            .foregroundStyle(.white)
+            .shadow(color: Color.accentColor.opacity(0.35), radius: 16, y: 8)
         }
     }
 

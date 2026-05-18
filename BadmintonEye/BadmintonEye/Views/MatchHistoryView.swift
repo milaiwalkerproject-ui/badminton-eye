@@ -17,18 +17,11 @@ struct MatchHistoryView: View {
     var body: some View {
         Group {
             if completedMatches.isEmpty {
-                ContentUnavailableView {
-                    Label(localization.localized("history.noMatches"), systemImage: "sportscourt")
-                } description: {
-                    Text("Start your first match to see results here.")
-                } actions: {
-                    NavigationLink("New Match") {
-                        MatchSetupView()
-                    }
-                    .buttonStyle(.borderedProminent)
-                }
+                emptyState
             } else {
                 matchList
+                    .scrollContentBackground(.hidden)
+                    .background(Color(.systemGroupedBackground))
             }
         }
         .navigationTitle(localization.localized("history.title"))
@@ -45,6 +38,46 @@ struct MatchHistoryView: View {
         } message: {
             Text("This match will be permanently removed.")
         }
+    }
+
+    // MARK: - Empty state
+
+    private var emptyState: some View {
+        VStack(spacing: BE.Space.l) {
+            Spacer()
+            ZStack {
+                Circle()
+                    .fill(LinearGradient(colors: [BE.TeamA.top.opacity(0.15), BE.TeamB.top.opacity(0.12)],
+                                         startPoint: .topLeading, endPoint: .bottomTrailing))
+                    .frame(width: 120, height: 120)
+                Image(systemName: "sportscourt")
+                    .font(.system(size: 52, weight: .light))
+                    .foregroundStyle(.tint)
+            }
+            VStack(spacing: 6) {
+                Text(localization.localized("history.noMatches"))
+                    .font(BE.displayTitle)
+                Text("Start your first match to see results here.")
+                    .font(.system(.subheadline, design: .rounded))
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, BE.Space.l)
+            }
+            NavigationLink {
+                MatchSetupView()
+            } label: {
+                Label("New Match", systemImage: "plus")
+                    .font(.system(.headline, design: .rounded).weight(.semibold))
+                    .padding(.horizontal, BE.Space.l)
+                    .padding(.vertical, 14)
+                    .background(BE.card(14).fill(Color.accentColor))
+                    .foregroundStyle(.white)
+                    .shadow(color: Color.accentColor.opacity(0.25), radius: 10, y: 4)
+            }
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
     }
 
     private var matchList: some View {
@@ -73,35 +106,61 @@ struct MatchHistoryView: View {
     // MARK: - Match Row
 
     private func matchRow(_ match: PersistedMatch) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
+        HStack(spacing: BE.Space.m) {
+            // Vertical accent stripe — winner-tinted
+            RoundedRectangle(cornerRadius: 2, style: .continuous)
+                .fill(accentColor(for: match))
+                .frame(width: 3)
+                .frame(maxHeight: .infinity)
+
+            VStack(alignment: .leading, spacing: 6) {
                 Text(playerNamesText(for: match))
-                    .font(.headline)
+                    .font(.system(.headline, design: .rounded).weight(.semibold))
                     .lineLimit(1)
-                Spacer()
-                Text(gameScoresText(for: match))
-                    .font(.subheadline.monospacedDigit())
-                    .foregroundStyle(.secondary)
-            }
-            HStack(spacing: 8) {
-                Text(formatBadge(for: match))
-                    .font(.caption)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(.quaternary)
-                    .clipShape(Capsule())
-                if let winner = winnerName(for: match) {
-                    Text(winner + " won")
-                        .font(.caption)
-                        .foregroundStyle(.green)
+
+                HStack(spacing: BE.Space.s) {
+                    Text(formatBadge(for: match))
+                        .font(BE.eyebrow)
+                        .tracking(0.6)
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(
+                            Capsule(style: .continuous).fill(Color(.tertiarySystemFill))
+                        )
+
+                    if let winner = winnerName(for: match) {
+                        HStack(spacing: 3) {
+                            Image(systemName: "trophy.fill").font(.system(size: 9))
+                            Text(winner)
+                                .font(.system(.caption, design: .rounded).weight(.medium))
+                        }
+                        .foregroundStyle(.secondary)
+                    }
                 }
-                Spacer()
+            }
+
+            Spacer(minLength: BE.Space.s)
+
+            VStack(alignment: .trailing, spacing: 2) {
+                Text(gameScoresText(for: match))
+                    .font(.system(.subheadline, design: .rounded).weight(.semibold))
+                    .monospacedDigit()
+                    .foregroundStyle(.primary)
                 Text(match.startedAt, style: .relative)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
             }
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, 6)
+    }
+
+    private func accentColor(for match: PersistedMatch) -> Color {
+        switch match.winnerSide {
+        case "sideA": return BE.TeamA.top
+        case "sideB": return BE.TeamB.top
+        default:      return Color(.tertiarySystemFill)
+        }
     }
 
     // MARK: - Helpers

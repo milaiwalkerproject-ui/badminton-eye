@@ -51,7 +51,7 @@ struct LiveMatchView: View {
                             serviceCourt: viewModel.state.currentServer.side == .sideA
                                 ? viewModel.state.serviceCourt : nil,
                             playerNames: viewModel.state.teamANames,
-                            backgroundColor: Color.blue.opacity(0.85)
+                            gradient: BE.TeamA.gradient
                         )
                     }
                     .buttonStyle(.plain)
@@ -74,7 +74,7 @@ struct LiveMatchView: View {
                             serviceCourt: viewModel.state.currentServer.side == .sideB
                                 ? viewModel.state.serviceCourt : nil,
                             playerNames: viewModel.state.teamBNames,
-                            backgroundColor: Color.red.opacity(0.85)
+                            gradient: BE.TeamB.gradient
                         )
                     }
                     .buttonStyle(.plain)
@@ -89,111 +89,48 @@ struct LiveMatchView: View {
             }
             .ignoresSafeArea()
 
-            // Top bar overlay
+            // Top HUD — unified glass pill centered, with floating
+            // icon buttons on either side.
             VStack {
-                HStack {
-                    // Undo button (A11Y-03)
-                    Button {
+                HStack(alignment: .center, spacing: BE.Space.s) {
+                    GlassIconButton(systemName: "arrow.uturn.backward", disabled: !viewModel.canUndo) {
                         viewModel.undo()
-                    } label: {
-                        Image(systemName: "arrow.uturn.backward")
-                            .font(.title2)
-                            .foregroundStyle(.white)
-                            .padding(10)
-                            .background(.black.opacity(0.4))
-                            .clipShape(Circle())
                     }
-                    .disabled(!viewModel.canUndo)
-                    .opacity(viewModel.canUndo ? 1.0 : 0.4)
                     .accessibilityLabel("Undo last point")
                     .accessibilityHint(viewModel.canUndo ? "Double-tap to undo the last scored point" : "No points to undo")
 
-                    Spacer()
+                    Spacer(minLength: 0)
 
-                    // Game info (A11Y-04)
-                    VStack(spacing: 2) {
-                        Text("\(localization.localized("match.game")) \(viewModel.state.currentGame.gameNumber)")
-                            .font(.headline)
-                            .foregroundStyle(.white)
-
-                        if !viewModel.state.games.isEmpty {
-                            Text(completedGameScores)
-                                .font(.caption)
-                                .foregroundStyle(.white.opacity(0.8))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 2)
-                                .background(.black.opacity(0.3))
-                                .clipShape(Capsule())
+                    GlassPill {
+                        VStack(spacing: 2) {
+                            Text("\(localization.localized("match.game")) \(viewModel.state.currentGame.gameNumber)")
+                                .font(.system(.subheadline, design: .rounded).weight(.semibold))
+                                .foregroundStyle(.white)
+                            if !viewModel.state.games.isEmpty {
+                                Text(completedGameScores)
+                                    .font(.system(.caption2, design: .rounded).weight(.medium))
+                                    .monospacedDigit()
+                                    .foregroundStyle(.white.opacity(0.75))
+                            }
                         }
                     }
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(gameInfoAccessibilityLabel)
 
-                    Spacer()
+                    Spacer(minLength: 0)
 
-                    // Challenge button (visible only during inProgress match)
                     if viewModel.state.matchPhase == .inProgress {
-                        Button {
-                            if subscriptionManager.isPremium {
-                                showChallengeSheet = true
-                            } else {
-                                showPaywall = true
-                            }
-                        } label: {
-                            ZStack(alignment: .topTrailing) {
-                                VStack(spacing: 2) {
-                                    ZStack(alignment: .bottomTrailing) {
-                                        Image(systemName: "eye.trianglebadge.exclamationmark")
-                                            .font(.title3)
-
-                                        // Lock badge for non-premium users
-                                        if !subscriptionManager.isPremium {
-                                            Image(systemName: "lock.fill")
-                                                .font(.caption2)
-                                                .foregroundStyle(.yellow)
-                                                .offset(x: 4, y: 2)
-                                        }
-                                    }
-                                    Text("Challenge")
-                                        .font(.caption2)
-                                }
-                                .foregroundStyle(.white)
-                                .padding(10)
-                                .background(.black.opacity(0.4))
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
-
-                                // Countdown badge (only for premium)
-                                if subscriptionManager.isPremium && challengeCountdown > 0 {
-                                    Text("\(challengeCountdown)")
-                                        .font(.caption2.bold())
-                                        .foregroundStyle(.black)
-                                        .frame(width: 18, height: 18)
-                                        .background(Color.yellow)
-                                        .clipShape(Circle())
-                                        .offset(x: 4, y: -4)
-                                }
-                            }
-                        }
-                        .disabled(subscriptionManager.isPremium && challengeCountdown == 0)
-                        .opacity(subscriptionManager.isPremium ? (challengeCountdown > 0 ? 1.0 : 0.4) : 1.0)
+                        challengeButton
                     }
 
-                    // End match button (A11Y-03)
-                    Button {
+                    GlassIconButton(systemName: "xmark") {
                         showAbandonAlert = true
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.title2)
-                            .foregroundStyle(.white)
-                            .padding(10)
-                            .background(.black.opacity(0.4))
-                            .clipShape(Circle())
                     }
                     .accessibilityLabel("End match")
                     .accessibilityHint("Double-tap to abandon the current match")
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 8)
+                .padding(.horizontal, BE.Space.m)
+                .padding(.top, BE.Space.s)
 
                 Spacer()
             }
@@ -245,6 +182,52 @@ struct LiveMatchView: View {
         ) {
             MatchEndView(state: viewModel.state, onNewMatch: onMatchEnd)
         }
+    }
+
+    // MARK: - Challenge button
+
+    @ViewBuilder
+    private var challengeButton: some View {
+        let active = subscriptionManager.isPremium && challengeCountdown > 0
+        let locked = !subscriptionManager.isPremium
+
+        Button {
+            if subscriptionManager.isPremium {
+                showChallengeSheet = true
+            } else {
+                showPaywall = true
+            }
+        } label: {
+            ZStack(alignment: .topTrailing) {
+                Image(systemName: "eye.trianglebadge.exclamationmark")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(locked ? .white.opacity(0.95) : BE.serveAccent)
+                    .frame(width: 38, height: 38)
+                    .background(.ultraThinMaterial, in: Circle())
+                    .overlay(Circle().strokeBorder(Color.white.opacity(0.15), lineWidth: 0.5))
+                    .shadow(color: .black.opacity(0.18), radius: 10, y: 4)
+
+                if locked {
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundStyle(.white)
+                        .padding(3)
+                        .background(Color.black.opacity(0.65), in: Circle())
+                        .offset(x: 2, y: -2)
+                } else if challengeCountdown > 0 {
+                    Text("\(challengeCountdown)")
+                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .monospacedDigit()
+                        .foregroundStyle(.black)
+                        .frame(width: 16, height: 16)
+                        .background(BE.serveAccent, in: Circle())
+                        .offset(x: 2, y: -2)
+                }
+            }
+        }
+        .disabled(subscriptionManager.isPremium && !active)
+        .opacity(subscriptionManager.isPremium ? (active ? 1.0 : 0.5) : 1.0)
+        .animation(BE.ease, value: challengeCountdown)
     }
 
     // MARK: - Challenge Countdown
