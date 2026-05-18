@@ -191,11 +191,15 @@ final class LiveMatchViewModel {
         }
         updateGameScores()
 
-        // Watch sync: dispatch to avoid blocking SwiftUI rendering
-        let snapState = state
-        let snapActive = snapState.matchPhase == .inProgress
-        Task.detached(priority: .utility) {
-            WatchSyncManager.shared.sendStateUpdate(snapState, isActive: snapActive)
+        // Watch sync: dispatch to avoid blocking SwiftUI rendering.
+        // Skipped in free-Apple-ID mode — WCSession isn't activated and the
+        // call still blocks under contention. Every score paid for it.
+        if !AppMode.freeAppleIDMode {
+            let snapState = state
+            let snapActive = snapState.matchPhase == .inProgress
+            Task.detached(priority: .utility) {
+                WatchSyncManager.shared.sendStateUpdate(snapState, isActive: snapActive)
+            }
         }
 
         if state.matchPhase == .inProgress {
