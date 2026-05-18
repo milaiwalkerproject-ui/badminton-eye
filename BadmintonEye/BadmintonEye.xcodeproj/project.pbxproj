@@ -82,6 +82,7 @@
 		RS1001 /* RallySuggestionFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = RS2001 /* RallySuggestionFlow.swift */; };
 		TN1001 /* TrackNetV3.mlpackage in Resources */ = {isa = PBXBuildFile; fileRef = TN2001 /* TrackNetV3.mlpackage */; };
 		TD1001 /* TrackNetShuttleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = TD2001 /* TrackNetShuttleDetector.swift */; };
+		LC1001 /* LiveCameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = LC2001 /* LiveCameraPreview.swift */; };
 		LM1001 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = LM2001 /* LocalizationManager.swift */; };
 		PR1001 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = PR2001 /* PrivacyInfo.xcprivacy */; };
 		IL1001 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = IL4001 /* Localizable.strings */; };
@@ -197,6 +198,7 @@
 		RS2001 /* RallySuggestionFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RallySuggestionFlow.swift; sourceTree = "<group>"; };
 		TN2001 /* TrackNetV3.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = Resources/TrackNetV3.mlpackage; sourceTree = "<group>"; };
 		TD2001 /* TrackNetShuttleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackNetShuttleDetector.swift; sourceTree = "<group>"; };
+		LC2001 /* LiveCameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCameraPreview.swift; sourceTree = "<group>"; };
 		LM2001 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
 		PR2001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		IL2001 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -321,6 +323,7 @@
 				DS0002 /* DesignSystem.swift */,
 				A20005 /* MatchSetupView.swift */,
 				A20006 /* LiveMatchView.swift */,
+				LC2001 /* LiveCameraPreview.swift */,
 				A20007 /* ScorePanel.swift */,
 				A20008 /* GameEndOverlay.swift */,
 				A20009 /* MatchEndView.swift */,
@@ -684,6 +687,7 @@
 				GR1001 /* GameRecordingService.swift in Sources */,
 				RS1001 /* RallySuggestionFlow.swift in Sources */,
 				TD1001 /* TrackNetShuttleDetector.swift in Sources */,
+				LC1001 /* LiveCameraPreview.swift in Sources */,
 				LM1001 /* LocalizationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
