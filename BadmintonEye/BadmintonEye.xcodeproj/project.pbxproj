@@ -79,6 +79,7 @@
 		AS1001 /* AudioTemporalSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = AS2001 /* AudioTemporalSync.swift */; };
 		DC1001 /* MultiCamCaptureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2001 /* MultiCamCaptureManager.swift */; };
 		GR1001 /* GameRecordingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = GR2001 /* GameRecordingService.swift */; };
+		RS1001 /* RallySuggestionFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = RS2001 /* RallySuggestionFlow.swift */; };
 		LM1001 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = LM2001 /* LocalizationManager.swift */; };
 		PR1001 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = PR2001 /* PrivacyInfo.xcprivacy */; };
 		IL1001 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = IL4001 /* Localizable.strings */; };
@@ -191,6 +192,7 @@
 		AS2001 /* AudioTemporalSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioTemporalSync.swift; sourceTree = "<group>"; };
 		DC2001 /* MultiCamCaptureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiCamCaptureManager.swift; sourceTree = "<group>"; };
 		GR2001 /* GameRecordingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameRecordingService.swift; sourceTree = "<group>"; };
+		RS2001 /* RallySuggestionFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RallySuggestionFlow.swift; sourceTree = "<group>"; };
 		LM2001 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
 		PR2001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		IL2001 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -358,6 +360,7 @@
 				AS2001 /* AudioTemporalSync.swift */,
 				DC2001 /* MultiCamCaptureManager.swift */,
 				GR2001 /* GameRecordingService.swift */,
+				RS2001 /* RallySuggestionFlow.swift */,
 				LM2001 /* LocalizationManager.swift */,
 			);
 			path = Services;
@@ -672,6 +675,7 @@
 				AS1001 /* AudioTemporalSync.swift in Sources */,
 				DC1001 /* MultiCamCaptureManager.swift in Sources */,
 				GR1001 /* GameRecordingService.swift in Sources */,
+				RS1001 /* RallySuggestionFlow.swift in Sources */,
 				LM1001 /* LocalizationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

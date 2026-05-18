@@ -7,6 +7,7 @@ struct LiveMatchView: View {
     @State private var showAbandonAlert = false
     @State private var showChallengeSheet = false
     @State private var showPaywall = false
+    @State private var showRallySuggestion = false
     @State private var challengeCountdown: Int = 0
     /// Cancellation token for the challenge countdown task.
     @State private var challengeCountdownTask: Task<Void, Never>?
@@ -133,6 +134,25 @@ struct LiveMatchView: View {
                 .padding(.top, BE.Space.s)
 
                 Spacer()
+
+                // Rally Ended floating button — only during active play.
+                // Hidden once the match is complete or abandoned.
+                if viewModel.state.matchPhase == .inProgress {
+                    Button {
+                        showRallySuggestion = true
+                    } label: {
+                        Label("Rally Ended", systemImage: "checkmark.circle.fill")
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 14)
+                            .background(.blue)
+                            .clipShape(Capsule())
+                            .shadow(radius: 4, y: 2)
+                    }
+                    .accessibilityHint("Auto-suggest the rally winner")
+                    .padding(.bottom, 32)
+                }
             }
 
             // Game end overlay
@@ -150,6 +170,16 @@ struct LiveMatchView: View {
         }
         .sheet(isPresented: $showChallengeSheet) {
             ChallengeVideoView()
+        }
+        .sheet(isPresented: $showRallySuggestion) {
+            RallySuggestionSheet(
+                teamANames: viewModel.state.teamANames,
+                teamBNames: viewModel.state.teamBNames
+            ) { resolvedSide in
+                if let side = resolvedSide {
+                    viewModel.scorePoint(for: side)
+                }
+            }
         }
         .sheet(isPresented: $showPaywall) {
             PaywallView()
