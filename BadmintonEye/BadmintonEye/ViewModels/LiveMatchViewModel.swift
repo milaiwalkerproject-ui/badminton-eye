@@ -159,13 +159,19 @@ final class LiveMatchViewModel {
 
     // MARK: - Continuous capture
 
+    // Phase B intentionally leaves continuous capture wired but inert. The
+    // AVCaptureSession overhead (mic + video data output + movie output) and
+    // a 10s uncompressed CMSampleBuffer ring buffer makes scoring unusably
+    // laggy and causes audio-session reroute artifacts; nothing in the MVP
+    // currently consumes the captured frames or saved video. Phase D will
+    // re-enable when the auto-suggest pipeline actually reads from the
+    // buffer.
     private func startContinuousCapture() {
-        guard state.matchPhase == .inProgress else { return }
-        Task { await recorder.startMatchRecording() }
+        // no-op until Phase D
     }
 
     private func stopContinuousCapture() {
-        Task { await recorder.stopMatchRecording() }
+        // no-op until Phase D
     }
 
     // MARK: - Private

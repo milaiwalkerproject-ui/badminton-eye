@@ -231,7 +231,11 @@ final class GameRecordingService: NSObject {
         guard status == .authorized || status == .limited else { return }
 
         do {
-            try await PHPhotoLibrary.shared().performChanges {
+            // performChanges runs the closure on its own PHPhotoLibrary
+            // queue, so the closure must be @Sendable. Without this, Swift 6
+            // strict-concurrency traps with SIGTRAP because the enclosing
+            // class is @MainActor.
+            try await PHPhotoLibrary.shared().performChanges { @Sendable in
                 PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
             }
             await MainActor.run {

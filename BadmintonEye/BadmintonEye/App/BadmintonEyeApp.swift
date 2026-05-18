@@ -7,7 +7,7 @@ import SwiftData
 /// inert. Flip `freeAppleIDMode` to `false` to restore full functionality.
 /// See `.planning/PROJECT.md` → "Current Milestone: MVP".
 enum AppMode {
-    static let freeAppleIDMode: Bool = false
+    static let freeAppleIDMode: Bool = true
 }
 
 @main
@@ -172,11 +172,18 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            if !hasCheckedRestore, let match = inProgressMatches.first {
-                restoredViewModel = LiveMatchViewModel.restoreFromPersistedMatch(
-                    match,
-                    modelContext: modelContext
-                )
+            // MVP: skip crash-recovery auto-resume. Mark any leftover
+            // in-progress matches as abandoned so they don't fight startup
+            // performance (SwiftData notifications, Watch sync, etc.) and
+            // so the user lands on the home tabs every launch. We can
+            // reintroduce a proper "Resume in-progress match?" prompt
+            // post-MVP if needed.
+            if !hasCheckedRestore {
+                for match in inProgressMatches {
+                    match.isAbandoned = true
+                    match.endedAt = Date()
+                }
+                try? modelContext.save()
                 hasCheckedRestore = true
             }
             if !AppMode.freeAppleIDMode {

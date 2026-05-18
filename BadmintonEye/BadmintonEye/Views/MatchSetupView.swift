@@ -16,8 +16,9 @@ struct MatchSetupView: View {
     @State private var playerB2Name: String = ""
     @State private var navigateToMatch = false
     @State private var matchState: MatchState?
-    @State private var showCalibration = false
     @State private var pendingCalibration: CalibrationProfile?
+    // Calibration gate is deferred — Phase D will reintroduce when the
+    // auto-suggest pipeline actually consumes the 4 corner points.
 
     // Picker sheet state
     @State private var showPickerFor: PickerTarget?
@@ -125,13 +126,6 @@ struct MatchSetupView: View {
                     }
                 )
                 .navigationBarBackButtonHidden(true)
-            }
-        }
-        .fullScreenCover(isPresented: $showCalibration) {
-            CourtCalibrationView { profile in
-                pendingCalibration = profile
-                showCalibration = false
-                navigateToMatch = true
             }
         }
         .sheet(isPresented: $showCustomBuilder) {
@@ -276,9 +270,7 @@ struct MatchSetupView: View {
             )
         }
         matchState = state
-        // Defer LiveMatchView push until the user completes calibration.
-        // The calibration sheet's confirm callback flips navigateToMatch.
-        showCalibration = true
+        navigateToMatch = true
     }
 
     /// Auto-creates Player records for any entered names not already in the database
