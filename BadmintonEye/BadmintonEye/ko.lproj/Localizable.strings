@@ -29,7 +29,7 @@
 "icloud.account" = "계정";
 
 /* Match Setup */
-"setup.title" = "배드민턴 아이";
+"setup.title" = "새 경기";
 "setup.matchFormat" = "경기 형식";
 "setup.singles" = "단식";
 "setup.doubles" = "복식";

@@ -31,7 +31,7 @@
 "icloud.account" = "Konto";
 
 /* Match Setup */
-"setup.title" = "Badminton Eye";
+"setup.title" = "Ny kamp";
 "setup.matchFormat" = "Kampformat";
 "setup.singles" = "Single";
 "setup.doubles" = "Double";

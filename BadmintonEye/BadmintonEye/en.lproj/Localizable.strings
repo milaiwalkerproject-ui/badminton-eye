@@ -29,7 +29,7 @@
 "icloud.account" = "Account";
 
 /* Match Setup */
-"setup.title" = "Badminton Eye";
+"setup.title" = "New Match";
 "setup.matchFormat" = "Match Format";
 "setup.singles" = "Singles";
 "setup.doubles" = "Doubles";

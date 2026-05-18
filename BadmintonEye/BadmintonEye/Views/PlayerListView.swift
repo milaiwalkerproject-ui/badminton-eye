@@ -74,23 +74,42 @@ struct PlayerListView: View {
 
     @ViewBuilder
     private func playerRow(_ player: Player) -> some View {
-        HStack(spacing: 12) {
-            avatarView(for: player, size: 40)
+        let record = winLossRecord(for: player)
+        let total = record.wins + record.losses
+        let winPct = total > 0 ? Int(round(Double(record.wins) / Double(total) * 100)) : 0
 
-            VStack(alignment: .leading, spacing: 2) {
+        HStack(spacing: BE.Space.m) {
+            avatarView(for: player, size: 44)
+
+            VStack(alignment: .leading, spacing: 3) {
                 Text(player.name)
-                    .font(.body)
-                    .fontWeight(.medium)
-
-                let record = winLossRecord(for: player)
-                Text("\(record.wins)W - \(record.losses)L")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .font(.system(.headline, design: .rounded).weight(.semibold))
+                    .lineLimit(1)
+                if total > 0 {
+                    Text("\(record.wins)W · \(record.losses)L · \(winPct)%")
+                        .font(.system(.caption, design: .rounded).weight(.medium))
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("No matches yet")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                }
             }
 
-            Spacer()
+            Spacer(minLength: BE.Space.s)
+
+            if total > 0 {
+                Text("\(total)")
+                    .font(.system(.subheadline, design: .rounded).weight(.semibold))
+                    .monospacedDigit()
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 9)
+                    .padding(.vertical, 3)
+                    .background(Capsule(style: .continuous).fill(Color(.tertiarySystemFill)))
+            }
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, 4)
     }
 
     // MARK: - Helpers

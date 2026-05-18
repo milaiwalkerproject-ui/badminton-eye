@@ -29,7 +29,7 @@
 "icloud.account" = "アカウント";
 
 /* Match Setup */
-"setup.title" = "バドミントンアイ";
+"setup.title" = "新しい試合";
 "setup.matchFormat" = "試合形式";
 "setup.singles" = "シングルス";
 "setup.doubles" = "ダブルス";

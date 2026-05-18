@@ -31,7 +31,7 @@
 "icloud.account" = "บัญชี";
 
 /* Match Setup */
-"setup.title" = "แบดมินตัน อาย";
+"setup.title" = "การแข่งขันใหม่";
 "setup.matchFormat" = "รูปแบบการแข่งขัน";
 "setup.singles" = "ประเภทเดี่ยว";
 "setup.doubles" = "ประเภทคู่";

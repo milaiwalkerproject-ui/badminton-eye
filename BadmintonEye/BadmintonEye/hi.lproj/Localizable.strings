@@ -31,7 +31,7 @@
 "icloud.account" = "खाता";
 
 /* Match Setup */
-"setup.title" = "बैडमिंटन आई";
+"setup.title" = "नया मैच";
 "setup.matchFormat" = "मैच फ़ॉर्मेट";
 "setup.singles" = "एकल";
 "setup.doubles" = "युगल";

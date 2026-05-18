@@ -31,7 +31,7 @@
 "icloud.account" = "Akaun";
 
 /* Match Setup */
-"setup.title" = "Badminton Eye";
+"setup.title" = "Perlawanan Baru";
 "setup.matchFormat" = "Format Perlawanan";
 "setup.singles" = "Perseorangan";
 "setup.doubles" = "Beregu";

@@ -29,7 +29,7 @@
 "icloud.account" = "账户";
 
 /* Match Setup */
-"setup.title" = "羽毛球之眼";
+"setup.title" = "新比赛";
 "setup.matchFormat" = "比赛形式";
 "setup.singles" = "单打";
 "setup.doubles" = "双打";
