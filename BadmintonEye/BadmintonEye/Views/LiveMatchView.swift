@@ -149,19 +149,23 @@ struct LiveMatchView: View {
     // MARK: - Scoreboard card (portrait)
 
     private var scoreboardCard: some View {
-        HStack(spacing: 0) {
+        let server = viewModel.state.currentServer.side
+        let court = viewModel.state.serviceCourt
+        return HStack(spacing: 0) {
             scoreboardSide(
                 isA: true,
                 score: viewModel.state.currentGame.scoreA,
                 name: viewModel.state.teamANames.first ?? "Team A",
-                isServing: viewModel.state.currentServer.side == .sideA,
+                isServing: server == .sideA,
+                serviceCourt: server == .sideA ? court : nil,
                 gradient: BE.TeamA.gradient
             )
             scoreboardSide(
                 isA: false,
                 score: viewModel.state.currentGame.scoreB,
                 name: viewModel.state.teamBNames.first ?? "Team B",
-                isServing: viewModel.state.currentServer.side == .sideB,
+                isServing: server == .sideB,
+                serviceCourt: server == .sideB ? court : nil,
                 gradient: BE.TeamB.gradient
             )
         }
@@ -176,6 +180,7 @@ struct LiveMatchView: View {
         score: Int,
         name: String,
         isServing: Bool,
+        serviceCourt: Court?,
         gradient: LinearGradient
     ) -> some View {
         Button {
@@ -203,13 +208,20 @@ struct LiveMatchView: View {
                             .lineLimit(1)
                     }
 
-                    Text("\(score)")
-                        .font(.system(size: 72, weight: .heavy, design: .rounded))
-                        .monospacedDigit()
-                        .foregroundStyle(.white)
-                        .shadow(color: .black.opacity(0.25), radius: 8, y: 3)
-                        .contentTransition(.numericText(value: Double(score)))
-                        .animation(BE.pop, value: score)
+                    // Score numeral with an inline L/R court chip — the
+                    // chip is reserved-space (invisible when not serving)
+                    // so the score numeral stays vertically centered.
+                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                        Text("\(score)")
+                            .font(.system(size: 72, weight: .heavy, design: .rounded))
+                            .monospacedDigit()
+                            .foregroundStyle(.white)
+                            .shadow(color: .black.opacity(0.25), radius: 8, y: 3)
+                            .contentTransition(.numericText(value: Double(score)))
+                            .animation(BE.pop, value: score)
+
+                        courtChip(serviceCourt)
+                    }
                 }
                 .padding(.vertical, BE.Space.s)
             }
@@ -218,7 +230,26 @@ struct LiveMatchView: View {
         .contentShape(Rectangle())
         .frame(maxWidth: .infinity)
         .accessibilityLabel("Score point for \(name)")
-        .accessibilityValue("\(score)\(isServing ? ", serving" : "")")
+        .accessibilityValue("\(score)\(isServing ? ", serving from \(serviceCourt == .right ? "right" : "left") court" : "")")
+    }
+
+    /// Small honey-tinted "L" / "R" chip shown next to the score for the
+    /// serving side. Renders invisibly (same footprint) when not serving
+    /// so layout stays stable between rallies.
+    @ViewBuilder
+    private func courtChip(_ court: Court?) -> some View {
+        if let court {
+            Text(court == .right ? "R" : "L")
+                .font(.system(.subheadline, design: .rounded).weight(.bold))
+                .foregroundStyle(.black)
+                .frame(width: 24, height: 24)
+                .background(BE.serveAccent, in: Circle())
+                .shadow(color: BE.serveAccent.opacity(0.55), radius: 6, y: 2)
+                .transition(.scale.combined(with: .opacity))
+        } else {
+            // Reserved transparent footprint to prevent score reflow.
+            Circle().fill(.clear).frame(width: 24, height: 24)
+        }
     }
 
     // MARK: - Camera tile
@@ -398,13 +429,14 @@ struct LiveMatchView: View {
     }
 
     /// Compact landscape-mode score banner: A-score · game · B-score.
+    /// The serving side's score is followed by an L/R court chip.
     private var scoreBanner: some View {
-        GlassPill {
+        let server = viewModel.state.currentServer.side
+        let court = viewModel.state.serviceCourt
+        return GlassPill {
             HStack(spacing: BE.Space.m) {
-                Text("\(viewModel.state.currentGame.scoreA)")
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
-                    .monospacedDigit()
-                    .foregroundStyle(.white)
+                bannerScore(viewModel.state.currentGame.scoreA,
+                            court: server == .sideA ? court : nil)
                 VStack(spacing: 2) {
                     Text("\(localization.localized("match.game")) \(viewModel.state.currentGame.gameNumber)")
                         .font(.system(.caption, design: .rounded).weight(.semibold))
@@ -416,15 +448,30 @@ struct LiveMatchView: View {
                             .foregroundStyle(.white.opacity(0.6))
                     }
                 }
-                Text("\(viewModel.state.currentGame.scoreB)")
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
-                    .monospacedDigit()
-                    .foregroundStyle(.white)
+                bannerScore(viewModel.state.currentGame.scoreB,
+                            court: server == .sideB ? court : nil)
             }
             .padding(.horizontal, BE.Space.s)
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Score \(viewModel.state.currentGame.scoreA) to \(viewModel.state.currentGame.scoreB), \(gameInfoAccessibilityLabel)")
+    }
+
+    /// Score numeral + adjacent L/R chip used inside the landscape banner.
+    private func bannerScore(_ score: Int, court: Court?) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 4) {
+            Text("\(score)")
+                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .monospacedDigit()
+                .foregroundStyle(.white)
+            if let court {
+                Text(court == .right ? "R" : "L")
+                    .font(.system(.caption2, design: .rounded).weight(.bold))
+                    .foregroundStyle(.black)
+                    .frame(width: 16, height: 16)
+                    .background(BE.serveAccent, in: Circle())
+            }
+        }
     }
 
     /// "REC" pill displayed over the camera tile so it's obvious the
