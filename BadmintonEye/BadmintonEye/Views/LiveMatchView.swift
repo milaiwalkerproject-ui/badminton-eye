@@ -195,6 +195,7 @@ struct LiveMatchView: View {
                 .blendMode(.plusLighter)
 
                 VStack(spacing: 6) {
+                    // Name row — serving pip · name · L/R court chip
                     HStack(spacing: 5) {
                         if isServing {
                             Circle()
@@ -206,22 +207,25 @@ struct LiveMatchView: View {
                             .font(.system(.footnote, design: .rounded).weight(.semibold))
                             .foregroundStyle(.white.opacity(0.92))
                             .lineLimit(1)
+                        if let serviceCourt {
+                            Text(serviceCourt == .right ? "R" : "L")
+                                .font(.system(.caption2, design: .rounded).weight(.bold))
+                                .foregroundStyle(.black)
+                                .frame(width: 18, height: 18)
+                                .background(BE.serveAccent, in: Circle())
+                                .shadow(color: BE.serveAccent.opacity(0.5), radius: 4, y: 1)
+                                .transition(.scale.combined(with: .opacity))
+                        }
                     }
+                    .animation(BE.ease, value: serviceCourt)
 
-                    // Score numeral with an inline L/R court chip — the
-                    // chip is reserved-space (invisible when not serving)
-                    // so the score numeral stays vertically centered.
-                    HStack(alignment: .firstTextBaseline, spacing: 6) {
-                        Text("\(score)")
-                            .font(.system(size: 72, weight: .heavy, design: .rounded))
-                            .monospacedDigit()
-                            .foregroundStyle(.white)
-                            .shadow(color: .black.opacity(0.25), radius: 8, y: 3)
-                            .contentTransition(.numericText(value: Double(score)))
-                            .animation(BE.pop, value: score)
-
-                        courtChip(serviceCourt)
-                    }
+                    Text("\(score)")
+                        .font(.system(size: 72, weight: .heavy, design: .rounded))
+                        .monospacedDigit()
+                        .foregroundStyle(.white)
+                        .shadow(color: .black.opacity(0.25), radius: 8, y: 3)
+                        .contentTransition(.numericText(value: Double(score)))
+                        .animation(BE.pop, value: score)
                 }
                 .padding(.vertical, BE.Space.s)
             }
@@ -231,25 +235,6 @@ struct LiveMatchView: View {
         .frame(maxWidth: .infinity)
         .accessibilityLabel("Score point for \(name)")
         .accessibilityValue("\(score)\(isServing ? ", serving from \(serviceCourt == .right ? "right" : "left") court" : "")")
-    }
-
-    /// Small honey-tinted "L" / "R" chip shown next to the score for the
-    /// serving side. Renders invisibly (same footprint) when not serving
-    /// so layout stays stable between rallies.
-    @ViewBuilder
-    private func courtChip(_ court: Court?) -> some View {
-        if let court {
-            Text(court == .right ? "R" : "L")
-                .font(.system(.subheadline, design: .rounded).weight(.bold))
-                .foregroundStyle(.black)
-                .frame(width: 24, height: 24)
-                .background(BE.serveAccent, in: Circle())
-                .shadow(color: BE.serveAccent.opacity(0.55), radius: 6, y: 2)
-                .transition(.scale.combined(with: .opacity))
-        } else {
-            // Reserved transparent footprint to prevent score reflow.
-            Circle().fill(.clear).frame(width: 24, height: 24)
-        }
     }
 
     // MARK: - Camera tile
