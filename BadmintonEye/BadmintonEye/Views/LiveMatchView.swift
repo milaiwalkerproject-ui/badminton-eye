@@ -284,39 +284,46 @@ struct LiveMatchView: View {
             }
             .ignoresSafeArea()
 
+            // Side icon buttons — padded into the safe area on both edges.
             VStack {
-                // Top: side HUD icons on a row; score banner anchored to
-                // the true horizontal center via ZStack so it isn't
-                // pushed by asymmetric side groups.
-                ZStack {
-                    HStack(alignment: .center, spacing: BE.Space.s) {
-                        GlassIconButton(systemName: "arrow.uturn.backward", disabled: !viewModel.canUndo) {
-                            viewModel.undo()
-                        }
-                        .accessibilityLabel("Undo last point")
-                        Spacer(minLength: 0)
-                        if viewModel.state.matchPhase == .inProgress {
-                            challengeButton
-                        }
-                        GlassIconButton(systemName: "xmark") {
-                            showAbandonAlert = true
-                        }
-                        .accessibilityLabel("End match")
+                HStack(alignment: .center, spacing: BE.Space.s) {
+                    GlassIconButton(systemName: "arrow.uturn.backward", disabled: !viewModel.canUndo) {
+                        viewModel.undo()
                     }
-                    scoreBanner
+                    .accessibilityLabel("Undo last point")
+                    Spacer(minLength: 0)
+                    if viewModel.state.matchPhase == .inProgress {
+                        challengeButton
+                    }
+                    GlassIconButton(systemName: "xmark") {
+                        showAbandonAlert = true
+                    }
+                    .accessibilityLabel("End match")
                 }
                 .frame(height: 44)
                 .padding(.horizontal, BE.Space.m)
                 .padding(.top, BE.Space.s)
 
                 Spacer()
+            }
 
-                if viewModel.state.matchPhase == .inProgress {
+            // Score banner — pinned to the true top-center of the canvas,
+            // independent of side icons' padding so they always share the
+            // same vertical axis as the bottom Rally Ended bubble.
+            VStack {
+                scoreBanner
+                    .padding(.top, BE.Space.s)
+                Spacer()
+            }
+
+            // Rally Ended — true bottom-center of the canvas.
+            if viewModel.state.matchPhase == .inProgress {
+                VStack {
+                    Spacer()
                     rallyEndedButton
                         .padding(.bottom, BE.Space.l)
                 }
             }
-            .padding(.bottom, BE.Space.s)
 
             if viewModel.showGameEndOverlay {
                 GameEndOverlay(viewModel: viewModel)
