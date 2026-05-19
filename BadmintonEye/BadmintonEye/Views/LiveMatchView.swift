@@ -129,13 +129,15 @@ struct LiveMatchView: View {
                     .padding(.bottom, BE.Space.m)
             }
 
-            // Rally Ended pinned above the camera bottom edge.
+            // Rally Ended floats over the camera, horizontally centered,
+            // clear of the home indicator.
             if viewModel.state.matchPhase == .inProgress {
                 VStack {
                     Spacer()
                     rallyEndedButton
                         .padding(.bottom, BE.Space.l + BE.Space.s)
                 }
+                .frame(maxWidth: .infinity)
             }
 
             if viewModel.showGameEndOverlay {
@@ -267,23 +269,27 @@ struct LiveMatchView: View {
             .ignoresSafeArea()
 
             VStack {
-                // Top: top-center score banner + side HUD icons.
-                HStack(alignment: .center, spacing: BE.Space.s) {
-                    GlassIconButton(systemName: "arrow.uturn.backward", disabled: !viewModel.canUndo) {
-                        viewModel.undo()
+                // Top: side HUD icons on a row; score banner anchored to
+                // the true horizontal center via ZStack so it isn't
+                // pushed by asymmetric side groups.
+                ZStack {
+                    HStack(alignment: .center, spacing: BE.Space.s) {
+                        GlassIconButton(systemName: "arrow.uturn.backward", disabled: !viewModel.canUndo) {
+                            viewModel.undo()
+                        }
+                        .accessibilityLabel("Undo last point")
+                        Spacer(minLength: 0)
+                        if viewModel.state.matchPhase == .inProgress {
+                            challengeButton
+                        }
+                        GlassIconButton(systemName: "xmark") {
+                            showAbandonAlert = true
+                        }
+                        .accessibilityLabel("End match")
                     }
-                    .accessibilityLabel("Undo last point")
-                    Spacer(minLength: 0)
                     scoreBanner
-                    Spacer(minLength: 0)
-                    if viewModel.state.matchPhase == .inProgress {
-                        challengeButton
-                    }
-                    GlassIconButton(systemName: "xmark") {
-                        showAbandonAlert = true
-                    }
-                    .accessibilityLabel("End match")
                 }
+                .frame(height: 44)
                 .padding(.horizontal, BE.Space.m)
                 .padding(.top, BE.Space.s)
 
@@ -291,9 +297,10 @@ struct LiveMatchView: View {
 
                 if viewModel.state.matchPhase == .inProgress {
                     rallyEndedButton
-                        .padding(.bottom, BE.Space.m)
+                        .padding(.bottom, BE.Space.l)
                 }
             }
+            .padding(.bottom, BE.Space.s)
 
             if viewModel.showGameEndOverlay {
                 GameEndOverlay(viewModel: viewModel)
@@ -303,16 +310,34 @@ struct LiveMatchView: View {
 
     // MARK: - Shared subviews
 
+    /// Top HUD. Uses a ZStack so the center game pill is anchored to the
+    /// true horizontal center, regardless of how many icon buttons appear
+    /// on each side. Left and right groups occupy the row but the pill
+    /// floats above it. All elements share the same vertical centerline.
     private var topHUD: some View {
-        HStack(alignment: .center, spacing: BE.Space.s) {
-            GlassIconButton(systemName: "arrow.uturn.backward", disabled: !viewModel.canUndo) {
-                viewModel.undo()
+        ZStack {
+            // Row: left group on the leading edge, right group trailing.
+            HStack(alignment: .center, spacing: BE.Space.s) {
+                GlassIconButton(systemName: "arrow.uturn.backward", disabled: !viewModel.canUndo) {
+                    viewModel.undo()
+                }
+                .accessibilityLabel("Undo last point")
+                .accessibilityHint(viewModel.canUndo ? "Double-tap to undo the last scored point" : "No points to undo")
+
+                Spacer(minLength: 0)
+
+                if viewModel.state.matchPhase == .inProgress {
+                    challengeButton
+                }
+
+                GlassIconButton(systemName: "xmark") {
+                    showAbandonAlert = true
+                }
+                .accessibilityLabel("End match")
+                .accessibilityHint("Double-tap to abandon the current match")
             }
-            .accessibilityLabel("Undo last point")
-            .accessibilityHint(viewModel.canUndo ? "Double-tap to undo the last scored point" : "No points to undo")
 
-            Spacer(minLength: 0)
-
+            // Center pill — true-centered, never pushed by side groups.
             GlassPill {
                 VStack(spacing: 2) {
                     Text("\(localization.localized("match.game")) \(viewModel.state.currentGame.gameNumber)")
@@ -328,19 +353,8 @@ struct LiveMatchView: View {
             }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(gameInfoAccessibilityLabel)
-
-            Spacer(minLength: 0)
-
-            if viewModel.state.matchPhase == .inProgress {
-                challengeButton
-            }
-
-            GlassIconButton(systemName: "xmark") {
-                showAbandonAlert = true
-            }
-            .accessibilityLabel("End match")
-            .accessibilityHint("Double-tap to abandon the current match")
         }
+        .frame(height: 44)
     }
 
     private var sideAScoreButton: some View {
