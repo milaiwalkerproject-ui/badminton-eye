@@ -195,28 +195,41 @@ struct LiveMatchView: View {
                 .blendMode(.plusLighter)
 
                 VStack(spacing: 6) {
-                    // Name row — serving pip · name · L/R court chip
+                    // Name row — reserved-width slots for the serving pip
+                    // and L/R chip so the name stays in the same X position
+                    // regardless of which side is serving. Slots animate
+                    // content in/out without nudging the name.
                     HStack(spacing: 5) {
-                        if isServing {
-                            Circle()
-                                .fill(BE.serveAccent)
-                                .frame(width: 7, height: 7)
-                                .shadow(color: BE.serveAccent.opacity(0.7), radius: 5)
+                        ZStack {
+                            if isServing {
+                                Circle()
+                                    .fill(BE.serveAccent)
+                                    .frame(width: 7, height: 7)
+                                    .shadow(color: BE.serveAccent.opacity(0.7), radius: 5)
+                                    .transition(.scale.combined(with: .opacity))
+                            }
                         }
+                        .frame(width: 7, height: 7)
+
                         Text(name)
                             .font(.system(.footnote, design: .rounded).weight(.semibold))
                             .foregroundStyle(.white.opacity(0.92))
                             .lineLimit(1)
-                        if let serviceCourt {
-                            Text(serviceCourt == .right ? "R" : "L")
-                                .font(.system(.caption2, design: .rounded).weight(.bold))
-                                .foregroundStyle(.black)
-                                .frame(width: 18, height: 18)
-                                .background(BE.serveAccent, in: Circle())
-                                .shadow(color: BE.serveAccent.opacity(0.5), radius: 4, y: 1)
-                                .transition(.scale.combined(with: .opacity))
+
+                        ZStack {
+                            if let serviceCourt {
+                                Text(serviceCourt == .right ? "R" : "L")
+                                    .font(.system(.caption2, design: .rounded).weight(.bold))
+                                    .foregroundStyle(.black)
+                                    .frame(width: 18, height: 18)
+                                    .background(BE.serveAccent, in: Circle())
+                                    .shadow(color: BE.serveAccent.opacity(0.5), radius: 4, y: 1)
+                                    .transition(.scale.combined(with: .opacity))
+                            }
                         }
+                        .frame(width: 18, height: 18)
                     }
+                    .animation(BE.ease, value: isServing)
                     .animation(BE.ease, value: serviceCourt)
 
                     Text("\(score)")
@@ -428,7 +441,8 @@ struct LiveMatchView: View {
         return GlassPill {
             HStack(spacing: BE.Space.m) {
                 bannerScore(viewModel.state.currentGame.scoreA,
-                            court: server == .sideA ? court : nil)
+                            court: server == .sideA ? court : nil,
+                            chipLeading: false)
                 VStack(spacing: 2) {
                     Text("\(localization.localized("match.game")) \(viewModel.state.currentGame.gameNumber)")
                         .font(.system(.caption, design: .rounded).weight(.semibold))
@@ -441,7 +455,8 @@ struct LiveMatchView: View {
                     }
                 }
                 bannerScore(viewModel.state.currentGame.scoreB,
-                            court: server == .sideB ? court : nil)
+                            court: server == .sideB ? court : nil,
+                            chipLeading: true)
             }
             .padding(.horizontal, BE.Space.s)
         }
@@ -449,21 +464,36 @@ struct LiveMatchView: View {
         .accessibilityLabel("Score \(viewModel.state.currentGame.scoreA) to \(viewModel.state.currentGame.scoreB), \(gameInfoAccessibilityLabel)")
     }
 
-    /// Score numeral + adjacent L/R chip used inside the landscape banner.
-    private func bannerScore(_ score: Int, court: Court?) -> some View {
+    /// Score numeral with reserved L/R chip slots on both sides. Only the
+    /// serving side's chip is populated, but the slot is always present,
+    /// so the banner's geometric center stays put regardless of which
+    /// side is serving — keeps it on the same vertical axis as the
+    /// Rally Ended bubble below.
+    private func bannerScore(_ score: Int, court: Court?, chipLeading: Bool) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 4) {
+            if chipLeading { chipSlot(court) }
             Text("\(score)")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .monospacedDigit()
                 .foregroundStyle(.white)
+            if !chipLeading { chipSlot(court) }
+        }
+    }
+
+    @ViewBuilder
+    private func chipSlot(_ court: Court?) -> some View {
+        ZStack {
             if let court {
                 Text(court == .right ? "R" : "L")
                     .font(.system(.caption2, design: .rounded).weight(.bold))
                     .foregroundStyle(.black)
                     .frame(width: 16, height: 16)
                     .background(BE.serveAccent, in: Circle())
+                    .transition(.scale.combined(with: .opacity))
             }
         }
+        .frame(width: 16, height: 16)
+        .animation(BE.ease, value: court)
     }
 
     /// "REC" pill displayed over the camera tile so it's obvious the
