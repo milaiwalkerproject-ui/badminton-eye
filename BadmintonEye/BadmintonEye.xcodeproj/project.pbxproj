@@ -82,6 +82,7 @@
 		RS1001 /* RallySuggestionFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = RS2001 /* RallySuggestionFlow.swift */; };
 		TN1001 /* TrackNetV3.mlpackage in Resources */ = {isa = PBXBuildFile; fileRef = TN2001 /* TrackNetV3.mlpackage */; };
 		TD1001 /* TrackNetShuttleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = TD2001 /* TrackNetShuttleDetector.swift */; };
+		TW1001 /* TrackNetWindowAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = TW2001 /* TrackNetWindowAdapter.swift */; };
 		TR1001 /* TrajectoryRallySuggestor.swift in Sources */ = {isa = PBXBuildFile; fileRef = TR2001 /* TrajectoryRallySuggestor.swift */; };
 		LC1001 /* LiveCameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = LC2001 /* LiveCameraPreview.swift */; };
 		LM1001 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = LM2001 /* LocalizationManager.swift */; };
@@ -199,6 +200,7 @@
 		RS2001 /* RallySuggestionFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RallySuggestionFlow.swift; sourceTree = "<group>"; };
 		TN2001 /* TrackNetV3.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = Resources/TrackNetV3.mlpackage; sourceTree = "<group>"; };
 		TD2001 /* TrackNetShuttleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackNetShuttleDetector.swift; sourceTree = "<group>"; };
+		TW2001 /* TrackNetWindowAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackNetWindowAdapter.swift; sourceTree = "<group>"; };
 		TR2001 /* TrajectoryRallySuggestor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryRallySuggestor.swift; sourceTree = "<group>"; };
 		LC2001 /* LiveCameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCameraPreview.swift; sourceTree = "<group>"; };
 		LM2001 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
@@ -372,6 +374,7 @@
 				GR2001 /* GameRecordingService.swift */,
 				RS2001 /* RallySuggestionFlow.swift */,
 				TD2001 /* TrackNetShuttleDetector.swift */,
+				TW2001 /* TrackNetWindowAdapter.swift */,
 				TR2001 /* TrajectoryRallySuggestor.swift */,
 				LM2001 /* LocalizationManager.swift */,
 			);
@@ -690,6 +693,7 @@
 				GR1001 /* GameRecordingService.swift in Sources */,
 				RS1001 /* RallySuggestionFlow.swift in Sources */,
 				TD1001 /* TrackNetShuttleDetector.swift in Sources */,
+				TW1001 /* TrackNetWindowAdapter.swift in Sources */,
 				TR1001 /* TrajectoryRallySuggestor.swift in Sources */,
 				LC1001 /* LiveCameraPreview.swift in Sources */,
 				LM1001 /* LocalizationManager.swift in Sources */,

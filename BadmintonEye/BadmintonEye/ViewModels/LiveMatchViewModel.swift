@@ -59,7 +59,7 @@ final class LiveMatchViewModel {
         self.recorder = GameRecordingService(frameBuffer: buffer)
         self.rallySuggestor = TrajectoryRallySuggestor(
             frameBuffer: buffer,
-            detector: CoreMLShuttleDetector(),
+            detector: TrackNetWindowAdapter(),
             calibration: persistedMatch.calibration
         )
         WatchSyncManager.shared.onScoringIntentReceived = { [weak self] side in
@@ -81,7 +81,7 @@ final class LiveMatchViewModel {
         self.recorder = GameRecordingService(frameBuffer: buffer)
         self.rallySuggestor = TrajectoryRallySuggestor(
             frameBuffer: buffer,
-            detector: CoreMLShuttleDetector(),
+            detector: TrackNetWindowAdapter(),
             calibration: calibration
         )
 
