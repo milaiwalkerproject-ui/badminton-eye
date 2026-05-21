@@ -79,9 +79,19 @@ struct LiveMatchView: View {
             if viewModel.state.matchPhase == .inProgress && currentTotalScore > 0 {
                 startChallengeCountdown()
             }
+            // Defer camera start until after the navigation transition
+            // so the previous view (calibration or setup) has fully
+            // released any session it owned. 250ms is comfortably past
+            // the default push animation and below any user-perceptible
+            // delay.
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 250_000_000)
+                viewModel.startContinuousCapture()
+            }
         }
         .onDisappear {
             challengeCountdownTask?.cancel()
+            viewModel.stopContinuousCapture()
         }
         .navigationDestination(
             isPresented: Binding(
@@ -255,7 +265,7 @@ struct LiveMatchView: View {
 
     private var cameraTile: some View {
         ZStack {
-            LiveCameraPreview(session: viewModel.recorder.captureSession)
+            LiveCameraPreview(session: viewModel.liveCaptureSession)
                 .clipShape(BE.card(20))
 
             VStack {
@@ -281,7 +291,7 @@ struct LiveMatchView: View {
     @ViewBuilder
     private func landscapeLayout(in size: CGSize) -> some View {
         ZStack {
-            LiveCameraPreview(session: viewModel.recorder.captureSession)
+            LiveCameraPreview(session: viewModel.liveCaptureSession)
                 .ignoresSafeArea()
 
             // Invisible half-screen tap zones — keep existing scoring

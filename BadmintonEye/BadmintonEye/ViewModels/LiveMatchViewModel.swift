@@ -1,4 +1,5 @@
 @preconcurrency import ActivityKit
+@preconcurrency import AVFoundation
 import Foundation
 import SwiftData
 import ScoringEngine
@@ -22,6 +23,11 @@ final class LiveMatchViewModel {
     /// reuses the same `CircularFrameBuffer` and detector instance the
     /// live capture is already filling.
     @ObservationIgnored let rallySuggestor: RallySuggesting
+
+    /// Live capture session, republished from the recorder so SwiftUI
+    /// can observe and re-attach the preview layer when it becomes
+    /// available. `nil` until `startContinuousCapture()` finishes.
+    private(set) var liveCaptureSession: AVCaptureSession?
 
     var canUndo: Bool { state.previousState != nil }
     var isMatchOver: Bool {
@@ -66,7 +72,8 @@ final class LiveMatchViewModel {
             self?.scorePoint(for: side)
         }
         startLiveActivity()
-        startContinuousCapture()
+        // startContinuousCapture is now driven from LiveMatchView.onAppear
+        // so the camera session doesn't race the navigation transition.
     }
 
     init(
@@ -114,7 +121,8 @@ final class LiveMatchViewModel {
             self?.scorePoint(for: side)
         }
         startLiveActivity()
-        startContinuousCapture()
+        // startContinuousCapture is now driven from LiveMatchView.onAppear
+        // so the camera session doesn't race the navigation transition.
     }
 
     // MARK: - Scoring
@@ -173,18 +181,23 @@ final class LiveMatchViewModel {
 
     // MARK: - Continuous capture
 
-    // Phase D re-enables continuous capture so `TrajectoryRallySuggestor`
-    // has frames to analyse when the user taps "Rally Ended". The recorder
-    // owns the AVCaptureSession and feeds the shared `CircularFrameBuffer`.
-    private func startContinuousCapture() {
-        Task { [recorder] in
+    // Driven from `LiveMatchView.onAppear` / `onDisappear` so the session
+    // is only created once the view is on-screen and previous views have
+    // had a chance to tear down their own capture sessions. Starting from
+    // `init` raced with the navigation transition and crashed the app.
+    func startContinuousCapture() {
+        Task { @MainActor [weak self, recorder] in
             await recorder.startMatchRecording()
+            self?.liveCaptureSession = recorder.captureSession
         }
     }
 
-    private func stopContinuousCapture() {
-        Task { [recorder] in
+    func stopContinuousCapture() {
+        let session = liveCaptureSession
+        liveCaptureSession = nil
+        Task { @MainActor [recorder] in
             await recorder.stopMatchRecording()
+            _ = session
         }
     }
 

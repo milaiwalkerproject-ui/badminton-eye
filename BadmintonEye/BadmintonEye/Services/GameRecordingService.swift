@@ -23,12 +23,12 @@ import Foundation
 /// `AVCaptureSession` setup and behaves as a no-op so the rest of the app
 /// stays functional during development.
 @MainActor
-@Observable
 final class GameRecordingService: NSObject {
 
-    // MARK: - Observable state
+    // MARK: - State
 
-    /// `true` while the capture session is actively running.
+    /// `true` while the capture session is actively running. Read-only
+    /// from outside; mutated only on the main actor.
     private(set) var isRecording: Bool = false
 
     /// Set when camera authorisation was denied so the UI can surface it.
@@ -38,9 +38,11 @@ final class GameRecordingService: NSObject {
     private(set) var recordingError: String?
 
     /// The live `AVCaptureSession`. `nil` until `startMatchRecording()`
-    /// has finished configuring and started it. `LiveCameraPreview`
-    /// observes this and re-attaches its preview layer when it becomes
-    /// non-nil.
+    /// has finished configuring and started it. The owning view model
+    /// republishes this as an `@Observable` property so SwiftUI can
+    /// attach the preview layer — keeping `@Observable` out of this
+    /// `NSObject` + AVFoundation-delegate class avoids macro/runtime
+    /// surprises with the strict-concurrency / Observation cocktail.
     private(set) var captureSession: AVCaptureSession?
 
     // MARK: - Public injection points
