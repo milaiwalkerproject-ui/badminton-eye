@@ -50,6 +50,31 @@ final class CircularFrameBuffer: @unchecked Sendable {
         return buffers.isEmpty
     }
 
+    /// Non-destructive snapshot of the most recent `seconds` of frames, oldest
+    /// first. Returns an empty array if the buffer is empty. Used by the
+    /// rally-suggestion pipeline to pull a recent window for ML inference
+    /// without clearing live capture.
+    func recentFrames(seconds: TimeInterval) -> [CMSampleBuffer] {
+        lock.lock()
+        defer { lock.unlock() }
+
+        guard let last = buffers.last else { return [] }
+        let newestTime = CMTimeGetSeconds(CMSampleBufferGetPresentationTimeStamp(last))
+        let cutoff = newestTime - seconds
+
+        var firstIndex = 0
+        for i in 0..<buffers.count {
+            let pts = CMTimeGetSeconds(CMSampleBufferGetPresentationTimeStamp(buffers[i]))
+            if pts >= cutoff {
+                firstIndex = i
+                break
+            }
+            firstIndex = i + 1
+        }
+        if firstIndex >= buffers.count { return [] }
+        return Array(buffers[firstIndex...])
+    }
+
     /// Drops all buffered frames.
     func clear() {
         lock.lock()

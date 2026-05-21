@@ -18,6 +18,10 @@ final class LiveMatchViewModel {
     // Both are non-observed (@ObservationIgnored) — UI doesn't render them.
     @ObservationIgnored let frameBuffer: CircularFrameBuffer
     @ObservationIgnored let recorder: GameRecordingService
+    /// Real "Rally Ended" suggester. Built once per view model so it
+    /// reuses the same `CircularFrameBuffer` and detector instance the
+    /// live capture is already filling.
+    @ObservationIgnored let rallySuggestor: RallySuggesting
 
     var canUndo: Bool { state.previousState != nil }
     var isMatchOver: Bool {
@@ -53,6 +57,11 @@ final class LiveMatchViewModel {
         let buffer = CircularFrameBuffer(capacity: 10.0)
         self.frameBuffer = buffer
         self.recorder = GameRecordingService(frameBuffer: buffer)
+        self.rallySuggestor = TrajectoryRallySuggestor(
+            frameBuffer: buffer,
+            detector: CoreMLShuttleDetector(),
+            calibration: persistedMatch.calibration
+        )
         WatchSyncManager.shared.onScoringIntentReceived = { [weak self] side in
             self?.scorePoint(for: side)
         }
@@ -70,6 +79,11 @@ final class LiveMatchViewModel {
         let buffer = CircularFrameBuffer(capacity: 10.0)
         self.frameBuffer = buffer
         self.recorder = GameRecordingService(frameBuffer: buffer)
+        self.rallySuggestor = TrajectoryRallySuggestor(
+            frameBuffer: buffer,
+            detector: CoreMLShuttleDetector(),
+            calibration: calibration
+        )
 
         // Create persisted match
         let match = PersistedMatch()
@@ -159,19 +173,19 @@ final class LiveMatchViewModel {
 
     // MARK: - Continuous capture
 
-    // Phase B intentionally leaves continuous capture wired but inert. The
-    // AVCaptureSession overhead (mic + video data output + movie output) and
-    // a 10s uncompressed CMSampleBuffer ring buffer makes scoring unusably
-    // laggy and causes audio-session reroute artifacts; nothing in the MVP
-    // currently consumes the captured frames or saved video. Phase D will
-    // re-enable when the auto-suggest pipeline actually reads from the
-    // buffer.
+    // Phase D re-enables continuous capture so `TrajectoryRallySuggestor`
+    // has frames to analyse when the user taps "Rally Ended". The recorder
+    // owns the AVCaptureSession and feeds the shared `CircularFrameBuffer`.
     private func startContinuousCapture() {
-        // no-op until Phase D
+        Task { [recorder] in
+            await recorder.startMatchRecording()
+        }
     }
 
     private func stopContinuousCapture() {
-        // no-op until Phase D
+        Task { [recorder] in
+            await recorder.stopMatchRecording()
+        }
     }
 
     // MARK: - Private

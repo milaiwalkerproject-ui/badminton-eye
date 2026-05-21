@@ -48,7 +48,22 @@ struct RallySuggestionSheet: View {
     @State private var suggestion: RallySuggestion?
     @Environment(\.dismiss) private var dismiss
 
-    private let suggestor: RallySuggesting = StubRallySuggestor()
+    /// Injected suggestor. Defaults to `StubRallySuggestor()` so previews
+    /// and tests don't need a live capture pipeline. `LiveMatchView`
+    /// passes in the real `TrajectoryRallySuggestor` from the view model.
+    private let suggestor: RallySuggesting
+
+    init(
+        teamANames: [String],
+        teamBNames: [String],
+        suggestor: RallySuggesting = StubRallySuggestor(),
+        onResolve: @escaping (Side?) -> Void
+    ) {
+        self.teamANames = teamANames
+        self.teamBNames = teamBNames
+        self.suggestor = suggestor
+        self.onResolve = onResolve
+    }
 
     var body: some View {
         VStack(spacing: 24) {

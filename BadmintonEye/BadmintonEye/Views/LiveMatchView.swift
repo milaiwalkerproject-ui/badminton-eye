@@ -61,7 +61,8 @@ struct LiveMatchView: View {
         .sheet(isPresented: $showRallySuggestion) {
             RallySuggestionSheet(
                 teamANames: viewModel.state.teamANames,
-                teamBNames: viewModel.state.teamBNames
+                teamBNames: viewModel.state.teamBNames,
+                suggestor: viewModel.rallySuggestor
             ) { resolvedSide in
                 if let side = resolvedSide {
                     viewModel.scorePoint(for: side)
