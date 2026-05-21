@@ -14,17 +14,18 @@ Plan: See PROJECT.md → Phases A–E
 Status:
 - **Phase A (Strip down):** ✅ `AppMode.freeAppleIDMode` gates CloudKit, Apple Sign In, StoreKit, Live Activity, Watch sync. Entitlements stripped of paid capabilities.
 - **Phase B (Continuous capture + calibration):** ✅ `CourtCalibrationView` runs at match start; `GameRecordingService` re-enabled (2026-05-21) — `startContinuousCapture` / `stopContinuousCapture` now actually call `recorder.startMatchRecording` / `stopMatchRecording` from `LiveMatchViewModel`.
-- **Phase C (Real shuttle detector):** ⚠️ `TrackNetV3.mlpackage` is bundled and `TrackNetShuttleDetector` loads it, but it does NOT conform to `ShuttleDetecting` (windowed API). The suggestor below currently uses `CoreMLShuttleDetector` which looks for a `ShuttlecockDetector.mlmodelc` that is **not in the bundle**. See blockers.
+- **Phase C (Real shuttle detector):** ✅ `TrackNetV3.mlpackage` is bundled. `TrackNetWindowAdapter` (2026-05-21) wraps `TrackNetShuttleDetector`'s windowed API into `ShuttleDetecting`, with rolling 8-frame ring, 288×512 CI preprocessing into a `CVPixelBufferPool`, oldest-frame background (TODO: temporal-median), and stride-4 inference caching. `LiveMatchViewModel` injects it into the suggestor.
 - **Phase D (Rally-end suggestion loop):** ✅ `TrajectoryRallySuggestor` (2026-05-21) replaces `StubRallySuggestor` — pulls last ~2s from `CircularFrameBuffer`, runs `ShuttleDetecting`, fits trajectory via `TrajectoryCalculator`, maps landing into court space via `CalibrationProfile`, returns side + confidence (count + parabola-residual + distance-from-net, equal weights, clamped). Graceful fallback (coin-flip capped at 0.50) when calibration missing / buffer empty / < 2 detections. `RallySuggestionSheet` accepts an injected suggestor; `LiveMatchView` passes the real one from `LiveMatchViewModel`. Build on iPhone 17 sim: SUCCEEDED.
 - **Phase E (On-device validation):** ⏳ Awaiting user — tether iPhone, free Apple ID install, calibrate court, play short rallies.
 
-Outstanding blockers before Phase E will produce real (non-fallback) suggestions:
-1. **Detector model mismatch.** `CoreMLShuttleDetector` expects `ShuttlecockDetector.mlmodelc`; bundle only ships `TrackNetV3.mlmodelc`. Options: (a) train/find a single-frame YOLO shuttlecock model named `ShuttlecockDetector` and add to `Resources/`; (b) write a `TrackNetWindowAdapter: ShuttleDetecting` that maintains a rolling 8-frame buffer + background + 288x512 preprocessing and adapts the windowed API to per-frame. Decision pending.
-2. **Footage tab WIP** (`GameVideoRecord`, `FootageView`, `FootageDetailView`) is committed as standalone files but not registered in `ModelContainer` / `project.pbxproj`, and `PersistedMatch.gameVideos` relationship isn't added. Not on MVP critical path; defer until after Phase E proves the suggestion loop.
+Open follow-ups (not blockers for Phase E start, quality improvements only):
+1. **TrackNet adapter background frame:** uses oldest-window frame; temporal-median blend is the proper fix — improves accuracy when the camera is static (typical tripod setup).
+2. **TrackNet confidence calibration:** heatmap peak passed through clamped to [0,1]; may want `sigmoid()` if the bundled checkpoint emits logits (suggestor's ranking still works either way).
+3. **Footage tab WIP** (`GameVideoRecord`, `FootageView`, `FootageDetailView`) is committed as standalone files but not registered in `ModelContainer` / `project.pbxproj`, and `PersistedMatch.gameVideos` relationship isn't added. Defer until after Phase E proves the suggestion loop.
 
-Last activity: 2026-05-21 — Phases B–D wired end-to-end; capture re-enabled; awaiting model decision for Phase E
+Last activity: 2026-05-21 — Phases B–D wired end-to-end; TrackNetWindowAdapter closes the detector blocker; ready for on-device Phase E
 
-Progress: [#####-----] 50% on MVP milestone — code path complete pending model + on-device test
+Progress: [#######---] 70% on MVP milestone — full pipeline live; awaiting on-device validation
 
 ## v2.0 history (paused, preserved for context)
 
