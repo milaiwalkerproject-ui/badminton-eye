@@ -261,11 +261,28 @@ struct LiveMatchView: View {
         .accessibilityValue("\(score)\(isServing ? ", serving from \(serviceCourt == .right ? "right" : "left") court" : "")")
     }
 
+    // MARK: - Camera preview gate
+
+    /// Renders the camera preview only when the recorder has finished
+    /// configuring its session. Until then, shows a black placeholder so
+    /// we don't flash an internal-session preview that gets immediately
+    /// replaced. The `.equatable()` modifier lets SwiftUI skip
+    /// `updateUIView` on score-taps when the session is unchanged.
+    @ViewBuilder
+    private var cameraPreviewOrPlaceholder: some View {
+        if let session = viewModel.liveCaptureSession {
+            LiveCameraPreview(session: session)
+                .equatable()
+        } else {
+            Color.black
+        }
+    }
+
     // MARK: - Camera tile
 
     private var cameraTile: some View {
         ZStack {
-            LiveCameraPreview(session: viewModel.liveCaptureSession)
+            cameraPreviewOrPlaceholder
                 .clipShape(BE.card(20))
 
             VStack {
@@ -291,7 +308,7 @@ struct LiveMatchView: View {
     @ViewBuilder
     private func landscapeLayout(in size: CGSize) -> some View {
         ZStack {
-            LiveCameraPreview(session: viewModel.liveCaptureSession)
+            cameraPreviewOrPlaceholder
                 .ignoresSafeArea()
 
             // Invisible half-screen tap zones — keep existing scoring
