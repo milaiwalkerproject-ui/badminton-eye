@@ -9,12 +9,22 @@ See: .planning/PROJECT.md (updated 2026-05-16 — MVP pivot)
 
 ## Current Position
 
-Phase: MVP-A — Strip down for free Apple ID install (code complete, awaiting on-device install confirmation)
+Phase: MVP-E — On-device validation (Phases A–D code complete; one model blocker remains before on-device demo)
 Plan: See PROJECT.md → Phases A–E
-Status: Phase A code landed. Added `AppMode.freeAppleIDMode` (default ON) in `BadmintonEyeApp.swift`; gated CloudKit binding in the SwiftData container, `AuthManager.checkAuthState`/`handleSignInResult`, every public StoreKit entry point on `SubscriptionManager`, and `startLiveActivity` on `LiveMatchViewModel`. Stripped `BadmintonEye.entitlements` of `applesignin`, `icloud-services`, `icloud-container-identifiers` (revert via git to flip back to paid mode). Watch + LiveActivity targets are untouched at the project-file level. Simulator build (iPhone 17) succeeds; `ScoringEngine` package tests pass 143/143. The shared BadmintonEye scheme has no Testables configured on `main` (pre-existing project-file hygiene gap — 5 test files on disk, only one wired into the target), so iOS-side `xcodebuild test` cannot run from the shared scheme; deferred to a later phase as it's outside Phase A scope.
-Last activity: 2026-05-16 — Phase A complete pending physical-device install verification
+Status:
+- **Phase A (Strip down):** ✅ `AppMode.freeAppleIDMode` gates CloudKit, Apple Sign In, StoreKit, Live Activity, Watch sync. Entitlements stripped of paid capabilities.
+- **Phase B (Continuous capture + calibration):** ✅ `CourtCalibrationView` runs at match start; `GameRecordingService` re-enabled (2026-05-21) — `startContinuousCapture` / `stopContinuousCapture` now actually call `recorder.startMatchRecording` / `stopMatchRecording` from `LiveMatchViewModel`.
+- **Phase C (Real shuttle detector):** ⚠️ `TrackNetV3.mlpackage` is bundled and `TrackNetShuttleDetector` loads it, but it does NOT conform to `ShuttleDetecting` (windowed API). The suggestor below currently uses `CoreMLShuttleDetector` which looks for a `ShuttlecockDetector.mlmodelc` that is **not in the bundle**. See blockers.
+- **Phase D (Rally-end suggestion loop):** ✅ `TrajectoryRallySuggestor` (2026-05-21) replaces `StubRallySuggestor` — pulls last ~2s from `CircularFrameBuffer`, runs `ShuttleDetecting`, fits trajectory via `TrajectoryCalculator`, maps landing into court space via `CalibrationProfile`, returns side + confidence (count + parabola-residual + distance-from-net, equal weights, clamped). Graceful fallback (coin-flip capped at 0.50) when calibration missing / buffer empty / < 2 detections. `RallySuggestionSheet` accepts an injected suggestor; `LiveMatchView` passes the real one from `LiveMatchViewModel`. Build on iPhone 17 sim: SUCCEEDED.
+- **Phase E (On-device validation):** ⏳ Awaiting user — tether iPhone, free Apple ID install, calibrate court, play short rallies.
 
-Progress: [#---------] 10% on MVP milestone — awaiting human checkpoint A
+Outstanding blockers before Phase E will produce real (non-fallback) suggestions:
+1. **Detector model mismatch.** `CoreMLShuttleDetector` expects `ShuttlecockDetector.mlmodelc`; bundle only ships `TrackNetV3.mlmodelc`. Options: (a) train/find a single-frame YOLO shuttlecock model named `ShuttlecockDetector` and add to `Resources/`; (b) write a `TrackNetWindowAdapter: ShuttleDetecting` that maintains a rolling 8-frame buffer + background + 288x512 preprocessing and adapts the windowed API to per-frame. Decision pending.
+2. **Footage tab WIP** (`GameVideoRecord`, `FootageView`, `FootageDetailView`) is committed as standalone files but not registered in `ModelContainer` / `project.pbxproj`, and `PersistedMatch.gameVideos` relationship isn't added. Not on MVP critical path; defer until after Phase E proves the suggestion loop.
+
+Last activity: 2026-05-21 — Phases B–D wired end-to-end; capture re-enabled; awaiting model decision for Phase E
+
+Progress: [#####-----] 50% on MVP milestone — code path complete pending model + on-device test
 
 ## v2.0 history (paused, preserved for context)
 
