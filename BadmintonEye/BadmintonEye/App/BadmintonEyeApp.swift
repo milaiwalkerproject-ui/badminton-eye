@@ -190,6 +190,15 @@ struct ContentView: View {
                 WatchSyncManager.shared.activate()
                 AuthManager.shared.checkAuthState()
             }
+            // Prewarm SwiftData @Query caches so first-time tab switches
+            // don't pay cold-fetch cost on screen. Runs on the main
+            // actor (ModelContext is main-actor-isolated) after a tiny
+            // delay so it doesn't block first paint.
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 100_000_000)
+                _ = try? modelContext.fetch(FetchDescriptor<PersistedMatch>())
+                _ = try? modelContext.fetch(FetchDescriptor<Player>())
+            }
         }
     }
 

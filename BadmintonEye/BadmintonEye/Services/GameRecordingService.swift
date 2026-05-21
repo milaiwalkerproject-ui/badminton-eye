@@ -68,6 +68,16 @@ final class GameRecordingService: NSObject {
         qos: .userInitiated
     )
 
+    /// Frame counter for the sample-buffer delegate. We forward only
+    /// every `frameStride`-th frame to the buffer (so ~5 fps from a
+    /// 30 fps source). Combined with the buffer's short capacity this
+    /// keeps the retained `CVPixelBuffer` count well under iOS's
+    /// camera-pool ceiling (~15) — retaining more stalls the preview
+    /// because the camera can't allocate new pool buffers to write into.
+    /// Touched only on `sampleQueue`.
+    private let frameStride: Int = 6
+    nonisolated(unsafe) private var frameCounter: Int = 0
+
     // MARK: - Simulator detection
 
     private var isSimulator: Bool {
@@ -187,6 +197,12 @@ extension GameRecordingService: AVCaptureVideoDataOutputSampleBufferDelegate {
         didOutput sampleBuffer: CMSampleBuffer,
         from connection: AVCaptureConnection
     ) {
+        // Stride: only forward every Nth frame so we don't retain a
+        // full camera-rate stream of HD pixel buffers. Counter is only
+        // touched on `sampleQueue`, so the nonisolated(unsafe) access is
+        // serial in practice.
+        frameCounter &+= 1
+        guard frameCounter % frameStride == 0 else { return }
         frameBuffer?.append(sampleBuffer)
     }
 }

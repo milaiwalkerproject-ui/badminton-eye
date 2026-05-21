@@ -60,7 +60,10 @@ final class LiveMatchViewModel {
         self.persistedMatch = persistedMatch
         self.modelContext = modelContext
         self.showGameEndOverlay = false
-        let buffer = CircularFrameBuffer(capacity: 10.0)
+        // 2-second rolling window. Combined with the recorder's 6×
+        // frame-stride (~5 fps effective), this caps retained
+        // CVPixelBuffers at ~10 so the camera pool stays unblocked.
+        let buffer = CircularFrameBuffer(capacity: 2.0)
         self.frameBuffer = buffer
         self.recorder = GameRecordingService(frameBuffer: buffer)
         self.rallySuggestor = TrajectoryRallySuggestor(
@@ -83,7 +86,10 @@ final class LiveMatchViewModel {
     ) {
         self.state = state
         self.modelContext = modelContext
-        let buffer = CircularFrameBuffer(capacity: 10.0)
+        // 2-second rolling window. Combined with the recorder's 6×
+        // frame-stride (~5 fps effective), this caps retained
+        // CVPixelBuffers at ~10 so the camera pool stays unblocked.
+        let buffer = CircularFrameBuffer(capacity: 2.0)
         self.frameBuffer = buffer
         self.recorder = GameRecordingService(frameBuffer: buffer)
         self.rallySuggestor = TrajectoryRallySuggestor(
