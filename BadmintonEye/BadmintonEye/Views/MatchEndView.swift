@@ -178,7 +178,7 @@ struct MatchEndView: View {
         Button {
             if let onNewMatch { onNewMatch() } else { dismiss() }
         } label: {
-            Text(localization.localized("match.new"))
+            Text(isAbandoned ? "Back to home" : localization.localized("match.new"))
                 .font(.system(.headline, design: .rounded).weight(.semibold))
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)

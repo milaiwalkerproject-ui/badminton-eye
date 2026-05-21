@@ -2,37 +2,51 @@ import SwiftUI
 import UIKit
 @preconcurrency import AVFoundation
 
-/// Lightweight back-camera preview. No recording, no mic, no buffer —
-/// just an `AVCaptureSession` with a video input feeding an
-/// `AVCaptureVideoPreviewLayer`. Safe to embed inside a SwiftUI view
-/// without the audio-session reroute, mic-feedback, or heap-pressure
-/// problems we hit with `GameRecordingService`.
+/// Back-camera preview. Two modes:
 ///
-/// Phase D will reintroduce a separate `CircularFrameBuffer` tee for ML
-/// inference; that lives in `GameRecordingService` and stays inert here
-/// so this stays cheap.
+/// 1. **External session (preferred during a live match).** Pass the
+///    `AVCaptureSession` owned by `GameRecordingService` so the preview
+///    layer attaches to the *same* session that's feeding the frame
+///    buffer. Running two sessions on the same camera causes severe lag
+///    and one silently fails — never do it.
+///
+/// 2. **Internal session (fallback for setup / preview screens).** When
+///    `session` is nil, the view spins up its own lightweight session
+///    with a single video input. Used by `CourtCalibrationView` and
+///    similar pre-match screens where no recorder exists yet.
 struct LiveCameraPreview: UIViewRepresentable {
 
-    /// Optional override for the preview's content fit. Defaults to
-    /// `.resizeAspectFill` so the preview looks like a viewfinder.
+    /// Optional externally-owned session. When non-nil, the preview layer
+    /// attaches to it and no internal session is created.
+    var session: AVCaptureSession?
+
+    /// Content fit. Defaults to `.resizeAspectFill` so the preview looks
+    /// like a viewfinder.
     var videoGravity: AVLayerVideoGravity = .resizeAspectFill
 
     func makeUIView(context: Context) -> PreviewUIView {
         let view = PreviewUIView()
         view.videoGravity = videoGravity
         view.backgroundColor = .black
-        Task { @MainActor in
-            await view.startIfNeeded()
+        if let session {
+            view.attach(externalSession: session)
+        } else {
+            Task { @MainActor in
+                await view.startInternalSession()
+            }
         }
         return view
     }
 
     func updateUIView(_ uiView: PreviewUIView, context: Context) {
         uiView.videoGravity = videoGravity
+        if let session {
+            uiView.attach(externalSession: session)
+        }
     }
 
     static func dismantleUIView(_ uiView: PreviewUIView, coordinator: ()) {
-        uiView.stopSession()
+        uiView.stopInternalSession()
     }
 
     // MARK: - Backing UIView
@@ -45,22 +59,50 @@ struct LiveCameraPreview: UIViewRepresentable {
             layer as! AVCaptureVideoPreviewLayer
         }
 
-        private let session = AVCaptureSession()
+        /// Internal session. Created lazily on first call to
+        /// `startInternalSession()` and only used when no external
+        /// session is supplied.
+        private let internalSession = AVCaptureSession()
         private let sessionQueue = DispatchQueue(
             label: "com.badmintoneye.LiveCameraPreview.session",
             qos: .userInitiated
         )
-        private var didConfigure = false
+        private var didConfigureInternal = false
+        private var isUsingExternalSession = false
 
         var videoGravity: AVLayerVideoGravity = .resizeAspectFill {
             didSet { previewLayer.videoGravity = videoGravity }
         }
 
-        // MARK: Session lifecycle
+        // MARK: External session attach
+
+        func attach(externalSession session: AVCaptureSession) {
+            // Already attached to this exact session — nothing to do.
+            if previewLayer.session === session { return }
+
+            // If we previously had our own internal session, stop it
+            // before swapping in the external one.
+            if !isUsingExternalSession && didConfigureInternal {
+                stopInternalSession()
+            }
+
+            isUsingExternalSession = true
+            previewLayer.session = session
+            previewLayer.videoGravity = videoGravity
+            DispatchQueue.main.async { [weak self] in
+                self?.applyCurrentRotation()
+            }
+        }
+
+        // MARK: Internal session lifecycle (fallback)
 
         @MainActor
-        func startIfNeeded() async {
-            previewLayer.session = session
+        func startInternalSession() async {
+            // If an external session was attached in the meantime, do
+            // nothing — the external owner controls the lifecycle.
+            if isUsingExternalSession { return }
+
+            previewLayer.session = internalSession
             previewLayer.videoGravity = videoGravity
 
             let granted: Bool
@@ -74,53 +116,51 @@ struct LiveCameraPreview: UIViewRepresentable {
             }
 
             guard granted else { return }
-            startCapture()
+            startInternalCapture()
         }
 
-        private func startCapture() {
+        private func startInternalCapture() {
             sessionQueue.async { [weak self] in
                 guard let self = self else { return }
+                if self.isUsingExternalSession { return }
 
-                if !self.didConfigure {
-                    self.configureSessionLocked()
-                    self.didConfigure = true
+                if !self.didConfigureInternal {
+                    self.configureInternalSessionLocked()
+                    self.didConfigureInternal = true
                 }
 
-                if !self.session.isRunning {
-                    self.session.startRunning()
+                if !self.internalSession.isRunning {
+                    self.internalSession.startRunning()
                 }
             }
         }
 
-        nonisolated func stopSession() {
+        nonisolated func stopInternalSession() {
             sessionQueue.async { [weak self] in
                 guard let self = self else { return }
-                if self.session.isRunning {
-                    self.session.stopRunning()
+                if self.internalSession.isRunning {
+                    self.internalSession.stopRunning()
                 }
             }
         }
 
-        // MARK: Configuration
+        // MARK: Internal session config
 
-        private func configureSessionLocked() {
-            session.beginConfiguration()
-            session.sessionPreset = .hd1280x720
+        private func configureInternalSessionLocked() {
+            internalSession.beginConfiguration()
+            internalSession.sessionPreset = .hd1280x720
 
             if let device = AVCaptureDevice.default(
                 .builtInWideAngleCamera,
                 for: .video,
                 position: .back
             ), let input = try? AVCaptureDeviceInput(device: device),
-                session.canAddInput(input) {
-                session.addInput(input)
+                internalSession.canAddInput(input) {
+                internalSession.addInput(input)
             }
 
-            session.commitConfiguration()
+            internalSession.commitConfiguration()
 
-            // Orient the preview to match the device's current UI rotation
-            // so a portrait-held phone shows an upright image instead of
-            // the sensor's native landscape.
             DispatchQueue.main.async { [weak self] in
                 self?.applyCurrentRotation()
             }

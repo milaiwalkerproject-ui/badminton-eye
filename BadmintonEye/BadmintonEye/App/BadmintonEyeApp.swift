@@ -110,11 +110,11 @@ struct ContentView: View {
                                 Label("Player List", systemImage: "person.2")
                             }
                         }
-                        Section("Stats") {
+                        Section("Footage") {
                             NavigationLink {
-                                StatsView()
+                                FootageView()
                             } label: {
-                                Label("Statistics", systemImage: "chart.bar")
+                                Label("Footage", systemImage: "film.stack")
                             }
                         }
                         Section("Settings") {
@@ -156,10 +156,10 @@ struct ContentView: View {
                     }
 
                     NavigationStack {
-                        StatsView()
+                        FootageView()
                     }
                     .tabItem {
-                        Label("Stats", systemImage: "chart.bar")
+                        Label("Footage", systemImage: "film.stack")
                     }
 
                     NavigationStack {

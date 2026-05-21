@@ -1,55 +1,54 @@
 @preconcurrency import AVFoundation
 import Foundation
-import Photos
 
 // MARK: - GameRecordingService
 
-/// Auto-starts a full-length AVCaptureMovieFileOutput recording when a match
-/// begins and saves the resulting video to the user's Photos library when the
-/// match ends.
+/// Owns the live `AVCaptureSession` for an in-progress match. Its sole job
+/// is to feed an injected `CircularFrameBuffer` with recent frames so the
+/// rally-end auto-suggest pipeline (`TrajectoryRallySuggestor`) has
+/// something to analyse.
 ///
-/// **Simulator safety**: When running in the Simulator (no physical camera) the
-/// service skips AVCaptureSession setup and behaves as a no-op so that the rest
-/// of the app remains functional during development.
+/// The session is exposed via `captureSession` so the SwiftUI camera
+/// preview (`LiveCameraPreview`) can attach its `AVCaptureVideoPreviewLayer`
+/// to the **same** session — running two `AVCaptureSession`s on the same
+/// back camera causes severe lag and one of them silently fails.
 ///
-/// **Usage** (from LiveMatchViewModel):
-/// ```swift
-/// let recorder = GameRecordingService()
-/// await recorder.startMatchRecording()   // call on match start
-/// await recorder.stopMatchRecording()    // call on match end / app background
-/// ```
+/// The full-match movie file output, audio capture, and Photos library
+/// save were removed in 2026-05-21 — they added significant overhead and
+/// weren't consumed anywhere in the MVP. The Footage feature, when it
+/// lands, will record to `Application Support/Footage/` via a separate
+/// path.
 ///
-/// **Capsule scope**: Services/GameRecordingService.swift,
-///                    Services/VideoCaptureManager.swift
-/// Out-of-scope wiring (Info.plist keys, LiveMatchView REC badge, LiveMatchViewModel
-/// integration) is tracked in follow-up tasks.
+/// **Simulator safety**: in the Simulator the service skips
+/// `AVCaptureSession` setup and behaves as a no-op so the rest of the app
+/// stays functional during development.
 @MainActor
 @Observable
 final class GameRecordingService: NSObject {
 
     // MARK: - Observable state
 
-    /// `true` while the capture session is actively writing frames.
+    /// `true` while the capture session is actively running.
     private(set) var isRecording: Bool = false
 
-    /// Set when a permission denial occurs so the UI can surface an alert.
+    /// Set when camera authorisation was denied so the UI can surface it.
     private(set) var permissionDenied: Bool = false
-
-    /// URL of the most recently completed recording, available for preview.
-    private(set) var lastRecordingURL: URL?
 
     /// Non-fatal error description (e.g. session config failure).
     private(set) var recordingError: String?
 
+    /// The live `AVCaptureSession`. `nil` until `startMatchRecording()`
+    /// has finished configuring and started it. `LiveCameraPreview`
+    /// observes this and re-attaches its preview layer when it becomes
+    /// non-nil.
+    private(set) var captureSession: AVCaptureSession?
+
     // MARK: - Public injection points
 
-    /// Optional rolling-window buffer fed by a parallel video data output.
-    /// Inject via `init(frameBuffer:)` to keep the last N seconds of frames
-    /// available for post-rally analysis (Hawk Eye auto-suggest).
-    /// `nonisolated` because the AVFoundation sample-buffer callback runs on
-    /// `sampleQueue`, not on the main actor. `CircularFrameBuffer` is
-    /// `@unchecked Sendable` and internally locked, so cross-actor access is
-    /// safe.
+    /// Rolling-window buffer fed by the video data output. The
+    /// AVFoundation sample-buffer callback runs on `sampleQueue`, not the
+    /// main actor; `CircularFrameBuffer` is `@unchecked Sendable` and
+    /// internally locked, so cross-actor access is safe.
     nonisolated let frameBuffer: CircularFrameBuffer?
 
     // MARK: - Init
@@ -61,10 +60,7 @@ final class GameRecordingService: NSObject {
 
     // MARK: - Private
 
-    private var captureSession: AVCaptureSession?
-    private var movieFileOutput: AVCaptureMovieFileOutput?
     private var videoDataOutput: AVCaptureVideoDataOutput?
-    private var activeOutputURL: URL?
     private let sampleQueue = DispatchQueue(
         label: "com.badmintoneye.GameRecordingService.sample",
         qos: .userInitiated
@@ -82,37 +78,30 @@ final class GameRecordingService: NSObject {
 
     // MARK: - Public API
 
-    /// Requests camera + microphone authorisation then starts recording.
+    /// Requests camera authorisation then starts the capture session.
     /// Call this when the match transitions to the **active** state.
     func startMatchRecording() async {
         guard !isRecording else { return }
 
         if isSimulator {
-            // Simulator: pretend we are recording so the REC badge shows
             isRecording = true
             return
         }
 
-        // Check / request AVCaptureDevice permissions
-        let cameraGranted = await requestCameraAuthorization()
-        let micGranted    = await requestMicrophoneAuthorization()
-
-        guard cameraGranted else {
+        let granted = await requestCameraAuthorization()
+        guard granted else {
             permissionDenied = true
             return
         }
 
-        // Configure and start the session
+        let session: AVCaptureSession
         do {
-            try configureSession(includeAudio: micGranted)
+            session = try configureSession()
         } catch {
             recordingError = error.localizedDescription
             return
         }
 
-        guard let session = captureSession, !session.isRunning else { return }
-
-        // Start session on a background queue
         await withCheckedContinuation { continuation in
             DispatchQueue.global(qos: .userInitiated).async { [weak session] in
                 session?.startRunning()
@@ -120,11 +109,11 @@ final class GameRecordingService: NSObject {
             }
         }
 
-        beginFileOutput()
+        captureSession = session
+        isRecording = true
     }
 
-    /// Stops the capture session, finalises the file, and saves it to Photos.
-    /// Call this on match end or when the app moves to background.
+    /// Stops the capture session. Call on match end / abandon / background.
     func stopMatchRecording() async {
         guard isRecording else { return }
 
@@ -133,45 +122,35 @@ final class GameRecordingService: NSObject {
             return
         }
 
-        // Stop writing — delegate callback fires when file is finalised
-        movieFileOutput?.stopRecording()
-        // Actual isRecording → false happens in delegate callback
+        let session = captureSession
+        captureSession = nil
+        isRecording = false
+        await withCheckedContinuation { continuation in
+            DispatchQueue.global(qos: .utility).async { [weak session] in
+                session?.stopRunning()
+                continuation.resume()
+            }
+        }
     }
 
     // MARK: - Private helpers
 
-    private func configureSession(includeAudio: Bool) throws {
+    private func configureSession() throws -> AVCaptureSession {
         let session = AVCaptureSession()
         session.beginConfiguration()
+        session.sessionPreset = .hd1280x720
 
-        // Video — back camera
         guard let videoDevice = AVCaptureDevice.default(
                 .builtInWideAngleCamera, for: .video, position: .back),
               let videoInput = try? AVCaptureDeviceInput(device: videoDevice),
               session.canAddInput(videoInput) else {
+            session.commitConfiguration()
             throw RecordingError.cameraUnavailable
         }
         session.addInput(videoInput)
 
-        // Audio (optional — silently omit if denied)
-        if includeAudio,
-           let audioDevice = AVCaptureDevice.default(for: .audio),
-           let audioInput  = try? AVCaptureDeviceInput(device: audioDevice),
-           session.canAddInput(audioInput) {
-            session.addInput(audioInput)
-        }
-
-        // Movie file output
-        let fileOutput = AVCaptureMovieFileOutput()
-        guard session.canAddOutput(fileOutput) else {
-            throw RecordingError.outputUnavailable
-        }
-        session.addOutput(fileOutput)
-
-        // Optional video data output that tees individual frames into the
-        // injected CircularFrameBuffer for Hawk Eye auto-suggest analysis.
-        // Skipped silently if no buffer was injected — keeps callers that
-        // only want a saved match video unchanged.
+        // Video data output → frame buffer. This is the only output we
+        // attach — no movie file, no audio, no Photos save.
         if frameBuffer != nil {
             let dataOutput = AVCaptureVideoDataOutput()
             dataOutput.alwaysDiscardsLateVideoFrames = true
@@ -183,23 +162,8 @@ final class GameRecordingService: NSObject {
         }
 
         session.commitConfiguration()
-        captureSession = session
-        movieFileOutput = fileOutput
+        return session
     }
-
-    private func beginFileOutput() {
-        guard let fileOutput = movieFileOutput, !fileOutput.isRecording else { return }
-
-        let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("match-\(UUID().uuidString)")
-            .appendingPathExtension("mov")
-
-        activeOutputURL = url
-        fileOutput.startRecording(to: url, recordingDelegate: self)
-        isRecording = true
-    }
-
-    // MARK: - Permission helpers
 
     private func requestCameraAuthorization() async -> Bool {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
@@ -209,80 +173,6 @@ final class GameRecordingService: NSObject {
             return await AVCaptureDevice.requestAccess(for: .video)
         default:
             return false
-        }
-    }
-
-    private func requestMicrophoneAuthorization() async -> Bool {
-        switch AVCaptureDevice.authorizationStatus(for: .audio) {
-        case .authorized:
-            return true
-        case .notDetermined:
-            return await AVCaptureDevice.requestAccess(for: .audio)
-        default:
-            return false
-        }
-    }
-
-    // MARK: - Photos save
-
-    private func saveToPhotosLibrary(url: URL) async {
-        // Request Photos add-only access if needed
-        let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
-        guard status == .authorized || status == .limited else { return }
-
-        do {
-            // performChanges runs the closure on its own PHPhotoLibrary
-            // queue, so the closure must be @Sendable. Without this, Swift 6
-            // strict-concurrency traps with SIGTRAP because the enclosing
-            // class is @MainActor.
-            try await PHPhotoLibrary.shared().performChanges { @Sendable in
-                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
-            }
-            await MainActor.run {
-                self.lastRecordingURL = url
-            }
-        } catch {
-            await MainActor.run {
-                self.recordingError = "Failed to save video: \(error.localizedDescription)"
-            }
-        }
-
-        // Clean up temp file regardless of outcome
-        try? FileManager.default.removeItem(at: url)
-    }
-}
-
-// MARK: - AVCaptureFileOutputRecordingDelegate
-
-extension GameRecordingService: AVCaptureFileOutputRecordingDelegate {
-    nonisolated func fileOutput(
-        _ output: AVCaptureFileOutput,
-        didFinishRecordingTo outputFileURL: URL,
-        from connections: [AVCaptureConnection],
-        error: Error?
-    ) {
-        Task { @MainActor in
-            self.isRecording = false
-
-            if let err = error {
-                // AVFoundation may pass an error AND a usable file; check the flag
-                let userInfoKey = AVErrorRecordingSuccessfullyFinishedKey
-                let finished = (err as NSError).userInfo[userInfoKey] as? Bool ?? false
-                if !finished {
-                    self.recordingError = err.localizedDescription
-                    try? FileManager.default.removeItem(at: outputFileURL)
-                    return
-                }
-            }
-
-            // Stop the capture session
-            let localSession = self.captureSession
-            DispatchQueue.global(qos: .utility).async {
-                localSession?.stopRunning()
-            }
-
-            // Save to Photos
-            await self.saveToPhotosLibrary(url: outputFileURL)
         }
     }
 }
@@ -304,14 +194,11 @@ extension GameRecordingService: AVCaptureVideoDataOutputSampleBufferDelegate {
 extension GameRecordingService {
     enum RecordingError: LocalizedError {
         case cameraUnavailable
-        case outputUnavailable
 
         var errorDescription: String? {
             switch self {
             case .cameraUnavailable:
                 return "Camera is not available on this device."
-            case .outputUnavailable:
-                return "Could not configure video file output."
             }
         }
     }

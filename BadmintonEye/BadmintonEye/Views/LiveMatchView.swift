@@ -255,7 +255,7 @@ struct LiveMatchView: View {
 
     private var cameraTile: some View {
         ZStack {
-            LiveCameraPreview()
+            LiveCameraPreview(session: viewModel.recorder.captureSession)
                 .clipShape(BE.card(20))
 
             VStack {
@@ -281,7 +281,7 @@ struct LiveMatchView: View {
     @ViewBuilder
     private func landscapeLayout(in size: CGSize) -> some View {
         ZStack {
-            LiveCameraPreview()
+            LiveCameraPreview(session: viewModel.recorder.captureSession)
                 .ignoresSafeArea()
 
             // Invisible half-screen tap zones — keep existing scoring

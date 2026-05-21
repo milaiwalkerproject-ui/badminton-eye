@@ -83,6 +83,9 @@
 		TN1001 /* TrackNetV3.mlpackage in Resources */ = {isa = PBXBuildFile; fileRef = TN2001 /* TrackNetV3.mlpackage */; };
 		TD1001 /* TrackNetShuttleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = TD2001 /* TrackNetShuttleDetector.swift */; };
 		TW1001 /* TrackNetWindowAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = TW2001 /* TrackNetWindowAdapter.swift */; };
+		GV1001 /* GameVideoRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = GV2001 /* GameVideoRecord.swift */; };
+		FV1001 /* FootageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FV2001 /* FootageView.swift */; };
+		FD1001 /* FootageDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD2001 /* FootageDetailView.swift */; };
 		TR1001 /* TrajectoryRallySuggestor.swift in Sources */ = {isa = PBXBuildFile; fileRef = TR2001 /* TrajectoryRallySuggestor.swift */; };
 		LC1001 /* LiveCameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = LC2001 /* LiveCameraPreview.swift */; };
 		LM1001 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = LM2001 /* LocalizationManager.swift */; };
@@ -201,6 +204,9 @@
 		TN2001 /* TrackNetV3.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = Resources/TrackNetV3.mlpackage; sourceTree = "<group>"; };
 		TD2001 /* TrackNetShuttleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackNetShuttleDetector.swift; sourceTree = "<group>"; };
 		TW2001 /* TrackNetWindowAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackNetWindowAdapter.swift; sourceTree = "<group>"; };
+		GV2001 /* GameVideoRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameVideoRecord.swift; sourceTree = "<group>"; };
+		FV2001 /* FootageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootageView.swift; sourceTree = "<group>"; };
+		FD2001 /* FootageDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootageDetailView.swift; sourceTree = "<group>"; };
 		TR2001 /* TrajectoryRallySuggestor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryRallySuggestor.swift; sourceTree = "<group>"; };
 		LC2001 /* LiveCameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCameraPreview.swift; sourceTree = "<group>"; };
 		LM2001 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
@@ -308,6 +314,7 @@
 				A2000D /* SyncPayload.swift */,
 				A20010 /* Player.swift */,
 				H20001 /* CalibrationProfile.swift */,
+				GV2001 /* GameVideoRecord.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -345,6 +352,8 @@
 				H20004 /* ChallengeVideoView.swift */,
 				H20008 /* TrajectoryReplayView.swift */,
 				S20002 /* StatsView.swift */,
+				FV2001 /* FootageView.swift */,
+				FD2001 /* FootageDetailView.swift */,
 				V62001 /* WinRateTrendChart.swift */,
 				V62002 /* ScoringPatternsChart.swift */,
 				MC2002 /* MultiAngleAnalysisView.swift */,
@@ -694,6 +703,9 @@
 				RS1001 /* RallySuggestionFlow.swift in Sources */,
 				TD1001 /* TrackNetShuttleDetector.swift in Sources */,
 				TW1001 /* TrackNetWindowAdapter.swift in Sources */,
+				GV1001 /* GameVideoRecord.swift in Sources */,
+				FV1001 /* FootageView.swift in Sources */,
+				FD1001 /* FootageDetailView.swift in Sources */,
 				TR1001 /* TrajectoryRallySuggestor.swift in Sources */,
 				LC1001 /* LiveCameraPreview.swift in Sources */,
 				LM1001 /* LocalizationManager.swift in Sources */,
