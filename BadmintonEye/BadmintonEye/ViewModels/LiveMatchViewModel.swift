@@ -24,6 +24,12 @@ final class LiveMatchViewModel {
     /// live capture is already filling.
     @ObservationIgnored let rallySuggestor: RallySuggesting
 
+    /// Seam-B producer: System-2 classifier primary, geometric fallback. The
+    /// live rally-end sheet runs through this (via `rallySuggestor`); the score
+    /// state machine reads `lastRallyResult` after the user resolves the sheet.
+    @ObservationIgnored let rallyResultProducer: RallyResultProducing
+    @ObservationIgnored let rallyResultBox: RallyResultBox
+
     /// Live capture session, republished from the recorder so SwiftUI
     /// can observe and re-attach the preview layer when it becomes
     /// available. `nil` until `startContinuousCapture()` finishes.
@@ -42,6 +48,11 @@ final class LiveMatchViewModel {
     }
     var showGameEndOverlay: Bool = false
     var justCompletedGame: GameState?
+
+    /// Most recent `RallyResult` produced for the current rally (full
+    /// provenance for the score state machine + override surface). Nil until
+    /// the first suggestion runs.
+    var lastRallyResult: RallyResult? { rallyResultBox.latest }
 
     // MARK: - Crash Recovery
 
@@ -73,11 +84,12 @@ final class LiveMatchViewModel {
         let buffer = CircularFrameBuffer(capacity: 2.0)
         self.frameBuffer = buffer
         self.recorder = GameRecordingService(frameBuffer: buffer)
-        self.rallySuggestor = TrajectoryRallySuggestor(
-            frameBuffer: buffer,
-            detector: TrackNetWindowAdapter(),
-            calibration: persistedMatch.calibration
+        let (producer, suggestor, box) = Self.makeRallyScoring(
+            buffer: buffer, calibration: persistedMatch.calibration
         )
+        self.rallyResultProducer = producer
+        self.rallySuggestor = suggestor
+        self.rallyResultBox = box
         WatchSyncManager.shared.onScoringIntentReceived = { [weak self] side in
             self?.scorePoint(for: side)
         }
@@ -99,11 +111,12 @@ final class LiveMatchViewModel {
         let buffer = CircularFrameBuffer(capacity: 2.0)
         self.frameBuffer = buffer
         self.recorder = GameRecordingService(frameBuffer: buffer)
-        self.rallySuggestor = TrajectoryRallySuggestor(
-            frameBuffer: buffer,
-            detector: TrackNetWindowAdapter(),
-            calibration: calibration
+        let (producer, suggestor, box) = Self.makeRallyScoring(
+            buffer: buffer, calibration: calibration
         )
+        self.rallyResultProducer = producer
+        self.rallySuggestor = suggestor
+        self.rallyResultBox = box
 
         // Create persisted match
         let match = PersistedMatch()
@@ -136,6 +149,36 @@ final class LiveMatchViewModel {
         startLiveActivity()
         // startContinuousCapture is now driven from LiveMatchView.onAppear
         // so the camera session doesn't race the navigation transition.
+    }
+
+    // MARK: - Rally scoring wiring
+
+    /// Builds the seam-B scoring stack: the System-2 `ClassifierRallyScorer`
+    /// (only when the trained model is bundled) as the primary producer, with
+    /// the geometric `TrajectoryRallySuggestor` as the fallback, plus the
+    /// `RallySuggesting` adapter the live sheet drives. Both share the same
+    /// `CircularFrameBuffer` the capture session is already filling.
+    private static func makeRallyScoring(
+        buffer: CircularFrameBuffer,
+        calibration: CalibrationProfile?
+    ) -> (RallyResultProducing, RallySuggesting, RallyResultBox) {
+        let geometric = TrajectoryRallySuggestor(
+            frameBuffer: buffer,
+            detector: TrackNetWindowAdapter(),
+            calibration: calibration
+        )
+        let classifier = ClassifierRallyScorer.loadBundledModel().map { model in
+            ClassifierRallyScorer(
+                frameBuffer: buffer,
+                detector: TrackNetWindowAdapter(),
+                calibration: calibration,
+                model: model
+            )
+        }
+        let producer = CompositeRallyResultProducer(classifier: classifier, geometric: geometric)
+        let box = RallyResultBox()
+        let suggestor = ProducerBackedSuggestor(producer: producer, box: box)
+        return (producer, suggestor, box)
     }
 
     // MARK: - Scoring

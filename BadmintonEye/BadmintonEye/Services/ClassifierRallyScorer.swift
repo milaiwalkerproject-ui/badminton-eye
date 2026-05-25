@@ -256,3 +256,78 @@ final class ClassifierRallyScorer: RallyResultProducing, @unchecked Sendable {
         }
     }
 }
+
+// MARK: - CompositeRallyResultProducer (classifier primary, geometric fallback)
+
+/// Routes rally scoring to the System-2 `ClassifierRallyScorer` when the
+/// trained model is bundled, and falls back to the geometric
+/// `TrajectoryRallySuggestor` (lifted to a `RallyResult`) when the classifier
+/// abstains — i.e. no model on this build. This keeps the live flow producing
+/// rich `RallyResult`s with provenance while degrading gracefully.
+final class CompositeRallyResultProducer: RallyResultProducing, @unchecked Sendable {
+    private let classifier: ClassifierRallyScorer?
+    private let geometric: RallySuggesting
+
+    init(classifier: ClassifierRallyScorer?, geometric: RallySuggesting) {
+        self.classifier = classifier
+        self.geometric = geometric
+    }
+
+    func produceResult(rallyIndex: Int, clipRef: ClipRef?) async -> RallyResult {
+        if let classifier {
+            return await classifier.produceResult(rallyIndex: rallyIndex, clipRef: clipRef)
+        }
+        // No trained model bundled → geometric suggestor is the source of truth.
+        let suggestion = await geometric.suggest()
+        return RallyResult.fromSuggestion(
+            rallyIndex: rallyIndex, suggestion: suggestion, clipRef: clipRef
+        )
+    }
+}
+
+// MARK: - Rally index + last-result holder (thread-safe)
+
+/// Cross-actor holder for the monotonic rally index and the most recent
+/// `RallyResult`. The producer runs off the main actor (detector + CoreML),
+/// while the view model reads `latest` on the main actor — so this is locked.
+final class RallyResultBox: @unchecked Sendable {
+    private let lock = NSLock()
+    private var _latest: RallyResult?
+    private var _index = 0
+
+    var latest: RallyResult? {
+        lock.lock(); defer { lock.unlock() }
+        return _latest
+    }
+
+    func nextIndex() -> Int {
+        lock.lock(); defer { lock.unlock() }
+        let i = _index; _index += 1; return i
+    }
+
+    func record(_ result: RallyResult) {
+        lock.lock(); _latest = result; lock.unlock()
+    }
+}
+
+// MARK: - ProducerBackedSuggestor (bridges seam B → the existing sheet API)
+
+/// Adapts a `RallyResultProducing` to the existing `RallySuggesting` sheet API
+/// so the live "rally ended" flow runs the classifier. Records the full
+/// `RallyResult` (with provenance) into a `RallyResultBox` for the score state
+/// machine to consume after the user resolves the sheet.
+final class ProducerBackedSuggestor: RallySuggesting, @unchecked Sendable {
+    private let producer: RallyResultProducing
+    private let box: RallyResultBox
+
+    init(producer: RallyResultProducing, box: RallyResultBox) {
+        self.producer = producer
+        self.box = box
+    }
+
+    func suggest() async -> RallySuggestion {
+        let result = await producer.produceResult(rallyIndex: box.nextIndex(), clipRef: nil)
+        box.record(result)
+        return result.asSuggestion
+    }
+}
