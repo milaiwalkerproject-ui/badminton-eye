@@ -2,12 +2,12 @@ import Foundation
 
 // MARK: - Types
 
-struct CourtPoint: Codable {
+struct CourtPoint: Codable, Sendable, Equatable {
     let x: Double  // court-space X (0.0 = left sideline, 1.0 = right sideline)
     let y: Double  // court-space Y (0.0 = near baseline, 1.0 = far baseline)
 }
 
-enum LandingResult: String {
+enum LandingResult: String, Codable, Sendable, Equatable {
     case inBounds    // green
     case outOfBounds // red
     case uncertain   // yellow
