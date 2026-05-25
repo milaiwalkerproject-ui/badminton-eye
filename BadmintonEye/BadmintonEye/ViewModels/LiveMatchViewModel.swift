@@ -199,6 +199,60 @@ final class LiveMatchViewModel {
         return (producer, suggestor, box)
     }
 
+    // MARK: - Rally resolution + training export
+
+    /// Resolve the current rally to `side` — confirmed suggestion, auto-applied,
+    /// or human override — then persist the finalized `RallyResult` to the
+    /// on-device training export before awarding the point. Driven by the
+    /// rally-end sheet; manual score taps bypass this (they aren't
+    /// classifier-driven rallies, so they shouldn't pollute the training data).
+    func resolveRally(for side: Side) {
+        let produced = rallyResultBox.latest
+        let clip = currentClipRef()
+        let finalResult: RallyResult
+        if let produced {
+            if side == produced.winner {
+                // Confirmed or auto-applied — keep the auto provenance, attach clip.
+                finalResult = produced.with(clipRef: clip)
+            } else {
+                // Human override — preserve the auto votes so the correction
+                // becomes a gold "human ≠ cv" training example (§6c).
+                finalResult = RallyResult.humanOverride(
+                    rallyIndex: produced.rallyIndex,
+                    winner: side,
+                    clipRef: clip,
+                    landing: produced.landing,
+                    positionVote: produced.positionVote,
+                    cvVote: produced.cvVote
+                )
+            }
+        } else {
+            // No produced result (e.g. manual rally-end with no detection) —
+            // record an authoritative human call.
+            finalResult = RallyResult.humanOverride(
+                rallyIndex: rallyResultBox.nextIndex(), winner: side, clipRef: clip
+            )
+        }
+        rallyResultBox.record(finalResult)
+        TrainingExportWriter.append(finalResult, matchID: persistedMatch.id)
+        scorePoint(for: side)
+    }
+
+    /// Best-effort clip pointer into the current game video: the last
+    /// ~2 s rally-suggestion window expressed as offsets from the game
+    /// recording start. `nil` until a game recording is in progress.
+    private func currentClipRef() -> ClipRef? {
+        guard let fileName = recordingFileName, let start = recordingStartedAt else {
+            return nil
+        }
+        let elapsed = Date().timeIntervalSince(start)
+        return ClipRef(
+            fileName: fileName,
+            startTime: max(0, elapsed - 2.0),
+            endTime: max(0, elapsed)
+        )
+    }
+
     // MARK: - Scoring
 
     /// Apply a point for the given side.

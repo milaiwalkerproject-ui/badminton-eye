@@ -134,4 +134,21 @@ extension RallyResult {
             nextServeVerified: nil
         )
     }
+
+    /// Returns a copy with `clipRef` set (keeps the existing one if `nil`),
+    /// used to attach the rally's video time-range at resolution time.
+    func with(clipRef newClip: ClipRef?) -> RallyResult {
+        RallyResult(
+            rallyIndex: rallyIndex,
+            winner: winner,
+            confidence: confidence,
+            source: source,
+            corroboration: corroboration,
+            landing: landing,
+            clipRef: newClip ?? clipRef,
+            positionVote: positionVote,
+            cvVote: cvVote,
+            nextServeVerified: nextServeVerified
+        )
+    }
 }

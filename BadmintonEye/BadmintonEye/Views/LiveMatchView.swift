@@ -66,7 +66,10 @@ struct LiveMatchView: View {
                 autoApply: { viewModel.shouldAutoApplyLastResult() }
             ) { resolvedSide in
                 if let side = resolvedSide {
-                    viewModel.scorePoint(for: side)
+                    // Routes through the rally resolver so the finalized
+                    // RallyResult (with human-override provenance) is written
+                    // to the on-device training export before scoring.
+                    viewModel.resolveRally(for: side)
                 }
             }
         }
