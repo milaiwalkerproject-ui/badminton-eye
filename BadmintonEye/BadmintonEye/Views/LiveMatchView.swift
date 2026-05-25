@@ -8,6 +8,7 @@ struct LiveMatchView: View {
     @State private var showChallengeSheet = false
     @State private var showPaywall = false
     @State private var showRallySuggestion = false
+    @State private var showReview = false
     @State private var challengeCountdown: Int = 0
     /// Cancellation token for the challenge countdown task.
     @State private var challengeCountdownTask: Task<Void, Never>?
@@ -36,6 +37,28 @@ struct LiveMatchView: View {
         return label
     }
 
+    /// Non-blocking badge: appears only when the system has queued uncertain
+    /// calls for optional review. Tapping opens the zoom/slow-mo review surface;
+    /// it never auto-presents, so it can't interrupt live play.
+    @ViewBuilder
+    private var reviewBadge: some View {
+        if !viewModel.reviewQueue.isEmpty {
+            Button {
+                showReview = true
+            } label: {
+                Label("\(viewModel.reviewQueue.count)", systemImage: "magnifyingglass.circle.fill")
+                    .font(.subheadline.weight(.semibold))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 7)
+                    .background(.orange, in: Capsule())
+                    .foregroundStyle(.white)
+            }
+            .padding(.top, 12)
+            .padding(.trailing, 12)
+            .accessibilityLabel("Review \(viewModel.reviewQueue.count) uncertain calls")
+        }
+    }
+
     var body: some View {
         GeometryReader { proxy in
             // Landscape: camera takes the canvas, score floats on top.
@@ -46,6 +69,7 @@ struct LiveMatchView: View {
                 portraitLayout(in: proxy.size)
             }
         }
+        .overlay(alignment: .topTrailing) { reviewBadge }
         .toolbar(.hidden, for: .tabBar)
         .alert("End Match?", isPresented: $showAbandonAlert) {
             Button("Cancel", role: .cancel) {}
@@ -75,6 +99,19 @@ struct LiveMatchView: View {
         }
         .sheet(isPresented: $showPaywall) {
             PaywallView()
+        }
+        .sheet(isPresented: $showReview) {
+            RallyReviewView(
+                items: viewModel.reviewQueue,
+                teamANames: viewModel.state.teamANames,
+                teamBNames: viewModel.state.teamBNames,
+                onVerdict: { item, side in
+                    viewModel.recordReviewVerdict(for: item, winner: side)
+                },
+                onDismissItem: { item in
+                    viewModel.dismissReview(item)
+                }
+            )
         }
         .onChange(of: currentTotalScore) { _, _ in
             startChallengeCountdown()

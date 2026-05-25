@@ -235,7 +235,62 @@ final class LiveMatchViewModel {
         }
         rallyResultBox.record(finalResult)
         TrainingExportWriter.append(finalResult, matchID: persistedMatch.id)
+        enqueueForReviewIfNeeded(finalResult)
         scorePoint(for: side)
+    }
+
+    // MARK: - Opportunistic review queue (non-blocking override surface)
+
+    /// A finalized rally flagged for optional later review (low confidence or an
+    /// uncertain landing). Surfaced as a non-blocking badge — reviewing one
+    /// records the user's verdict to the training export. Never blocks play.
+    struct ReviewItem: Identifiable, Equatable {
+        let id = UUID()
+        let result: RallyResult
+    }
+
+    /// Calls awaiting optional review, oldest first. Observed → drives the badge.
+    private(set) var reviewQueue: [ReviewItem] = []
+
+    /// At/above this confidence a classifier call is solid enough to skip the
+    /// queue. Below it (or an `.uncertain` landing) → queue. Conservative
+    /// because confidence is provisional (overconfident) pre-calibration.
+    @ObservationIgnored private let reviewConfidenceBar = 0.97
+    @ObservationIgnored private let maxReviewQueue = 20
+
+    private func enqueueForReviewIfNeeded(_ result: RallyResult) {
+        guard result.source != .human else { return }   // user already decided it
+        let uncertainLanding = result.landing?.result == .uncertain
+        guard uncertainLanding || result.confidence < reviewConfidenceBar else { return }
+        reviewQueue.append(ReviewItem(result: result))
+        if reviewQueue.count > maxReviewQueue {
+            reviewQueue.removeFirst(reviewQueue.count - maxReviewQueue)
+        }
+    }
+
+    /// Record the user's reviewed verdict for a queued call: writes a
+    /// human-sourced `RallyResult` to the training export (preserving the
+    /// classifier vote, so a differing verdict is a gold corrected example) and
+    /// dequeues it. Does NOT retroactively change the live score — the point was
+    /// already played; this captures the ground-truth label for the flywheel.
+    func recordReviewVerdict(for item: ReviewItem, winner: Side) {
+        let r = item.result
+        let humanResult = RallyResult.humanOverride(
+            rallyIndex: r.rallyIndex,
+            winner: winner,
+            clipRef: r.clipRef,
+            landing: r.landing,
+            positionVote: r.positionVote,
+            cvVote: r.cvVote
+        )
+        TrainingExportWriter.append(humanResult, matchID: persistedMatch.id)
+        reviewQueue.removeAll { $0.id == item.id }
+    }
+
+    /// Remove a queued call without recording a verdict (user agrees with the
+    /// auto call, or doesn't want to review it).
+    func dismissReview(_ item: ReviewItem) {
+        reviewQueue.removeAll { $0.id == item.id }
     }
 
     /// Best-effort clip pointer into the current game video: the last
