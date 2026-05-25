@@ -210,6 +210,10 @@ final class GameRecordingService: NSObject {
         }
         session.addInput(videoInput)
 
+        // Prefer 60fps capture where the device supports it (~5× better
+        // close-call landing per the CV spike); graceful 30fps fallback.
+        configureFrameRate(videoDevice, target: 60)
+
         // Video data output → frame buffer. This is the only output we
         // attach — no movie file, no audio, no Photos save.
         if frameBuffer != nil {
@@ -224,6 +228,41 @@ final class GameRecordingService: NSObject {
 
         session.commitConfiguration()
         return session
+    }
+
+    /// Selects a device format that supports `target` fps (capped at 1080p to
+    /// bound CPU/thermal cost) and pins the min/max frame duration to it.
+    /// No-op — leaving the session at its default ~30fps preset — when no
+    /// qualifying format exists, so this degrades gracefully on older devices.
+    /// Setting `activeFormat` switches the session to input-priority, which is
+    /// what we want here.
+    private func configureFrameRate(_ device: AVCaptureDevice, target: Double) {
+        var chosen: AVCaptureDevice.Format?
+        var chosenWidth: Int32 = 0
+        for format in device.formats {
+            let dims = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
+            guard dims.height <= 1080 else { continue }
+            let supportsTarget = format.videoSupportedFrameRateRanges.contains {
+                $0.maxFrameRate >= target
+            }
+            guard supportsTarget else { continue }
+            // Prefer the highest-resolution format that still reaches `target`.
+            if chosen == nil || dims.width > chosenWidth {
+                chosen = format
+                chosenWidth = dims.width
+            }
+        }
+        guard let chosen else { return }   // no high-fps format → keep ~30fps
+        do {
+            try device.lockForConfiguration()
+            device.activeFormat = chosen
+            let duration = CMTime(value: 1, timescale: CMTimeScale(target))
+            device.activeVideoMinFrameDuration = duration
+            device.activeVideoMaxFrameDuration = duration
+            device.unlockForConfiguration()
+        } catch {
+            // Couldn't lock for configuration — leave the default frame rate.
+        }
     }
 
     private func requestCameraAuthorization() async -> Bool {
