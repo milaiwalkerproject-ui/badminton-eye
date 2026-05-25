@@ -43,5 +43,11 @@ final class PersistedMatch {
     // (and matches started without calibration) still load.
     var calibration: CalibrationProfile?
 
+    // Per-game recorded video files (Footage feature). Cascade delete so
+    // removing a match also removes its footage rows. Optional array keeps
+    // the CloudKit migration additive for existing rows.
+    @Relationship(deleteRule: .cascade, inverse: \GameVideoRecord.match)
+    var gameVideos: [GameVideoRecord]? = []
+
     init() {}
 }

@@ -29,6 +29,7 @@ struct BadmintonEyeApp: App {
         do {
             container = try ModelContainer(
                 for: PersistedMatch.self, Player.self, CalibrationProfile.self,
+                GameVideoRecord.self,
                 configurations: config
             )
         } catch let primaryError {
@@ -37,6 +38,7 @@ struct BadmintonEyeApp: App {
             let fallbackConfig = ModelConfiguration(isStoredInMemoryOnly: true)
             if let fallback = try? ModelContainer(
                 for: PersistedMatch.self, Player.self, CalibrationProfile.self,
+                GameVideoRecord.self,
                 configurations: fallbackConfig
             ) {
                 container = fallback

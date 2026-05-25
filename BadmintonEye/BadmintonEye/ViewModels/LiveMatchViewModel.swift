@@ -29,6 +29,13 @@ final class LiveMatchViewModel {
     /// available. `nil` until `startContinuousCapture()` finishes.
     private(set) var liveCaptureSession: AVCaptureSession?
 
+    // MARK: - Footage recording (per game)
+    // Metadata for the game currently being recorded to disk. A
+    // `GameVideoRecord` row is created from these at each game boundary.
+    @ObservationIgnored private var recordingGameNumber: Int = 0
+    @ObservationIgnored private var recordingStartedAt: Date?
+    @ObservationIgnored private var recordingFileName: String?
+
     var canUndo: Bool { state.previousState != nil }
     var isMatchOver: Bool {
         state.matchPhase == .complete || state.matchPhase == .abandoned
@@ -145,6 +152,12 @@ final class LiveMatchViewModel {
         if state.games.count > previousGameCount {
             // A game just ended
             justCompletedGame = state.games.last
+            if let completed = state.games.last {
+                finishGameFootage(
+                    completed: completed,
+                    isMatchOver: state.matchPhase == .complete
+                )
+            }
             if state.matchPhase != .complete {
                 showGameEndOverlay = true
             }
@@ -180,7 +193,12 @@ final class LiveMatchViewModel {
     }
 
     func abandonMatch() {
+        // Capture the partial current game's footage before tearing down.
+        let partialGame = state.currentGame
         state = MatchEngine.apply(event: .abandon, to: state)
+        if recordingFileName != nil {
+            finishGameFootage(completed: partialGame, isMatchOver: true)
+        }
         persistState()
         stopContinuousCapture()
     }
@@ -194,7 +212,14 @@ final class LiveMatchViewModel {
     func startContinuousCapture() {
         Task { @MainActor [weak self, recorder] in
             await recorder.startMatchRecording()
-            self?.liveCaptureSession = recorder.captureSession
+            guard let self else { return }
+            self.liveCaptureSession = recorder.captureSession
+            // Begin footage for the in-progress game if we haven't already
+            // (guards against a second onAppear re-triggering capture).
+            if self.recordingFileName == nil,
+               self.state.matchPhase == .inProgress {
+                self.beginGameFootage(gameNumber: self.state.games.count + 1)
+            }
         }
     }
 
@@ -204,6 +229,56 @@ final class LiveMatchViewModel {
         Task { @MainActor [recorder] in
             await recorder.stopMatchRecording()
             _ = session
+        }
+    }
+
+    // MARK: - Footage recording (per game)
+
+    /// Starts recording the given game number to a fresh file and tracks
+    /// its metadata for the eventual `GameVideoRecord`.
+    private func beginGameFootage(gameNumber: Int) {
+        let fileName = "\(persistedMatch.id.uuidString)-game\(gameNumber).mp4"
+        recordingGameNumber = gameNumber
+        recordingStartedAt = Date()
+        recordingFileName = fileName
+        recorder.startGameRecording(fileName: fileName)
+    }
+
+    /// Finalises the in-flight recording, persists a `GameVideoRecord` for
+    /// the completed game, and — unless the match is over — begins the next
+    /// game's recording. File finalisation is async, so this runs off the
+    /// scoring tap's critical path.
+    private func finishGameFootage(completed: GameState, isMatchOver: Bool) {
+        let gameNumber = recordingGameNumber
+        let startedAt = recordingStartedAt ?? Date()
+        let fileName = recordingFileName ?? ""
+        let scoreA = completed.scoreA
+        let scoreB = completed.scoreB
+        // Clear so a re-entrant boundary (or abandon after complete) is a no-op.
+        recordingFileName = nil
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            let didWrite = await self.recorder.finishCurrentGameRecording()
+            let record = GameVideoRecord(
+                gameNumber: gameNumber,
+                fileName: didWrite ? fileName : "",
+                startedAt: startedAt,
+                endedAt: Date(),
+                rallyCount: scoreA + scoreB,
+                scoreA: scoreA,
+                scoreB: scoreB,
+                locationName: nil
+            )
+            self.modelContext.insert(record)
+            record.match = self.persistedMatch
+            if self.persistedMatch.gameVideos == nil {
+                self.persistedMatch.gameVideos = []
+            }
+            self.persistedMatch.gameVideos?.append(record)
+            try? self.modelContext.save()
+            if !isMatchOver {
+                self.beginGameFootage(gameNumber: gameNumber + 1)
+            }
         }
     }
 
