@@ -20,14 +20,19 @@ final class LiveMatchPerformanceTests: XCTestCase {
 
     func testScoringThroughput() throws {
         // Build an in-memory SwiftData stack with the full schema used by the app.
-        let schema = Schema([PersistedMatch.self])
+        // GameVideoRecord is included because PersistedMatch now has a
+        // `gameVideos` relationship to it; the container fails without it.
+        let schema = Schema([PersistedMatch.self, GameVideoRecord.self])
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(for: schema, configurations: [config])
-        let context = ModelContext(container)
 
         measure {
             // Each iteration of measure{} gets a fresh match so score counts
-            // never reach match completion (which would stop scoring).
+            // never reach match completion (which would stop scoring). The
+            // ModelContext is created inside the closure because it isn't
+            // Sendable and can't be captured across the measure{} boundary;
+            // ModelContainer is Sendable, so capturing it is fine.
+            let context = ModelContext(container)
             let matchState = MatchState.newSinglesMatch()
             let viewModel = LiveMatchViewModel(state: matchState, modelContext: context)
 
