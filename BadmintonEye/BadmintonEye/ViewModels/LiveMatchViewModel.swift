@@ -54,6 +54,24 @@ final class LiveMatchViewModel {
     /// the first suggestion runs.
     var lastRallyResult: RallyResult? { rallyResultBox.latest }
 
+    /// Conservative auto-apply confidence threshold (§3.1). Most rallies fall
+    /// below this → confirm sheet. Only tighten DOWN once Vision's ground-truth
+    /// holdout calibration validates the classifier's (currently overconfident,
+    /// heuristic-lineage) confidence. See ClassifierRallyScorer train/serve-skew note.
+    @ObservationIgnored private let autoApplyConfidenceThreshold = 0.92
+
+    /// §3.1 decision for the most recently produced `RallyResult`: auto-apply
+    /// only when confident AND signals don't conflict AND the landing isn't a
+    /// close call (`.uncertain`). `.human` results are authoritative; conflict,
+    /// uncertain landings, and low confidence all defer to the user.
+    func shouldAutoApplyLastResult() -> Bool {
+        guard let r = rallyResultBox.latest else { return false }
+        if r.source == .human { return true }
+        if r.corroboration == .conflict { return false }
+        if let landing = r.landing, landing.result == .uncertain { return false }
+        return r.confidence >= autoApplyConfidenceThreshold
+    }
+
     // MARK: - Crash Recovery
 
     static func restoreFromPersistedMatch(

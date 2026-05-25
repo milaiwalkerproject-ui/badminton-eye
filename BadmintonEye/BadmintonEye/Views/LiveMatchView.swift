@@ -62,7 +62,8 @@ struct LiveMatchView: View {
             RallySuggestionSheet(
                 teamANames: viewModel.state.teamANames,
                 teamBNames: viewModel.state.teamBNames,
-                suggestor: viewModel.rallySuggestor
+                suggestor: viewModel.rallySuggestor,
+                autoApply: { viewModel.shouldAutoApplyLastResult() }
             ) { resolvedSide in
                 if let side = resolvedSide {
                     viewModel.scorePoint(for: side)

@@ -53,15 +53,24 @@ struct RallySuggestionSheet: View {
     /// passes in the real `TrajectoryRallySuggestor` from the view model.
     private let suggestor: RallySuggesting
 
+    /// §3.1 auto-apply gate. Evaluated once, after the suggestor produces a
+    /// result (which records the full `RallyResult` provenance). When it
+    /// returns `true`, the sheet auto-resolves to the suggested side instead of
+    /// waiting for a manual Confirm — high-confidence rallies don't interrupt
+    /// play (the point stays undoable). Defaults to never auto-applying.
+    private let autoApply: () -> Bool
+
     init(
         teamANames: [String],
         teamBNames: [String],
         suggestor: RallySuggesting = StubRallySuggestor(),
+        autoApply: @escaping () -> Bool = { false },
         onResolve: @escaping (Side?) -> Void
     ) {
         self.teamANames = teamANames
         self.teamBNames = teamBNames
         self.suggestor = suggestor
+        self.autoApply = autoApply
         self.onResolve = onResolve
     }
 
@@ -95,7 +104,15 @@ struct RallySuggestionSheet: View {
         .task {
             // Run the suggestor only once per sheet presentation.
             guard suggestion == nil else { return }
-            suggestion = await suggestor.suggest()
+            let produced = await suggestor.suggest()
+            // §3.1: confident + corroborated + not a close call → auto-apply
+            // without a manual tap (brief flash, then dismiss). Otherwise show
+            // the confirm/override card so the user decides.
+            if autoApply() {
+                resolve(with: produced.side)
+            } else {
+                suggestion = produced
+            }
         }
         .presentationDetents([.medium])
     }
