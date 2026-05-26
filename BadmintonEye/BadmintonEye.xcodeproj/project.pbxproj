@@ -99,6 +99,7 @@
 		UT10001 /* BadmintonEyeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20001 /* BadmintonEyeTests.swift */; };
 		UT10002 /* LiveMatchPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20003 /* LiveMatchPerformanceTests.swift */; };
 		UT10008 /* FeaturizeGoldenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20006 /* FeaturizeGoldenTests.swift */; };
+		UT10009 /* LiveMatchScoringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20007 /* LiveMatchScoringTests.swift */; };
 		UT10005 /* WatchSyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20004 /* WatchSyncManagerTests.swift */; };
 		UT10006 /* WatchMatchViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20005 /* WatchMatchViewModelTests.swift */; };
 		UT10007 /* WatchMatchViewModel.swift in Sources (Tests) */ = {isa = PBXBuildFile; fileRef = W20002 /* WatchMatchViewModel.swift */; };
@@ -235,6 +236,7 @@
 		UT20002 /* BadmintonEyeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BadmintonEyeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		UT20003 /* LiveMatchPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveMatchPerformanceTests.swift; sourceTree = "<group>"; };
 		UT20006 /* FeaturizeGoldenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturizeGoldenTests.swift; sourceTree = "<group>"; };
+		UT20007 /* LiveMatchScoringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveMatchScoringTests.swift; sourceTree = "<group>"; };
 		UT20004 /* WatchSyncManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSyncManagerTests.swift; sourceTree = "<group>"; };
 		UT20005 /* WatchMatchViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchMatchViewModelTests.swift; sourceTree = "<group>"; };
 		WP2001 /* WCSessionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WCSessionProtocol.swift; sourceTree = "<group>"; };
@@ -434,6 +436,7 @@
 				UT20001 /* BadmintonEyeTests.swift */,
 				UT20003 /* LiveMatchPerformanceTests.swift */,
 				UT20006 /* FeaturizeGoldenTests.swift */,
+				UT20007 /* LiveMatchScoringTests.swift */,
 				UT20004 /* WatchSyncManagerTests.swift */,
 				UT20005 /* WatchMatchViewModelTests.swift */,
 			);
@@ -769,6 +772,7 @@
 				UT10001 /* BadmintonEyeTests.swift in Sources */,
 				UT10002 /* LiveMatchPerformanceTests.swift in Sources */,
 				UT10008 /* FeaturizeGoldenTests.swift in Sources */,
+				UT10009 /* LiveMatchScoringTests.swift in Sources */,
 				/* Watch tests (UT10005/06/07) quarantined from the iOS test target:
 				   WatchMatchViewModel.swift is a watchOS-module source that can't
 				   resolve its app-module deps (SyncPayload, WatchSessionManager) in
