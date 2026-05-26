@@ -100,8 +100,18 @@ final class ClassifierRallyScorer: RallyResultProducing, @unchecked Sendable {
             return fallback(rallyIndex: rallyIndex, clipRef: clipRef)
         }
 
-        // Decimate to a bounded set, tracking each frame's index in the
-        // (decimated) window as the trajectory's `f` (a monotonic frame proxy).
+        // Decimate to a bounded set. Each chosen frame's trajectory `f` is the
+        // ORIGINAL strided index into the `CircularFrameBuffer` window (assigned
+        // below as `f: originalIdx`), NOT a 0..<count position in the decimated
+        // window — so gaps from missed detections are preserved in `f` and the
+        // frame-spacing-sensitive features (`final_velocity`, `gap_ratio`) reflect
+        // real elapsed frames.
+        //
+        // NOTE: a residual capture-fps-vs-training-fps scale difference still
+        // remains in `final_velocity`/`gap_ratio` (training stride ~8 vs on-device
+        // capture stride). That skew is intentionally left to post-labeling
+        // confidence calibration (hawkeye/.../calibrate_confidence.py); the
+        // conservative 0.92 auto-apply gate is the interim safeguard.
         let stridedIdx = Array(stride(from: 0, to: sampleBuffers.count, by: max(frameStride, 1)))
         let chosen = Array(stridedIdx.suffix(maxFramesPerSuggestion))
 
