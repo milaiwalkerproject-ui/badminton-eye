@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import AVKit
+import UIKit
 
 /// Per-match footage screen. Shows every `GameVideoRecord` attached to the
 /// match in order, with inline playback and metadata, plus a premium-gated
@@ -20,19 +21,15 @@ struct FootageDetailView: View {
     @State private var showPaywall = false
     @State private var pendingRecord: GameVideoRecord?
 
-    /// Subscription state. The exact type/name is project-defined; we read
-    /// it via `SubscriptionManager.shared.isSubscribed` if it exists. Falls
-    /// back to `false` so the paywall always wins on debug builds without
-    /// StoreKit configured.
-    @State private var isSubscribed: Bool = SubscriptionGate.isSubscribed
+    /// Premium entitlement, read directly from the app's `SubscriptionManager`.
+    private var isSubscribed: Bool { SubscriptionManager.shared.isPremium }
 
     private var games: [GameVideoRecord] {
-        // Mirror lookup keeps this view compiling before
-        // `PersistedMatch.gameVideos` is added to SwiftDataModels.swift.
-        let raw = Mirror(reflecting: match).children
-            .first { $0.label == "gameVideos" }?
-            .value as? [GameVideoRecord]
-        return (raw ?? []).sorted { $0.gameNumber < $1.gameNumber }
+        // Direct relationship access — `PersistedMatch.gameVideos` is now a
+        // wired SwiftData @Relationship. (The previous Mirror lookup never
+        // resolved the synthesized stored property, so the list was always
+        // empty and the screen permanently showed "No game videos".)
+        (match.gameVideos ?? []).sorted { $0.gameNumber < $1.gameNumber }
     }
 
     var body: some View {
@@ -55,11 +52,20 @@ struct FootageDetailView: View {
         .navigationTitle("Match Footage")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showPaywall) {
-            // Falls back gracefully if PaywallView doesn't exist on this
-            // branch — we just render a placeholder so the build doesn't
-            // break before merge.
-            PaywallShim()
+            PaywallView()
         }
+        .sheet(item: $shareURL) { wrapper in
+            ShareSheet(items: [wrapper.url])
+        }
+    }
+
+    /// URL of a game video queued for sharing (the "highlight" export). Wrapped
+    /// so it's `Identifiable` for `.sheet(item:)`.
+    @State private var shareURL: ShareURL?
+
+    private struct ShareURL: Identifiable {
+        let url: URL
+        var id: String { url.path }
     }
 
     // MARK: - Per-game section
@@ -103,11 +109,12 @@ struct FootageDetailView: View {
                 }
             } label: {
                 Label {
-                    Text("Generate Highlight")
+                    Text("Share Highlight")
                 } icon: {
-                    Image(systemName: "sparkles")
+                    Image(systemName: "square.and.arrow.up")
                 }
             }
+            .disabled(rec.resolvedURL() == nil)
         } header: {
             Text("Game \(rec.gameNumber)")
         }
@@ -121,75 +128,27 @@ struct FootageDetailView: View {
         return String(format: "%d:%02d", total / 60, total % 60)
     }
 
-    /// TODO(highlight-pipeline): wire to `HighlightEditor.makeHighlight(...)`.
-    /// For now this is a no-op so the UI works end-to-end behind the paywall.
+    /// Produces a shareable highlight for the game. The full
+    /// trim/zoom/slow-mo/super-rally editor is a follow-up; for now this
+    /// surfaces the recorded game video through the system share sheet so the
+    /// action is actually functional (it previously no-op'd, which is what made
+    /// the feature feel broken). No-op if the file is missing.
     private func runHighlightPipeline(for record: GameVideoRecord) {
-        _ = record
+        guard let url = record.resolvedURL() else { return }
+        shareURL = ShareURL(url: url)
     }
 }
 
-// MARK: - Subscription gate (soft binding)
+// MARK: - Share sheet
 
-/// Reads `SubscriptionManager.shared.isSubscribed` reflectively so this file
-/// compiles even on branches where the StoreKit layer is feature-flagged off
-/// (e.g. free-Apple-ID MVP mode). Replace with a direct call once the manager
-/// is guaranteed present.
-private enum SubscriptionGate {
-    static var isSubscribed: Bool {
-        // Look up SubscriptionManager.shared via NSClassFromString-style
-        // probing. Returns false on any failure — the user just sees the
-        // paywall stub, which is the safer default.
-        let candidates: [String] = ["BadmintonEye.SubscriptionManager",
-                                    "SubscriptionManager"]
-        for name in candidates {
-            if let cls = NSClassFromString(name) as? NSObject.Type {
-                let sharedSel = NSSelectorFromString("shared")
-                if cls.responds(to: sharedSel) {
-                    let shared = cls.perform(sharedSel)?
-                        .takeUnretainedValue() as? NSObject
-                    let isSubSel = NSSelectorFromString("isSubscribed")
-                    if let shared = shared, shared.responds(to: isSubSel) {
-                        let val = shared.perform(isSubSel)?
-                            .takeUnretainedValue()
-                        if let b = val as? Bool { return b }
-                        if let n = val as? NSNumber { return n.boolValue }
-                    }
-                }
-            }
-        }
-        return false
+/// Thin `UIActivityViewController` wrapper for sharing/exporting a recorded
+/// game video (Save to Files, AirDrop, Messages, etc.).
+private struct ShareSheet: UIViewControllerRepresentable {
+    let items: [Any]
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: items, applicationActivities: nil)
     }
-}
 
-// MARK: - Paywall shim
-
-/// Lightweight stand-in until this branch has a real PaywallView. The real
-/// app target ships `PaywallView` (see `Views/PaywallView.swift`); presenting
-/// it directly via `PaywallView()` requires its initializer signature, which
-/// varies across branches. Keep this shim minimal to avoid coupling.
-private struct PaywallShim: View {
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 24) {
-                Image(systemName: "sparkles.tv")
-                    .font(.system(size: 64))
-                    .foregroundStyle(.tint)
-                Text("Premium feature")
-                    .font(.title2).bold()
-                Text("Auto-generated highlight reels are available with Badminton Eye Premium.")
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal)
-                Spacer()
-            }
-            .padding(.top, 48)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") { dismiss() }
-                }
-            }
-        }
-    }
+    func updateUIViewController(_ controller: UIActivityViewController, context: Context) {}
 }

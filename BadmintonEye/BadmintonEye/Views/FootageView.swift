@@ -13,12 +13,21 @@ import SwiftData
 ///   and iPhone TabView) with a `FootageView` entry. See HANDOFF.md.
 struct FootageView: View {
 
+    // Any finished match (completed OR abandoned). Footage is recorded for
+    // both — abandoned matches finalize their in-flight game on teardown — so
+    // restricting to `isComplete` hid all footage from the common
+    // start-then-stop test flow.
     @Query(
-        filter: #Predicate<PersistedMatch> { $0.isComplete && !$0.isAbandoned },
+        filter: #Predicate<PersistedMatch> { $0.isComplete || $0.isAbandoned },
         sort: \PersistedMatch.startedAt,
         order: .reverse
     )
-    private var matches: [PersistedMatch]
+    private var allFinished: [PersistedMatch]
+
+    /// Only matches that actually captured at least one game video.
+    private var matches: [PersistedMatch] {
+        allFinished.filter { ($0.gameVideos?.contains { !$0.fileName.isEmpty }) ?? false }
+    }
 
     var body: some View {
         Group {
@@ -58,16 +67,9 @@ struct FootageView: View {
 private struct FootageRow: View {
     let match: PersistedMatch
 
-    /// Pull videos via the planned `gameVideos` relationship on PersistedMatch.
-    /// Until that relationship is added, this stays at zero — the row still
-    /// renders, just without a "N games" hint.
+    /// Number of recorded game videos via the wired `gameVideos` relationship.
     private var gameCount: Int {
-        // Reflection-free: rely on the optional KVC-style accessor that
-        // SwiftData synthesizes once the inverse relationship is wired.
-        // For now we read a static 0 so this file compiles standalone.
-        return (Mirror(reflecting: match).children
-            .first { $0.label == "gameVideos" }?
-            .value as? [GameVideoRecord])?.count ?? 0
+        match.gameVideos?.count ?? 0
     }
 
     private var teamA: String {
@@ -100,9 +102,6 @@ private struct FootageRow: View {
 
                 HStack(spacing: 6) {
                     Text(match.startedAt, style: .date)
-                    if let loc = match.locationName, !loc.isEmpty {
-                        Text("• \(loc)").lineLimit(1)
-                    }
                     if gameCount > 0 {
                         Text("• \(gameCount) game\(gameCount == 1 ? "" : "s")")
                     }
@@ -114,19 +113,5 @@ private struct FootageRow: View {
             Spacer()
         }
         .padding(.vertical, 2)
-    }
-}
-
-// MARK: - PersistedMatch.locationName shim
-//
-// `locationName` is a planned addition to `PersistedMatch`. Reading it via
-// Mirror keeps this file compiling before the property is added to
-// `Models/SwiftDataModels.swift`. Once the property lands, swap this for
-// a direct access and delete the extension.
-private extension PersistedMatch {
-    var locationName: String? {
-        Mirror(reflecting: self).children
-            .first { $0.label == "locationName" }?
-            .value as? String
     }
 }
