@@ -71,14 +71,22 @@ final class GameRecordingService: NSObject {
         qos: .userInitiated
     )
 
-    /// Frame counter for the sample-buffer delegate. We forward only
-    /// every `frameStride`-th frame to the buffer (so ~5 fps from a
-    /// 30 fps source). Combined with the buffer's short capacity this
-    /// keeps the retained `CVPixelBuffer` count well under iOS's
-    /// camera-pool ceiling (~15) — retaining more stalls the preview
-    /// because the camera can't allocate new pool buffers to write into.
+    /// Target effective frame rate forwarded into the ring buffer (the
+    /// rally-suggestion window only needs a sparse parabola, not full rate).
+    /// Keeping this at ~5 fps × the buffer's 2 s capacity bounds the retained
+    /// `CVPixelBuffer` count at ~10 — well under iOS's camera-pool ceiling
+    /// (~15). Retaining more stalls the preview (and the whole UI) because the
+    /// camera can't allocate new pool buffers to write into.
+    private static let targetRingBufferFPS: Double = 5.0
+
+    /// Frame counter for the sample-buffer delegate. We forward only every
+    /// `frameStride`-th frame to the ring buffer. The stride is derived from
+    /// the *actual* capture frame rate in `configureSession` (set before the
+    /// session starts, then read on `sampleQueue`) so it scales with the
+    /// 60 fps high-rate path AND the 30 fps fallback — a fixed stride of 6 at
+    /// 60 fps over-filled the pool and stalled the preview.
     /// Touched only on `sampleQueue`.
-    private let frameStride: Int = 6
+    nonisolated(unsafe) private var frameStride: Int = 6
     nonisolated(unsafe) private var frameCounter: Int = 0
 
     /// Per-game full-length recorder. Created on `startGameRecording`,
@@ -212,7 +220,12 @@ final class GameRecordingService: NSObject {
 
         // Prefer 60fps capture where the device supports it (~5× better
         // close-call landing per the CV spike); graceful 30fps fallback.
-        configureFrameRate(videoDevice, target: 60)
+        let captureFPS = configureFrameRate(videoDevice, target: 60)
+
+        // Derive the ring-buffer stride from the actual capture rate so we
+        // forward ~`targetRingBufferFPS` into the buffer regardless of whether
+        // we ended up at 60 or 30 fps. e.g. 60 fps → stride 12, 30 fps → 6.
+        frameStride = max(1, Int((captureFPS / Self.targetRingBufferFPS).rounded()))
 
         // Video data output → frame buffer. This is the only output we
         // attach — no movie file, no audio, no Photos save.
@@ -236,7 +249,10 @@ final class GameRecordingService: NSObject {
     /// qualifying format exists, so this degrades gracefully on older devices.
     /// Setting `activeFormat` switches the session to input-priority, which is
     /// what we want here.
-    private func configureFrameRate(_ device: AVCaptureDevice, target: Double) {
+    /// - Returns: the effective capture frame rate the session will run at, so
+    ///   the caller can size the ring-buffer stride to it.
+    @discardableResult
+    private func configureFrameRate(_ device: AVCaptureDevice, target: Double) -> Double {
         var chosen: AVCaptureDevice.Format?
         var chosenWidth: Int32 = 0
         for format in device.formats {
@@ -252,7 +268,7 @@ final class GameRecordingService: NSObject {
                 chosenWidth = dims.width
             }
         }
-        guard let chosen else { return }   // no high-fps format → keep ~30fps
+        guard let chosen else { return 30 }   // no high-fps format → keep ~30fps
         do {
             try device.lockForConfiguration()
             device.activeFormat = chosen
@@ -260,8 +276,10 @@ final class GameRecordingService: NSObject {
             device.activeVideoMinFrameDuration = duration
             device.activeVideoMaxFrameDuration = duration
             device.unlockForConfiguration()
+            return target
         } catch {
             // Couldn't lock for configuration — leave the default frame rate.
+            return 30
         }
     }
 
