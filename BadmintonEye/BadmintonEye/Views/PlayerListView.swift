@@ -20,13 +20,41 @@ struct PlayerListView: View {
         }
     }
 
+    /// Win/loss record keyed by player name, computed in a SINGLE pass over
+    /// the completed matches. Previously each row called `winLossRecord(for:)`,
+    /// which re-scanned every match for every player on every body
+    /// evaluation — O(players × matches) on each tab switch / render. This
+    /// reduces that to O(matches) once per render.
+    private var recordsByName: [String: WinLoss] {
+        var records: [String: WinLoss] = [:]
+        for match in matches where match.isComplete {
+            guard let winner = match.winnerSide else { continue }
+            let sideAWon = winner == "sideA"
+            let sideBWon = winner == "sideB"
+            guard sideAWon || sideBWon else { continue }
+
+            func tally(_ name: String?, didWin: Bool) {
+                guard let name, !name.isEmpty else { return }
+                var rec = records[name, default: WinLoss(wins: 0, losses: 0)]
+                if didWin { rec.wins += 1 } else { rec.losses += 1 }
+                records[name] = rec
+            }
+            tally(match.playerAName, didWin: sideAWon)
+            tally(match.playerA2Name, didWin: sideAWon)
+            tally(match.playerBName, didWin: sideBWon)
+            tally(match.playerB2Name, didWin: sideBWon)
+        }
+        return records
+    }
+
     var body: some View {
-        List {
+        let records = recordsByName
+        return List {
             ForEach(filteredPlayers) { player in
                 NavigationLink {
                     HeadToHeadView(player: player)
                 } label: {
-                    playerRow(player)
+                    playerRow(player, record: records[player.name] ?? WinLoss(wins: 0, losses: 0))
                 }
                 .swipeActions(edge: .trailing) {
                     Button(localization.localized("players.edit")) {
@@ -73,8 +101,7 @@ struct PlayerListView: View {
     // MARK: - Player Row
 
     @ViewBuilder
-    private func playerRow(_ player: Player) -> some View {
-        let record = winLossRecord(for: player)
+    private func playerRow(_ player: Player, record: WinLoss) -> some View {
         let total = record.wins + record.losses
         let winPct = total > 0 ? Int(round(Double(record.wins) / Double(total) * 100)) : 0
 
@@ -145,25 +172,5 @@ struct PlayerListView: View {
     struct WinLoss {
         var wins: Int
         var losses: Int
-    }
-
-    func winLossRecord(for player: Player) -> WinLoss {
-        var wins = 0
-        var losses = 0
-
-        for match in matches where match.isComplete {
-            let isSideA = match.playerAName == player.name || match.playerA2Name == player.name
-            let isSideB = match.playerBName == player.name || match.playerB2Name == player.name
-
-            if isSideA {
-                if match.winnerSide == "sideA" { wins += 1 }
-                else if match.winnerSide == "sideB" { losses += 1 }
-            } else if isSideB {
-                if match.winnerSide == "sideB" { wins += 1 }
-                else if match.winnerSide == "sideA" { losses += 1 }
-            }
-        }
-
-        return WinLoss(wins: wins, losses: losses)
     }
 }

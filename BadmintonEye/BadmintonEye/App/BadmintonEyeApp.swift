@@ -70,12 +70,13 @@ struct BadmintonEyeApp: App {
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.horizontalSizeClass) private var sizeClass
-    @Query(
-        filter: #Predicate<PersistedMatch> { !$0.isComplete && !$0.isAbandoned },
-        sort: \PersistedMatch.startedAt,
-        order: .reverse
-    )
-    private var inProgressMatches: [PersistedMatch]
+
+    // NOTE: intentionally NO top-level `@Query` here. A reactive query at the
+    // root re-runs `ContentView.body` — rebuilding the ENTIRE TabView /
+    // NavigationSplitView tree — on every SwiftData save anywhere in the app
+    // (scoring a point, writing footage records, abandoning a match). That
+    // showed up as launch + tab-switch lag. The one leftover-match cleanup we
+    // need at launch is a one-shot fetch in `.onAppear` instead.
 
     @State private var restoredViewModel: LiveMatchViewModel?
     @State private var hasCheckedRestore = false
@@ -200,12 +201,17 @@ struct ContentView: View {
             // reintroduce a proper "Resume in-progress match?" prompt
             // post-MVP if needed.
             if !hasCheckedRestore {
-                for match in inProgressMatches {
-                    match.isAbandoned = true
-                    match.endedAt = Date()
-                }
-                try? modelContext.save()
                 hasCheckedRestore = true
+                let descriptor = FetchDescriptor<PersistedMatch>(
+                    predicate: #Predicate { !$0.isComplete && !$0.isAbandoned }
+                )
+                if let leftovers = try? modelContext.fetch(descriptor), !leftovers.isEmpty {
+                    for match in leftovers {
+                        match.isAbandoned = true
+                        match.endedAt = Date()
+                    }
+                    try? modelContext.save()
+                }
             }
             if !AppMode.freeAppleIDMode {
                 WatchSyncManager.shared.activate()
