@@ -27,7 +27,7 @@ final class LiveMatchViewModel {
     /// Seam-B producer: System-2 classifier primary, geometric fallback. The
     /// live rally-end sheet runs through this (via `rallySuggestor`); the score
     /// state machine reads `lastRallyResult` after the user resolves the sheet.
-    @ObservationIgnored let rallyResultProducer: RallyResultProducing
+    @ObservationIgnored let rallyResultProducer: LazyRallyResultProducer
     @ObservationIgnored let rallyResultBox: RallyResultBox
 
     /// Live capture session, republished from the recorder so SwiftUI
@@ -176,27 +176,64 @@ final class LiveMatchViewModel {
     /// the geometric `TrajectoryRallySuggestor` as the fallback, plus the
     /// `RallySuggesting` adapter the live sheet drives. Both share the same
     /// `CircularFrameBuffer` the capture session is already filling.
+    ///
+    /// Performance: the actual stack — which loads the `RallyWinnerClassifier`
+    /// CoreML model and allocates two `CIContext`s inside the detector adapters
+    /// — is built **lazily on a background task** via `LazyRallyResultProducer`.
+    /// Doing it synchronously here blocked the main actor during the navigation
+    /// transition into the live match (the "extreme lag at match start"). The
+    /// stack is warmed up from `startContinuousCapture()` once the view is
+    /// on-screen, so the first "Rally Ended" tap is already hot.
+    @MainActor
     private static func makeRallyScoring(
         buffer: CircularFrameBuffer,
         calibration: CalibrationProfile?
-    ) -> (RallyResultProducing, RallySuggesting, RallyResultBox) {
-        let geometric = TrajectoryRallySuggestor(
-            frameBuffer: buffer,
-            detector: TrackNetWindowAdapter(),
-            calibration: calibration
-        )
-        let classifier = ClassifierRallyScorer.loadBundledModel().map { model in
-            ClassifierRallyScorer(
+    ) -> (LazyRallyResultProducer, RallySuggesting, RallyResultBox) {
+        // Snapshot the (non-Sendable, main-actor) calibration into a Sendable
+        // value up front so the off-main build closure captures only Sendable
+        // state.
+        let calibrationSnapshot = Self.calibrationSnapshot(calibration)
+        // The detector adapters (each allocate a `CIContext`) and the CoreML
+        // model are the heavy parts; the whole stack is built lazily on a
+        // background task the first time it's needed (warmed from
+        // `startContinuousCapture`), so it never blocks the match-start
+        // transition.
+        let producer = LazyRallyResultProducer {
+            let model = ClassifierRallyScorer.loadBundledModel()
+            let geometric = TrajectoryRallySuggestor(
                 frameBuffer: buffer,
                 detector: TrackNetWindowAdapter(),
-                calibration: calibration,
-                model: model
+                calibration: calibrationSnapshot
             )
+            let classifier = model.map { model in
+                ClassifierRallyScorer(
+                    frameBuffer: buffer,
+                    detector: TrackNetWindowAdapter(),
+                    calibration: calibrationSnapshot,
+                    model: model
+                )
+            }
+            return CompositeRallyResultProducer(classifier: classifier, geometric: geometric)
         }
-        let producer = CompositeRallyResultProducer(classifier: classifier, geometric: geometric)
         let box = RallyResultBox()
         let suggestor = ProducerBackedSuggestor(producer: producer, box: box)
         return (producer, suggestor, box)
+    }
+
+    /// Reads the values the rally scorers need off a live `CalibrationProfile`
+    /// into a `Sendable` snapshot. Main-actor isolated because `@Model` access
+    /// is. Returns `nil` when calibration is absent or incomplete.
+    @MainActor
+    private static func calibrationSnapshot(_ calibration: CalibrationProfile?) -> RallyCalibration? {
+        guard let calibration,
+              let corners = calibration.corners,
+              calibration.imageWidth > 0, calibration.imageHeight > 0
+        else { return nil }
+        return RallyCalibration(
+            corners: corners,
+            imageWidth: calibration.imageWidth,
+            imageHeight: calibration.imageHeight
+        )
     }
 
     // MARK: - Rally resolution + training export
@@ -380,6 +417,10 @@ final class LiveMatchViewModel {
     // had a chance to tear down their own capture sessions. Starting from
     // `init` raced with the navigation transition and crashed the app.
     func startContinuousCapture() {
+        // Warm the rally-scoring stack (CoreML load + CIContext alloc) on a
+        // background task now that the view is on-screen, so the first
+        // "Rally Ended" tap is hot without blocking the match-start transition.
+        rallyResultProducer.warmUp()
         Task { @MainActor [weak self, recorder] in
             await recorder.startMatchRecording()
             guard let self else { return }

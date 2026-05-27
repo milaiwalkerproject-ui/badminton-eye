@@ -18,6 +18,24 @@ public struct ShuttleObservation: Sendable {
     }
 }
 
+/// `Sendable` snapshot of the court calibration the rally scorers need.
+///
+/// `CalibrationProfile` is a main-actor-isolated SwiftData `@Model`, so it can't
+/// be captured by the `@Sendable` build closures that construct the scorers off
+/// the main thread. This carries only the primitives the homography needs,
+/// captured once on the main actor.
+public struct RallyCalibration: Sendable {
+    public let corners: [CGPoint]
+    public let imageWidth: Double
+    public let imageHeight: Double
+
+    public init(corners: [CGPoint], imageWidth: Double, imageHeight: Double) {
+        self.corners = corners
+        self.imageWidth = imageWidth
+        self.imageHeight = imageHeight
+    }
+}
+
 /// Contract for shuttle detection implementations.
 /// Conform to this protocol to provide real or placeholder shuttle detection
 /// that plugs into HawkEyePipeline without pipeline changes.

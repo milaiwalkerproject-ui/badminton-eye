@@ -66,11 +66,14 @@ final class ClassifierRallyScorer: RallyResultProducing, @unchecked Sendable {
     // MARK: - Dependencies
     private let frameBuffer: CircularFrameBuffer
     private let detector: ShuttleDetecting
-    private let calibration: CalibrationProfile?
+    private let calibrationSnapshotValue: RallyCalibration?
     private let calculator = TrajectoryCalculator()
     private let model: MLModel?
 
     // MARK: - Init
+
+    /// Main-actor convenience: snapshots the live `CalibrationProfile`.
+    @MainActor
     init(
         frameBuffer: CircularFrameBuffer,
         detector: ShuttleDetecting,
@@ -79,8 +82,34 @@ final class ClassifierRallyScorer: RallyResultProducing, @unchecked Sendable {
     ) {
         self.frameBuffer = frameBuffer
         self.detector = detector
-        self.calibration = calibration
+        self.calibrationSnapshotValue = Self.snapshot(calibration)
         self.model = model
+    }
+
+    /// Sendable-snapshot init used by the off-main lazy builder.
+    init(
+        frameBuffer: CircularFrameBuffer,
+        detector: ShuttleDetecting,
+        calibration: RallyCalibration?,
+        model: MLModel?
+    ) {
+        self.frameBuffer = frameBuffer
+        self.detector = detector
+        self.calibrationSnapshotValue = calibration
+        self.model = model
+    }
+
+    @MainActor
+    private static func snapshot(_ calibration: CalibrationProfile?) -> RallyCalibration? {
+        guard let calibration,
+              let corners = calibration.corners,
+              calibration.imageWidth > 0, calibration.imageHeight > 0
+        else { return nil }
+        return RallyCalibration(
+            corners: corners,
+            imageWidth: calibration.imageWidth,
+            imageHeight: calibration.imageHeight
+        )
     }
 
     /// Convenience loader for the bundled `RallyWinnerClassifier.mlpackage`.
@@ -94,7 +123,7 @@ final class ClassifierRallyScorer: RallyResultProducing, @unchecked Sendable {
 
     // MARK: - RallyResultProducing
     func produceResult(rallyIndex: Int, clipRef: ClipRef?) async -> RallyResult {
-        let calibrationSnapshot = await snapshotCalibration()
+        let calibrationSnapshot = calibrationSnapshotValue
         let sampleBuffers = frameBuffer.recentFrames(seconds: windowSeconds)
         guard let model, !sampleBuffers.isEmpty else {
             return fallback(rallyIndex: rallyIndex, clipRef: clipRef)
@@ -218,7 +247,7 @@ final class ClassifierRallyScorer: RallyResultProducing, @unchecked Sendable {
     // MARK: - Landing (close calls → .uncertain)
     private func computeLanding(
         imagePoints pts: [(x: Double, y: Double, f: Int, vis: Bool)],
-        snapshot: CalibrationSnapshot?,
+        snapshot: RallyCalibration?,
         modelConfidence: Double
     ) -> LandingCall? {
         guard let snap = snapshot else { return nil }   // no calibration → no court landing
@@ -250,21 +279,6 @@ final class ClassifierRallyScorer: RallyResultProducing, @unchecked Sendable {
         )
     }
 
-    // MARK: - Calibration snapshot
-    private struct CalibrationSnapshot: Sendable {
-        let corners: [CGPoint]; let imageWidth: Double; let imageHeight: Double
-    }
-    private func snapshotCalibration() async -> CalibrationSnapshot? {
-        guard let calibration else { return nil }
-        return await MainActor.run {
-            guard let corners = calibration.corners,
-                  calibration.imageWidth > 0, calibration.imageHeight > 0
-            else { return nil as CalibrationSnapshot? }
-            return CalibrationSnapshot(corners: corners,
-                                       imageWidth: calibration.imageWidth,
-                                       imageHeight: calibration.imageHeight)
-        }
-    }
 }
 
 // MARK: - CompositeRallyResultProducer (classifier primary, geometric fallback)
@@ -292,6 +306,68 @@ final class CompositeRallyResultProducer: RallyResultProducing, @unchecked Senda
         return RallyResult.fromSuggestion(
             rallyIndex: rallyIndex, suggestion: suggestion, clipRef: clipRef
         )
+    }
+}
+
+// MARK: - LazyRallyResultProducer (defers heavy init off the match-start path)
+
+/// Wraps a `RallyResultProducing` that is expensive to construct (CoreML model
+/// load, `CIContext` creation in the detector adapters) and builds it lazily, on
+/// a background task, the first time a rally is scored.
+///
+/// This exists purely to keep `LiveMatchViewModel.init` — which runs on the main
+/// actor during the navigation transition into the live match — from
+/// synchronously loading the `RallyWinnerClassifier` model and allocating two
+/// `CIContext`s. That synchronous work was the dominant source of the
+/// "extreme lag when starting a match". The underlying producer is identical;
+/// only *when* it's built changes.
+///
+/// Construction is serialised by an inner `actor` so concurrent first calls
+/// (e.g. a warm-up racing the first "Rally Ended") share one build.
+final class LazyRallyResultProducer: RallyResultProducing, @unchecked Sendable {
+
+    /// Serialises construction and caches the built producer.
+    private actor Store {
+        private let build: @Sendable () async -> RallyResultProducing
+        private var built: RallyResultProducing?
+        private var inFlight: Task<RallyResultProducing, Never>?
+
+        init(build: @escaping @Sendable () async -> RallyResultProducing) {
+            self.build = build
+        }
+
+        func producer() async -> RallyResultProducing {
+            if let built { return built }
+            if let inFlight { return await inFlight.value }
+            let task = Task<RallyResultProducing, Never> { [build] in
+                await build()
+            }
+            inFlight = task
+            let result = await task.value
+            built = result
+            inFlight = nil
+            return result
+        }
+    }
+
+    private let store: Store
+
+    init(build: @escaping @Sendable () async -> RallyResultProducing) {
+        self.store = Store(build: build)
+    }
+
+    /// Eagerly trigger construction without scoring a rally. Called once the
+    /// live view is on-screen so the first "Rally Ended" tap is already warm,
+    /// but off the synchronous match-start path.
+    func warmUp() {
+        Task.detached(priority: .utility) { [store] in
+            _ = await store.producer()
+        }
+    }
+
+    func produceResult(rallyIndex: Int, clipRef: ClipRef?) async -> RallyResult {
+        let p = await store.producer()
+        return await p.produceResult(rallyIndex: rallyIndex, clipRef: clipRef)
     }
 }
 

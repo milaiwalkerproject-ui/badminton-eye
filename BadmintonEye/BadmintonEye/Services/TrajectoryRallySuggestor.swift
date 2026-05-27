@@ -63,11 +63,15 @@ final class TrajectoryRallySuggestor: RallySuggesting, @unchecked Sendable {
 
     private let frameBuffer: CircularFrameBuffer
     private let detector: ShuttleDetecting
-    private let calibration: CalibrationProfile?
+    /// Pre-captured Sendable calibration. `nil` → coin-flip fallback path.
+    private let calibrationSnapshotValue: RallyCalibration?
     private let calculator = TrajectoryCalculator()
 
     // MARK: - Init
 
+    /// Main-actor convenience: snapshots the live `CalibrationProfile`. Safe to
+    /// call from a `@MainActor` context (the only place a profile is reachable).
+    @MainActor
     init(
         frameBuffer: CircularFrameBuffer,
         detector: ShuttleDetecting,
@@ -75,7 +79,31 @@ final class TrajectoryRallySuggestor: RallySuggesting, @unchecked Sendable {
     ) {
         self.frameBuffer = frameBuffer
         self.detector = detector
-        self.calibration = calibration
+        self.calibrationSnapshotValue = Self.snapshot(calibration)
+    }
+
+    /// Sendable-snapshot init used by the off-main lazy builder.
+    init(
+        frameBuffer: CircularFrameBuffer,
+        detector: ShuttleDetecting,
+        calibration: RallyCalibration?
+    ) {
+        self.frameBuffer = frameBuffer
+        self.detector = detector
+        self.calibrationSnapshotValue = calibration
+    }
+
+    @MainActor
+    private static func snapshot(_ calibration: CalibrationProfile?) -> RallyCalibration? {
+        guard let calibration,
+              let corners = calibration.corners,
+              calibration.imageWidth > 0, calibration.imageHeight > 0
+        else { return nil }
+        return RallyCalibration(
+            corners: corners,
+            imageWidth: calibration.imageWidth,
+            imageHeight: calibration.imageHeight
+        )
     }
 
     // MARK: - RallySuggesting
@@ -85,7 +113,7 @@ final class TrajectoryRallySuggestor: RallySuggesting, @unchecked Sendable {
         // is a SwiftData model (@MainActor by convention); snapshot the
         // values we need into Sendable primitives so the rest of the work
         // can run off the main actor safely.
-        let calibrationSnapshot = await snapshotCalibration()
+        let calibrationSnapshot = calibrationSnapshotValue
         let sampleBuffers = frameBuffer.recentFrames(seconds: windowSeconds)
 
         guard
@@ -219,29 +247,4 @@ final class TrajectoryRallySuggestor: RallySuggesting, @unchecked Sendable {
         return RallySuggestion(side: side, confidence: confidence)
     }
 
-    // MARK: - Calibration snapshot
-
-    /// Sendable snapshot of the calibration profile so the suggestor's
-    /// async work can leave the main actor safely.
-    private struct CalibrationSnapshot: Sendable {
-        let corners: [CGPoint]
-        let imageWidth: Double
-        let imageHeight: Double
-    }
-
-    private func snapshotCalibration() async -> CalibrationSnapshot? {
-        guard let calibration else { return nil }
-        return await MainActor.run {
-            guard
-                let corners = calibration.corners,
-                calibration.imageWidth > 0,
-                calibration.imageHeight > 0
-            else { return nil as CalibrationSnapshot? }
-            return CalibrationSnapshot(
-                corners: corners,
-                imageWidth: calibration.imageWidth,
-                imageHeight: calibration.imageHeight
-            )
-        }
-    }
 }
