@@ -120,15 +120,20 @@ struct LiveMatchView: View {
             if viewModel.state.matchPhase == .inProgress && currentTotalScore > 0 {
                 startChallengeCountdown()
             }
-            // Defer camera start until after the navigation transition
-            // so the previous view (calibration or setup) has fully
-            // released any session it owned. 250ms is comfortably past
-            // the default push animation and below any user-perceptible
-            // delay.
-            Task { @MainActor in
-                try? await Task.sleep(nanoseconds: 250_000_000)
-                viewModel.startContinuousCapture()
-            }
+        }
+        // Auto-start continuous capture + per-game footage recording when the
+        // live match appears, and tear it down when it leaves. Driven by a
+        // lifecycle-scoped `.task` (not a detached `onAppear` Task) so it runs
+        // reliably on every appearance and is cancelled on disappear — the
+        // previous detached-Task approach could be starved/dropped and left
+        // capture (and therefore footage recording) silently not started.
+        .task {
+            // Small settle delay so the push animation's prior view has
+            // released the shared camera, then start. Cancellation-aware:
+            // if the view leaves first, we skip starting.
+            try? await Task.sleep(nanoseconds: 150_000_000)
+            guard !Task.isCancelled else { return }
+            viewModel.startContinuousCapture()
         }
         .onDisappear {
             challengeCountdownTask?.cancel()
