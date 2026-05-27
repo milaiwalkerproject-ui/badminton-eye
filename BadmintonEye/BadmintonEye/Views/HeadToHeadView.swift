@@ -153,6 +153,15 @@ struct HeadToHeadView: View {
         }
         .navigationTitle(localization.localized("headtohead.title"))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                NavigationLink {
+                    StatsView(playerName: player.name)
+                } label: {
+                    Label(localization.localized("stats.title"), systemImage: "chart.bar.xaxis")
+                }
+            }
+        }
     }
 
     // MARK: - Subviews

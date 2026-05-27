@@ -2,6 +2,11 @@ import SwiftUI
 import SwiftData
 
 struct StatsView: View {
+    /// When set, stats are computed for this specific player (used from the
+    /// Players area). When `nil`, the view auto-detects the most frequent
+    /// player across all matches (the global "my stats" behaviour).
+    var playerName: String? = nil
+
     @Query private var allMatches: [PersistedMatch]
     @State private var viewModel = MatchStatsViewModel()
     @State private var localization = LocalizationManager.shared
@@ -15,7 +20,9 @@ struct StatsView: View {
             }
         }
         .navigationTitle(localization.localized("stats.title"))
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
+            viewModel.selectedPlayerName = playerName
             viewModel.update(matches: allMatches)
         }
         .onChange(of: allMatches.count) {
