@@ -24,6 +24,11 @@ struct FootageView: View {
     )
     private var allFinished: [PersistedMatch]
 
+    /// Presents the shared video-import / Hawk-Eye challenge flow
+    /// (`ChallengeVideoView`). Footage is where users look for "Import Video",
+    /// so the entry point lives here in addition to the Matches tab.
+    @State private var showVideoImport = false
+
     /// Only matches that actually captured at least one game video.
     private var matches: [PersistedMatch] {
         allFinished.filter { ($0.gameVideos?.contains { !$0.fileName.isEmpty }) ?? false }
@@ -37,6 +42,13 @@ struct FootageView: View {
                 } description: {
                     Text("Play a match — the camera records each game automatically.")
                         .multilineTextAlignment(.center)
+                } actions: {
+                    Button {
+                        showVideoImport = true
+                    } label: {
+                        Label("Import Video", systemImage: "square.and.arrow.down.on.square")
+                    }
+                    .buttonStyle(.borderedProminent)
                 }
             } else {
                 List {
@@ -59,6 +71,19 @@ struct FootageView: View {
         }
         .navigationTitle("Footage")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    showVideoImport = true
+                } label: {
+                    Label("Import Video", systemImage: "square.and.arrow.down.on.square")
+                }
+                .accessibilityLabel("Import video")
+            }
+        }
+        .sheet(isPresented: $showVideoImport) {
+            ChallengeVideoView()
+        }
     }
 }
 
