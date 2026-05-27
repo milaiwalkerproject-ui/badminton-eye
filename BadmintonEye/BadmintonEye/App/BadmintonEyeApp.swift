@@ -79,6 +79,12 @@ struct ContentView: View {
 
     @State private var restoredViewModel: LiveMatchViewModel?
     @State private var hasCheckedRestore = false
+    /// Presents the standalone video-import / Hawk-Eye challenge flow
+    /// (`ChallengeVideoView`) from the Matches tab. This restores a top-level
+    /// entry point for importing a clip from the photo library — previously the
+    /// only way to reach the importer was the premium challenge button inside a
+    /// live match.
+    @State private var showVideoImport = false
 
     var body: some View {
         Group {
@@ -103,6 +109,11 @@ struct ContentView: View {
                                 MatchSetupView()
                             } label: {
                                 Label("New Match", systemImage: "plus.circle")
+                            }
+                            Button {
+                                showVideoImport = true
+                            } label: {
+                                Label("Import Video", systemImage: "square.and.arrow.down.on.square")
                             }
                         }
                         Section("Players") {
@@ -137,6 +148,14 @@ struct ContentView: View {
                     NavigationStack {
                         MatchHistoryView()
                             .toolbar {
+                                ToolbarItem(placement: .topBarLeading) {
+                                    Button {
+                                        showVideoImport = true
+                                    } label: {
+                                        Image(systemName: "square.and.arrow.down.on.square")
+                                    }
+                                    .accessibilityLabel("Import video")
+                                }
                                 ToolbarItem(placement: .primaryAction) {
                                     NavigationLink {
                                         MatchSetupView()
@@ -201,6 +220,11 @@ struct ContentView: View {
                 _ = try? modelContext.fetch(FetchDescriptor<PersistedMatch>())
                 _ = try? modelContext.fetch(FetchDescriptor<Player>())
             }
+        }
+        // Standalone video-import / Hawk-Eye challenge entry point, shared by
+        // both the iPhone TabView and the iPad sidebar.
+        .sheet(isPresented: $showVideoImport) {
+            ChallengeVideoView()
         }
     }
 
