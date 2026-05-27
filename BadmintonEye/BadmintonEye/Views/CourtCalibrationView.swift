@@ -44,6 +44,8 @@ struct CourtCalibrationView: View {
     @State private var corners: [CGPoint] = []
     @State private var venueName: String = ""
     @State private var isSessionRunning = false
+    @State private var permissionDenied = false
+    @State private var cameraUnavailable = false
     @State private var viewSize: CGSize = .zero
 
     private let cornerLabels = ["Top-Left", "Top-Right", "Bottom-Right", "Bottom-Left"]
@@ -65,6 +67,10 @@ struct CourtCalibrationView: View {
                                 }
                         }
                     )
+            } else if permissionDenied {
+                cameraDeniedView
+            } else if cameraUnavailable {
+                cameraUnavailableView
             } else {
                 Color.black.ignoresSafeArea()
                 ProgressView("Starting camera...")
@@ -170,22 +176,102 @@ struct CourtCalibrationView: View {
         corners.append(location)
     }
 
+    // MARK: - Permission / unavailable states
+
+    private var cameraDeniedView: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+            VStack(spacing: 16) {
+                Image(systemName: "video.slash.fill")
+                    .font(.system(size: 50))
+                    .foregroundStyle(.white.opacity(0.8))
+                Text("Camera Access Needed")
+                    .font(.title3.bold())
+                    .foregroundStyle(.white)
+                Text("Calibration needs the camera to see the court. Enable camera access for Badminton Eye in Settings.")
+                    .font(.subheadline)
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.white.opacity(0.7))
+                    .padding(.horizontal, 40)
+                Button("Open Settings") {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+            }
+        }
+    }
+
+    private var cameraUnavailableView: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+            VStack(spacing: 16) {
+                Image(systemName: "camera.fill")
+                    .font(.system(size: 50))
+                    .foregroundStyle(.white.opacity(0.8))
+                Text("Camera Unavailable")
+                    .font(.title3.bold())
+                    .foregroundStyle(.white)
+                Text("No back camera is available on this device.")
+                    .font(.subheadline)
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.white.opacity(0.7))
+                    .padding(.horizontal, 40)
+            }
+        }
+    }
+
     // MARK: - Camera Session
 
+    /// Requests camera authorisation (showing the system prompt on first run)
+    /// and only then configures + starts the session. Without this gate the
+    /// session was started with an input that never delivered frames on a
+    /// `.notDetermined`/`.denied` device, leaving a permanently black preview.
     private func startSession() {
-        guard !isSessionRunning else { return }
-        captureSession.sessionPreset = .hd1280x720
+        guard !isSessionRunning, !permissionDenied else { return }
 
-        guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
-              let input = try? AVCaptureDeviceInput(device: device),
-              captureSession.canAddInput(input) else {
-            return
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized:
+            configureAndStart()
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                Task { @MainActor in
+                    if granted {
+                        configureAndStart()
+                    } else {
+                        permissionDenied = true
+                    }
+                }
+            }
+        default:
+            permissionDenied = true
         }
-        captureSession.addInput(input)
+    }
 
-        let localSession = captureSession
+    /// Configures the capture device and starts the session off the main
+    /// thread. `addInput`/`canAddInput` touch the device and can be slow, so
+    /// they run on a background queue; only the resulting flags hop back to
+    /// the main actor to drive the SwiftUI preview.
+    private func configureAndStart() {
+        guard !isSessionRunning else { return }
+        let session = captureSession
         DispatchQueue.global(qos: .userInitiated).async {
-            localSession.startRunning()
+            session.beginConfiguration()
+            session.sessionPreset = .hd1280x720
+
+            guard session.inputs.isEmpty,
+                  let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
+                  let input = try? AVCaptureDeviceInput(device: device),
+                  session.canAddInput(input) else {
+                session.commitConfiguration()
+                Task { @MainActor in cameraUnavailable = true }
+                return
+            }
+            session.addInput(input)
+            session.commitConfiguration()
+
+            session.startRunning()
             Task { @MainActor in
                 isSessionRunning = true
             }
@@ -193,12 +279,11 @@ struct CourtCalibrationView: View {
     }
 
     private func stopSession() {
-        guard isSessionRunning else { return }
-        let localSession = captureSession
-        DispatchQueue.global(qos: .userInitiated).async {
-            localSession.stopRunning()
-        }
+        let session = captureSession
         isSessionRunning = false
+        DispatchQueue.global(qos: .userInitiated).async {
+            if session.isRunning { session.stopRunning() }
+        }
     }
 
     // MARK: - Save
