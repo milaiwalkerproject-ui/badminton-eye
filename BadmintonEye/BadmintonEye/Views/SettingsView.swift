@@ -1,11 +1,14 @@
 import SwiftUI
+import SwiftData
 import AuthenticationServices
 
 struct SettingsView: View {
 
+    @Environment(\.modelContext) private var modelContext
     @Bindable private var authManager = AuthManager.shared
     private var subscriptionManager = SubscriptionManager.shared
     @State private var showPaywall = false
+    @State private var showCalibration = false
     @AppStorage("hapticFeedbackEnabled") private var hapticEnabled = true
     @AppStorage("voiceAnnouncementsEnabled") private var voiceAnnouncementsEnabled = false
     @State private var localization = LocalizationManager.shared
@@ -19,6 +22,7 @@ struct SettingsView: View {
             }
 
             premiumSection
+            courtSection
             preferencesSection
             aboutSection
         }
@@ -27,6 +31,41 @@ struct SettingsView: View {
         .background(Color(.systemGroupedBackground).ignoresSafeArea())
         .navigationTitle(localization.localized("settings.title"))
         .sheet(isPresented: $showPaywall) { PaywallView() }
+        .fullScreenCover(isPresented: $showCalibration) {
+            CourtCalibrationView { profile in
+                modelContext.insert(profile)
+                try? modelContext.save()
+            }
+        }
+    }
+
+    // MARK: - Court calibration
+
+    private var courtSection: some View {
+        Section {
+            Button {
+                showCalibration = true
+            } label: {
+                HStack(spacing: BE.Space.m) {
+                    SettingsIconTile(systemName: "square.grid.3x3.square", tint: .green)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Calibrate Court")
+                            .font(.system(.body, design: .rounded).weight(.semibold))
+                            .foregroundStyle(.primary)
+                        Text("Tap the 4 court corners so Hawk Eye can map shots.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption.bold())
+                        .foregroundStyle(Color(.tertiaryLabel))
+                }
+                .padding(.vertical, 2)
+            }
+        } header: {
+            sectionHeader("Court")
+        }
     }
 
     // MARK: - Premium
