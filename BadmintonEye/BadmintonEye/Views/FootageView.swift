@@ -13,26 +13,34 @@ import SwiftData
 ///   and iPhone TabView) with a `FootageView` entry. See HANDOFF.md.
 struct FootageView: View {
 
-    // Any finished match (completed OR abandoned). Footage is recorded for
-    // both — abandoned matches finalize their in-flight game on teardown — so
-    // restricting to `isComplete` hid all footage from the common
-    // start-then-stop test flow.
+    // Any finished match (completed OR abandoned) that has at least one
+    // recorded game video. Footage is recorded for both completed and
+    // abandoned matches — abandoned matches finalize their in-flight game on
+    // teardown.
+    //
+    // PERF: the "has a non-empty video" filter is pushed into the predicate so
+    // SQLite evaluates it — previously `body` filtered in Swift via
+    // `allFinished.filter { $0.gameVideos?.contains … }`, which FAULTED the
+    // `gameVideos` to-many relationship for every finished match on the main
+    // thread. Because this tab is built eagerly inside the root `TabView`, that
+    // relationship-faulting ran during launch and was a measured top cost of
+    // the cold-launch main-thread hang (Time Profiler: `_newValuesForRelationship`
+    // / `objectIDsForRelationshipNamed:`). Filtering in SQL avoids materializing
+    // those rows at all.
     @Query(
-        filter: #Predicate<PersistedMatch> { $0.isComplete || $0.isAbandoned },
+        filter: #Predicate<PersistedMatch> { match in
+            (match.isComplete || match.isAbandoned) &&
+            (match.gameVideos?.contains { !$0.fileName.isEmpty } ?? false)
+        },
         sort: \PersistedMatch.startedAt,
         order: .reverse
     )
-    private var allFinished: [PersistedMatch]
+    private var matches: [PersistedMatch]
 
     /// Presents the shared video-import / Hawk-Eye challenge flow
     /// (`ChallengeVideoView`). Footage is where users look for "Import Video",
     /// so the entry point lives here in addition to the Matches tab.
     @State private var showVideoImport = false
-
-    /// Only matches that actually captured at least one game video.
-    private var matches: [PersistedMatch] {
-        allFinished.filter { ($0.gameVideos?.contains { !$0.fileName.isEmpty }) ?? false }
-    }
 
     var body: some View {
         Group {

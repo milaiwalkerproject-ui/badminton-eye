@@ -246,30 +246,42 @@ struct ContentView: View {
             // post-MVP if needed.
             if !hasCheckedRestore {
                 hasCheckedRestore = true
-                let descriptor = FetchDescriptor<PersistedMatch>(
-                    predicate: #Predicate { !$0.isComplete && !$0.isAbandoned }
-                )
-                if let leftovers = try? modelContext.fetch(descriptor), !leftovers.isEmpty {
+                // PERF: run the leftover-match cleanup off the main thread.
+                // Time Profiler on a cold launch (iPhone 16) showed a ~2.0s
+                // SEVERE main-thread hang starting the instant ContentView
+                // appeared. The dominant frames were SwiftData materialization
+                // (`PersistedMatch.init(backingData:)`,
+                // `-[NSSQLiteConnection fetchResultSet:usingFetchPlan:]`,
+                // relationship faulting) driven by this synchronous fetch in
+                // `onAppear`. Doing it in a detached background `ModelContext`
+                // keeps the main thread free for first paint; the work is a
+                // one-shot bookkeeping pass whose result the user never waits on.
+                let containerForCleanup = modelContext.container
+                Task.detached(priority: .utility) {
+                    let context = ModelContext(containerForCleanup)
+                    let descriptor = FetchDescriptor<PersistedMatch>(
+                        predicate: #Predicate { !$0.isComplete && !$0.isAbandoned }
+                    )
+                    guard let leftovers = try? context.fetch(descriptor),
+                          !leftovers.isEmpty else { return }
+                    let now = Date()
                     for match in leftovers {
                         match.isAbandoned = true
-                        match.endedAt = Date()
+                        match.endedAt = now
                     }
-                    try? modelContext.save()
+                    try? context.save()
                 }
             }
             if !AppMode.freeAppleIDMode {
                 WatchSyncManager.shared.activate()
                 AuthManager.shared.checkAuthState()
             }
-            // Prewarm SwiftData @Query caches so first-time tab switches
-            // don't pay cold-fetch cost on screen. Runs on the main
-            // actor (ModelContext is main-actor-isolated) after a tiny
-            // delay so it doesn't block first paint.
-            Task { @MainActor in
-                try? await Task.sleep(nanoseconds: 100_000_000)
-                _ = try? modelContext.fetch(FetchDescriptor<PersistedMatch>())
-                _ = try? modelContext.fetch(FetchDescriptor<Player>())
-            }
+            // NOTE: deliberately NO @Query "prewarm" fetch here. A previous
+            // revision fetched ALL PersistedMatch + Player rows on the main
+            // actor shortly after launch to warm caches; profiling showed that
+            // just re-paid the full main-thread materialization cost for no
+            // rendering benefit (each tab's own `@Query` fetches lazily, and
+            // only the rows it needs, when that tab is first shown).
         }
         // Standalone video-import / Hawk-Eye challenge entry point, shared by
         // both the iPhone TabView and the iPad sidebar.
