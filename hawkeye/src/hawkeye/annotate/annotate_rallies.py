@@ -4,7 +4,23 @@ For each rally in data/processed/trajectories/*.json, find the matching video
 in data/raw/youtube/<video_id>.mp4, play the rally segment with the trajectory
 overlaid, and prompt the user for the winning side.
 
-Keys: A = sideA, B = sideB, S = skip, Q = quit & save, R = replay.
+Keys:
+    A = sideA (left half wins)
+    B = sideB (right half wins)
+    N = NOT A RALLY  -- the segmenter surfaced non-play footage (warm-up,
+        knock-up, players getting ready, between-point junk). DISTINCT from S:
+        N means "this clip is not real play at all", so it must NEVER be forced
+        into an A/B winner label. N rows are STORED (segregated, never trained)
+        so they can later train a rally-vs-not-rally filter.
+    S = skip -- it IS a rally but the winner is unclear; nothing is recorded.
+    R = replay
+    Q = quit & save
+
+Verdict semantics (what gets written):
+    A / B          -> {"winner": "sideA"|"sideB"} (training-grade)
+    N (not a rally) -> {"winner": "not_rally", "not_rally": true,
+                        "split": "not_rally"}  (stored, EXCLUDED from train/eval)
+    S (skip)        -> no row written
 
 Annotations appended to data/processed/annotations.jsonl. Already-annotated
 (video, rally_id) pairs are skipped on resume.
@@ -28,7 +44,8 @@ TRAJ_DIR = REPO_ROOT / "data" / "processed" / "trajectories"
 VIDEO_DIR = REPO_ROOT / "data" / "raw" / "youtube"
 ANN_PATH = REPO_ROOT / "data" / "processed" / "annotations.jsonl"
 
-WIN_NAME = "Annotate Rally (A=sideA  B=sideB  S=skip  R=replay  Q=quit)"
+WIN_NAME = ("Annotate Rally  A=left wins  B=right wins  "
+            "N=not a rally (warm-up/junk)  S=skip unclear  R=replay  Q=quit")
 
 # Trajectory overlay tuning.
 TRAIL_LEN = 10  # number of most-recent points to draw as a fading trail
@@ -81,7 +98,13 @@ def load_done() -> set[tuple[str, int]]:
 
 
 def play_and_prompt(video_path: Path, rally: dict, fps: float) -> str | None:
-    """Return 'sideA' | 'sideB' | 'skip' | 'quit'. None to replay."""
+    """Return 'sideA' | 'sideB' | 'not_rally' | 'skip' | 'quit'. None to replay.
+
+    'not_rally' (key N) means the clip is not real play (warm-up/junk) and must
+    NOT be coerced into an A/B winner; callers store it as a segregated row that
+    is excluded from winner training/eval. 'skip' (S) means a real rally with an
+    unclear winner and records nothing.
+    """
     sf, ef = rally["start_frame"], rally["end_frame"]
     traj = rally["trajectory"]
 
@@ -133,12 +156,20 @@ def play_and_prompt(video_path: Path, rally: dict, fps: float) -> str | None:
                     (12, 28), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 4)
         cv2.putText(frame, f"rally {rally['rally_id']}  frame {f}/{ef}",
                     (12, 28), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+        # On-screen key legend so the A/B-vs-N-vs-S distinction is always visible.
+        legend = "A=left wins  B=right wins  N=not a rally (warm-up/junk)  S=skip unclear  R=replay  Q=quit"
+        cv2.putText(frame, legend, (12, H - 14),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.52, (0, 0, 0), 4)
+        cv2.putText(frame, legend, (12, H - 14),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.52, (255, 255, 255), 1)
         cv2.imshow(WIN_NAME, frame)
         k = cv2.waitKey(delay) & 0xFF
         if k in (ord('a'), ord('A')):
             cap.release(); return "sideA"
         if k in (ord('b'), ord('B')):
             cap.release(); return "sideB"
+        if k in (ord('n'), ord('N')):
+            cap.release(); return "not_rally"
         if k in (ord('s'), ord('S')):
             cap.release(); return "skip"
         if k in (ord('q'), ord('Q')):
@@ -153,6 +184,7 @@ def play_and_prompt(video_path: Path, rally: dict, fps: float) -> str | None:
         k = cv2.waitKey(0) & 0xFF
         if k in (ord('a'), ord('A')): return "sideA"
         if k in (ord('b'), ord('B')): return "sideB"
+        if k in (ord('n'), ord('N')): return "not_rally"
         if k in (ord('s'), ord('S')): return "skip"
         if k in (ord('q'), ord('Q')): return "quit"
         if k in (ord('r'), ord('R')): return None
@@ -190,7 +222,7 @@ def main() -> int:
                 if res == "quit":
                     print("[annotate] saving and quitting"); cv2.destroyAllWindows(); return 0
                 if res == "skip":
-                    print(f"[annotate] {vid} rally {rally['rally_id']}: skipped")
+                    print(f"[annotate] {vid} rally {rally['rally_id']}: skipped (unclear winner, not recorded)")
                     continue
                 rec = {
                     "video": vid,
@@ -199,6 +231,12 @@ def main() -> int:
                     "annotator": args.annotator,
                     "timestamp": dt.datetime.utcnow().isoformat() + "Z",
                 }
+                # 'not_rally' is STORED but segregated: never a sideA/sideB winner,
+                # excluded from winner train/eval (kept for a future rally-vs-not
+                # filter). Mark it distinctly so loaders can tell it apart from S.
+                if res == "not_rally":
+                    rec["not_rally"] = True
+                    rec["split"] = "not_rally"
                 ann_f.write(json.dumps(rec) + "\n"); ann_f.flush()
                 done.add(key)
                 print(f"[annotate] {vid} rally {rally['rally_id']}: {res}")
