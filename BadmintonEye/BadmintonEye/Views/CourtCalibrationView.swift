@@ -4,27 +4,45 @@ import SwiftData
 
 // MARK: - Camera Preview (UIViewRepresentable)
 
-/// Wraps AVCaptureVideoPreviewLayer in a UIView for SwiftUI.
+/// A `UIView` whose backing layer *is* the `AVCaptureVideoPreviewLayer`.
+///
+/// Using `layerClass` (instead of adding the preview layer as a sublayer) is
+/// the key to a visible preview: the backing layer is created and laid out by
+/// UIKit, so it automatically tracks the view's bounds. There is no separate
+/// sublayer left at `.zero` when the view is sized after `updateUIView` runs —
+/// which is exactly what produced the black-but-running-camera symptom.
+final class CameraPreviewUIView: UIView {
+    override class var layerClass: AnyClass { AVCaptureVideoPreviewLayer.self }
+
+    var previewLayer: AVCaptureVideoPreviewLayer {
+        // Safe: `layerClass` guarantees the backing layer's type.
+        layer as! AVCaptureVideoPreviewLayer
+    }
+
+    var session: AVCaptureSession? {
+        get { previewLayer.session }
+        set { previewLayer.session = newValue }
+    }
+}
+
+/// Wraps `AVCaptureVideoPreviewLayer` in a SwiftUI view, attaching the *running*
+/// capture session so frames are rendered on screen.
 struct CameraPreviewView: UIViewRepresentable {
     let session: AVCaptureSession
 
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView(frame: .zero)
-        let previewLayer = AVCaptureVideoPreviewLayer(session: session)
-        previewLayer.videoGravity = .resizeAspectFill
-        view.layer.addSublayer(previewLayer)
-        context.coordinator.previewLayer = previewLayer
+    func makeUIView(context: Context) -> CameraPreviewUIView {
+        let view = CameraPreviewUIView()
+        view.previewLayer.videoGravity = .resizeAspectFill
+        view.session = session
         return view
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {
-        context.coordinator.previewLayer?.frame = uiView.bounds
-    }
-
-    func makeCoordinator() -> Coordinator { Coordinator() }
-
-    final class Coordinator {
-        var previewLayer: AVCaptureVideoPreviewLayer?
+    func updateUIView(_ uiView: CameraPreviewUIView, context: Context) {
+        // Re-point at the live session if SwiftUI recreates the representable
+        // with a different instance; layout/sizing is handled by UIKit.
+        if uiView.session !== session {
+            uiView.session = session
+        }
     }
 }
 
