@@ -17,53 +17,97 @@ struct BadmintonEyeApp: App {
     @State private var showStorageError = false
     @State private var storageErrorMessage = ""
 
-    private let container: ModelContainer
+    /// The SwiftData container is created lazily *after* first paint.
+    ///
+    /// Opening the on-disk store (and validating/migrating the schema across
+    /// four model types) is synchronous, main-thread work that previously ran
+    /// inside `App.init()` — which blocks the very first frame on *every* cold
+    /// launch. Profiling the launch path showed this store-open dominated the
+    /// felt lag (managers are inert in free mode, the leftover-match cleanup is
+    /// already a deferred one-shot fetch, and there is no model/asset load at
+    /// startup). We now show a lightweight splash immediately and build the
+    /// container on a background actor, attaching it once ready.
+    @State private var container: ModelContainer?
 
-    init() {
-        let isSignedIn = AuthManager.shared.isSignedIn
-        let useCloudKit = isSignedIn && !AppMode.freeAppleIDMode
-        let config: ModelConfiguration = useCloudKit
-            ? ModelConfiguration(cloudKitDatabase: .automatic)
-            : ModelConfiguration()
-
-        do {
-            container = try ModelContainer(
-                for: PersistedMatch.self, Player.self, CalibrationProfile.self,
-                GameVideoRecord.self,
-                configurations: config
-            )
-        } catch let primaryError {
-            // Primary store failed — fall back to an in-memory container so the
-            // app never crashes, and surface a friendly alert to the user.
-            let fallbackConfig = ModelConfiguration(isStoredInMemoryOnly: true)
-            if let fallback = try? ModelContainer(
-                for: PersistedMatch.self, Player.self, CalibrationProfile.self,
-                GameVideoRecord.self,
-                configurations: fallbackConfig
-            ) {
-                container = fallback
-                _showStorageError = State(initialValue: true)
-                _storageErrorMessage = State(initialValue: primaryError.localizedDescription)
-            } else {
-                // In-memory creation cannot fail for valid schema; guard anyway.
-                fatalError("Unable to create in-memory ModelContainer: \(primaryError)")
+    var body: some Scene {
+        WindowGroup {
+            Group {
+                if let container {
+                    ContentView()
+                        .modelContainer(container)
+                } else {
+                    LaunchPlaceholderView()
+                }
+            }
+            .alert("Storage Unavailable", isPresented: $showStorageError) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(
+                    "Your data could not be loaded from persistent storage " +
+                    "and will not be saved this session.\n\n\(storageErrorMessage)"
+                )
+            }
+            .task {
+                guard container == nil else { return }
+                let result = await Self.makeContainer()
+                container = result.container
+                if let message = result.errorMessage {
+                    storageErrorMessage = message
+                    showStorageError = true
+                }
             }
         }
     }
 
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-                .alert("Storage Unavailable", isPresented: $showStorageError) {
-                    Button("OK", role: .cancel) {}
-                } message: {
-                    Text(
-                        "Your data could not be loaded from persistent storage " +
-                        "and will not be saved this session.\n\n\(storageErrorMessage)"
-                    )
+    /// Builds the `ModelContainer` off the main thread. SwiftData's
+    /// `ModelContainer` is `Sendable`, so we hop it back to the caller (the
+    /// main actor) once the store is open.
+    private static func makeContainer() async -> (container: ModelContainer, errorMessage: String?) {
+        await Task.detached(priority: .userInitiated) {
+            let isSignedIn = AuthManager.shared.isSignedIn
+            let useCloudKit = isSignedIn && !AppMode.freeAppleIDMode
+            let config: ModelConfiguration = useCloudKit
+                ? ModelConfiguration(cloudKitDatabase: .automatic)
+                : ModelConfiguration()
+
+            do {
+                let container = try ModelContainer(
+                    for: PersistedMatch.self, Player.self, CalibrationProfile.self,
+                    GameVideoRecord.self,
+                    configurations: config
+                )
+                return (container, nil)
+            } catch let primaryError {
+                // Primary store failed — fall back to an in-memory container so
+                // the app never crashes, and surface a friendly alert.
+                let fallbackConfig = ModelConfiguration(isStoredInMemoryOnly: true)
+                if let fallback = try? ModelContainer(
+                    for: PersistedMatch.self, Player.self, CalibrationProfile.self,
+                    GameVideoRecord.self,
+                    configurations: fallbackConfig
+                ) {
+                    return (fallback, primaryError.localizedDescription)
                 }
+                // In-memory creation cannot fail for valid schema; guard anyway.
+                fatalError("Unable to create in-memory ModelContainer: \(primaryError)")
+            }
+        }.value
+    }
+}
+
+/// Minimal splash shown for the brief window between first paint and the
+/// SwiftData store finishing opening on a background task.
+private struct LaunchPlaceholderView: View {
+    var body: some View {
+        ZStack {
+            Color(.systemBackground).ignoresSafeArea()
+            VStack(spacing: 16) {
+                Image(systemName: "sportscourt")
+                    .font(.system(size: 56, weight: .light))
+                    .foregroundStyle(.tint)
+                ProgressView()
+            }
         }
-        .modelContainer(container)
     }
 }
 

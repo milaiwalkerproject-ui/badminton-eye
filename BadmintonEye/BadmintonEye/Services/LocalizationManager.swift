@@ -72,8 +72,19 @@ final class LocalizationManager {
         didSet {
             UserDefaults.standard.set(currentLanguage.rawValue, forKey: "appLanguage")
             UserDefaults.standard.set([currentLanguage.rawValue], forKey: "AppleLanguages")
+            // Invalidate the cached `.lproj` bundle so the next lookup resolves
+            // the newly selected language.
+            cachedBundle = nil
+            cachedBundleLanguage = nil
         }
     }
+
+    /// Cached resolved `.lproj` bundle for `currentLanguage`. Without this,
+    /// every `localized(_:)` call did a `Bundle.main.path` + `Bundle(path:)`
+    /// filesystem lookup — paid once per string on every view render,
+    /// including the first paint of the Matches tab at launch.
+    private var cachedBundle: Bundle?
+    private var cachedBundleLanguage: AppLanguage?
 
     /// Whether user has explicitly chosen a language (vs system default).
     var hasCustomLanguage: Bool {
@@ -99,10 +110,23 @@ final class LocalizationManager {
     /// Get a localized string for the current language.
     /// Falls back to English if the key isn't translated.
     func localized(_ key: String) -> String {
-        guard let path = Bundle.main.path(forResource: currentLanguage.rawValue, ofType: "lproj"),
-              let bundle = Bundle(path: path) else {
+        guard let bundle = languageBundle() else {
             return NSLocalizedString(key, comment: "")
         }
         return bundle.localizedString(forKey: key, value: nil, table: nil)
+    }
+
+    /// Resolves (and caches) the `.lproj` bundle for the current language.
+    private func languageBundle() -> Bundle? {
+        if cachedBundleLanguage == currentLanguage, let cachedBundle {
+            return cachedBundle
+        }
+        guard let path = Bundle.main.path(forResource: currentLanguage.rawValue, ofType: "lproj"),
+              let bundle = Bundle(path: path) else {
+            return nil
+        }
+        cachedBundle = bundle
+        cachedBundleLanguage = currentLanguage
+        return bundle
     }
 }
