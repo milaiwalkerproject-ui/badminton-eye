@@ -83,7 +83,7 @@ struct ChallengeVideoView: View {
 
     private var calibrationRequiredView: some View {
         VStack(spacing: 20) {
-            Image(systemName: "viewfinder")
+            Image(systemName: "camera.viewfinder")
                 .font(.system(size: 60))
                 .foregroundStyle(.secondary)
 
@@ -98,7 +98,7 @@ struct ChallengeVideoView: View {
             Button {
                 showCalibration = true
             } label: {
-                Label("Calibrate Court First", systemImage: "viewfinder")
+                Label("Calibrate Court First", systemImage: "camera.viewfinder")
                     .font(.headline)
                     .frame(maxWidth: .infinity)
             }
