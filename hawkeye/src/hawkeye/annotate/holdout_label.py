@@ -30,9 +30,10 @@ import json
 import random
 from pathlib import Path
 
+from .annotate_rallies import resolve_video
+
 REPO_ROOT = Path(__file__).resolve().parents[3]
 TRAJ_DIR = REPO_ROOT / "data" / "processed" / "trajectories"
-VIDEO_DIR = REPO_ROOT / "data" / "raw" / "youtube"
 HOLDOUT_PATH = REPO_ROOT / "data" / "processed" / "annotations_human_holdout.jsonl"
 
 # Usability filter (from P0 spike (b)): drop degenerate "rallies".
@@ -66,14 +67,15 @@ def _load_done() -> set[tuple[str, int]]:
 
 
 def select_sample(n: int, seed: int = 0) -> list[tuple[str, dict, float]]:
-    """Stratified: round-robin across videos that have a local mp4, taking usable
-    rallies until we reach n. Deterministic given seed."""
+    """Stratified: round-robin across videos that have a resolvable local source
+    file (any data/raw/ subdir, any common video extension), taking usable rallies
+    until we reach n. Deterministic given seed."""
     rng = random.Random(seed)
     per_video: list[tuple[str, list[dict], float]] = []
     for jp in sorted(TRAJ_DIR.glob("*.json")):
         data = json.loads(jp.read_text())
         vid = data["video"]
-        if not (VIDEO_DIR / f"{vid}.mp4").exists():
+        if resolve_video(vid) is None:
             continue
         fps = float(data.get("fps", 30.0))
         usable = [r for r in data.get("rallies", []) if _usable(r, fps)]
@@ -139,7 +141,10 @@ def main() -> int:
     labeled = 0
     with HOLDOUT_PATH.open("a") as f:
         for i, (vid, rally, fps) in enumerate(todo, 1):
-            video_path = VIDEO_DIR / f"{vid}.mp4"
+            video_path = resolve_video(vid)
+            if video_path is None:
+                print(f"[holdout] no video for {vid}, skipping")
+                continue
             print(f"[holdout] {i}/{len(todo)}  {vid} rally {rally['rally_id']}")
             while True:
                 res = play_and_prompt(video_path, rally, fps)

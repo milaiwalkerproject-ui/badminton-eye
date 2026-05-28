@@ -41,8 +41,49 @@ import cv2
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 TRAJ_DIR = REPO_ROOT / "data" / "processed" / "trajectories"
-VIDEO_DIR = REPO_ROOT / "data" / "raw" / "youtube"
+RAW_DIR = REPO_ROOT / "data" / "raw"
+# Kept for backward compat / docs; resolve_video() now searches all of RAW_DIR.
+VIDEO_DIR = RAW_DIR / "youtube"
 ANN_PATH = REPO_ROOT / "data" / "processed" / "annotations.jsonl"
+
+# Common video container extensions. Matching is case-insensitive, so this set
+# covers .mp4/.MP4, .mov/.MOV, .m4v/.M4V regardless of how the file is stored.
+VIDEO_EXTS = (".mp4", ".mov", ".m4v")
+
+
+def resolve_video(vid: str, raw_dir: Path = RAW_DIR) -> Path | None:
+    """Find the source video for a trajectory's ``<vid>`` id under ``data/raw/``.
+
+    Historically videos lived only in ``data/raw/youtube/<vid>.mp4``. User footage
+    (e.g. ``data/raw/own_footage/IMG_4665.MOV``) lives in sibling dirs and uses
+    other extensions/cases. This searches ``raw_dir`` RECURSIVELY for a file named
+    ``<vid>`` with any common video extension (``.mp4 .mov .m4v``), case-insensitive,
+    and returns the first match (or None if not found).
+
+    Existing youtube ``.mp4`` videos resolve exactly as before (the youtube/ dir is
+    searched first for a deterministic, behavior-preserving result).
+    """
+    exts = {e.lower() for e in VIDEO_EXTS}
+
+    def _scan(base: Path) -> Path | None:
+        if not base.exists():
+            return None
+        # rglob a stable, case-insensitive set of candidates.
+        for p in sorted(base.rglob(f"{vid}.*")):
+            if p.is_file() and p.suffix.lower() in exts:
+                return p
+        return None
+
+    # Preserve legacy behavior: prefer youtube/<vid>.mp4 first.
+    youtube = raw_dir / "youtube"
+    direct = youtube / f"{vid}.mp4"
+    if direct.exists():
+        return direct
+    hit = _scan(youtube)
+    if hit is not None:
+        return hit
+    # Fall back to a recursive search of the whole raw tree (own_footage/, etc.).
+    return _scan(raw_dir)
 
 WIN_NAME = ("Annotate Rally  A=left wins  B=right wins  "
             "N=not a rally (warm-up/junk)  S=skip unclear  R=replay  Q=quit")
@@ -206,8 +247,8 @@ def main() -> int:
         for jp in sorted(TRAJ_DIR.glob("*.json")):
             data = json.loads(jp.read_text())
             vid = data["video"]; fps = float(data.get("fps", 30.0))
-            video_path = VIDEO_DIR / f"{vid}.mp4"
-            if not video_path.exists():
+            video_path = resolve_video(vid)
+            if video_path is None:
                 print(f"[annotate] no video for {vid}, skipping")
                 continue
             for rally in data.get("rallies", []):
