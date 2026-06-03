@@ -21,6 +21,9 @@ struct FootageDetailView: View {
     @State private var showPaywall = false
     @State private var pendingRecord: GameVideoRecord?
 
+    /// Record currently being edited in the trim/zoom highlight editor.
+    @State private var editingRecord: GameVideoRecord?
+
     /// Premium entitlement, read directly from the app's `SubscriptionManager`.
     private var isSubscribed: Bool { SubscriptionManager.shared.isPremium }
 
@@ -56,6 +59,9 @@ struct FootageDetailView: View {
         }
         .sheet(item: $shareURL) { wrapper in
             ShareSheet(items: [wrapper.url])
+        }
+        .sheet(item: $editingRecord) { rec in
+            HighlightClipEditorView(record: rec)
         }
     }
 
@@ -100,6 +106,27 @@ struct FootageDetailView: View {
                 LabeledContent("Location", value: loc)
             }
 
+            if rec.clipRef != nil {
+                LabeledContent("Highlight", value: highlightLabel(rec))
+            }
+
+            // Trim/zoom highlight editor entry point. Lets the user bound a
+            // rally segment, preview, save the ClipRef, and export+share the
+            // trimmed clip.
+            Button {
+                editingRecord = rec
+            } label: {
+                Label {
+                    Text(rec.clipRef == nil ? "Create Highlight" : "Edit Highlight")
+                } icon: {
+                    Image(systemName: "scissors")
+                }
+            }
+            .disabled(rec.resolvedURL() == nil)
+            .accessibilityLabel(rec.clipRef == nil
+                ? "Create highlight for game \(rec.gameNumber)"
+                : "Edit highlight for game \(rec.gameNumber)")
+
             Button {
                 pendingRecord = rec
                 if isSubscribed {
@@ -128,14 +155,37 @@ struct FootageDetailView: View {
         return String(format: "%d:%02d", total / 60, total % 60)
     }
 
-    /// Produces a shareable highlight for the game. The full
-    /// trim/zoom/slow-mo/super-rally editor is a follow-up; for now this
-    /// surfaces the recorded game video through the system share sheet so the
-    /// action is actually functional (it previously no-op'd, which is what made
-    /// the feature feel broken). No-op if the file is missing.
+    /// Short "0:05 – 0:18" label for a saved highlight clip.
+    private func highlightLabel(_ record: GameVideoRecord) -> String {
+        guard let clip = record.clipRef else { return "—" }
+        func fmt(_ s: Double) -> String {
+            let t = Int(s.rounded())
+            return String(format: "%d:%02d", t / 60, t % 60)
+        }
+        return "\(fmt(clip.startTime)) – \(fmt(clip.endTime))"
+    }
+
+    /// Produces a shareable highlight for the game. If a `ClipRef` has been
+    /// saved via the trim/zoom editor, the trimmed segment is exported and
+    /// shared; otherwise the whole game video is shared (so the action stays
+    /// functional even before a highlight is created). No-op if the file is
+    /// missing.
     private func runHighlightPipeline(for record: GameVideoRecord) {
         guard let url = record.resolvedURL() else { return }
-        shareURL = ShareURL(url: url)
+        guard let clip = record.clipRef else {
+            shareURL = ShareURL(url: url)
+            return
+        }
+        Task {
+            if let outURL = try? await HighlightExporter.exportTrimmed(
+                sourceURL: url, clip: clip
+            ) {
+                await MainActor.run { shareURL = ShareURL(url: outURL) }
+            } else {
+                // Fall back to the full video if export fails.
+                await MainActor.run { shareURL = ShareURL(url: url) }
+            }
+        }
     }
 }
 

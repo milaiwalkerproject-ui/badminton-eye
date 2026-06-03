@@ -50,6 +50,28 @@ final class GameVideoRecord {
     /// added there.
     var match: PersistedMatch?
 
+    // MARK: - Highlight clip (ClipRef)
+
+    /// Persisted highlight "clip": a time-range OFFSET into THIS game video
+    /// (not a separate file). A clip is the rally segment the user trimmed in
+    /// the highlight editor.
+    ///
+    /// Both fields are optional so the migration stays purely additive
+    /// (matching the CloudKit-safe pattern used by every other property here):
+    /// a row with `clipStartTime == nil` simply has no saved highlight yet.
+    /// The clip's video file is THIS record's `fileName`, so it is not stored
+    /// again here.
+    ///
+    /// Invariant when present: `0 <= clipStartTime < clipEndTime <= duration`.
+    /// Use `clipRef` / `setClip(_:)` rather than touching these directly so the
+    /// clamping in `ClipRef.clamped` is always applied.
+
+    /// Highlight start offset, in seconds from the start of the game video.
+    var clipStartTime: Double?
+
+    /// Highlight end offset, in seconds from the start of the game video.
+    var clipEndTime: Double?
+
     init() {}
 
     init(
@@ -70,6 +92,96 @@ final class GameVideoRecord {
         self.scoreA = scoreA
         self.scoreB = scoreB
         self.locationName = locationName
+    }
+}
+
+// MARK: - ClipRef trim validation
+
+/// Trim in/out clamping / validation for the highlight clip. `ClipRef` itself
+/// (the `{ fileName, startTime, endTime }` time-range contract) is declared in
+/// `Services/RallyResult.swift`; this extension is the single source of truth
+/// for producing a *valid* clip from a requested in/out range.
+extension ClipRef {
+
+    /// Smallest allowed clip length, in seconds. Prevents degenerate
+    /// zero/near-zero exports that AVFoundation rejects.
+    static let minimumDuration: Double = 0.5
+
+    /// Clip length in seconds.
+    var duration: Double { max(0, endTime - startTime) }
+
+    /// Clamps a requested in/out range to a valid clip.
+    ///
+    /// Rules (single source of truth for trim validation):
+    /// - `start` is clamped to `[0, duration - minimumDuration]` (or `[0, ∞)`
+    ///   when `duration` is unknown/`nil`).
+    /// - `end` is clamped to `[start + minimumDuration, duration]`.
+    /// - If the requested range is inverted (`end <= start`), `end` is pushed to
+    ///   `start + minimumDuration`.
+    ///
+    /// Returns `nil` only when no valid clip of at least `minimumDuration` can
+    /// fit inside `duration` (i.e. the video is shorter than the minimum).
+    static func clamped(
+        fileName: String,
+        start: Double,
+        end: Double,
+        duration: Double?
+    ) -> ClipRef? {
+        // A non-finite / too-short duration means we cannot place a clip.
+        if let d = duration, !(d.isFinite) || d < minimumDuration {
+            return nil
+        }
+
+        let safeStartLowerBound = 0.0
+        let startUpperBound: Double
+        if let d = duration {
+            startUpperBound = max(safeStartLowerBound, d - minimumDuration)
+        } else {
+            startUpperBound = Double.greatestFiniteMagnitude
+        }
+
+        // Sanitize NaN/inf inputs to bounds.
+        let reqStart = start.isFinite ? start : safeStartLowerBound
+        let reqEnd = end.isFinite ? end : reqStart + minimumDuration
+
+        var clampedStart = min(max(reqStart, safeStartLowerBound), startUpperBound)
+
+        let endUpperBound = duration ?? Double.greatestFiniteMagnitude
+        var clampedEnd = min(max(reqEnd, clampedStart + minimumDuration), endUpperBound)
+
+        // If clamping the end against the duration squeezed it below the
+        // minimum, walk the start back to preserve the minimum length.
+        if clampedEnd - clampedStart < minimumDuration {
+            clampedStart = max(safeStartLowerBound, clampedEnd - minimumDuration)
+            clampedEnd = max(clampedEnd, clampedStart + minimumDuration)
+            if let d = duration, clampedEnd > d {
+                return nil
+            }
+        }
+
+        guard clampedEnd > clampedStart else { return nil }
+        return ClipRef(fileName: fileName, startTime: clampedStart, endTime: clampedEnd)
+    }
+}
+
+// MARK: - ClipRef <-> GameVideoRecord
+
+extension GameVideoRecord {
+    /// The saved highlight clip, or `nil` if none has been saved. Returns `nil`
+    /// rather than an invalid range if the persisted values are inconsistent.
+    /// The clip's `fileName` is this record's own `fileName`.
+    var clipRef: ClipRef? {
+        guard let start = clipStartTime, let end = clipEndTime,
+              end > start, !fileName.isEmpty
+        else { return nil }
+        return ClipRef(fileName: fileName, startTime: start, endTime: end)
+    }
+
+    /// Persists (or clears, when `nil`) the highlight clip on this record.
+    /// Only the time-range is stored; the file is always this record's video.
+    func setClip(_ clip: ClipRef?) {
+        clipStartTime = clip?.startTime
+        clipEndTime = clip?.endTime
     }
 }
 
