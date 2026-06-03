@@ -107,22 +107,30 @@ struct MatchHistoryView: View {
 
     private func matchRow(_ match: PersistedMatch) -> some View {
         HStack(spacing: BE.Space.m) {
-            // Vertical accent stripe — winner-tinted
+            // Vertical accent stripe — winner-tinted.
+            // Self-sizes to the row's intrinsic height (driven by the text columns)
+            // instead of greedily demanding infinite height, which previously
+            // distorted the HStack's width distribution.
             RoundedRectangle(cornerRadius: 2, style: .continuous)
                 .fill(accentColor(for: match))
                 .frame(width: 3)
                 .frame(maxHeight: .infinity)
+                .fixedSize(horizontal: true, vertical: false)
 
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: BE.Space.xs) {
                 Text(playerNamesText(for: match))
                     .font(.system(.headline, design: .rounded).weight(.semibold))
                     .lineLimit(1)
+                    .truncationMode(.tail)
+                    .minimumScaleFactor(0.85)
 
                 HStack(spacing: BE.Space.s) {
                     Text(formatBadge(for: match))
                         .font(BE.eyebrow)
                         .tracking(0.6)
                         .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .fixedSize(horizontal: true, vertical: false)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
                         .background(
@@ -131,14 +139,23 @@ struct MatchHistoryView: View {
 
                     if let winner = winnerName(for: match) {
                         HStack(spacing: 3) {
-                            Image(systemName: "trophy.fill").font(.system(size: 9))
+                            Image(systemName: "trophy.fill")
+                                .font(.system(size: 9))
                             Text(winner)
                                 .font(.system(.caption, design: .rounded).weight(.medium))
+                                .lineLimit(1)
+                                .truncationMode(.tail)
                         }
                         .foregroundStyle(.secondary)
+                        // Truncate the winner name (rather than the format badge)
+                        // when horizontal space is tight.
+                        .layoutPriority(-1)
                     }
                 }
             }
+            // Leading column may shrink, but should win the width contest over
+            // the trailing score column so names stay readable.
+            .layoutPriority(1)
 
             Spacer(minLength: BE.Space.s)
 
@@ -147,10 +164,16 @@ struct MatchHistoryView: View {
                     .font(.system(.subheadline, design: .rounded).weight(.semibold))
                     .monospacedDigit()
                     .foregroundStyle(.primary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
                 Text(match.startedAt, style: .relative)
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
+                    .lineLimit(1)
             }
+            // Keep the score column at its natural width so the score line never
+            // wraps onto a second line.
+            .fixedSize(horizontal: true, vertical: false)
         }
         .padding(.vertical, 6)
     }
