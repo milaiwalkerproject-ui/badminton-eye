@@ -136,13 +136,12 @@ def synthetic_dataset(n: int = 50, seed: int = 0) -> tuple[np.ndarray, np.ndarra
         # Real convention (see _heuristic_winner, export_shots, and the label
         # loader above: y=0 if sideA else 1): x<0.5 -> sideA (LEFT, label 0);
         # x>=0.5 -> sideB (RIGHT, label 1).
-        # NOTE: the synthetic end_x below INVERTS this — it places label 0 (sideA)
-        # on the right (x~0.7) and label 1 (sideB) on the left (x~0.3). This is a
+        # NOTE: the synthetic end_x below now MATCHES this convention — it places
+        # label 0 (sideA) on the left (x~0.3) and label 1 (sideB) on the right
+        # (x~0.7), consistent with the real left/right->side mapping. The set is a
         # self-consistent synthetic toy set (train/eval use the same mapping, so the
-        # MLP still learns a separable signal), but it does NOT match the real
-        # left/right->side convention. Left as-is to avoid silently changing model
-        # behavior; flagged for follow-up. Add noise so it's not trivially separable.
-        end_x = 0.7 + rng.normal(0, 0.1) if label == 0 else 0.3 + rng.normal(0, 0.1)
+        # MLP still learns a separable signal). Add noise so it's not trivially separable.
+        end_x = 0.3 + rng.normal(0, 0.1) if label == 0 else 0.7 + rng.normal(0, 0.1)
         traj = []
         npts = int(rng.integers(20, 60))
         start_x = 1 - end_x
