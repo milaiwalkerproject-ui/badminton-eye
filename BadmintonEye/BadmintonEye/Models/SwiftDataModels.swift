@@ -7,7 +7,15 @@ final class PersistedMatch {
     var format: String = "singles"
     var startedAt: Date = Date()
     var endedAt: Date?
-    var stateJSON: Data?
+    // Encoded match state. `.externalStorage` keeps this (potentially large)
+    // blob out of the table row, so queries that materialize matches — match
+    // history, win/loss tallies — no longer drag every state blob through
+    // SQLite. Lightweight-migration-safe: verified against a populated
+    // old-schema store (inline blobs read back byte-identical; legacy NULL
+    // blobs surface as EMPTY Data after migration, which every consumer
+    // already treats identically to nil because `try? JSONDecoder().decode`
+    // fails on empty input).
+    @Attribute(.externalStorage) var stateJSON: Data?
     var isComplete: Bool = false
     var isAbandoned: Bool = false
 

@@ -5,8 +5,10 @@
 // Coverage targets:
 //   - ResultFusionService.fuse()  — verifies PR #6 guard path + weighted fusion logic
 //   - SyncPayload.from(dictionary:) — verifies defensive decoding (PR #5 safe encoder guard)
+//   - PlayerListView.winLossRecords — predicate-filtered query tallies ≡ full scan
 
 import XCTest
+import SwiftData
 @testable import BadmintonEye
 
 // MARK: - ResultFusionService
@@ -117,5 +119,68 @@ final class SyncPayloadTests: XCTestCase {
         let garbage = Data([0xFF, 0xFE, 0x00])
         XCTAssertNil(SyncPayload.from(dictionary: ["syncPayload": garbage]),
                       "SyncPayload.from must return nil for corrupt JSON data")
+    }
+}
+
+// MARK: - PlayerListView win/loss tally predicate equivalence
+
+@MainActor
+final class PlayerRecordsPredicateTests: XCTestCase {
+
+    /// The Players tab now fetches only `isComplete && winnerSide != nil`
+    /// rows instead of materializing every match. This pins the invariant
+    /// that the store-level predicate yields EXACTLY the same win/loss
+    /// tallies as a full scan of all matches.
+    func testPredicateFilteredTalliesMatchFullScan() throws {
+        let schema = Schema([PersistedMatch.self, GameVideoRecord.self])
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: schema, configurations: [config])
+        let context = ModelContext(container)
+
+        func insertMatch(
+            _ format: String, complete: Bool, winner: String?,
+            a: String? = nil, a2: String? = nil,
+            b: String? = nil, b2: String? = nil
+        ) {
+            let m = PersistedMatch()
+            m.format = format
+            m.isComplete = complete
+            m.winnerSide = winner
+            m.playerAName = a
+            m.playerA2Name = a2
+            m.playerBName = b
+            m.playerB2Name = b2
+            context.insert(m)
+        }
+
+        // Rows that MUST count toward tallies.
+        insertMatch("singles", complete: true, winner: "sideA", a: "Alice", b: "Bob")
+        insertMatch("singles", complete: true, winner: "sideB", a: "Alice", b: "Bob")
+        insertMatch("doubles", complete: true, winner: "sideA",
+                    a: "Alice", a2: "Cara", b: "Bob", b2: "Dan")
+        // Rows that MUST NOT count (and must not change the tallies).
+        insertMatch("singles", complete: false, winner: nil, a: "Alice", b: "Bob")     // in progress
+        insertMatch("singles", complete: true, winner: nil, a: "Alice", b: "Bob")      // completed, never decided
+        insertMatch("singles", complete: false, winner: "sideA", a: "Alice", b: "Bob") // inconsistent row
+        try context.save()
+
+        let all = try context.fetch(FetchDescriptor<PersistedMatch>())
+        let filtered = try context.fetch(FetchDescriptor<PersistedMatch>(
+            predicate: #Predicate { $0.isComplete && $0.winnerSide != nil }
+        ))
+
+        XCTAssertEqual(all.count, 6)
+        XCTAssertEqual(filtered.count, 3,
+                       "Predicate must exclude in-progress and undecided rows")
+
+        let fromFiltered = PlayerListView.winLossRecords(from: filtered)
+        let fromAll = PlayerListView.winLossRecords(from: all)
+        XCTAssertEqual(fromFiltered, fromAll,
+                       "Store-level predicate must not change the tallies")
+
+        XCTAssertEqual(fromFiltered["Alice"], PlayerListView.WinLoss(wins: 2, losses: 1))
+        XCTAssertEqual(fromFiltered["Bob"], PlayerListView.WinLoss(wins: 1, losses: 2))
+        XCTAssertEqual(fromFiltered["Cara"], PlayerListView.WinLoss(wins: 1, losses: 0))
+        XCTAssertEqual(fromFiltered["Dan"], PlayerListView.WinLoss(wins: 0, losses: 1))
     }
 }
