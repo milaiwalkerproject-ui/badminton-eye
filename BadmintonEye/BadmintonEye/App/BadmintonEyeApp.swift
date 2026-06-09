@@ -193,14 +193,6 @@ struct ContentView: View {
                     NavigationStack {
                         MatchHistoryView()
                             .toolbar {
-                                ToolbarItem(placement: .topBarLeading) {
-                                    Button {
-                                        showVideoImport = true
-                                    } label: {
-                                        Image(systemName: "square.and.arrow.down.on.square")
-                                    }
-                                    .accessibilityLabel("Import video")
-                                }
                                 ToolbarItem(placement: .primaryAction) {
                                     NavigationLink {
                                         MatchSetupView()
