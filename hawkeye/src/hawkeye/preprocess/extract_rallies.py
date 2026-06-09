@@ -8,8 +8,14 @@ Pipeline:
   - group consecutive visible detections into rallies (gap<0.5s = same; >1s = boundary)
   - write JSON per video to data/processed/trajectories/<video_id>.json
 
+The output JSON carries a top-level ``orientation`` field ("side_on"|"end_on",
+ADR-0001) resolved from --orientation > the data/processed/orientation.json
+sidecar > "side_on". Existing trajectory JSONs without the field are side_on
+by definition and are never rewritten.
+
 Usage:
     python -m hawkeye.preprocess.extract_rallies <video_path> [--out-dir DIR]
+                                                 [--orientation side_on|end_on]
 """
 from __future__ import annotations
 
@@ -23,6 +29,8 @@ from pathlib import Path
 import cv2
 import numpy as np
 import torch
+
+from ..orientation import VALID_ORIENTATIONS, load_orientation_map, resolve_orientation
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 TRACKNET_REPO = REPO_ROOT / "third_party" / "TrackNetV3"
@@ -117,9 +125,15 @@ def detect_rallies(detections: list[dict], fps: float) -> list[dict]:
 
 
 @torch.no_grad()
-def process_video(video_path: Path, out_dir: Path) -> dict:
+def process_video(video_path: Path, out_dir: Path, orientation: str | None = None) -> dict:
     out_dir.mkdir(parents=True, exist_ok=True)
     vid = video_path.stem
+
+    # Resolve camera orientation: explicit arg > sidecar > side_on (ADR-0001).
+    if orientation is None:
+        orientation = resolve_orientation(vid, sidecar=load_orientation_map())
+    elif orientation not in VALID_ORIENTATIONS:
+        raise ValueError(f"invalid orientation {orientation!r}; expected one of {VALID_ORIENTATIONS}")
 
     model = load_tracknet()
     dev = _device()
@@ -135,7 +149,7 @@ def process_video(video_path: Path, out_dir: Path) -> dict:
     n = len(frames)
     if n < SEQ_LEN:
         print(f"[extract] {vid}: only {n} frames (<{SEQ_LEN}); skipping")
-        return {"video": vid, "fps": fps, "rallies": []}
+        return {"video": vid, "fps": fps, "orientation": orientation, "rallies": []}
     print(f"[extract] {vid}: {n} frames @ {fps:.2f} fps", flush=True)
 
     # Rolling median background over 5s window. Pre-compute one global median
@@ -170,7 +184,7 @@ def process_video(video_path: Path, out_dir: Path) -> dict:
     rallies = detect_rallies(detections, fps)
     print(f"[extract] {vid}: {len(rallies)} rallies (min {MIN_RALLY_S}s)", flush=True)
 
-    payload = {"video": vid, "fps": float(fps), "rallies": rallies}
+    payload = {"video": vid, "fps": float(fps), "orientation": orientation, "rallies": rallies}
     out_path = out_dir / f"{vid}.json"
     out_path.write_text(json.dumps(payload, indent=2))
     print(f"[extract] {vid}: wrote {out_path}")
@@ -181,11 +195,13 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("video", type=Path)
     ap.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
+    ap.add_argument("--orientation", choices=list(VALID_ORIENTATIONS), default=None,
+                    help="camera orientation (default: orientation.json sidecar, else side_on)")
     args = ap.parse_args()
     if not args.video.exists():
         print(f"[extract] missing video: {args.video}", file=sys.stderr)
         return 2
-    process_video(args.video, args.out_dir)
+    process_video(args.video, args.out_dir, orientation=args.orientation)
     return 0
 
 

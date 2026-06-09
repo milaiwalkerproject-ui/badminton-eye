@@ -2,10 +2,11 @@
 
 For each trajectory JSON in data/processed/trajectories/:
 - For each rally, look at the last 3-5 visible (x,y) points before the rally
-  ends. If the shuttle ends up on the left half (mean_x < 0.5) we call it
-  sideA, otherwise sideB. If we don't have enough visible points or the last
-  point looks like a tracking jump, we record "skip" so the human annotator
-  (bin/annotate.sh) can revisit it.
+  ends and project them onto the canonical side axis (hawkeye.orientation):
+  side_on (default) uses image-X (mean_x < 0.5 -> sideA = left), end_on uses
+  1 - image-Y (sideA = near/bottom). If we don't have enough visible points or
+  the last point looks like a tracking jump, we record "skip" so the human
+  annotator (bin/annotate.sh) can revisit it.
 
 Output: appended lines to data/processed/annotations.jsonl, one per rally.
 Idempotent on (video, rally_id) — re-running won't duplicate heuristic
@@ -27,6 +28,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable
 
+from ..orientation import (
+    SIDE_ON, load_orientation_map, resolve_orientation,
+    tail_side_mean, winner_from_side_axis,
+)
+
 ANNOTATOR_ID = "heuristic_v1"
 DEFAULT_TRAJ_DIR = Path("data/processed/trajectories")
 DEFAULT_OUT = Path("data/processed/annotations.jsonl")
@@ -41,8 +47,12 @@ def _iter_visible(rally: dict) -> Iterable[dict]:
             yield p
 
 
-def classify_rally(rally: dict) -> tuple[str, dict]:
-    """Return (winner, evidence). winner ∈ {sideA, sideB, skip}."""
+def classify_rally(rally: dict, orientation: str = SIDE_ON) -> tuple[str, dict]:
+    """Return (winner, evidence). winner ∈ {sideA, sideB, skip}.
+
+    Side decision goes through the shared canonical-side-axis helper
+    (hawkeye.orientation) — side_on is the historical mean_x<0.5 rule.
+    """
     visible = list(_iter_visible(rally))
     if len(visible) < MIN_POINTS:
         return "skip", {
@@ -53,7 +63,7 @@ def classify_rally(rally: dict) -> tuple[str, dict]:
     tail = visible[-TAIL_POINTS:]
     if len(tail) >= 2:
         a, b = tail[-2], tail[-1]
-        dist = math.hypot(b["x"] - a["x"], b["y"] - a["y"])
+        dist = math.hypot(b["x"] - a["x"], b["y"] - a["y"])  # raw image coords
         if dist > JUMP_THRESHOLD:
             return "skip", {
                 "reason": "tracking_jump",
@@ -61,12 +71,15 @@ def classify_rally(rally: dict) -> tuple[str, dict]:
                 "n_points_used": len(tail),
             }
 
+    mean_side, _ = tail_side_mean(tail, orientation, tail=TAIL_POINTS)
     mean_x = sum(p["x"] for p in tail) / len(tail)
     mean_y = sum(p["y"] for p in tail) / len(tail)
-    winner = "sideA" if mean_x < 0.5 else "sideB"
+    winner = winner_from_side_axis(mean_side)
     return winner, {
         "mean_x": round(mean_x, 4),
         "mean_y": round(mean_y, 4),
+        "mean_side": round(mean_side, 4),
+        "orientation": orientation,
         "n_points_used": len(tail),
     }
 
@@ -112,6 +125,7 @@ def run(traj_dir: Path, out_path: Path, force: bool) -> dict:
     if not files:
         print(f"[auto_annotate] no trajectory files in {traj_dir}", file=sys.stderr)
 
+    sidecar = load_orientation_map()
     with out_path.open("a", encoding="utf-8") as out_fh:
         for traj_file in files:
             try:
@@ -120,6 +134,7 @@ def run(traj_dir: Path, out_path: Path, force: bool) -> dict:
                 print(f"[auto_annotate] skipping {traj_file}: {exc}", file=sys.stderr)
                 continue
             video = data.get("video") or traj_file.stem
+            orientation = resolve_orientation(video, traj_payload=data, sidecar=sidecar)
             rallies = data.get("rallies", [])
             for rally in rallies:
                 rid = int(rally.get("rally_id", -1))
@@ -134,11 +149,12 @@ def run(traj_dir: Path, out_path: Path, force: bool) -> dict:
                     if not force:
                         skipped_existing += 1
                         continue
-                winner, evidence = classify_rally(rally)
+                winner, evidence = classify_rally(rally, orientation)
                 row = {
                     "video": video,
                     "rally_id": rid,
                     "winner": winner,
+                    "orientation": orientation,
                     "annotator": ANNOTATOR_ID,
                     "timestamp": now,
                     "evidence": evidence,
