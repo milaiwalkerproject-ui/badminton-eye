@@ -39,6 +39,8 @@ from pathlib import Path
 
 import cv2
 
+from .rally_filter import implausibility_reason
+
 REPO_ROOT = Path(__file__).resolve().parents[3]
 TRAJ_DIR = REPO_ROOT / "data" / "processed" / "trajectories"
 RAW_DIR = REPO_ROOT / "data" / "raw"
@@ -90,6 +92,32 @@ WIN_NAME = ("Annotate Rally  A=left wins  B=right wins  "
 
 # Trajectory overlay tuning.
 TRAIL_LEN = 10  # number of most-recent points to draw as a fading trail
+
+# DISPLAY-ONLY padding past the rally's end_frame (fix #4): segmentation often
+# cuts right at the last detected shuttle point, hiding the landing/outcome.
+# We PLAY a little extra video so the human sees the point resolve, but the
+# trajectory overlay still stops at end_frame and start/end_frame and all
+# stored data are UNCHANGED.
+PAD_S = 2.0
+
+
+def padded_end_frame(end_frame: int, fps: float,
+                     last_video_frame: int | None,
+                     pad_s: float = PAD_S) -> int:
+    """Last frame to PLAY for a rally clip (display-only padding, fix #4).
+
+    Returns ``min(end_frame + round(pad_s * fps), last_video_frame)``, clamped
+    so it is never below ``end_frame`` (a broken/unknown frame count must not
+    truncate the original clip; the read loop already stops safely at EOF).
+
+    Pure function — does NOT modify the rally; ``end_frame`` as stored in the
+    trajectory/segmentation JSON is untouched.
+    """
+    pad = int(round(max(pad_s, 0.0) * max(fps, 0.0)))
+    target = end_frame + pad
+    if last_video_frame is not None and last_video_frame >= 0:
+        target = min(target, last_video_frame)
+    return max(target, end_frame)
 
 
 def _draw_side_legend(frame, W: int, H: int) -> None:
@@ -145,6 +173,11 @@ def play_and_prompt(video_path: Path, rally: dict, fps: float) -> str | None:
     NOT be coerced into an A/B winner; callers store it as a segregated row that
     is excluded from winner training/eval. 'skip' (S) means a real rally with an
     unclear winner and records nothing.
+
+    DISPLAY-ONLY padding (fix #4): playback continues ~PAD_S seconds past
+    end_frame (clamped at EOF) so the human sees the point resolve; the
+    trajectory overlay is drawn only up to end_frame, and the rally's stored
+    start_frame/end_frame are never modified.
     """
     sf, ef = rally["start_frame"], rally["end_frame"]
     traj = rally["trajectory"]
@@ -155,6 +188,11 @@ def play_and_prompt(video_path: Path, rally: dict, fps: float) -> str | None:
         return "skip"
     cap.set(cv2.CAP_PROP_POS_FRAMES, sf)
 
+    # Last playable frame: end_frame + display padding, clamped at EOF.
+    n_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    last_video_frame = n_frames - 1 if n_frames > 0 else None
+    play_ef = padded_end_frame(ef, fps, last_video_frame)
+
     # Index trajectory points by frame for overlay lookup.
     by_frame: dict[int, dict] = {p["f"]: p for p in traj}
     pts_so_far: list[tuple[int, int]] = []
@@ -163,7 +201,7 @@ def play_and_prompt(video_path: Path, rally: dict, fps: float) -> str | None:
 
     cv2.namedWindow(WIN_NAME, cv2.WINDOW_NORMAL)
     f = sf
-    while f <= ef:
+    while f <= play_ef:
         ok, frame = cap.read()
         if not ok:
             break
@@ -171,7 +209,9 @@ def play_and_prompt(video_path: Path, rally: dict, fps: float) -> str | None:
         # Persistent A/B court-half indicator (drawn first, under the trail).
         _draw_side_legend(frame, W, H)
 
-        p = by_frame.get(f)
+        # Overlay only up to the ORIGINAL end_frame; padded frames past ef are
+        # context-only (no new trajectory points are added).
+        p = by_frame.get(f) if f <= ef else None
         if p is not None and p.get("vis"):
             px, py = int(p["x"] * W), int(p["y"] * H)
             pts_so_far.append((px, py))
@@ -193,9 +233,12 @@ def play_and_prompt(video_path: Path, rally: dict, fps: float) -> str | None:
             cv2.circle(frame, cur, 8, (0, 0, 255), -1)         # bright red fill
             cv2.circle(frame, cur, 13, (255, 255, 255), 2)     # white outline
 
-        cv2.putText(frame, f"rally {rally['rally_id']}  frame {f}/{ef}",
+        hud = f"rally {rally['rally_id']}  frame {f}/{ef}"
+        if f > ef:
+            hud += "  [post-rally pad]"
+        cv2.putText(frame, hud,
                     (12, 28), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 4)
-        cv2.putText(frame, f"rally {rally['rally_id']}  frame {f}/{ef}",
+        cv2.putText(frame, hud,
                     (12, 28), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
         # On-screen key legend so the A/B-vs-N-vs-S distinction is always visible.
         legend = "A=left wins  B=right wins  N=not a rally (warm-up/junk)  S=skip unclear  R=replay  Q=quit"
@@ -243,6 +286,7 @@ def main() -> int:
         print(f"[annotate] no trajectories at {TRAJ_DIR}"); return 2
 
     ANN_PATH.parent.mkdir(parents=True, exist_ok=True)
+    auto_skipped = 0
     with ANN_PATH.open("a") as ann_f:
         for jp in sorted(TRAJ_DIR.glob("*.json")):
             data = json.loads(jp.read_text())
@@ -255,12 +299,24 @@ def main() -> int:
                 key = (vid, int(rally["rally_id"]))
                 if key in done:
                     continue
+                # Fix #2: DISPLAY-TIME auto-skip of implausible/degenerate
+                # segments. Writes NOTHING (auto-skip != ground-truth
+                # not_rally); the N key remains the human fallback.
+                reason = implausibility_reason(rally, fps)
+                if reason is not None:
+                    auto_skipped += 1
+                    print(f"[annotate] {vid} rally {rally['rally_id']}: "
+                          f"AUTO-SKIP ({reason}) — nothing written",
+                          file=sys.stderr)
+                    continue
                 while True:
                     res = play_and_prompt(video_path, rally, fps)
                     if res is None:
                         continue  # replay
                     break
                 if res == "quit":
+                    if auto_skipped:
+                        print(f"[annotate] auto-skipped {auto_skipped} implausible segment(s) (display-only, nothing written)", file=sys.stderr)
                     print("[annotate] saving and quitting"); cv2.destroyAllWindows(); return 0
                 if res == "skip":
                     print(f"[annotate] {vid} rally {rally['rally_id']}: skipped (unclear winner, not recorded)")
@@ -282,6 +338,8 @@ def main() -> int:
                 done.add(key)
                 print(f"[annotate] {vid} rally {rally['rally_id']}: {res}")
     cv2.destroyAllWindows()
+    if auto_skipped:
+        print(f"[annotate] auto-skipped {auto_skipped} implausible segment(s) (display-only, nothing written)", file=sys.stderr)
     print("[annotate] all rallies processed")
     return 0
 

@@ -28,27 +28,18 @@ import argparse
 import datetime as dt
 import json
 import random
+import sys
 from pathlib import Path
 
 from .annotate_rallies import resolve_video
+# Usability filter (from P0 spike (b)) lives in the SHARED rally_filter module
+# (fix #2): same thresholds as the old local _usable, plus gap-ratio and
+# degenerate-collapse rejection. DISPLAY-TIME only — writes nothing.
+from .rally_filter import is_plausible_rally
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 TRAJ_DIR = REPO_ROOT / "data" / "processed" / "trajectories"
 HOLDOUT_PATH = REPO_ROOT / "data" / "processed" / "annotations_human_holdout.jsonl"
-
-# Usability filter (from P0 spike (b)): drop degenerate "rallies".
-MIN_POINTS = 10          # below this = noise/partial detection
-MIN_DUR_S = 2.5          # shorter than a real rally
-MAX_DUR_S = 40.0         # longer = a segmentation failure (whole-video collapse)
-
-
-def _usable(rally: dict, fps: float) -> bool:
-    sf, ef = rally.get("start_frame"), rally.get("end_frame")
-    if sf is None or ef is None:
-        return False
-    dur = (ef - sf) / max(fps, 1.0)
-    n_vis = sum(1 for p in rally.get("trajectory", []) if p.get("vis", True))
-    return n_vis >= MIN_POINTS and MIN_DUR_S <= dur <= MAX_DUR_S
 
 
 def _load_done() -> set[tuple[str, int]]:
@@ -72,18 +63,24 @@ def select_sample(n: int, seed: int = 0) -> list[tuple[str, dict, float]]:
     until we reach n. Deterministic given seed."""
     rng = random.Random(seed)
     per_video: list[tuple[str, list[dict], float]] = []
+    auto_skipped = 0
     for jp in sorted(TRAJ_DIR.glob("*.json")):
         data = json.loads(jp.read_text())
         vid = data["video"]
         if resolve_video(vid) is None:
             continue
         fps = float(data.get("fps", 30.0))
-        usable = [r for r in data.get("rallies", []) if _usable(r, fps)]
+        rallies = data.get("rallies", [])
+        usable = [r for r in rallies if is_plausible_rally(r, fps)]
+        auto_skipped += len(rallies) - len(usable)
         if not usable:
             continue
         rng.shuffle(usable)
         per_video.append((vid, usable, fps))
     rng.shuffle(per_video)
+    if auto_skipped:
+        print(f"[holdout] auto-skipped {auto_skipped} implausible segment(s) "
+              f"(display-only filter; nothing written)", file=sys.stderr)
 
     # Round-robin draw → spreads the sample across clips (skill tiers / fps).
     picked: list[tuple[str, dict, float]] = []
