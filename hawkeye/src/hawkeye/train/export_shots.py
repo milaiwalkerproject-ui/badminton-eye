@@ -24,6 +24,11 @@ import json
 from pathlib import Path
 from typing import Optional
 
+from ..orientation import (
+    SIDE_ON, heuristic_winner, load_orientation_map, resolve_orientation,
+    check_inference_gate, load_model_meta,
+)
+
 REPO_ROOT = Path(__file__).resolve().parents[3]
 TRAJ_DIR = REPO_ROOT / "data" / "processed" / "trajectories"
 VIDEO_DIR = REPO_ROOT / "data" / "raw" / "youtube"
@@ -60,13 +65,9 @@ def decide(human: Optional[str], cv: Optional[str], heuristic: Optional[str]) ->
             "split_hint": "quarantine", "human_corrected": False}
 
 
-def _heuristic_winner(trajectory: list[dict]) -> Optional[str]:
-    vis = [p for p in trajectory if p.get("vis", True)]
-    if len(vis) < 3:
-        return None
-    last = vis[-5:]
-    mean_x = sum(float(p["x"]) for p in last) / len(last)
-    return "sideA" if mean_x < 0.5 else "sideB"
+def _heuristic_winner(trajectory: list[dict], orientation: str = SIDE_ON) -> Optional[str]:
+    """Shared convention helper (orientation-aware); see hawkeye.orientation."""
+    return heuristic_winner(trajectory, orientation)
 
 
 def _is_not_rally(rec: dict) -> bool:
@@ -113,13 +114,17 @@ def _load_not_rally(path: Path) -> set[tuple[str, int]]:
     return out
 
 
-def build_record(vid: str, rally: dict, fps: float, *, human, cv, heuristic) -> dict:
+def build_record(vid: str, rally: dict, fps: float, *, human, cv, heuristic,
+                 orientation: str = SIDE_ON) -> dict:
     d = decide(human, cv, heuristic)
     label_value = human or cv or heuristic
     sf, ef = rally.get("start_frame"), rally.get("end_frame")
     return {
         "schema_version": SCHEMA_VERSION,
         "shot_id": f"{vid}:r{rally['rally_id']}",
+        # winner stays sideA/sideB; (winner, orientation) is unambiguous:
+        # side_on A=left/B=right, end_on A=near/B=far (ADR-0001).
+        "orientation": orientation,
         "clip_ref": {
             "video_id": vid,
             "file": str((VIDEO_DIR / f"{vid}.mp4")),
@@ -263,6 +268,7 @@ def run(with_cv: bool) -> int:
                  | _load_not_rally(HEURISTIC_ANN))
     model = None
     featurize = None
+    model_meta = None
     if with_cv:
         import numpy as np  # noqa
         import coremltools as ct
@@ -270,15 +276,18 @@ def run(with_cv: bool) -> int:
         featurize = _f
         mp = REPO_ROOT / "data" / "processed" / "RallyWinnerClassifier.mlpackage"
         model = ct.models.MLModel(str(mp)) if mp.exists() else None
+        model_meta = load_model_meta(mp)
 
+    sidecar = load_orientation_map()
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     from collections import Counter
     split_counts = Counter()
-    n = 0
+    n = n_gated = 0
     with OUT_PATH.open("w") as out:
         for jp in sorted(TRAJ_DIR.glob("*.json")):
             data = json.loads(jp.read_text())
             vid = data["video"]; fps = float(data.get("fps", 30.0))
+            orientation = resolve_orientation(vid, traj_payload=data, sidecar=sidecar)
             for rally in data.get("rallies", []):
                 rid = int(rally["rally_id"])
                 traj = rally["trajectory"]
@@ -286,24 +295,36 @@ def run(with_cv: bool) -> int:
                 # do not run cv/heuristic on it.
                 if (vid, rid) in not_rally:
                     rec = _not_rally_record(vid, rally, fps)
+                    rec["orientation"] = orientation
                     out.write(json.dumps(rec) + "\n")
                     split_counts[rec["split_hint"]] += 1
                     n += 1
                     continue
                 h = human.get((vid, rid))
-                heur = heuristic.get((vid, rid)) or _heuristic_winner(traj)
+                heur = heuristic.get((vid, rid)) or _heuristic_winner(traj, orientation)
                 cv = None
                 if model is not None and featurize is not None:
-                    import numpy as np
-                    feats = featurize(traj).astype(np.float32).reshape(1, -1)
-                    logits = np.asarray(next(iter(model.predict(
-                        {"trajectory_features": feats}).values()))).reshape(-1)
-                    cv = "sideA" if int(np.argmax(logits)) == 0 else "sideB"
-                rec = build_record(vid, rally, fps, human=h, cv=cv, heuristic=heur)
+                    # ADR-0001 constraint (b): no zero-shot end_on predictions —
+                    # cv vote stays None (record still written) until a model
+                    # trained on end-on labels exists.
+                    if not check_inference_gate(orientation, model_meta,
+                                                context=f"{vid}:r{rid}"):
+                        n_gated += 1
+                    else:
+                        import numpy as np
+                        feats = featurize(traj, orientation).astype(np.float32).reshape(1, -1)
+                        logits = np.asarray(next(iter(model.predict(
+                            {"trajectory_features": feats}).values()))).reshape(-1)
+                        cv = "sideA" if int(np.argmax(logits)) == 0 else "sideB"
+                rec = build_record(vid, rally, fps, human=h, cv=cv, heuristic=heur,
+                                   orientation=orientation)
                 out.write(json.dumps(rec) + "\n")
                 split_counts[rec["split_hint"]] += 1
                 n += 1
     print(f"[export] wrote {n} records → {OUT_PATH}")
+    if n_gated:
+        print(f"[export] cv vote GATED for {n_gated} end_on rallies (model has no "
+              f"end_on training labels)")
     print(f"[export] split breakdown: {dict(split_counts)}")
     print(f"[export] trainable (split=train): {split_counts['train']} "
           f"(only human labels are training-grade by design)")

@@ -8,8 +8,12 @@ Output:
   data/processed/RallyWinnerClassifier.mlpackage  (Core ML, FP16, mlprogram, iOS17)
   data/processed/RallyWinnerClassifier_meta.json  (feature schema)
 
+Orientation (ADR-0001): featurize/normalize_for_orientation map the player-
+separation axis onto canonical X per video orientation (side_on = identity,
+end_on side axis = 1 - image_y); gravity/arc features stay on raw image coords.
+
 Feature vector (38 floats):
-  - 16 evenly-spaced (x, y) trajectory samples         -> 32
+  - 16 evenly-spaced (side_axis, y) trajectory samples -> 32
   - mean (x, y) of last 3 points                       ->  2
   - final velocity magnitude (||p_n - p_{n-3}|| / dt)  ->  1
   - max y (apex)                                       ->  1
@@ -35,6 +39,11 @@ import torch.nn as nn
 
 import os
 
+from ..orientation import (
+    SIDE_ON, END_ON, VALID_ORIENTATIONS,
+    load_orientation_map, resolve_orientation, side_coordinate,
+)
+
 REPO_ROOT = Path(__file__).resolve().parents[3]
 TRAJ_DIR = REPO_ROOT / "data" / "processed" / "trajectories"
 # Override the label source for flywheel retrains (e.g. the cleaned set from
@@ -49,38 +58,79 @@ FEATURE_DIM = NUM_SAMPLES * 2 + 2 + 1 + 1 + 1 + 1  # 38
 
 # ---------- Feature engineering ----------
 
-def featurize(trajectory: list[dict]) -> np.ndarray:
-    pts = [(float(p["x"]), float(p["y"]), int(p["f"]), bool(p.get("vis", True))) for p in trajectory]
-    pts = [p for p in pts if p[3]]
+def normalize_for_orientation(trajectory: list[dict], orientation: str = SIDE_ON) -> list[dict]:
+    """Map the player-separation axis onto canonical X (ADR-0001 constraint a).
+
+    side_on == IDENTITY: the input list is returned unchanged (same object).
+
+    end_on: each point's ``x`` is replaced by the canonical side coordinate
+    ``1 - image_y`` (near/bottom -> <0.5 == sideA; far/top -> >=0.5 == sideB),
+    while the RAW image coordinates are preserved (``y`` untouched, original x
+    kept as ``img_x``) so gravity/arc features (apex_y, final_v, length) keep
+    operating on real image geometry.
+
+    This is deliberately NOT a 90-degree coordinate rotation: rotating the whole
+    frame would feed horizontal spread into apex_y (= ys.min(), an arc-height /
+    gravity feature) and produce garbage.
+    """
+    if orientation == SIDE_ON:
+        return trajectory
+    if orientation not in VALID_ORIENTATIONS:
+        raise ValueError(f"invalid orientation {orientation!r}")
+    out = []
+    for p in trajectory:
+        q = dict(p)
+        q["img_x"] = float(p["x"])                      # raw image x, kept for physics features
+        q["x"] = side_coordinate(p, orientation)        # canonical side axis = 1 - image_y
+        out.append(q)
+    return out
+
+
+def featurize(trajectory: list[dict], orientation: str = SIDE_ON) -> np.ndarray:
+    """Orientation-aware feature vector.
+
+    Side-related features (the 16 samples' side axis, mean_last_x — everything
+    the ``mean < 0.5 -> sideA`` convention reads) use the CANONICAL side axis
+    from ``normalize_for_orientation``. Gravity/arc features (apex_y, final_v,
+    length) and the y half of the samples always use RAW image coordinates.
+    For side_on this is bit-for-bit identical to the historical featurizer.
+    """
+    traj = normalize_for_orientation(trajectory, orientation)
+    # (side, raw_x, raw_y, frame) per visible point. img_x falls back to x for
+    # side_on, where the canonical side axis IS raw image x.
+    pts = [(float(p["x"]), float(p.get("img_x", p["x"])), float(p["y"]), int(p["f"]))
+           for p in traj if bool(p.get("vis", True))]
     if len(pts) < 2:
         return np.zeros(FEATURE_DIM, dtype=np.float32)
 
-    xs = np.array([p[0] for p in pts], dtype=np.float32)
-    ys = np.array([p[1] for p in pts], dtype=np.float32)
-    fs = np.array([p[2] for p in pts], dtype=np.float32)
+    side = np.array([p[0] for p in pts], dtype=np.float32)   # canonical side axis
+    xs = np.array([p[1] for p in pts], dtype=np.float32)     # raw image x
+    ys = np.array([p[2] for p in pts], dtype=np.float32)     # raw image y
+    fs = np.array([p[3] for p in pts], dtype=np.float32)
 
     # Evenly-spaced 16 samples via linear interpolation along time index.
+    # x channel = canonical side axis; y channel = raw image y.
     idx = np.linspace(0, len(pts) - 1, num=NUM_SAMPLES)
     lo = np.floor(idx).astype(int); hi = np.minimum(lo + 1, len(pts) - 1)
     frac = idx - lo
-    sx = xs[lo] * (1 - frac) + xs[hi] * frac
+    sx = side[lo] * (1 - frac) + side[hi] * frac
     sy = ys[lo] * (1 - frac) + ys[hi] * frac
     samples = np.stack([sx, sy], axis=1).reshape(-1)  # 32
 
     last3 = pts[-3:]
-    mean_last_x = float(np.mean([p[0] for p in last3]))
-    mean_last_y = float(np.mean([p[1] for p in last3]))
+    mean_last_x = float(np.mean([p[0] for p in last3]))  # canonical side axis (winner convention)
+    mean_last_y = float(np.mean([p[2] for p in last3]))  # raw image y
 
     if len(pts) >= 4:
-        dx = pts[-1][0] - pts[-4][0]
-        dy = pts[-1][1] - pts[-4][1]
-        df = max(1.0, pts[-1][2] - pts[-4][2])
+        dx = pts[-1][1] - pts[-4][1]        # raw image coords in BOTH orientations
+        dy = pts[-1][2] - pts[-4][2]
+        df = max(1.0, pts[-1][3] - pts[-4][3])
         final_v = math.hypot(dx, dy) / df
     else:
         final_v = 0.0
 
-    apex_y = float(ys.min())  # image coord: lower y == higher apex
-    seg = np.hypot(np.diff(xs), np.diff(ys)).sum()
+    apex_y = float(ys.min())  # raw image coord: lower y == higher apex (gravity feature)
+    seg = np.hypot(np.diff(xs), np.diff(ys)).sum()  # raw image path length
     length = float(seg)
 
     span = max(1.0, float(fs[-1] - fs[0]))
@@ -93,9 +143,17 @@ def featurize(trajectory: list[dict]) -> np.ndarray:
 
 # ---------- Dataset loading ----------
 
-def load_dataset() -> tuple[np.ndarray, np.ndarray]:
+def load_dataset() -> tuple[np.ndarray, np.ndarray, list[str]]:
+    """Returns (X, y, trained_orientations).
+
+    trained_orientations is the sorted list of orientations that contributed at
+    least one REAL labeled sample — it feeds the model meta's end-on inference
+    gate (ADR-0001 constraint b): end_on predictions stay blocked until a model
+    is trained from a dataset where this list contains "end_on".
+    """
     if not ANN_PATH.exists():
-        return np.zeros((0, FEATURE_DIM), dtype=np.float32), np.zeros((0,), dtype=np.int64)
+        return (np.zeros((0, FEATURE_DIM), dtype=np.float32),
+                np.zeros((0,), dtype=np.int64), [])
     anns: dict[tuple[str, int], str] = {}
     n_not_rally = 0
     for line in ANN_PATH.read_text().splitlines():
@@ -114,43 +172,64 @@ def load_dataset() -> tuple[np.ndarray, np.ndarray]:
     if n_not_rally:
         print(f"[train] excluded {n_not_rally} not_rally rows from training set")
 
+    sidecar = load_orientation_map()
     X, y = [], []
+    orientations_seen: set[str] = set()
     for jp in sorted(TRAJ_DIR.glob("*.json")):
         data = json.loads(jp.read_text())
         vid = data["video"]
+        orientation = resolve_orientation(vid, traj_payload=data, sidecar=sidecar)
         for rally in data.get("rallies", []):
             key = (vid, int(rally["rally_id"]))
             if key not in anns: continue
-            X.append(featurize(rally["trajectory"]))
+            X.append(featurize(rally["trajectory"], orientation))
             y.append(0 if anns[key] == "sideA" else 1)
+            orientations_seen.add(orientation)
     if not X:
-        return np.zeros((0, FEATURE_DIM), dtype=np.float32), np.zeros((0,), dtype=np.int64)
-    return np.stack(X), np.array(y, dtype=np.int64)
+        return (np.zeros((0, FEATURE_DIM), dtype=np.float32),
+                np.zeros((0,), dtype=np.int64), [])
+    return np.stack(X), np.array(y, dtype=np.int64), sorted(orientations_seen)
 
 
 def synthetic_dataset(n: int = 50, seed: int = 0) -> tuple[np.ndarray, np.ndarray]:
+    """Synthetic toy rallies, emitted in BOTH orientations, correctly labeled.
+
+    The rally is generated on the CANONICAL side axis (end_side<0.5 -> sideA,
+    label 0; >=0.5 -> sideB, label 1 — the real convention shared by
+    orientation.heuristic_winner and the label loader above), then rendered to
+    image coordinates per orientation:
+      side_on: image x = side axis, image y = gravity arc            (historical)
+      end_on:  image y = 1 - side axis (near=bottom), minus a small arc
+               component (projection mixes depth and height on image-Y);
+               image x = lateral jitter around court center.
+    featurize() is called with the matching orientation, so post-normalization
+    the side-axis channel is consistent across both. NOTE (ADR-0001): synthetic
+    end-on toys do NOT count as end-on training labels — they never open the
+    end-on inference gate.
+    """
     rng = np.random.default_rng(seed)
     X, y = [], []
-    for _ in range(n):
+    for k in range(n):
         label = int(rng.integers(0, 2))
-        # Real convention (see _heuristic_winner, export_shots, and the label
-        # loader above: y=0 if sideA else 1): x<0.5 -> sideA (LEFT, label 0);
-        # x>=0.5 -> sideB (RIGHT, label 1).
-        # NOTE: the synthetic end_x below now MATCHES this convention — it places
-        # label 0 (sideA) on the left (x~0.3) and label 1 (sideB) on the right
-        # (x~0.7), consistent with the real left/right->side mapping. The set is a
-        # self-consistent synthetic toy set (train/eval use the same mapping, so the
-        # MLP still learns a separable signal). Add noise so it's not trivially separable.
-        end_x = 0.3 + rng.normal(0, 0.1) if label == 0 else 0.7 + rng.normal(0, 0.1)
+        orientation = SIDE_ON if k % 2 == 0 else END_ON
+        end_side = 0.3 + rng.normal(0, 0.1) if label == 0 else 0.7 + rng.normal(0, 0.1)
         traj = []
         npts = int(rng.integers(20, 60))
-        start_x = 1 - end_x
+        start_side = 1 - end_side
         for i in range(npts):
             t = i / (npts - 1)
-            x = start_x * (1 - t) + end_x * t + rng.normal(0, 0.02)
-            y_p = 0.5 - 0.4 * math.sin(math.pi * t) + rng.normal(0, 0.02)
+            side = start_side * (1 - t) + end_side * t + rng.normal(0, 0.02)
+            arc = 0.4 * math.sin(math.pi * t)  # arc height above baseline
+            if orientation == SIDE_ON:
+                x = side
+                y_p = 0.5 - arc + rng.normal(0, 0.02)
+            else:
+                # end_on: depth (near/far) lives on image-Y; the arc lifts the
+                # shuttle up the frame (smaller y) on top of the depth signal.
+                y_p = (1.0 - side) - 0.15 * arc + rng.normal(0, 0.02)
+                x = 0.5 + rng.normal(0, 0.05)
             traj.append({"f": i, "x": float(x), "y": float(y_p), "conf": 0.9, "vis": True})
-        X.append(featurize(traj)); y.append(label)
+        X.append(featurize(traj, orientation)); y.append(label)
     return np.stack(X), np.array(y, dtype=np.int64)
 
 
@@ -245,12 +324,16 @@ def main() -> int:
     ap.add_argument("--epochs", type=int, default=100)
     args = ap.parse_args()
 
-    X, y = load_dataset()
+    X, y, trained_orientations = load_dataset()
     used_synthetic = False
     if args.synthetic or len(X) < 8:
         print(f"[train] only {len(X)} real samples; using synthetic dataset")
         X, y = synthetic_dataset(50)
         used_synthetic = True
+        # ADR-0001 constraint (b): synthetic both-orientation toys are NOT
+        # end-on training labels. Only real human end-on labels (via
+        # load_dataset) may open the end-on inference gate.
+        trained_orientations = [SIDE_ON]
 
     print(f"[train] dataset: X={X.shape} y={y.shape} class0={(y==0).sum()} class1={(y==1).sum()}")
     model = train(X, y, epochs=args.epochs)
@@ -269,6 +352,9 @@ def main() -> int:
         "labels": {"0": "sideA", "1": "sideB"},
         "synthetic": used_synthetic,
         "num_samples": int(len(X)),
+        # End-on inference gate (ADR-0001): consumers refuse end_on input
+        # unless "end_on" appears here, i.e. the model saw REAL end-on labels.
+        "trained_orientations": trained_orientations or [SIDE_ON],
     }
     (OUT_DIR / f"RallyWinnerClassifier{suffix}_meta.json").write_text(json.dumps(meta, indent=2))
     print(f"[train] meta written; synthetic={used_synthetic}")
