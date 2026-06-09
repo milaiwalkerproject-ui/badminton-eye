@@ -132,8 +132,8 @@ class TestSelectSampleUsesSharedFilter:
         monkeypatch.setattr(holdout_label, "resolve_video",
                             lambda vid: tmp_path / f"{vid}.mp4")
 
-        picked = holdout_label.select_sample(n=10, seed=0)
-        ids = [(vid, r["rally_id"]) for vid, r, _fps in picked]
+        picked = holdout_label.select_sample(n=10, seed=0, sidecar={})
+        ids = [(vid, r["rally_id"]) for vid, r, _fps, _orientation in picked]
         assert ("vid1", 1) in ids
         assert ("vid1", 2) not in ids
         # Trajectory JSON on disk untouched (display-time filter only).

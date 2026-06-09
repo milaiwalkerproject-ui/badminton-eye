@@ -5,8 +5,8 @@ in data/raw/youtube/<video_id>.mp4, play the rally segment with the trajectory
 overlaid, and prompt the user for the winning side.
 
 Keys:
-    A = sideA (left half wins)
-    B = sideB (right half wins)
+    A = sideA (side_on: LEFT half wins; end_on: NEAR player / bottom wins)
+    B = sideB (side_on: RIGHT half wins; end_on: FAR player / top wins)
     N = NOT A RALLY  -- the segmenter surfaced non-play footage (warm-up,
         knock-up, players getting ready, between-point junk). DISTINCT from S:
         N means "this clip is not real play at all", so it must NEVER be forced
@@ -25,8 +25,18 @@ Verdict semantics (what gets written):
 Annotations appended to data/processed/annotations.jsonl. Already-annotated
 (video, rally_id) pairs are skipped on resume.
 
+Orientation awareness (ADR-0001): each video's camera orientation is resolved
+via hawkeye.orientation (trajectory JSON ``orientation`` field > sidecar
+``data/processed/orientation.json`` > ``side_on``), overridable with
+``--orientation``. The divider/legend rotates with it:
+    side_on: vertical divider, A=left / B=right   (historical, pixel-identical)
+    end_on:  horizontal divider, A=near(bottom) / B=far(top)
+Keys and the stored record schema are UNCHANGED — the winner is always
+``sideA``/``sideB``; its spatial meaning is bound by (winner, orientation).
+
 Usage:
     python -m hawkeye.annotate.annotate_rallies [--annotator NAME]
+        [--orientation side_on|end_on]
 """
 from __future__ import annotations
 
@@ -39,6 +49,12 @@ from pathlib import Path
 
 import cv2
 
+from ..orientation import (
+    SIDE_ON,
+    VALID_ORIENTATIONS,
+    load_orientation_map,
+    resolve_orientation,
+)
 from .rally_filter import implausibility_reason
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -90,6 +106,91 @@ def resolve_video(vid: str, raw_dir: Path = RAW_DIR) -> Path | None:
 WIN_NAME = ("Annotate Rally  A=left wins  B=right wins  "
             "N=not a rally (warm-up/junk)  S=skip unclear  R=replay  Q=quit")
 
+
+# ---------------------------------------------------------------------------
+# Orientation-aware presentation (ADR-0001) — pure, testable helpers.
+# ---------------------------------------------------------------------------
+
+def resolve_labeler_orientation(video_id: str,
+                                traj_payload: dict | None = None,
+                                sidecar: dict[str, str] | None = None,
+                                override: str | None = None) -> str:
+    """Resolve the orientation used to PRESENT a video for labeling.
+
+    Precedence: explicit ``--orientation`` override > trajectory-JSON field >
+    sidecar > ``side_on`` (the historical default; absent metadata ALWAYS
+    means side_on so every pre-ADR video renders exactly as before).
+    """
+    if override is not None:
+        if override not in VALID_ORIENTATIONS:
+            raise ValueError(
+                f"invalid orientation {override!r}; expected one of {VALID_ORIENTATIONS}")
+        return override
+    return resolve_orientation(video_id, traj_payload=traj_payload, sidecar=sidecar)
+
+
+def win_name(orientation: str = SIDE_ON) -> str:
+    """OpenCV window title. side_on returns the historical title verbatim."""
+    if orientation == SIDE_ON:
+        return WIN_NAME
+    if orientation not in VALID_ORIENTATIONS:
+        raise ValueError(
+            f"invalid orientation {orientation!r}; expected one of {VALID_ORIENTATIONS}")
+    return ("Annotate Rally  A=near wins  B=far wins  "
+            "N=not a rally (warm-up/junk)  S=skip unclear  R=replay  Q=quit")
+
+
+def key_legend_text(orientation: str = SIDE_ON) -> str:
+    """On-screen key legend. side_on returns the historical string verbatim."""
+    if orientation == SIDE_ON:
+        return ("A=left wins  B=right wins  N=not a rally (warm-up/junk)  "
+                "S=skip unclear  R=replay  Q=quit")
+    if orientation not in VALID_ORIENTATIONS:
+        raise ValueError(
+            f"invalid orientation {orientation!r}; expected one of {VALID_ORIENTATIONS}")
+    return ("A=near player wins  B=far player wins  N=not a rally (warm-up/junk)  "
+            "S=skip unclear  R=replay  Q=quit")
+
+
+def side_legend_geometry(orientation: str, W: int, H: int) -> dict:
+    """Pure divider/legend geometry for a WxH frame.
+
+    Returns a dict of:
+      divider:  ((x1, y1), (x2, y2)) endpoints of the A/B divider line
+      rect_a:   ((x1, y1), (x2, y2)) tint rectangle of side A's half
+      rect_b:   ((x1, y1), (x2, y2)) tint rectangle of side B's half
+      label_a:  (cx, y_base) anchor of the big "A" label; the renderer draws at
+                org = (cx - text_w // 2, y_base + text_h)
+      label_b:  (cx, y_base) anchor of the big "B" label
+
+    side_on values are EXACTLY the legacy hard-coded geometry (vertical divider
+    at W//2, A=left, B=right, both labels along the top edge) — the regression
+    bar is pixel-identical side_on rendering.
+
+    end_on: horizontal divider at H//2; A = NEAR player = BOTTOM half,
+    B = FAR player = TOP half (ADR-0001: side = 1 - image_y).
+    """
+    if orientation == SIDE_ON:
+        mid = W // 2
+        return {
+            "divider": ((mid, 0), (mid, H)),
+            "rect_a": ((0, 0), (mid, H)),
+            "rect_b": ((mid, 0), (W, H)),
+            "label_a": (mid // 2, 12),
+            "label_b": (mid + mid // 2, 12),
+        }
+    if orientation not in VALID_ORIENTATIONS:
+        raise ValueError(
+            f"invalid orientation {orientation!r}; expected one of {VALID_ORIENTATIONS}")
+    midy = H // 2
+    return {
+        "divider": ((0, midy), (W, midy)),
+        "rect_a": ((0, midy), (W, H)),   # A = near player = bottom half
+        "rect_b": ((0, 0), (W, midy)),   # B = far player  = top half
+        "label_a": (W // 2, midy + 12),  # just below the divider
+        "label_b": (W // 2, 12),         # top edge, as side_on labels were
+    }
+
 # Trajectory overlay tuning.
 TRAIL_LEN = 10  # number of most-recent points to draw as a fading trail
 
@@ -120,33 +221,34 @@ def padded_end_frame(end_frame: int, fps: float,
     return max(target, end_frame)
 
 
-def _draw_side_legend(frame, W: int, H: int) -> None:
-    """Persistent A/B court-half indicator.
+def _draw_side_legend(frame, W: int, H: int, orientation: str = SIDE_ON) -> None:
+    """Persistent A/B court-half indicator, orientation-aware (ADR-0001).
 
     Convention (binding for the stored label): the pipeline's heuristic maps a
-    rally to a side by the shuttle's mean x of its final visible points --
-    ``"sideA" if mean_x < 0.5 else "sideB"`` (see hawkeye/train/holdout_eval.py
-    and export_shots.py ``_heuristic_winner``). Normalized x maps to the frame's
-    horizontal axis (px = x * W in the renderer), so:
-        LEFT half  (x < 0.5)  -> A (sideA)
-        RIGHT half (x >= 0.5) -> B (sideB)
+    rally to a side via the canonical side axis (hawkeye.orientation):
+        side_on: side = x      -> LEFT half  (x < 0.5)        = A (sideA)
+                                  RIGHT half (x >= 0.5)        = B (sideB)
+        end_on:  side = 1 - y  -> NEAR/bottom half (y >= 0.5)  = A (sideA)
+                                  FAR/top half     (y < 0.5)   = B (sideB)
+    All geometry comes from ``side_legend_geometry``; side_on values are the
+    legacy constants, so side_on rendering is pixel-identical to before.
     """
-    mid = W // 2
+    g = side_legend_geometry(orientation, W, H)
     overlay = frame.copy()
     # Tint each half faintly so the split is obvious without obscuring play.
-    cv2.rectangle(overlay, (0, 0), (mid, H), (60, 120, 60), -1)        # A: greenish
-    cv2.rectangle(overlay, (mid, 0), (W, H), (60, 60, 140), -1)        # B: reddish
+    cv2.rectangle(overlay, g["rect_a"][0], g["rect_a"][1], (60, 120, 60), -1)  # A: greenish
+    cv2.rectangle(overlay, g["rect_b"][0], g["rect_b"][1], (60, 60, 140), -1)  # B: reddish
     cv2.addWeighted(overlay, 0.12, frame, 0.88, 0, frame)
-    # Vertical divider.
-    cv2.line(frame, (mid, 0), (mid, H), (255, 255, 255), 1)
+    # Divider (vertical for side_on, horizontal for end_on).
+    cv2.line(frame, g["divider"][0], g["divider"][1], (255, 255, 255), 1)
 
-    # Large persistent side labels, centered in each half.
+    # Large persistent side labels, one per half.
     fs = max(1.5, H / 360.0)
     th = max(2, int(H / 200))
-    for txt, cx, color in (("A", mid // 2, (120, 255, 120)),
-                           ("B", mid + mid // 2, (140, 140, 255))):
+    for txt, (cx, y_base), color in (("A", g["label_a"], (120, 255, 120)),
+                                     ("B", g["label_b"], (140, 140, 255))):
         (tw, tht), _ = cv2.getTextSize(txt, cv2.FONT_HERSHEY_SIMPLEX, fs, th)
-        org = (cx - tw // 2, tht + 12)
+        org = (cx - tw // 2, y_base + tht)
         cv2.putText(frame, txt, org, cv2.FONT_HERSHEY_SIMPLEX, fs, (0, 0, 0), th + 3)
         cv2.putText(frame, txt, org, cv2.FONT_HERSHEY_SIMPLEX, fs, color, th)
 
@@ -166,8 +268,14 @@ def load_done() -> set[tuple[str, int]]:
     return done
 
 
-def play_and_prompt(video_path: Path, rally: dict, fps: float) -> str | None:
+def play_and_prompt(video_path: Path, rally: dict, fps: float,
+                    orientation: str = SIDE_ON) -> str | None:
     """Return 'sideA' | 'sideB' | 'not_rally' | 'skip' | 'quit'. None to replay.
+
+    ``orientation`` (ADR-0001) only rotates the PRESENTATION (divider, legend,
+    window title): side_on keeps the historical vertical A=left/B=right split
+    pixel-identical; end_on shows a horizontal split with A=near(bottom) and
+    B=far(top). Keys and return values are identical in both orientations.
 
     'not_rally' (key N) means the clip is not real play (warm-up/junk) and must
     NOT be coerced into an A/B winner; callers store it as a segregated row that
@@ -199,7 +307,9 @@ def play_and_prompt(video_path: Path, rally: dict, fps: float) -> str | None:
 
     delay = max(1, int(1000.0 / max(fps, 1.0)))
 
-    cv2.namedWindow(WIN_NAME, cv2.WINDOW_NORMAL)
+    wname = win_name(orientation)
+    legend = key_legend_text(orientation)
+    cv2.namedWindow(wname, cv2.WINDOW_NORMAL)
     f = sf
     while f <= play_ef:
         ok, frame = cap.read()
@@ -207,7 +317,7 @@ def play_and_prompt(video_path: Path, rally: dict, fps: float) -> str | None:
             break
         H, W = frame.shape[:2]
         # Persistent A/B court-half indicator (drawn first, under the trail).
-        _draw_side_legend(frame, W, H)
+        _draw_side_legend(frame, W, H, orientation)
 
         # Overlay only up to the ORIGINAL end_frame; padded frames past ef are
         # context-only (no new trajectory points are added).
@@ -241,12 +351,11 @@ def play_and_prompt(video_path: Path, rally: dict, fps: float) -> str | None:
         cv2.putText(frame, hud,
                     (12, 28), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
         # On-screen key legend so the A/B-vs-N-vs-S distinction is always visible.
-        legend = "A=left wins  B=right wins  N=not a rally (warm-up/junk)  S=skip unclear  R=replay  Q=quit"
         cv2.putText(frame, legend, (12, H - 14),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.52, (0, 0, 0), 4)
         cv2.putText(frame, legend, (12, H - 14),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.52, (255, 255, 255), 1)
-        cv2.imshow(WIN_NAME, frame)
+        cv2.imshow(wname, frame)
         k = cv2.waitKey(delay) & 0xFF
         if k in (ord('a'), ord('A')):
             cap.release(); return "sideA"
@@ -277,6 +386,9 @@ def play_and_prompt(video_path: Path, rally: dict, fps: float) -> str | None:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--annotator", default=os.environ.get("USER", "unknown"))
+    ap.add_argument("--orientation", choices=list(VALID_ORIENTATIONS), default=None,
+                    help="camera orientation override (default: trajectory JSON "
+                         "field, else orientation.json sidecar, else side_on)")
     args = ap.parse_args()
 
     done = load_done()
@@ -285,6 +397,7 @@ def main() -> int:
     if not TRAJ_DIR.exists():
         print(f"[annotate] no trajectories at {TRAJ_DIR}"); return 2
 
+    sidecar = load_orientation_map()
     ANN_PATH.parent.mkdir(parents=True, exist_ok=True)
     auto_skipped = 0
     with ANN_PATH.open("a") as ann_f:
@@ -295,6 +408,11 @@ def main() -> int:
             if video_path is None:
                 print(f"[annotate] no video for {vid}, skipping")
                 continue
+            orientation = resolve_labeler_orientation(
+                vid, traj_payload=data, sidecar=sidecar, override=args.orientation)
+            if orientation != SIDE_ON:
+                print(f"[annotate] {vid}: orientation={orientation} "
+                      f"(A=near/bottom, B=far/top)")
             for rally in data.get("rallies", []):
                 key = (vid, int(rally["rally_id"]))
                 if key in done:
@@ -310,7 +428,7 @@ def main() -> int:
                           file=sys.stderr)
                     continue
                 while True:
-                    res = play_and_prompt(video_path, rally, fps)
+                    res = play_and_prompt(video_path, rally, fps, orientation)
                     if res is None:
                         continue  # replay
                     break
