@@ -12,6 +12,9 @@ struct MultiAngleAnalysisView: View {
     @State private var secondPipeline = HawkEyePipeline()
     @State private var fusedResult: HawkEyeResult?
     @State private var isAnalyzing = false
+    @State private var isImporting = false
+    @State private var importErrorMessage: String?
+    @State private var showImportErrorAlert = false
 
     var body: some View {
         VStack(spacing: 20) {
@@ -40,6 +43,9 @@ struct MultiAngleAnalysisView: View {
                         result: fused
                     )
                 }
+            } else if isImporting {
+                ProgressView("Preparing video\u{2026}")
+                    .padding()
             } else if isAnalyzing {
                 ProgressView("Analyzing second angle...")
                     .padding()
@@ -65,6 +71,11 @@ struct MultiAngleAnalysisView: View {
             }
         }
         .padding()
+        .alert("Import Error", isPresented: $showImportErrorAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(importErrorMessage ?? "The video could not be imported.")
+        }
     }
 
     // MARK: - Result Card
@@ -113,12 +124,23 @@ struct MultiAngleAnalysisView: View {
     private func handleVideoSelection(_ item: PhotosPickerItem?) async {
         guard let item else { return }
 
-        // Export video to temporary URL
-        guard let videoData = try? await item.loadTransferable(type: Data.self) else { return }
-
-        let tempURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent("angle2_\(UUID().uuidString).mp4")
-        try? videoData.write(to: tempURL)
+        // Stream the video to disk via FileRepresentation (never into RAM).
+        isImporting = true
+        let tempURL: URL
+        do {
+            guard let video = try await item.loadTransferable(type: ImportedVideo.self) else {
+                throw VideoImportError.unsupportedItem
+            }
+            try ImportedVideo.validate(url: video.url)
+            tempURL = video.url
+        } catch {
+            isImporting = false
+            selectedItem = nil
+            importErrorMessage = error.localizedDescription
+            showImportErrorAlert = true
+            return
+        }
+        isImporting = false
 
         secondAngleURL = tempURL
         isAnalyzing = true

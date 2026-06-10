@@ -23,6 +23,10 @@ struct ChallengeVideoView: View {
     @State private var showRecorder = false
     @State private var showResult = false
     @State private var showErrorAlert = false
+    @State private var isImporting = false
+    @State private var importProgress: Progress?
+    @State private var importErrorMessage: String?
+    @State private var showImportErrorAlert = false
 
     private var hasCalibration: Bool { !calibrations.isEmpty }
 
@@ -110,6 +114,42 @@ struct ChallengeVideoView: View {
     // MARK: - Video Source Picker
 
     private var videoSourcePickerView: some View {
+        ZStack {
+            videoSourcePickerContent
+
+            // Importing overlay: shown from the moment a library video is
+            // picked until the file lands on disk (or the import fails).
+            if isImporting {
+                Color.black.opacity(0.7)
+                    .ignoresSafeArea()
+
+                VStack(spacing: 20) {
+                    if let importProgress {
+                        ProgressView(importProgress)
+                            .progressViewStyle(.linear)
+                            .labelsHidden()
+                            .tint(.yellow)
+                            .frame(maxWidth: 220)
+                    } else {
+                        ProgressView()
+                            .scaleEffect(1.5)
+                            .tint(.yellow)
+                    }
+
+                    Text("Preparing video\u{2026}")
+                        .font(.title3.bold())
+                        .foregroundStyle(.white)
+                }
+            }
+        }
+        .alert("Import Error", isPresented: $showImportErrorAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(importErrorMessage ?? "The video could not be imported.")
+        }
+    }
+
+    private var videoSourcePickerContent: some View {
         VStack(spacing: 24) {
             Image(systemName: "eye.trianglebadge.exclamationmark")
                 .font(.system(size: 50))
@@ -343,7 +383,7 @@ struct ChallengeVideoView: View {
             if let hawkEyeResult = pipeline.result {
                 TrajectoryReplayView(
                     result: hawkEyeResult,
-                    videoURL: videoCaptureManager.capturedVideoURL,
+                    videoURL: url,
                     captureFPS: videoCaptureManager.currentFPS,
                     isDemoMode: isDemoMode
                 )
@@ -363,14 +403,25 @@ struct ChallengeVideoView: View {
 
     private func handleVideoSelection(_ item: PhotosPickerItem?) {
         guard let item else { return }
-        Task {
-            if let data = try? await item.loadTransferable(type: Data.self) {
-                let tempURL = FileManager.default.temporaryDirectory
-                    .appendingPathComponent(UUID().uuidString)
-                    .appendingPathExtension("mov")
-                try? data.write(to: tempURL)
-                await MainActor.run {
-                    selectedVideoURL = tempURL
+        isImporting = true
+        // The Progress-returning variant streams the file to disk (no full load
+        // into RAM) and reports determinate progress for iCloud downloads.
+        importProgress = item.loadTransferable(type: ImportedVideo.self) { result in
+            Task { @MainActor in
+                defer {
+                    isImporting = false
+                    importProgress = nil
+                }
+                do {
+                    guard let video = try result.get() else {
+                        throw VideoImportError.unsupportedItem
+                    }
+                    try ImportedVideo.validate(url: video.url)
+                    selectedVideoURL = video.url
+                } catch {
+                    selectedVideoItem = nil
+                    importErrorMessage = error.localizedDescription
+                    showImportErrorAlert = true
                 }
             }
         }

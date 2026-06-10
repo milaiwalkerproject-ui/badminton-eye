@@ -74,6 +74,8 @@
 		V91001 /* CoreMLShuttleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = V92001 /* CoreMLShuttleDetector.swift */; };
 		HP1001 /* HapticFeedbackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = HP2001 /* HapticFeedbackService.swift */; };
 		MC1001 /* ResultFusionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = MC2001 /* ResultFusionService.swift */; };
+		VI1001 /* ImportedVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = VI2001 /* ImportedVideo.swift */; };
+		VI1002 /* ImportedVideoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = VI2002 /* ImportedVideoTests.swift */; };
 		MC1002 /* MultiAngleAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = MC2002 /* MultiAngleAnalysisView.swift */; };
 		CF1001 /* ScoringFormatBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2001 /* ScoringFormatBuilderView.swift */; };
 		AS1001 /* AudioTemporalSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = AS2001 /* AudioTemporalSync.swift */; };
@@ -204,6 +206,8 @@
 		V92001 /* CoreMLShuttleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMLShuttleDetector.swift; sourceTree = "<group>"; };
 		HP2001 /* HapticFeedbackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticFeedbackService.swift; sourceTree = "<group>"; };
 		MC2001 /* ResultFusionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultFusionService.swift; sourceTree = "<group>"; };
+		VI2001 /* ImportedVideo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportedVideo.swift; sourceTree = "<group>"; };
+		VI2002 /* ImportedVideoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportedVideoTests.swift; sourceTree = "<group>"; };
 		MC2002 /* MultiAngleAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiAngleAnalysisView.swift; sourceTree = "<group>"; };
 		CF2001 /* ScoringFormatBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoringFormatBuilderView.swift; sourceTree = "<group>"; };
 		AS2001 /* AudioTemporalSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioTemporalSync.swift; sourceTree = "<group>"; };
@@ -399,6 +403,7 @@
 				V92001 /* CoreMLShuttleDetector.swift */,
 				HP2001 /* HapticFeedbackService.swift */,
 				MC2001 /* ResultFusionService.swift */,
+				VI2001 /* ImportedVideo.swift */,
 				AS2001 /* AudioTemporalSync.swift */,
 				DC2001 /* MultiCamCaptureManager.swift */,
 				GR2001 /* GameRecordingService.swift */,
@@ -443,6 +448,7 @@
 				UT20006 /* FeaturizeGoldenTests.swift */,
 				UT20007 /* LiveMatchScoringTests.swift */,
 				UT20008 /* ClipRefTests.swift */,
+				VI2002 /* ImportedVideoTests.swift */,
 				UT20004 /* WatchSyncManagerTests.swift */,
 				UT20005 /* WatchMatchViewModelTests.swift */,
 			);
@@ -723,6 +729,7 @@
 				V91001 /* CoreMLShuttleDetector.swift in Sources */,
 				HP1001 /* HapticFeedbackService.swift in Sources */,
 				MC1001 /* ResultFusionService.swift in Sources */,
+				VI1001 /* ImportedVideo.swift in Sources */,
 				MC1002 /* MultiAngleAnalysisView.swift in Sources */,
 				CF1001 /* ScoringFormatBuilderView.swift in Sources */,
 				AS1001 /* AudioTemporalSync.swift in Sources */,
@@ -781,6 +788,7 @@
 				UT10008 /* FeaturizeGoldenTests.swift in Sources */,
 				UT10009 /* LiveMatchScoringTests.swift in Sources */,
 				UT10010 /* ClipRefTests.swift in Sources */,
+				VI1002 /* ImportedVideoTests.swift in Sources */,
 				/* Watch tests (UT10005/06/07) quarantined from the iOS test target:
 				   WatchMatchViewModel.swift is a watchOS-module source that can't
 				   resolve its app-module deps (SyncPayload, WatchSessionManager) in
