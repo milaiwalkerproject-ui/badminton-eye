@@ -78,6 +78,10 @@ struct FootageDetailView: View {
 
     @ViewBuilder
     private func gameSection(for rec: GameVideoRecord) -> some View {
+        // Resolve once per render — drives the player/placeholder, the
+        // disabled state of both highlight actions, AND the explanatory
+        // footer so a grayed row is never left unexplained (no dead taps).
+        let recordingAvailable = rec.resolvedURL() != nil
         Section {
             if let url = rec.resolvedURL() {
                 VideoPlayer(player: AVPlayer(url: url))
@@ -122,7 +126,7 @@ struct FootageDetailView: View {
                     Image(systemName: "scissors")
                 }
             }
-            .disabled(rec.resolvedURL() == nil)
+            .disabled(!recordingAvailable)
             .accessibilityLabel(rec.clipRef == nil
                 ? "Create highlight for game \(rec.gameNumber)"
                 : "Edit highlight for game \(rec.gameNumber)")
@@ -141,9 +145,13 @@ struct FootageDetailView: View {
                     Image(systemName: "square.and.arrow.up")
                 }
             }
-            .disabled(rec.resolvedURL() == nil)
+            .disabled(!recordingAvailable)
         } header: {
             Text("Game \(rec.gameNumber)")
+        } footer: {
+            if !recordingAvailable {
+                Text("Recording unavailable — this game's video file is missing, so highlight actions are disabled.")
+            }
         }
     }
 

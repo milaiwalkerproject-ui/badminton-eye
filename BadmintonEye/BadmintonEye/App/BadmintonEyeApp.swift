@@ -124,6 +124,10 @@ struct ContentView: View {
 
     @State private var restoredViewModel: LiveMatchViewModel?
     @State private var hasCheckedRestore = false
+    /// Set when launch cleanup found a resumable in-progress match — drives
+    /// the "Resume Match?" prompt. The match stays untouched until the user
+    /// chooses Resume or Discard.
+    @State private var pendingResumeID: PersistentIdentifier?
     /// Presents the standalone video-import / Hawk-Eye challenge flow
     /// (`ChallengeVideoView`) from the Matches tab. This restores a top-level
     /// entry point for importing a clip from the photo library — previously the
@@ -230,15 +234,14 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            // MVP: skip crash-recovery auto-resume. Mark any leftover
-            // in-progress matches as abandoned so they don't fight startup
-            // performance (SwiftData notifications, Watch sync, etc.) and
-            // so the user lands on the home tabs every launch. We can
-            // reintroduce a proper "Resume in-progress match?" prompt
-            // post-MVP if needed.
+            // Launch leftover-match pass: the NEWEST resumable in-progress
+            // match is offered to the user via a "Resume Match?" prompt
+            // (Resume / Discard) instead of silently vanishing — felt data
+            // loss was a review trust-breaker. Any other leftovers (older
+            // duplicates, undecodable state) are finalized as abandoned.
             if !hasCheckedRestore {
                 hasCheckedRestore = true
-                // PERF: run the leftover-match cleanup off the main thread.
+                // PERF: run the leftover-match pass off the main thread.
                 // Time Profiler on a cold launch (iPhone 16) showed a ~2.0s
                 // SEVERE main-thread hang starting the instant ContentView
                 // appeared. The dominant frames were SwiftData materialization
@@ -246,22 +249,37 @@ struct ContentView: View {
                 // `-[NSSQLiteConnection fetchResultSet:usingFetchPlan:]`,
                 // relationship faulting) driven by this synchronous fetch in
                 // `onAppear`. Doing it in a detached background `ModelContext`
-                // keeps the main thread free for first paint; the work is a
-                // one-shot bookkeeping pass whose result the user never waits on.
+                // keeps the main thread free for first paint; only the
+                // (Sendable) ID of a resumable match hops back to the main
+                // actor to raise the prompt.
                 let containerForCleanup = modelContext.container
                 Task.detached(priority: .utility) {
                     let context = ModelContext(containerForCleanup)
                     let descriptor = FetchDescriptor<PersistedMatch>(
-                        predicate: #Predicate { !$0.isComplete && !$0.isAbandoned }
+                        predicate: #Predicate { !$0.isComplete && !$0.isAbandoned },
+                        sortBy: [SortDescriptor(\.startedAt, order: .reverse)]
                     )
                     guard let leftovers = try? context.fetch(descriptor),
                           !leftovers.isEmpty else { return }
+                    var resumeID: PersistentIdentifier?
                     let now = Date()
                     for match in leftovers {
-                        match.isAbandoned = true
-                        match.endedAt = now
+                        if resumeID == nil,
+                           MatchResumeService.isResumable(
+                               isComplete: match.isComplete,
+                               isAbandoned: match.isAbandoned,
+                               stateJSON: match.stateJSON
+                           ) {
+                            resumeID = match.persistentModelID
+                        } else {
+                            match.isAbandoned = true
+                            match.endedAt = now
+                        }
                     }
                     try? context.save()
+                    if let resumeID {
+                        await MainActor.run { pendingResumeID = resumeID }
+                    }
                 }
             }
             if !AppMode.freeAppleIDMode {
@@ -280,6 +298,47 @@ struct ContentView: View {
         .sheet(isPresented: $showVideoImport) {
             ChallengeVideoView()
         }
+        // Resume prompt for an in-progress match persisted by a previous
+        // session. The user explicitly chooses; nothing is dropped silently.
+        .alert(
+            "Resume Match?",
+            isPresented: Binding(
+                get: { pendingResumeID != nil },
+                set: { if !$0 { pendingResumeID = nil } }
+            )
+        ) {
+            Button("Resume") {
+                if let id = pendingResumeID { resumeMatch(id: id) }
+            }
+            Button("Discard", role: .destructive) {
+                if let id = pendingResumeID { discardMatch(id: id) }
+            }
+        } message: {
+            Text("You have an unfinished match from a previous session.")
+        }
     }
 
+    /// Rebuilds the live-match view model from the persisted crash-recovery
+    /// state and presents the live screen. Falls back to discarding if the
+    /// state can no longer be restored.
+    private func resumeMatch(id: PersistentIdentifier) {
+        guard let match = modelContext.model(for: id) as? PersistedMatch,
+              let vm = LiveMatchViewModel.restoreFromPersistedMatch(
+                  match, modelContext: modelContext
+              )
+        else {
+            discardMatch(id: id)
+            return
+        }
+        restoredViewModel = vm
+    }
+
+    /// Finalizes the leftover match as abandoned (it gets an end date and the
+    /// abandoned flag, same as ending a match from the live screen).
+    private func discardMatch(id: PersistentIdentifier) {
+        guard let match = modelContext.model(for: id) as? PersistedMatch else { return }
+        match.isAbandoned = true
+        match.endedAt = Date()
+        try? modelContext.save()
+    }
 }

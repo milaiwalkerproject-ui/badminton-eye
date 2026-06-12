@@ -13,14 +13,48 @@ struct PlayerPickerView: View {
     @State private var searchText = ""
 
     private var recentOpponents: [String] {
+        Self.recentOpponents(
+            fromMatchNameLists: recentMatches.map { match in
+                [match.playerAName, match.playerBName,
+                 match.playerA2Name, match.playerB2Name].compactMap { $0 }
+            },
+            excluding: excludeNames
+        )
+    }
+
+    // MARK: - Recents derivation (placeholder-aware, testable)
+
+    /// Default names the app substitutes when a match is started without real
+    /// player names — `MatchState` falls back to "Player 1"/"Player 2" for
+    /// singles and `MatchSetupView` fills "Player A1"… for doubles/mixed.
+    /// They're bookkeeping placeholders, not people, so they must never
+    /// surface as "Recent Opponents".
+    static let placeholderPlayerNames: Set<String> = [
+        "Player 1", "Player 2",
+        "Player A1", "Player A2", "Player B1", "Player B2",
+        "Side A", "Side B",
+    ]
+
+    /// Derives the recent-opponent chips from per-match name lists (most
+    /// recent match first): de-duplicated, placeholder and excluded names
+    /// dropped, capped at `limit`. Pure function so the filtering is unit
+    /// tested without SwiftData.
+    static func recentOpponents(
+        fromMatchNameLists nameLists: [[String]],
+        excluding excludeNames: [String],
+        limit: Int = 5
+    ) -> [String] {
         var seen = Set<String>()
         var result: [String] = []
-        for match in recentMatches {
-            for name in [match.playerAName, match.playerBName, match.playerA2Name, match.playerB2Name].compactMap({ $0 }) {
-                guard !name.isEmpty, !excludeNames.contains(name), !seen.contains(name) else { continue }
+        for names in nameLists {
+            for name in names {
+                guard !name.isEmpty,
+                      !placeholderPlayerNames.contains(name),
+                      !excludeNames.contains(name),
+                      !seen.contains(name) else { continue }
                 seen.insert(name)
                 result.append(name)
-                if result.count >= 5 { return result }
+                if result.count >= limit { return result }
             }
         }
         return result

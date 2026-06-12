@@ -126,6 +126,10 @@ struct GlassIconButton: View {
                 .background(.ultraThinMaterial, in: Circle())
                 .overlay(Circle().strokeBorder(Color.white.opacity(0.15), lineWidth: 0.5))
                 .shadow(color: .black.opacity(0.18), radius: 10, y: 4)
+                // Keep the 38pt glass visual but expand the hit area to the
+                // HIG 44pt minimum — these are the undo/exit controls.
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
         }
         .disabled(disabled)
         .opacity(disabled ? 0.45 : 1.0)

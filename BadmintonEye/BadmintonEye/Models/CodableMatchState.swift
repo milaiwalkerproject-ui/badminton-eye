@@ -66,3 +66,25 @@ struct CodableMatchState: Codable {
         return state
     }
 }
+
+// MARK: - Launch resume detection
+
+/// Decides whether a persisted match left over from a previous session can be
+/// offered for resume at launch (`ContentView`'s "Resume Match?" prompt).
+/// Pure logic over the persisted columns so it's unit-testable without
+/// SwiftData: a match is resumable only when it is neither complete nor
+/// abandoned AND its crash-recovery `stateJSON` decodes to an in-progress
+/// `MatchState`. Anything else (missing/corrupt JSON, terminal phase) is
+/// finalized as abandoned instead of silently vanishing.
+enum MatchResumeService {
+    static func isResumable(
+        isComplete: Bool,
+        isAbandoned: Bool,
+        stateJSON: Data?
+    ) -> Bool {
+        guard !isComplete, !isAbandoned, let data = stateJSON,
+              let codable = try? JSONDecoder().decode(CodableMatchState.self, from: data)
+        else { return false }
+        return codable.matchPhase == .inProgress
+    }
+}

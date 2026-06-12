@@ -100,9 +100,11 @@ final class VoiceAnnouncementService: NSObject {
     /// 2. Voice matching `Locale.current.language.languageCode`.
     /// 3. System default (nil — AVFoundation picks automatically).
     private func preferredVoice() -> AVSpeechSynthesisVoice? {
-        // Prefer the in-app language selection when available.
+        // Prefer a legacy in-app language override when one was explicitly
+        // set; otherwise follow the system locale (which reflects iOS's
+        // native per-app language setting — the in-app picker is gone).
         let languageCode: String
-        if let manager = localizationManager {
+        if let manager = localizationManager, manager.hasCustomLanguage {
             languageCode = manager.currentLanguage.rawValue
         } else {
             languageCode = Locale.current.language.languageCode?.identifier ?? "en"

@@ -117,7 +117,14 @@ final class LocalizationManager {
     }
 
     /// Resolves (and caches) the `.lproj` bundle for the current language.
+    ///
+    /// Returns `nil` when the user never set a legacy in-app override, so
+    /// `localized(_:)` falls through to `NSLocalizedString` and the system
+    /// (including iOS's native per-app language setting) resolves the
+    /// language. The in-app picker was removed from Settings; only a
+    /// previously stored override still routes through an explicit bundle.
     private func languageBundle() -> Bundle? {
+        guard hasCustomLanguage else { return nil }
         if cachedBundleLanguage == currentLanguage, let cachedBundle {
             return cachedBundle
         }

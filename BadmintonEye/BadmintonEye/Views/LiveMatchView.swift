@@ -40,6 +40,12 @@ struct LiveMatchView: View {
     /// Non-blocking badge: appears only when the system has queued uncertain
     /// calls for optional review. Tapping opens the zoom/slow-mo review surface;
     /// it never auto-presents, so it can't interrupt live play.
+    ///
+    /// Lives in a reserved slot inside the top HUD row (portrait and
+    /// landscape) — NOT as a screen-level overlay. A previous revision
+    /// overlaid it `.topTrailing` on the whole layout, which rendered it on
+    /// top of the ✕ end-match button the moment a call was queued, burying
+    /// the exit control mid-match.
     @ViewBuilder
     private var reviewBadge: some View {
         if !viewModel.reviewQueue.isEmpty {
@@ -52,9 +58,11 @@ struct LiveMatchView: View {
                     .padding(.vertical, 7)
                     .background(.orange, in: Capsule())
                     .foregroundStyle(.white)
+                    // HIG 44pt minimum tap target; the capsule stays compact
+                    // but the hit area fills the HUD row height.
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
             }
-            .padding(.top, 12)
-            .padding(.trailing, 12)
             .accessibilityLabel("Review \(viewModel.reviewQueue.count) uncertain calls")
         }
     }
@@ -69,7 +77,6 @@ struct LiveMatchView: View {
                 portraitLayout(in: proxy.size)
             }
         }
-        .overlay(alignment: .topTrailing) { reviewBadge }
         .toolbar(.hidden, for: .tabBar)
         .alert("End Match?", isPresented: $showAbandonAlert) {
             Button("Cancel", role: .cancel) {}
@@ -379,6 +386,7 @@ struct LiveMatchView: View {
                     }
                     .accessibilityLabel("Undo last point")
                     Spacer(minLength: 0)
+                    reviewBadge
                     if viewModel.state.matchPhase == .inProgress {
                         challengeButton
                     }
@@ -435,6 +443,8 @@ struct LiveMatchView: View {
                 .accessibilityHint(viewModel.canUndo ? "Double-tap to undo the last scored point" : "No points to undo")
 
                 Spacer(minLength: 0)
+
+                reviewBadge
 
                 if viewModel.state.matchPhase == .inProgress {
                     challengeButton

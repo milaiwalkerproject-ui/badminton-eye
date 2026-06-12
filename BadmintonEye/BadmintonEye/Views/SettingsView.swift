@@ -1,10 +1,12 @@
 import SwiftUI
 import SwiftData
+import UIKit
 import AuthenticationServices
 
 struct SettingsView: View {
 
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.openURL) private var openURL
     @Bindable private var authManager = AuthManager.shared
     private var subscriptionManager = SubscriptionManager.shared
     @State private var showPaywall = false
@@ -196,19 +198,28 @@ struct SettingsView: View {
 
     private var preferencesSection: some View {
         Section {
-            // Language
-            Picker(selection: $localization.currentLanguage) {
-                ForEach(AppLanguage.allCases) { language in
-                    HStack(spacing: 8) {
-                        Text(language.flag)
-                        Text(language.nativeName)
-                    }
-                    .tag(language)
+            // Language — no in-app picker (it rendered broken "?" glyph boxes
+            // and an in-app language switcher is non-HIG anyway). The app
+            // ships 9 localizations, so iOS surfaces a per-app language
+            // setting natively; this row deep-links straight to it.
+            Button {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    openURL(url)
                 }
             } label: {
                 HStack(spacing: BE.Space.m) {
                     SettingsIconTile(systemName: "globe", tint: .blue)
-                    Text(localization.localized("settings.language"))
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(localization.localized("settings.language"))
+                            .foregroundStyle(.primary)
+                        Text("Set in iOS Settings")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "arrow.up.right")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             }
 

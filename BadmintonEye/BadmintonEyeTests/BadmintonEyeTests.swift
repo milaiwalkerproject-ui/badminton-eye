@@ -9,6 +9,7 @@
 
 import XCTest
 import SwiftData
+import ScoringEngine
 @testable import BadmintonEye
 
 // MARK: - ResultFusionService
@@ -182,5 +183,132 @@ final class PlayerRecordsPredicateTests: XCTestCase {
         XCTAssertEqual(fromFiltered["Bob"], PlayerListView.WinLoss(wins: 1, losses: 2))
         XCTAssertEqual(fromFiltered["Cara"], PlayerListView.WinLoss(wins: 1, losses: 0))
         XCTAssertEqual(fromFiltered["Dan"], PlayerListView.WinLoss(wins: 0, losses: 1))
+    }
+}
+
+// MARK: - Recent Opponents derivation (placeholder filtering)
+
+final class RecentOpponentsTests: XCTestCase {
+
+    func testPlaceholderNamesAreExcluded() {
+        // A singles match started without typed names persists the
+        // ScoringEngine defaults "Player 1"/"Player 2"; doubles persists
+        // "Player A1"… — none of these are real opponents.
+        let recents = PlayerPickerView.recentOpponents(
+            fromMatchNameLists: [
+                ["Player 1", "Player 2"],
+                ["Player A1", "Player A2", "Player B1", "Player B2"],
+                ["Alice", "Bob"],
+            ],
+            excluding: []
+        )
+        XCTAssertEqual(recents, ["Alice", "Bob"],
+                       "Placeholder defaults must never surface as recent opponents")
+    }
+
+    func testAllPlaceholderMatchesYieldEmptyRecents() {
+        let recents = PlayerPickerView.recentOpponents(
+            fromMatchNameLists: [["Player 1", "Player 2"], ["Side A", "Side B"]],
+            excluding: []
+        )
+        XCTAssertTrue(recents.isEmpty,
+                      "Matches with only placeholder names must produce no chips")
+    }
+
+    func testExcludedAndDuplicateNamesAreDropped() {
+        let recents = PlayerPickerView.recentOpponents(
+            fromMatchNameLists: [
+                ["Alice", "Bob"],
+                ["Bob", "Cara"],   // Bob deduplicated
+                ["Dan", "Alice"],  // Alice deduplicated
+            ],
+            excluding: ["Alice"]   // already selected in the other slot
+        )
+        XCTAssertEqual(recents, ["Bob", "Cara", "Dan"])
+    }
+
+    func testRecencyOrderAndLimit() {
+        let recents = PlayerPickerView.recentOpponents(
+            fromMatchNameLists: [
+                ["A", "B"], ["C", "D"], ["E", "F"], ["G", "H"],
+            ],
+            excluding: []
+        )
+        XCTAssertEqual(recents, ["A", "B", "C", "D", "E"],
+                       "Most recent matches first, capped at 5 chips")
+    }
+
+    func testEmptyNamesAreIgnored() {
+        let recents = PlayerPickerView.recentOpponents(
+            fromMatchNameLists: [["", "Alice"]],
+            excluding: []
+        )
+        XCTAssertEqual(recents, ["Alice"])
+    }
+}
+
+// MARK: - Launch resume detection
+
+final class MatchResumeServiceTests: XCTestCase {
+
+    /// Crash-recovery JSON for a match in the given phase.
+    private func stateJSON(complete: Bool) throws -> Data {
+        var state = MatchState.newSinglesMatch(
+            teamAName: "Alice", teamBName: "Bob", scoringSystem: .standard21
+        )
+        if complete {
+            // Run side A to 21-0 so the engine marks the match complete.
+            for _ in 0..<21 {
+                state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+            }
+            // 21-0 wins game 1; for best-of-3 we need two games.
+            for _ in 0..<21 {
+                state = MatchEngine.apply(event: .scorePoint(.sideA), to: state)
+            }
+        }
+        return try JSONEncoder().encode(CodableMatchState(from: state))
+    }
+
+    func testInProgressMatchIsResumable() throws {
+        let json = try stateJSON(complete: false)
+        XCTAssertTrue(MatchResumeService.isResumable(
+            isComplete: false, isAbandoned: false, stateJSON: json
+        ), "A leftover in-progress match must be offered for resume")
+    }
+
+    func testCompleteFlagBlocksResume() throws {
+        let json = try stateJSON(complete: false)
+        XCTAssertFalse(MatchResumeService.isResumable(
+            isComplete: true, isAbandoned: false, stateJSON: json
+        ))
+    }
+
+    func testAbandonedFlagBlocksResume() throws {
+        let json = try stateJSON(complete: false)
+        XCTAssertFalse(MatchResumeService.isResumable(
+            isComplete: false, isAbandoned: true, stateJSON: json
+        ))
+    }
+
+    func testMissingStateJSONBlocksResume() {
+        XCTAssertFalse(MatchResumeService.isResumable(
+            isComplete: false, isAbandoned: false, stateJSON: nil
+        ), "No crash-recovery state → nothing to resume")
+    }
+
+    func testCorruptStateJSONBlocksResume() {
+        let garbage = Data([0xDE, 0xAD, 0xBE, 0xEF])
+        XCTAssertFalse(MatchResumeService.isResumable(
+            isComplete: false, isAbandoned: false, stateJSON: garbage
+        ), "Undecodable state must be finalized as abandoned, not resumed")
+    }
+
+    func testCompletedPhaseInJSONBlocksResume() throws {
+        // Flags say in-progress but the serialized state already reached a
+        // terminal phase — the JSON is authoritative.
+        let json = try stateJSON(complete: true)
+        XCTAssertFalse(MatchResumeService.isResumable(
+            isComplete: false, isAbandoned: false, stateJSON: json
+        ))
     }
 }
