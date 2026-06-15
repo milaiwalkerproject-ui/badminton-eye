@@ -9,23 +9,29 @@ See: .planning/PROJECT.md (updated 2026-05-16 — MVP pivot)
 
 ## Current Position
 
-Phase: MVP-E — On-device validation (Phases A–D code complete; one model blocker remains before on-device demo)
+Phase: MVP-E — On-device validation (Phases A–D code complete; pipeline live, awaiting physical-device test pass)
 Plan: See PROJECT.md → Phases A–E
 Status:
 - **Phase A (Strip down):** ✅ `AppMode.freeAppleIDMode` gates CloudKit, Apple Sign In, StoreKit, Live Activity, Watch sync. Entitlements stripped of paid capabilities.
-- **Phase B (Continuous capture + calibration):** ✅ `CourtCalibrationView` runs at match start; `GameRecordingService` re-enabled (2026-05-21) — `startContinuousCapture` / `stopContinuousCapture` now actually call `recorder.startMatchRecording` / `stopMatchRecording` from `LiveMatchViewModel`.
-- **Phase C (Real shuttle detector):** ✅ `TrackNetV3.mlpackage` is bundled. `TrackNetWindowAdapter` (2026-05-21) wraps `TrackNetShuttleDetector`'s windowed API into `ShuttleDetecting`, with rolling 8-frame ring, 288×512 CI preprocessing into a `CVPixelBufferPool`, oldest-frame background (TODO: temporal-median), and stride-4 inference caching. `LiveMatchViewModel` injects it into the suggestor.
-- **Phase D (Rally-end suggestion loop):** ✅ `TrajectoryRallySuggestor` (2026-05-21) replaces `StubRallySuggestor` — pulls last ~2s from `CircularFrameBuffer`, runs `ShuttleDetecting`, fits trajectory via `TrajectoryCalculator`, maps landing into court space via `CalibrationProfile`, returns side + confidence (count + parabola-residual + distance-from-net, equal weights, clamped). Graceful fallback (coin-flip capped at 0.50) when calibration missing / buffer empty / < 2 detections. `RallySuggestionSheet` accepts an injected suggestor; `LiveMatchView` passes the real one from `LiveMatchViewModel`. Build on iPhone 17 sim: SUCCEEDED.
-- **Phase E (On-device validation):** ⏳ Awaiting user — tether iPhone, free Apple ID install, calibrate court, play short rallies.
+- **Phase B (Continuous capture + calibration):** ✅ `CourtCalibrationView` runs at match start; `GameRecordingService` re-enabled — `startContinuousCapture` / `stopContinuousCapture` call `recorder.startMatchRecording` / `stopMatchRecording` from `LiveMatchViewModel`. Court Calibration also reachable from Settings.
+- **Phase C (Real shuttle detector):** ✅ `TrackNetV3.mlpackage` is bundled. `TrackNetWindowAdapter` wraps `TrackNetShuttleDetector`'s windowed API into `ShuttleDetecting`, with rolling 8-frame ring, 288×512 CI preprocessing into a `CVPixelBufferPool`, oldest-frame background (TODO: temporal-median), and stride-4 inference caching. `LiveMatchViewModel` injects it into the suggestor. Pipeline since gained orientation-aware / both-angle support and a cross-court shuttle mask post-filter (ADR-0001).
+- **Phase D (Rally-end suggestion loop):** ✅ `TrajectoryRallySuggestor` replaces `StubRallySuggestor` — pulls last ~2s from `CircularFrameBuffer`, runs `ShuttleDetecting`, fits trajectory via `TrajectoryCalculator`, maps landing into court space via `CalibrationProfile`, returns side + confidence (count + parabola-residual + distance-from-net, equal weights, clamped). Graceful fallback (coin-flip capped at 0.50) when calibration missing / buffer empty / < 2 detections. `RallySuggestionSheet` accepts an injected suggestor; `LiveMatchView` passes the real one.
+- **Phase E (On-device validation):** ⏳ Awaiting user — tether iPhone, free Apple ID install, calibrate court, play short rallies, measure suggestion accuracy vs the ~70% target.
 
-Open follow-ups (not blockers for Phase E start, quality improvements only):
-1. **TrackNet adapter background frame:** uses oldest-window frame; temporal-median blend is the proper fix — improves accuracy when the camera is static (typical tripod setup).
+Work landed since the 2026-05-21 snapshot (54 commits): Footage tab fully wired (see resolved follow-up #3), trim/zoom highlight clip editor with persisted `ClipRef`, library video import streamed to disk with progress, Players-tab + cold-launch perf fixes (killed a measured 2.0s SwiftData main-thread hang), five trust-breaker UX defects from design review, and a large hawkeye/labeler push (orientation support, N=not-a-rally verdict, auto-annotate baselines).
+
+Open follow-ups (quality improvements, not Phase E blockers):
+1. **TrackNet adapter background frame:** uses oldest-window frame; temporal-median blend is the proper fix — improves accuracy when the camera is static (typical tripod setup). Tracked as `TODO(bg-median)` in `TrackNetWindowAdapter.swift`.
 2. **TrackNet confidence calibration:** heatmap peak passed through clamped to [0,1]; may want `sigmoid()` if the bundled checkpoint emits logits (suggestor's ranking still works either way).
-3. **Footage tab WIP** (`GameVideoRecord`, `FootageView`, `FootageDetailView`) is committed as standalone files but not registered in `ModelContainer` / `project.pbxproj`, and `PersistedMatch.gameVideos` relationship isn't added. Defer until after Phase E proves the suggestion loop.
+3. ~~**Footage tab WIP**~~ ✅ RESOLVED — `GameVideoRecord` is registered in the `ModelContainer` schema, `PersistedMatch.gameVideos` cascade relationship is in place, and the files are wired into `project.pbxproj`. Footage editor (trim/zoom, `ClipRef`) shipped.
 
-Last activity: 2026-05-21 — Phases B–D wired end-to-end; TrackNetWindowAdapter closes the detector blocker; ready for on-device Phase E
+Infra:
+- **CI added** (`.github/workflows/ci.yml`): macOS runner runs `swift test` for ScoringEngine and `xcodebuild test` for the BadmintonEye scheme on push/PR to `main`.
+- **Stale PRs:** 7 open PRs (#18, #20–24, #27) are pre-pivot (claude-flow bot, May 10) and mostly target features the MVP pivot cut (paywall, widgets, account deletion, superseded CoreML detector). Triaged 2026-06-15 — see PR comments.
 
-Progress: [#######---] 70% on MVP milestone — full pipeline live; awaiting on-device validation
+Last activity: 2026-06-15 — refreshed planning state, added CI, triaged stale pre-pivot PRs. Code-complete through Phase D; Phase E (on-device) is the remaining gate.
+
+Progress: [########--] 80% on MVP milestone — full pipeline live + hardened; awaiting on-device validation
 
 ## v2.0 history (paused, preserved for context)
 
@@ -106,6 +112,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-31
-Stopped at: v1.14 complete — all phases done
+Last session: 2026-06-15
+Stopped at: Planning state refreshed, CI workflow added, stale pre-pivot PRs triaged. MVP Phases A–D code-complete; Phase E (on-device validation on a tethered iPhone) is the remaining gate and requires the user + a Mac.
 Resume file: None
