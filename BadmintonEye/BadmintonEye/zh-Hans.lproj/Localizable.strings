@@ -184,3 +184,4 @@
 "calibration.autoDetect.detecting" = "识别中…";
 "calibration.autoDetect.notFound" = "未找到球场。请移动以露出更多球场，或手动轻点四个角。";
 "calibration.autoDetect.noFrame" = "摄像头尚未就绪——请稍后再试。";
+"calibration.autoDetect.hint" = "提示：点按“自动识别球场”让应用替你找到球场——或者自己轻点四个角。";

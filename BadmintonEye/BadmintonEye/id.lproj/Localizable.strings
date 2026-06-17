@@ -186,3 +186,4 @@
 "calibration.autoDetect.detecting" = "Mendeteksi…";
 "calibration.autoDetect.notFound" = "Lapangan tidak ditemukan. Geser agar lebih banyak lapangan terlihat, atau ketuk sudut-sudutnya.";
 "calibration.autoDetect.noFrame" = "Kamera belum siap — coba lagi sebentar.";
+"calibration.autoDetect.hint" = "Tips: ketuk Deteksi otomatis agar aplikasi menemukan lapangan untukmu — atau ketuk sendiri keempat sudutnya.";

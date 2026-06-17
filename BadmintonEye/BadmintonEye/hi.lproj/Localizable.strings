@@ -186,3 +186,4 @@
 "calibration.autoDetect.detecting" = "पहचाना जा रहा है…";
 "calibration.autoDetect.notFound" = "कोर्ट नहीं मिला। ज़्यादा कोर्ट दिखाने के लिए हिलाएँ, या कोनों को टैप करें।";
 "calibration.autoDetect.noFrame" = "कैमरा अभी तैयार नहीं है — थोड़ी देर में फिर कोशिश करें।";
+"calibration.autoDetect.hint" = "सुझाव: ‘कोर्ट स्वतः पहचानें’ टैप करें ताकि ऐप आपके लिए कोर्ट ढूँढ़ ले — या खुद चारों कोनों को टैप करें।";

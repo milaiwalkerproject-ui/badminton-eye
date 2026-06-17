@@ -186,3 +186,4 @@
 "calibration.autoDetect.detecting" = "กำลังตรวจจับ…";
 "calibration.autoDetect.notFound" = "ไม่พบสนาม ขยับเพื่อให้เห็นสนามมากขึ้น หรือแตะที่มุมทั้งสี่";
 "calibration.autoDetect.noFrame" = "กล้องยังไม่พร้อม — ลองอีกครั้งในอีกสักครู่";
+"calibration.autoDetect.hint" = "เคล็ดลับ: แตะ ‘ตรวจจับสนามอัตโนมัติ’ เพื่อให้แอปหาสนามให้คุณ — หรือแตะที่มุมทั้งสี่ด้วยตัวเอง";

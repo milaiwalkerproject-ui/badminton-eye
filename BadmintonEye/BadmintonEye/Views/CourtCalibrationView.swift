@@ -196,6 +196,18 @@ struct CourtCalibrationView: View {
                                 .background(.black.opacity(0.6))
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
                                 .padding(.horizontal, 24)
+                        } else {
+                            // First-time hint: make it obvious auto-detect is
+                            // optional and manual tapping always works.
+                            Text(localized("calibration.autoDetect.hint"))
+                                .font(.footnote)
+                                .foregroundStyle(.white.opacity(0.9))
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(.black.opacity(0.5))
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                                .padding(.horizontal, 24)
                         }
                     }
                     .padding(.top, 10)

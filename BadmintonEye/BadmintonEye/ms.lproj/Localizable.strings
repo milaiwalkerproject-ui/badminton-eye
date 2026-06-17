@@ -186,3 +186,4 @@
 "calibration.autoDetect.detecting" = "Mengesan…";
 "calibration.autoDetect.notFound" = "Gelanggang tidak ditemui. Gerak supaya lebih banyak gelanggang kelihatan, atau ketik penjurunya.";
 "calibration.autoDetect.noFrame" = "Kamera belum bersedia — cuba lagi sebentar.";
+"calibration.autoDetect.hint" = "Petua: ketik Kesan automatik untuk biarkan apl mencari gelanggang — atau ketik sendiri keempat-empat penjuru.";

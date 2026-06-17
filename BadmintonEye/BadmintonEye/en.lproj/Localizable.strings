@@ -184,3 +184,4 @@
 "calibration.autoDetect.detecting" = "Detecting…";
 "calibration.autoDetect.notFound" = "No court found. Move so more of the court is visible, or tap the corners.";
 "calibration.autoDetect.noFrame" = "Camera not ready yet — try again in a moment.";
+"calibration.autoDetect.hint" = "Tip: tap Auto-detect to find the court for you — or tap the four corners yourself.";

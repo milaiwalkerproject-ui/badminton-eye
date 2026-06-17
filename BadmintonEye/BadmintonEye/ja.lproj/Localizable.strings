@@ -184,3 +184,4 @@
 "calibration.autoDetect.detecting" = "検出中…";
 "calibration.autoDetect.notFound" = "コートが見つかりません。コートがもっと見えるように移動するか、四隅をタップしてください。";
 "calibration.autoDetect.noFrame" = "カメラの準備ができていません。少し待ってからもう一度お試しください。";
+"calibration.autoDetect.hint" = "ヒント：「コートを自動検出」をタップするとアプリが探してくれます。自分で四隅をタップしてもOKです。";
