@@ -135,7 +135,19 @@ struct ContentView: View {
     /// live match.
     @State private var showVideoImport = false
 
+    /// First-run onboarding gate. While `false`, the onboarding flow is shown
+    /// instead of the main app; `OnboardingView` flips it on completion/skip.
+    @AppStorage(OnboardingStore.completedKey) private var hasCompletedOnboarding = false
+
     var body: some View {
+        if hasCompletedOnboarding {
+            home
+        } else {
+            OnboardingView(onFinish: { hasCompletedOnboarding = true })
+        }
+    }
+
+    @ViewBuilder private var home: some View {
         Group {
             if let vm = restoredViewModel {
                 // Crash recovery: resume in-progress match
