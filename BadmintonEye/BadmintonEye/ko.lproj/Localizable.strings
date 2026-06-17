@@ -178,3 +178,9 @@
 "onboarding.ready.title" = "모두 준비됐습니다";
 "onboarding.ready.subtitle" = "언제든 경기를 시작하세요.";
 "onboarding.ready.start" = "점수 기록 시작";
+
+/* Court auto-detect (Option 5) */
+"calibration.autoDetect.button" = "코트 자동 감지";
+"calibration.autoDetect.detecting" = "감지 중…";
+"calibration.autoDetect.notFound" = "코트를 찾지 못했습니다. 코트가 더 보이도록 움직이거나 네 모서리를 탭하세요.";
+"calibration.autoDetect.noFrame" = "카메라가 아직 준비되지 않았습니다. 잠시 후 다시 시도하세요.";

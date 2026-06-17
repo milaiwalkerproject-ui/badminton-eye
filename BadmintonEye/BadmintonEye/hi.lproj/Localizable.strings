@@ -180,3 +180,9 @@
 "onboarding.ready.title" = "सब तैयार है";
 "onboarding.ready.subtitle" = "जब भी तैयार हों, मैच शुरू करें।";
 "onboarding.ready.start" = "स्कोरिंग शुरू करें";
+
+/* Court auto-detect (Option 5) */
+"calibration.autoDetect.button" = "कोर्ट स्वतः पहचानें";
+"calibration.autoDetect.detecting" = "पहचाना जा रहा है…";
+"calibration.autoDetect.notFound" = "कोर्ट नहीं मिला। ज़्यादा कोर्ट दिखाने के लिए हिलाएँ, या कोनों को टैप करें।";
+"calibration.autoDetect.noFrame" = "कैमरा अभी तैयार नहीं है — थोड़ी देर में फिर कोशिश करें।";

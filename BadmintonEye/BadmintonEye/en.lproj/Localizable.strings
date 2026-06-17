@@ -178,3 +178,9 @@
 "onboarding.ready.title" = "You're all set";
 "onboarding.ready.subtitle" = "Start a match whenever you're ready.";
 "onboarding.ready.start" = "Start scoring";
+
+/* Court auto-detect (Option 5) */
+"calibration.autoDetect.button" = "Auto-detect court";
+"calibration.autoDetect.detecting" = "Detecting…";
+"calibration.autoDetect.notFound" = "No court found. Move so more of the court is visible, or tap the corners.";
+"calibration.autoDetect.noFrame" = "Camera not ready yet — try again in a moment.";

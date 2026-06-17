@@ -180,3 +180,9 @@
 "onboarding.ready.title" = "Du er klar";
 "onboarding.ready.subtitle" = "Start en kamp, når du er klar.";
 "onboarding.ready.start" = "Begynd at tælle point";
+
+/* Court auto-detect (Option 5) */
+"calibration.autoDetect.button" = "Find banen automatisk";
+"calibration.autoDetect.detecting" = "Registrerer…";
+"calibration.autoDetect.notFound" = "Ingen bane fundet. Flyt dig, så mere af banen er synlig, eller tryk på hjørnerne.";
+"calibration.autoDetect.noFrame" = "Kameraet er ikke klar endnu — prøv igen om et øjeblik.";

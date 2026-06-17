@@ -29,11 +29,16 @@ final class CameraPreviewUIView: UIView {
 /// capture session so frames are rendered on screen.
 struct CameraPreviewView: UIViewRepresentable {
     let session: AVCaptureSession
+    /// Called once with the backing preview layer so the calibration view can
+    /// convert detected capture-device points into on-screen points
+    /// (rotation- and gravity-aware) via `layerPointConverted(fromCaptureDevicePoint:)`.
+    var onMakeLayer: ((AVCaptureVideoPreviewLayer) -> Void)? = nil
 
     func makeUIView(context: Context) -> CameraPreviewUIView {
         let view = CameraPreviewUIView()
         view.previewLayer.videoGravity = .resizeAspectFill
         view.session = session
+        onMakeLayer?(view.previewLayer)
         return view
     }
 
@@ -43,6 +48,38 @@ struct CameraPreviewView: UIViewRepresentable {
         if uiView.session !== session {
             uiView.session = session
         }
+    }
+}
+
+// MARK: - Preview-layer holder
+
+/// Reference box that carries the `AVCaptureVideoPreviewLayer` out of the
+/// `UIViewRepresentable` so SwiftUI code can call `layerPointConverted(...)`.
+/// Held as `@State` so it survives view-body recreation.
+final class PreviewLayerBox {
+    var layer: AVCaptureVideoPreviewLayer?
+}
+
+// MARK: - Frame grabber
+
+/// Keeps the most recent camera frame from an `AVCaptureVideoDataOutput` so a
+/// one-shot court detection can run on demand. Thread-safe: the delegate
+/// callback fires on a capture queue while `latestFrame()` is read on the main
+/// actor.
+final class CourtFrameGrabber: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, @unchecked Sendable {
+    private let lock = NSLock()
+    private var latest: CVPixelBuffer?
+
+    func captureOutput(_ output: AVCaptureOutput,
+                       didOutput sampleBuffer: CMSampleBuffer,
+                       from connection: AVCaptureConnection) {
+        guard let buffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+        lock.lock(); latest = buffer; lock.unlock()
+    }
+
+    func latestFrame() -> CVPixelBuffer? {
+        lock.lock(); defer { lock.unlock() }
+        return latest
     }
 }
 
@@ -66,13 +103,23 @@ struct CourtCalibrationView: View {
     @State private var cameraUnavailable = false
     @State private var viewSize: CGSize = .zero
 
+    // Auto-detect (Option 5) state.
+    @State private var localization = LocalizationManager.shared
+    @State private var previewLayerBox = PreviewLayerBox()
+    @State private var frameGrabber = CourtFrameGrabber()
+    @State private var courtDetector: CourtDetecting = VisionCourtDetector()
+    @State private var isDetecting = false
+    @State private var detectionMessage: String?
+
     private let cornerLabels = ["Top-Left", "Top-Right", "Bottom-Right", "Bottom-Left"]
+
+    private func localized(_ key: String) -> String { localization.localized(key) }
 
     var body: some View {
         ZStack {
             // Camera preview
             if isSessionRunning {
-                CameraPreviewView(session: captureSession)
+                CameraPreviewView(session: captureSession, onMakeLayer: { previewLayerBox.layer = $0 })
                     .ignoresSafeArea()
                     .overlay(
                         GeometryReader { geo in
@@ -119,6 +166,40 @@ struct CourtCalibrationView: View {
                     .background(.black.opacity(0.6))
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     .padding(.top, 60)
+
+                // Auto-detect (Option 5): let Vision find the court instead of
+                // tapping all four corners. Only offered until 4 corners exist.
+                if corners.count < 4 {
+                    VStack(spacing: 8) {
+                        Button {
+                            autoDetectCourt()
+                        } label: {
+                            Label(
+                                isDetecting
+                                    ? localized("calibration.autoDetect.detecting")
+                                    : localized("calibration.autoDetect.button"),
+                                systemImage: "viewfinder.circle.fill"
+                            )
+                            .font(.subheadline.bold())
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.blue)
+                        .disabled(isDetecting)
+
+                        if let detectionMessage {
+                            Text(detectionMessage)
+                                .font(.footnote)
+                                .foregroundStyle(.white)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(.black.opacity(0.6))
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                                .padding(.horizontal, 24)
+                        }
+                    }
+                    .padding(.top, 10)
+                }
 
                 Spacer()
 
@@ -192,6 +273,40 @@ struct CourtCalibrationView: View {
     private func handleTap(at location: CGPoint) {
         guard corners.count < 4 else { return }
         corners.append(location)
+    }
+
+    // MARK: - Auto-detect (Option 5)
+
+    /// Runs the on-device court detector on the most recent camera frame and,
+    /// on success, fills in all four corners (same order as the manual taps) so
+    /// the user can Confirm or Recalibrate. Degrades gracefully when the camera
+    /// isn't ready yet or no court is found — the manual tap flow always works.
+    private func autoDetectCourt() {
+        guard !isDetecting else { return }
+        guard let buffer = frameGrabber.latestFrame(), let layer = previewLayerBox.layer else {
+            detectionMessage = localized("calibration.autoDetect.noFrame")
+            return
+        }
+        isDetecting = true
+        detectionMessage = nil
+        let detector = courtDetector
+        Task {
+            let detected = await detector.detectCourt(in: buffer)
+            await MainActor.run {
+                isDetecting = false
+                guard let detected else {
+                    detectionMessage = localized("calibration.autoDetect.notFound")
+                    return
+                }
+                // Map normalized capture-device points → on-screen points via
+                // the preview layer (handles rotation + aspect-fill cropping),
+                // matching where a manual tap would have landed.
+                corners = detected.corners.map {
+                    layer.layerPointConverted(fromCaptureDevicePoint: $0)
+                }
+                detectionMessage = nil
+            }
+        }
     }
 
     // MARK: - Permission / unavailable states
@@ -274,6 +389,7 @@ struct CourtCalibrationView: View {
     private func configureAndStart() {
         guard !isSessionRunning else { return }
         let session = captureSession
+        let grabber = frameGrabber
         DispatchQueue.global(qos: .userInitiated).async {
             session.beginConfiguration()
             session.sessionPreset = .hd1280x720
@@ -287,6 +403,18 @@ struct CourtCalibrationView: View {
                 return
             }
             session.addInput(input)
+
+            // Tap frames for the one-shot court auto-detector. The preview
+            // connection is unaffected; this output only feeds Vision.
+            let videoOutput = AVCaptureVideoDataOutput()
+            videoOutput.alwaysDiscardsLateVideoFrames = true
+            videoOutput.setSampleBufferDelegate(
+                grabber, queue: DispatchQueue(label: "court.frame.grabber")
+            )
+            if session.canAddOutput(videoOutput) {
+                session.addOutput(videoOutput)
+            }
+
             session.commitConfiguration()
 
             session.startRunning()

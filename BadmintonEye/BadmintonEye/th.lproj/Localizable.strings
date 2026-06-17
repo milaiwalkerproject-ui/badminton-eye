@@ -180,3 +180,9 @@
 "onboarding.ready.title" = "พร้อมแล้ว";
 "onboarding.ready.subtitle" = "เริ่มการแข่งขันเมื่อคุณพร้อม";
 "onboarding.ready.start" = "เริ่มให้คะแนน";
+
+/* Court auto-detect (Option 5) */
+"calibration.autoDetect.button" = "ตรวจจับสนามอัตโนมัติ";
+"calibration.autoDetect.detecting" = "กำลังตรวจจับ…";
+"calibration.autoDetect.notFound" = "ไม่พบสนาม ขยับเพื่อให้เห็นสนามมากขึ้น หรือแตะที่มุมทั้งสี่";
+"calibration.autoDetect.noFrame" = "กล้องยังไม่พร้อม — ลองอีกครั้งในอีกสักครู่";

@@ -178,3 +178,9 @@
 "onboarding.ready.title" = "一切就绪";
 "onboarding.ready.subtitle" = "随时可以开始一场比赛。";
 "onboarding.ready.start" = "开始记分";
+
+/* Court auto-detect (Option 5) */
+"calibration.autoDetect.button" = "自动识别球场";
+"calibration.autoDetect.detecting" = "识别中…";
+"calibration.autoDetect.notFound" = "未找到球场。请移动以露出更多球场，或手动轻点四个角。";
+"calibration.autoDetect.noFrame" = "摄像头尚未就绪——请稍后再试。";

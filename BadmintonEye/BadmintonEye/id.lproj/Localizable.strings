@@ -180,3 +180,9 @@
 "onboarding.ready.title" = "Semua siap";
 "onboarding.ready.subtitle" = "Mulai pertandingan kapan pun kamu siap.";
 "onboarding.ready.start" = "Mulai mencatat skor";
+
+/* Court auto-detect (Option 5) */
+"calibration.autoDetect.button" = "Deteksi lapangan otomatis";
+"calibration.autoDetect.detecting" = "Mendeteksi…";
+"calibration.autoDetect.notFound" = "Lapangan tidak ditemukan. Geser agar lebih banyak lapangan terlihat, atau ketuk sudut-sudutnya.";
+"calibration.autoDetect.noFrame" = "Kamera belum siap — coba lagi sebentar.";
