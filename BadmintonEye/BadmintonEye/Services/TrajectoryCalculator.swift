@@ -250,3 +250,75 @@ struct TrajectoryCalculator {
         solveLinearSystem(a, b)
     }
 }
+
+// MARK: - Shot Speed (F1 foundation — see .planning/REEL-PARITY-ROADMAP.md)
+
+/// A measured shuttle speed for one shot, with explicit honesty about what it is.
+///
+/// PURPOSE: the primary value of measuring speed is NOT the on-screen number — it
+/// is a *calibrated, frame-rate-independent* velocity that can replace the
+/// degenerate `final_velocity` feature feeding the rally-winner classifier
+/// (currently normalized-image-units per frame-INDEX, the documented train/serve
+/// skew behind the conservative 0.92 gate). The km/h readout is a user-facing
+/// byproduct of that same computation.
+struct ShotSpeed: Equatable, Sendable {
+    /// Peak ground-plane speed in metres per second.
+    let metersPerSecond: Double
+    /// Number of trajectory samples behind the estimate.
+    let sampleCount: Int
+    /// Effective sampling rate (Hz) over the samples used — a smash peak cannot be
+    /// captured below ~120 fps.
+    let effectiveFPS: Double
+
+    /// Convenience km/h.
+    var kilometersPerHour: Double { metersPerSecond * 3.6 }
+
+    /// Court-plane speed ignores shuttle height (parallax) → a lower bound on true
+    /// 3-D speed; and below ~120 fps a smash peak is under-sampled. Treat the
+    /// number as "approximate" unless both hold.
+    var isReliable: Bool { sampleCount >= 4 && effectiveFPS >= 120 && metersPerSecond > 0 }
+}
+
+extension TrajectoryCalculator {
+
+    /// Standard BWF court, used to convert normalized court space [0,1] → metres.
+    static let courtLengthMeters = 13.40   // baseline to baseline
+    static let courtWidthMeters  = 6.10    // doubles sideline to sideline
+
+    /// Peak shuttle speed across a calibrated court-space trajectory, using REAL
+    /// elapsed seconds (not frame indices). `courtPoints[i]` is the rectified
+    /// position (x ∈ [0,1] width, y ∈ [0,1] length); `timestamps[i]` is the
+    /// matching presentation time in seconds. Returns nil when there is too little
+    /// signal to be meaningful.
+    ///
+    /// This is the calibrated, fps-independent velocity the roadmap calls for:
+    /// camera-framing-invariant (metres via the court rectangle) and frame-rate-
+    /// invariant (÷ real seconds). The same quantity is the intended replacement
+    /// for the classifier's `final_velocity` feature — that swap requires a
+    /// coordinated retrain (F1↔F2 coupling) — and it yields km/h for display.
+    func shotSpeed(courtPoints: [CourtPoint], timestamps: [Double]) -> ShotSpeed? {
+        guard courtPoints.count >= 2, courtPoints.count == timestamps.count else { return nil }
+
+        var peak = 0.0
+        var usedSegments = 0
+        var firstT = Double.greatestFiniteMagnitude
+        var lastT = -Double.greatestFiniteMagnitude
+
+        for i in 1..<courtPoints.count {
+            let dt = timestamps[i] - timestamps[i - 1]
+            guard dt > 1e-4 else { continue }   // skip duplicate / out-of-order stamps
+            let dxM = (courtPoints[i].x - courtPoints[i - 1].x) * Self.courtWidthMeters
+            let dyM = (courtPoints[i].y - courtPoints[i - 1].y) * Self.courtLengthMeters
+            let v = (dxM * dxM + dyM * dyM).squareRoot() / dt
+            if v > peak { peak = v }
+            usedSegments += 1
+            firstT = Swift.min(firstT, timestamps[i - 1])
+            lastT = Swift.max(lastT, timestamps[i])
+        }
+
+        guard usedSegments > 0, peak > 0 else { return nil }
+        let span = Swift.max(lastT - firstT, 1e-4)
+        let fps = Double(usedSegments) / span
+        return ShotSpeed(metersPerSecond: peak, sampleCount: courtPoints.count, effectiveFPS: fps)
+    }
+}

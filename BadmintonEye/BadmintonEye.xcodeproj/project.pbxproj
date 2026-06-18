@@ -63,6 +63,7 @@
 		H10005 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = H20005 /* AVFoundation.framework */; };
 		H10006 /* HawkEyePipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20006 /* HawkEyePipeline.swift */; };
 		H10007 /* TrajectoryCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20007 /* TrajectoryCalculator.swift */; };
+		HD1001 /* HitDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = HD2001 /* HitDetector.swift */; };
 		H10008 /* TrajectoryReplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20008 /* TrajectoryReplayView.swift */; };
 		S10001 /* MatchStatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20001 /* MatchStatsViewModel.swift */; };
 		S10002 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20002 /* StatsView.swift */; };
@@ -104,6 +105,8 @@
 		UT10008 /* FeaturizeGoldenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20006 /* FeaturizeGoldenTests.swift */; };
 		UT10009 /* LiveMatchScoringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20007 /* LiveMatchScoringTests.swift */; };
 		UT10010 /* ClipRefTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20008 /* ClipRefTests.swift */; };
+		UT10011 /* ShotSpeedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20009 /* ShotSpeedTests.swift */; };
+		UT10012 /* HitDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20010 /* HitDetectorTests.swift */; };
 		UT10005 /* WatchSyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20004 /* WatchSyncManagerTests.swift */; };
 		UT10006 /* WatchMatchViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20005 /* WatchMatchViewModelTests.swift */; };
 		UT10007 /* WatchMatchViewModel.swift in Sources (Tests) */ = {isa = PBXBuildFile; fileRef = W20002 /* WatchMatchViewModel.swift */; };
@@ -195,6 +198,7 @@
 		H20005 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		H20006 /* HawkEyePipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HawkEyePipeline.swift; sourceTree = "<group>"; };
 		H20007 /* TrajectoryCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryCalculator.swift; sourceTree = "<group>"; };
+		HD2001 /* HitDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitDetector.swift; sourceTree = "<group>"; };
 		H20008 /* TrajectoryReplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryReplayView.swift; sourceTree = "<group>"; };
 		S20001 /* MatchStatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchStatsViewModel.swift; sourceTree = "<group>"; };
 		S20002 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
@@ -245,6 +249,8 @@
 		UT20006 /* FeaturizeGoldenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturizeGoldenTests.swift; sourceTree = "<group>"; };
 		UT20007 /* LiveMatchScoringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveMatchScoringTests.swift; sourceTree = "<group>"; };
 		UT20008 /* ClipRefTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipRefTests.swift; sourceTree = "<group>"; };
+		UT20009 /* ShotSpeedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShotSpeedTests.swift; sourceTree = "<group>"; };
+		UT20010 /* HitDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitDetectorTests.swift; sourceTree = "<group>"; };
 		UT20004 /* WatchSyncManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSyncManagerTests.swift; sourceTree = "<group>"; };
 		UT20005 /* WatchMatchViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchMatchViewModelTests.swift; sourceTree = "<group>"; };
 		WP2001 /* WCSessionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WCSessionProtocol.swift; sourceTree = "<group>"; };
@@ -397,6 +403,7 @@
 				H20002 /* VideoCaptureManager.swift */,
 				H20006 /* HawkEyePipeline.swift */,
 				H20007 /* TrajectoryCalculator.swift */,
+				HD2001 /* HitDetector.swift */,
 				T72001 /* ShuttleDetecting.swift */,
 				T72002 /* PlaceholderShuttleDetector.swift */,
 				V82001 /* CircularFrameBuffer.swift */,
@@ -448,6 +455,8 @@
 				UT20006 /* FeaturizeGoldenTests.swift */,
 				UT20007 /* LiveMatchScoringTests.swift */,
 				UT20008 /* ClipRefTests.swift */,
+				UT20009 /* ShotSpeedTests.swift */,
+				UT20010 /* HitDetectorTests.swift */,
 				VI2002 /* ImportedVideoTests.swift */,
 				UT20004 /* WatchSyncManagerTests.swift */,
 				UT20005 /* WatchMatchViewModelTests.swift */,
@@ -718,6 +727,7 @@
 				H10004 /* ChallengeVideoView.swift in Sources */,
 				H10006 /* HawkEyePipeline.swift in Sources */,
 				H10007 /* TrajectoryCalculator.swift in Sources */,
+				HD1001 /* HitDetector.swift in Sources */,
 				H10008 /* TrajectoryReplayView.swift in Sources */,
 				S10001 /* MatchStatsViewModel.swift in Sources */,
 				S10002 /* StatsView.swift in Sources */,
@@ -788,6 +798,8 @@
 				UT10008 /* FeaturizeGoldenTests.swift in Sources */,
 				UT10009 /* LiveMatchScoringTests.swift in Sources */,
 				UT10010 /* ClipRefTests.swift in Sources */,
+				UT10011 /* ShotSpeedTests.swift in Sources */,
+				UT10012 /* HitDetectorTests.swift in Sources */,
 				VI1002 /* ImportedVideoTests.swift in Sources */,
 				/* Watch tests (UT10005/06/07) quarantined from the iOS test target:
 				   WatchMatchViewModel.swift is a watchOS-module source that can't
