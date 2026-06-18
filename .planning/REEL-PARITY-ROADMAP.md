@@ -207,6 +207,13 @@ now. **The phone is NOT required for this metric.** · **Risk:** circular labels
 offline accuracy ≠ on-device accuracy — the on-device path has a coarser background frame, decimated fps, and no
 orientation featurizer, so measure those separately during on-device validation.
 
+**Status (2026-06-18):** ✅ eval harness committed (`hawkeye/src/hawkeye/train/hit_attribution_eval.py`). First
+real-data signal on the **7 labeled holdout rallies**: **last-hit attribution 7/7 (100%)** vs tail-mean heuristic
+**1/7** and naive mean-side **3/7**. Why: the landing/mean signals pick where the shuttle *lands* (the loser's
+side); last-hit picks who *struck* (the winner) — the reel-teardown lesson, validated. Strong directional support
+for FK, but **N=7 is tiny — not conclusive.** ⏳ A meaningful number needs the human-labeling mission (~250
+rallies; the `labeling-bundle/` end-on footage is queued). The harness re-scores automatically as labels are added.
+
 ## F3 — Serve-rule scoring + on-device pose  ·  *biggest correctness upgrade*
 
 **Goal:** infer the rally winner from badminton's rules, not from fragile monocular landing calls. Closes gap #3.
