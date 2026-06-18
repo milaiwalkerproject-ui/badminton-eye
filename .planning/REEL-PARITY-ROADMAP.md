@@ -93,8 +93,21 @@ cross-check the F2 winner metric, and being pure geometry it's measurable offlin
 Testing caught a real bug (approach-speed was sampled AT the turn, where a clear's apex velocity ≈ 0 → real
 strokes wrongly rejected; now uses the incoming-arc PEAK speed). Also: the spec's hitter→side prose was inverted
 vs its own test cases — implemented per the physically-correct cases (reversal toward far baseline ⇒ far player
-`.sideA`). ⏳ Not yet wired into the live rally path (`TrajectoryRallySuggestor` for last-hit attribution / shot
-count; `LiveMatchViewModel` for auto rally-end) — that wiring is the next step.
+`.sideA`).
+
+**Wiring (2026-06-18):**
+- ✅ **#1 last-hit attribution** — `TrajectoryRallySuggestor.suggest()` now keeps each frame's PTS, builds
+  `TrackSample`s (court + seconds), runs `detectHits()`, and prefers `lastHitter` as the winner side when
+  `quality ≥ 0.5`. Confidence fusion: agreement with the landing call boosts confidence; disagreement caps it
+  at 0.60 (below the 0.92 auto-apply gate) so the user confirms. Verified the `.sideA/.sideB` convention matches
+  the existing landing mapping in both directions. Full suite **80/80** green.
+- ✅ **#2 rally-end decision** — `HitDetector.confidentRallyEnd()` (+ tests): the auto-rally-end brain (latest
+  segment iff a confident, just-completed rally; track-loss & low quality rejected).
+- ⏳ **#2 driver deferred** — a *live* auto-trigger needs continuous detection at cadence
+  (`FULLMATCH-ANALYSIS-DESIGN.md` Phase 2). Running the shuttle detector continuously contradicts the app's
+  current on-demand/battery design (the detector is built lazily, run only on the "Rally Ended" tap), and an
+  untuned auto-popup in the core scoring loop can't be validated without on-device footage. So the manual tap
+  stays primary; the decision brain is ready to plug into the Phase-2 continuous pipeline.
 
 ## F1 — Calibrated shuttle velocity  ·  *primarily a scoring-feature repair; km/h is a byproduct*
 

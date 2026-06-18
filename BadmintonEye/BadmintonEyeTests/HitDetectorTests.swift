@@ -125,6 +125,21 @@ final class HitDetectorTests: XCTestCase {
         XCTAssertEqual(det.detectRallies(s), det.detectRallies(s))
     }
 
+    // MARK: confident rally-end gate (auto-rally-end brain)
+
+    func testConfidentRallyEndAcceptsCleanRally() {
+        let s = ramp(fps: 120, [(0.6, 0.1, 0.95), (0.7, 0.95, 0.15), (0.5, 0.15, 0.15)])
+        let end = det.confidentRallyEnd(s)
+        XCTAssertEqual(end?.side, .sideA)
+        XCTAssertEqual(end?.reason, .settledFlight)
+    }
+
+    func testConfidentRallyEndRejectsLowQuality() {
+        // 30 fps → quality penalised below the 0.6 default gate → don't auto-end.
+        let s = ramp(fps: 30, [(0.5, 0.1, 0.9), (0.5, 0.9, 0.2), (0.5, 0.2, 0.85), (0.45, 0.85, 0.01)])
+        XCTAssertNil(det.confidentRallyEnd(s))
+    }
+
     // MARK: degenerate inputs never crash and never invent hits
 
     func testDegenerateInputs() {

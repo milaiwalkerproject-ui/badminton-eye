@@ -120,6 +120,25 @@ struct HitDetector: Sendable {
         return (seg.hits, seg.lastHitter, seg.endReason, seg.quality)
     }
 
+    /// FK auto-rally-end decision: the latest segment IFF it is a *confident,
+    /// just-completed* rally — i.e. it ended on a settled flight or a shuttle past
+    /// a baseline (NOT a mere track loss, which is ambiguous) with quality ≥
+    /// `minQuality`. Returns the winner side + reason + quality, or nil to keep
+    /// waiting / fall back to the manual "Rally Ended" tap.
+    ///
+    /// This is the brain the live auto-rally-end watcher plugs into; the DRIVER that
+    /// feeds it a live trajectory window at cadence is the continuous-tracking
+    /// pipeline (FULLMATCH-ANALYSIS Phase 2).
+    func confidentRallyEnd(_ samples: [TrackSample], minQuality: Double = 0.6)
+        -> (side: Side, reason: HitEndReason, quality: Double)? {
+        guard let seg = detectRallies(samples).last,
+              let side = seg.lastHitter,
+              seg.endReason != .trackLost,
+              seg.quality >= minQuality
+        else { return nil }
+        return (side, seg.endReason, seg.quality)
+    }
+
     // MARK: - Internals
 
     private struct Prepared: Equatable { let t: Double; let y: Double; let imageY: Double?; let conf: Double }
