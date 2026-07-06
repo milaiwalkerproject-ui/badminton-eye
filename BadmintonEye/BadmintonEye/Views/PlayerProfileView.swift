@@ -49,12 +49,16 @@ struct PlayerProfileView: View {
                 }
                 .listRowBackground(Color.clear)
 
+                // Resolved outside the picker label: PhotosPicker's label
+                // closure is nonisolated in the iOS 18.5 SDK, so it can't
+                // touch the main-actor LocalizationManager directly.
+                let choosePhotoLabel = localization.localized("player.choosePhoto")
                 PhotosPicker(
                     selection: $photoItem,
                     matching: .images,
                     photoLibrary: .shared()
                 ) {
-                    Label(localization.localized("player.choosePhoto"), systemImage: "photo.on.rectangle")
+                    Label(choosePhotoLabel, systemImage: "photo.on.rectangle")
                 }
 
                 if photoData != nil {
