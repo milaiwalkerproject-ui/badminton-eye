@@ -188,6 +188,7 @@ final class PlayerRecordsPredicateTests: XCTestCase {
 
 // MARK: - Recent Opponents derivation (placeholder filtering)
 
+@MainActor
 final class RecentOpponentsTests: XCTestCase {
 
     func testPlaceholderNamesAreExcluded() {

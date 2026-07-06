@@ -27,17 +27,22 @@ final class LiveMatchPerformanceTests: XCTestCase {
         let container = try ModelContainer(for: schema, configurations: [config])
 
         measure {
-            // Each iteration of measure{} gets a fresh match so score counts
-            // never reach match completion (which would stop scoring). The
-            // ModelContext is created inside the closure because it isn't
-            // Sendable and can't be captured across the measure{} boundary;
-            // ModelContainer is Sendable, so capturing it is fine.
-            let context = ModelContext(container)
-            let matchState = MatchState.newSinglesMatch()
-            let viewModel = LiveMatchViewModel(state: matchState, modelContext: context)
+            // XCTest invokes sync test methods (and this block) on the main
+            // thread; assumeIsolated makes that explicit so the main-actor
+            // LiveMatchViewModel is usable under Swift 6.1 checking.
+            MainActor.assumeIsolated {
+                // Each iteration of measure{} gets a fresh match so score counts
+                // never reach match completion (which would stop scoring). The
+                // ModelContext is created inside the closure because it isn't
+                // Sendable and can't be captured across the measure{} boundary;
+                // ModelContainer is Sendable, so capturing it is fine.
+                let context = ModelContext(container)
+                let matchState = MatchState.newSinglesMatch()
+                let viewModel = LiveMatchViewModel(state: matchState, modelContext: context)
 
-            for _ in 0..<100 {
-                viewModel.scorePoint(for: .sideA)
+                for _ in 0..<100 {
+                    viewModel.scorePoint(for: .sideA)
+                }
             }
         }
     }
