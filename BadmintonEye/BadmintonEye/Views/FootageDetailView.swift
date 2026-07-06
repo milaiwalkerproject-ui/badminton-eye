@@ -24,6 +24,11 @@ struct FootageDetailView: View {
     /// Record currently being edited in the trim/zoom highlight editor.
     @State private var editingRecord: GameVideoRecord?
 
+    // Full-match analysis (wave 1 Phase 2): one video at a time, progress is
+    // session-local; completed chunks persist in FullMatchAnalysisStore and
+    // a rerun resumes where it stopped.
+    @State private var analysis = FullMatchAnalysisCoordinator()
+
     /// Premium entitlement, read directly from the app's `SubscriptionManager`.
     private var isSubscribed: Bool { SubscriptionManager.shared.isPremium }
 
@@ -158,6 +163,45 @@ struct FootageDetailView: View {
                 }
             }
             .disabled(!recordingAvailable)
+
+            // Wave 1 Phase 2: chunked on-device TrackNet pass over the full
+            // game video. Resumable — completed chunks persist across runs.
+            if analysis.analyzingStem == rec.videoStem, let progress = analysis.progress {
+                HStack {
+                    ProgressView(value: Double(progress.completed),
+                                 total: Double(max(1, progress.total)))
+                    Text(String(format: LocalizationManager.shared.localized("footage.analyze.progress"),
+                                progress.completed, progress.total))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                }
+            } else if analysis.doneStem == rec.videoStem {
+                Label {
+                    Text(LocalizationManager.shared.localized("footage.analyze.done"))
+                } icon: {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                }
+            } else {
+                Button {
+                    if let url = rec.resolvedURL() {
+                        analysis.start(url: url, stem: rec.videoStem)
+                    }
+                } label: {
+                    Label {
+                        Text(LocalizationManager.shared.localized("footage.analyze"))
+                    } icon: {
+                        Image(systemName: "waveform.badge.magnifyingglass")
+                    }
+                }
+                .disabled(!recordingAvailable || analysis.analyzingStem != nil)
+            }
+            if let message = analysis.errorMessage, analysis.errorStem == rec.videoStem {
+                Text(message)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+            }
         } header: {
             Text("Game \(rec.gameNumber)")
         } footer: {
@@ -221,4 +265,55 @@ private struct ShareSheet: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ controller: UIActivityViewController, context: Context) {}
+}
+
+// MARK: - Full-match analysis coordinator (wave 1 Phase 2)
+
+/// Main-actor state holder driving `FullMatchAnalyzer` for one video at a
+/// time. A @MainActor class is implicitly Sendable, so the analyzer's
+/// @Sendable progress callback can safely hop back to it — the view struct
+/// itself must never be captured across that boundary (Swift 6.1).
+@MainActor
+@Observable
+final class FullMatchAnalysisCoordinator {
+    private(set) var analyzingStem: String?
+    private(set) var progress: (completed: Int, total: Int)?
+    private(set) var errorMessage: String?
+    private(set) var errorStem: String?
+    private(set) var doneStem: String?
+    private var task: Task<Void, Never>?
+
+    func start(url: URL, stem: String) {
+        guard analyzingStem == nil, !stem.isEmpty else { return }
+        analyzingStem = stem
+        progress = (0, 1)
+        errorMessage = nil
+        errorStem = nil
+        UIApplication.shared.isIdleTimerDisabled = true
+
+        task = Task {
+            let analyzer = FullMatchAnalyzer()
+            do {
+                try await analyzer.analyze(videoURL: url, videoStem: stem) { completed, total in
+                    Task { @MainActor [weak self] in
+                        guard let self, self.analyzingStem == stem else { return }
+                        self.progress = (completed, total)
+                    }
+                }
+                doneStem = stem
+            } catch is CancellationError {
+                // Cancelled: completed chunks are persisted; a rerun resumes.
+            } catch {
+                errorMessage = error.localizedDescription
+                errorStem = stem
+            }
+            UIApplication.shared.isIdleTimerDisabled = false
+            analyzingStem = nil
+            progress = nil
+        }
+    }
+
+    func cancel() {
+        task?.cancel()
+    }
 }

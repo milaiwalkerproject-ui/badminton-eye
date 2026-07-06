@@ -209,3 +209,8 @@
 "labeling.orientation.sideOn.detail" = "球员位于画面的左右两侧";
 "labeling.orientation.endOn" = "从场地后方";
 "labeling.orientation.endOn.detail" = "球员位于画面的近处（下方）和远处（上方）";
+
+/* Full-match analysis (wave 1 Phase 2) */
+"footage.analyze" = "分析比赛视频";
+"footage.analyze.progress" = "正在分析… %d/%d";
+"footage.analyze.done" = "分析完成";

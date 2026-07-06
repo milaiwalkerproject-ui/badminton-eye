@@ -211,3 +211,8 @@
 "labeling.orientation.sideOn.detail" = "Spillerne ses til venstre og højre i billedet";
 "labeling.orientation.endOn" = "Bagfra banen";
 "labeling.orientation.endOn.detail" = "Spillerne ses nær (nederst) og fjern (øverst) i billedet";
+
+/* Full-match analysis (wave 1 Phase 2) */
+"footage.analyze" = "Analysér kampvideo";
+"footage.analyze.progress" = "Analyserer… %d/%d";
+"footage.analyze.done" = "Analyse fuldført";

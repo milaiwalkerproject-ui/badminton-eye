@@ -65,6 +65,8 @@
 		H10007 /* TrajectoryCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20007 /* TrajectoryCalculator.swift */; };
 		HD1001 /* HitDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = HD2001 /* HitDetector.swift */; };
 		RX1001 /* RallyLabelExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = RX2001 /* RallyLabelExport.swift */; };
+		FS1001 /* FullMatchAnalysisStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FS2001 /* FullMatchAnalysisStore.swift */; };
+		FA1001 /* FullMatchAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2001 /* FullMatchAnalyzer.swift */; };
 		H10008 /* TrajectoryReplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20008 /* TrajectoryReplayView.swift */; };
 		S10001 /* MatchStatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20001 /* MatchStatsViewModel.swift */; };
 		S10002 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20002 /* StatsView.swift */; };
@@ -117,6 +119,7 @@
 		UT10014 /* HitDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20012 /* HitDetectorTests.swift */; };
 		UT10015 /* CalibrationHomographyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20013 /* CalibrationHomographyTests.swift */; };
 		UT10016 /* RallyLabelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20014 /* RallyLabelTests.swift */; };
+		UT10017 /* FullMatchAnalyzerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20015 /* FullMatchAnalyzerTests.swift */; };
 		UT10005 /* WatchSyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20004 /* WatchSyncManagerTests.swift */; };
 		UT10006 /* WatchMatchViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20005 /* WatchMatchViewModelTests.swift */; };
 		UT10007 /* WatchMatchViewModel.swift in Sources (Tests) */ = {isa = PBXBuildFile; fileRef = W20002 /* WatchMatchViewModel.swift */; };
@@ -210,6 +213,8 @@
 		H20007 /* TrajectoryCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryCalculator.swift; sourceTree = "<group>"; };
 		HD2001 /* HitDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitDetector.swift; sourceTree = "<group>"; };
 		RX2001 /* RallyLabelExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RallyLabelExport.swift; sourceTree = "<group>"; };
+		FS2001 /* FullMatchAnalysisStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullMatchAnalysisStore.swift; sourceTree = "<group>"; };
+		FA2001 /* FullMatchAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullMatchAnalyzer.swift; sourceTree = "<group>"; };
 		H20008 /* TrajectoryReplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryReplayView.swift; sourceTree = "<group>"; };
 		S20001 /* MatchStatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchStatsViewModel.swift; sourceTree = "<group>"; };
 		S20002 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
@@ -271,6 +276,7 @@
 		UT20012 /* HitDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitDetectorTests.swift; sourceTree = "<group>"; };
 		UT20013 /* CalibrationHomographyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationHomographyTests.swift; sourceTree = "<group>"; };
 		UT20014 /* RallyLabelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RallyLabelTests.swift; sourceTree = "<group>"; };
+		UT20015 /* FullMatchAnalyzerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullMatchAnalyzerTests.swift; sourceTree = "<group>"; };
 		UT20004 /* WatchSyncManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSyncManagerTests.swift; sourceTree = "<group>"; };
 		UT20005 /* WatchMatchViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchMatchViewModelTests.swift; sourceTree = "<group>"; };
 		WP2001 /* WCSessionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WCSessionProtocol.swift; sourceTree = "<group>"; };
@@ -428,6 +434,8 @@
 				H20007 /* TrajectoryCalculator.swift */,
 				HD2001 /* HitDetector.swift */,
 				RX2001 /* RallyLabelExport.swift */,
+				FS2001 /* FullMatchAnalysisStore.swift */,
+				FA2001 /* FullMatchAnalyzer.swift */,
 				T72001 /* ShuttleDetecting.swift */,
 				T72002 /* PlaceholderShuttleDetector.swift */,
 				V82001 /* CircularFrameBuffer.swift */,
@@ -487,6 +495,7 @@
 				UT20012 /* HitDetectorTests.swift */,
 				UT20013 /* CalibrationHomographyTests.swift */,
 				UT20014 /* RallyLabelTests.swift */,
+				UT20015 /* FullMatchAnalyzerTests.swift */,
 				VI2002 /* ImportedVideoTests.swift */,
 				UT20004 /* WatchSyncManagerTests.swift */,
 				UT20005 /* WatchMatchViewModelTests.swift */,
@@ -759,6 +768,8 @@
 				H10007 /* TrajectoryCalculator.swift in Sources */,
 				HD1001 /* HitDetector.swift in Sources */,
 				RX1001 /* RallyLabelExport.swift in Sources */,
+				FS1001 /* FullMatchAnalysisStore.swift in Sources */,
+				FA1001 /* FullMatchAnalyzer.swift in Sources */,
 				H10008 /* TrajectoryReplayView.swift in Sources */,
 				S10001 /* MatchStatsViewModel.swift in Sources */,
 				S10002 /* StatsView.swift in Sources */,
@@ -840,6 +851,7 @@
 				UT10014 /* HitDetectorTests.swift in Sources */,
 				UT10015 /* CalibrationHomographyTests.swift in Sources */,
 				UT10016 /* RallyLabelTests.swift in Sources */,
+				UT10017 /* FullMatchAnalyzerTests.swift in Sources */,
 				VI1002 /* ImportedVideoTests.swift in Sources */,
 				/* Watch tests (UT10005/06/07) quarantined from the iOS test target:
 				   WatchMatchViewModel.swift is a watchOS-module source that can't

@@ -209,3 +209,8 @@
 "labeling.orientation.sideOn.detail" = "선수가 화면의 왼쪽과 오른쪽에 보임";
 "labeling.orientation.endOn" = "코트 뒤에서";
 "labeling.orientation.endOn.detail" = "선수가 화면의 가까운 쪽(아래)과 먼 쪽(위)에 보임";
+
+/* Full-match analysis (wave 1 Phase 2) */
+"footage.analyze" = "경기 영상 분석";
+"footage.analyze.progress" = "분석 중… %d/%d";
+"footage.analyze.done" = "분석 완료";

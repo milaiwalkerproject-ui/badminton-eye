@@ -209,3 +209,8 @@
 "labeling.orientation.sideOn.detail" = "Players appear on the left and right of the frame";
 "labeling.orientation.endOn" = "From behind the court";
 "labeling.orientation.endOn.detail" = "Players appear near (bottom) and far (top) in the frame";
+
+/* Full-match analysis (wave 1 Phase 2) */
+"footage.analyze" = "Analyze Match Video";
+"footage.analyze.progress" = "Analyzing… %d/%d";
+"footage.analyze.done" = "Analysis complete";

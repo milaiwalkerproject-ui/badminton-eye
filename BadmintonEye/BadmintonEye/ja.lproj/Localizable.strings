@@ -209,3 +209,8 @@
 "labeling.orientation.sideOn.detail" = "選手が画面の左右に映っている";
 "labeling.orientation.endOn" = "コートの後ろから";
 "labeling.orientation.endOn.detail" = "選手が画面の手前（下）と奥（上）に映っている";
+
+/* Full-match analysis (wave 1 Phase 2) */
+"footage.analyze" = "試合動画を解析";
+"footage.analyze.progress" = "解析中… %d/%d";
+"footage.analyze.done" = "解析が完了しました";

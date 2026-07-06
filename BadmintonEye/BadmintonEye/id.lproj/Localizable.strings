@@ -211,3 +211,8 @@
 "labeling.orientation.sideOn.detail" = "Pemain tampak di kiri dan kanan bingkai";
 "labeling.orientation.endOn" = "Dari belakang lapangan";
 "labeling.orientation.endOn.detail" = "Pemain tampak dekat (bawah) dan jauh (atas) di bingkai";
+
+/* Full-match analysis (wave 1 Phase 2) */
+"footage.analyze" = "Analisis Video Pertandingan";
+"footage.analyze.progress" = "Menganalisis… %d/%d";
+"footage.analyze.done" = "Analisis selesai";

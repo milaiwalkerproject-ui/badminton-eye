@@ -211,3 +211,8 @@
 "labeling.orientation.sideOn.detail" = "ผู้เล่นอยู่ทางซ้ายและขวาของเฟรม";
 "labeling.orientation.endOn" = "จากด้านหลังคอร์ท";
 "labeling.orientation.endOn.detail" = "ผู้เล่นอยู่ฝั่งใกล้ (ล่าง) และไกล (บน) ของเฟรม";
+
+/* Full-match analysis (wave 1 Phase 2) */
+"footage.analyze" = "วิเคราะห์วิดีโอแมตช์";
+"footage.analyze.progress" = "กำลังวิเคราะห์… %d/%d";
+"footage.analyze.done" = "วิเคราะห์เสร็จสิ้น";

@@ -211,3 +211,8 @@
 "labeling.orientation.sideOn.detail" = "खिलाड़ी फ़्रेम में बाएँ और दाएँ दिखते हैं";
 "labeling.orientation.endOn" = "कोर्ट के पीछे से";
 "labeling.orientation.endOn.detail" = "खिलाड़ी फ़्रेम में पास (नीचे) और दूर (ऊपर) दिखते हैं";
+
+/* Full-match analysis (wave 1 Phase 2) */
+"footage.analyze" = "मैच वीडियो का विश्लेषण करें";
+"footage.analyze.progress" = "विश्लेषण हो रहा है… %d/%d";
+"footage.analyze.done" = "विश्लेषण पूर्ण";
