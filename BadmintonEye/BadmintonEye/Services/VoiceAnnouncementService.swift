@@ -26,17 +26,11 @@ final class VoiceAnnouncementService: NSObject {
     // MARK: - Private State
 
     private let synthesizer = AVSpeechSynthesizer()
-    private var localizationManager: LocalizationManager?
 
     // MARK: - Init
 
     override private init() {
         super.init()
-        // Capture LocalizationManager on main actor; fall back to Locale.current language code
-        // if the shared instance is not yet accessible.
-        Task { @MainActor in
-            self.localizationManager = LocalizationManager.shared
-        }
     }
 
     // MARK: - Public API
@@ -103,12 +97,19 @@ final class VoiceAnnouncementService: NSObject {
         // Prefer a legacy in-app language override when one was explicitly
         // set; otherwise follow the system locale (which reflects iOS's
         // native per-app language setting — the in-app picker is gone).
-        let languageCode: String
-        if let manager = localizationManager, manager.hasCustomLanguage {
-            languageCode = manager.currentLanguage.rawValue
-        } else {
-            languageCode = Locale.current.language.languageCode?.identifier ?? "en"
+        // LocalizationManager is main-actor-isolated; announcements fire from
+        // main-actor view models, so consult it only when already on main and
+        // fall back to the system locale otherwise (the old behavior whenever
+        // the manager reference hadn't been captured yet).
+        var customLanguage: String?
+        if Thread.isMainThread {
+            customLanguage = MainActor.assumeIsolated { () -> String? in
+                let manager = LocalizationManager.shared
+                return manager.hasCustomLanguage ? manager.currentLanguage.rawValue : nil
+            }
         }
+        let languageCode = customLanguage
+            ?? Locale.current.language.languageCode?.identifier ?? "en"
 
         // AVSpeechSynthesisVoice.speechVoices() returns all installed voices.
         // Pick the first one whose language prefix matches.

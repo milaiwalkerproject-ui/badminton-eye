@@ -100,16 +100,20 @@ final class AuthManager: NSObject, @unchecked Sendable {
         userEmail = UserDefaults.standard.string(forKey: userEmailKey)
 
         let provider = ASAuthorizationAppleIDProvider()
-        provider.getCredentialState(forUserID: uid) { [weak self] state, _ in
+        provider.getCredentialState(forUserID: uid) { state, _ in
+            // No self capture: sending a weakly-captured reference into a
+            // main-actor task trips Swift 6.1's region analysis (Xcode 16.4).
+            // AuthManager is a singleton, so resolve it inside the task.
             Task { @MainActor in
+                let auth = AuthManager.shared
                 switch state {
                 case .authorized:
-                    self?.isSignedIn = true
+                    auth.isSignedIn = true
                 case .revoked, .notFound:
-                    self?.signOut()
+                    auth.signOut()
                 default:
                     // transferred or unknown -- treat as signed out
-                    self?.signOut()
+                    auth.signOut()
                 }
             }
         }

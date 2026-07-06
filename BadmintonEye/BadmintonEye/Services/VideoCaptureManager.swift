@@ -71,8 +71,10 @@ final class VideoCaptureManager: NSObject, @unchecked Sendable {
 
         // Timer to update duration and auto-stop at max
         let timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+            // Unwrap before the hop: sending the weak box itself into a
+            // main-actor task trips Swift 6.1's region analysis (Xcode 16.4).
+            guard let self else { return }
             Task { @MainActor in
-                guard let self else { return }
                 self.recordingDuration += 0.1
                 if self.recordingDuration >= self.maxDuration {
                     self.stopRecording()
