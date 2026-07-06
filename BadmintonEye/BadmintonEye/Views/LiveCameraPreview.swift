@@ -17,7 +17,11 @@ struct LiveCameraPreview: UIViewRepresentable, Equatable {
     var videoGravity: AVLayerVideoGravity = .resizeAspectFill
 
     nonisolated static func == (lhs: LiveCameraPreview, rhs: LiveCameraPreview) -> Bool {
-        lhs.session === rhs.session && lhs.videoGravity == rhs.videoGravity
+        // `session` is main-actor-isolated (AVCaptureSession isn't Sendable),
+        // and SwiftUI only diffs views on the main actor, so hop in dynamically.
+        MainActor.assumeIsolated {
+            lhs.session === rhs.session && lhs.videoGravity == rhs.videoGravity
+        }
     }
 
     func makeUIView(context: Context) -> PreviewUIView {
