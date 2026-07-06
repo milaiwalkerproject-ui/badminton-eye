@@ -145,3 +145,45 @@
 "recording.camera.accessRequired.message" = "Badminton Eye har brug for kameraadgang for at optage din kamp. Aktiver det i Indstillinger.";
 "recording.camera.openSettings" = "Åbn indstillinger";
 "recording.rec.accessibilityLabel" = "Optagelse i gang";
+
+/* Onboarding (first-run) */
+"onboarding.skip" = "Spring over";
+"onboarding.back" = "Tilbage";
+"onboarding.continue" = "Fortsæt";
+"onboarding.welcome.title" = "Velkommen til Badminton Eye";
+"onboarding.welcome.subtitle" = "Tæl point med et tryk — og lad AI på enheden foreslå, hvem der vandt hver dyst.";
+"onboarding.signIn.title" = "Gør den til din";
+"onboarding.signIn.subtitle" = "Log ind med Apple for at synkronisere dine kampe på tværs af dine enheder.";
+"onboarding.signIn.freeTitle" = "Ingen konto nødvendig";
+"onboarding.signIn.freeSubtitle" = "Denne version gemmer alt på din enhed — ingen login nødvendig.";
+"onboarding.signIn.continueWithout" = "Fortsæt uden konto";
+"onboarding.autoScore.title" = "Automatisk pointtælling";
+"onboarding.autoScore.subtitle" = "Ret kameraet mod banen. Efter hver dyst foreslår appen, hvem der vandt — du bekræfter bare.";
+"onboarding.autoScore.point1" = "Foreslår vinderen af dysten på cirka to sekunder";
+"onboarding.autoScore.point2" = "Ét tryk for at bekræfte eller ændre";
+"onboarding.autoScore.point3" = "Stadig en fuld manuel pointtæller, når du vil";
+"onboarding.calibration.title" = "Indstil din bane";
+"onboarding.calibration.subtitle" = "Markér banen én gang, så appen ved, hvor linjerne er. Det tager kun få sekunder.";
+"onboarding.calibration.point1" = "Stil din telefon, hvor den kan se banen";
+"onboarding.calibration.point2" = "Tryk på de fire hjørner ét efter ét";
+"onboarding.calibration.point3" = "Giv den et navn, så du kan bruge den igen næste gang";
+"onboarding.calibration.calibrateNow" = "Kalibrér en bane nu";
+"onboarding.calibration.later" = "Du kan også indstille dette senere, fra enhver kamp.";
+"onboarding.calibration.savedFormat" = "Gemt bane: %@";
+"onboarding.challenge.title" = "Hawk Eye-udfordringer";
+"onboarding.challenge.subtitle" = "Er du i tvivl, om den var inde eller ude? Udfordr kendelsen, og Hawk Eye afspiller fjerboldens bane for at afgøre det.";
+"onboarding.challenge.point1" = "AI-linjedømmer ud fra din video";
+"onboarding.challenge.point2" = "Slowmotion-genafspilning af banen";
+"onboarding.challenge.includedTitle" = "Inkluderet til dig";
+"onboarding.challenge.includedSubtitle" = "Hawk Eye er låst op i denne version — prøv det når som helst.";
+"onboarding.challenge.subscribe" = "Abonnér for at låse op";
+"onboarding.ready.title" = "Du er klar";
+"onboarding.ready.subtitle" = "Start en kamp, når du er klar.";
+"onboarding.ready.start" = "Begynd at tælle point";
+
+/* Court auto-detect (Option 5) */
+"calibration.autoDetect.button" = "Find banen automatisk";
+"calibration.autoDetect.detecting" = "Registrerer…";
+"calibration.autoDetect.notFound" = "Ingen bane fundet. Flyt dig, så mere af banen er synlig, eller tryk på hjørnerne.";
+"calibration.autoDetect.noFrame" = "Kameraet er ikke klar endnu — prøv igen om et øjeblik.";
+"calibration.autoDetect.hint" = "Tip: tryk på Find banen automatisk, så appen finder banen for dig — eller tryk selv på de fire hjørner.";

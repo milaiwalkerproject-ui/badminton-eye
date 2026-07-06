@@ -145,3 +145,45 @@
 "recording.camera.accessRequired.message" = "Badminton Eye membutuhkan akses kamera untuk merekam pertandingan Anda. Aktifkan di Pengaturan.";
 "recording.camera.openSettings" = "Buka Pengaturan";
 "recording.rec.accessibilityLabel" = "Perekaman sedang berlangsung";
+
+/* Onboarding (first-run) */
+"onboarding.skip" = "Lewati";
+"onboarding.back" = "Kembali";
+"onboarding.continue" = "Lanjut";
+"onboarding.welcome.title" = "Selamat datang di Badminton Eye";
+"onboarding.welcome.subtitle" = "Catat skor pertandinganmu dengan satu ketukan — dan biarkan AI di perangkat menebak pemenang setiap reli.";
+"onboarding.signIn.title" = "Sesuaikan untukmu";
+"onboarding.signIn.subtitle" = "Masuk dengan Apple agar pertandinganmu tersinkron di semua perangkat.";
+"onboarding.signIn.freeTitle" = "Tidak perlu akun";
+"onboarding.signIn.freeSubtitle" = "Versi ini menyimpan semuanya di perangkatmu — tidak perlu masuk.";
+"onboarding.signIn.continueWithout" = "Lanjut tanpa akun";
+"onboarding.autoScore.title" = "Penilaian otomatis";
+"onboarding.autoScore.subtitle" = "Arahkan kameramu ke lapangan. Setelah tiap reli, aplikasi menyarankan pemenangnya — kamu tinggal mengonfirmasi.";
+"onboarding.autoScore.point1" = "Menyarankan pemenang reli dalam sekitar dua detik";
+"onboarding.autoScore.point2" = "Satu ketukan untuk mengonfirmasi atau mengubah";
+"onboarding.autoScore.point3" = "Tetap menjadi pencatat skor manual lengkap kapan pun kamu mau";
+"onboarding.calibration.title" = "Siapkan lapanganmu";
+"onboarding.calibration.subtitle" = "Tandai lapangan sekali agar aplikasi tahu letak garisnya. Hanya butuh beberapa detik.";
+"onboarding.calibration.point1" = "Letakkan ponsel di tempat yang bisa melihat lapangan";
+"onboarding.calibration.point2" = "Ketuk keempat sudut, satu per satu";
+"onboarding.calibration.point3" = "Beri nama agar bisa dipakai lagi nanti";
+"onboarding.calibration.calibrateNow" = "Kalibrasi lapangan sekarang";
+"onboarding.calibration.later" = "Kamu juga bisa mengaturnya nanti, dari pertandingan mana pun.";
+"onboarding.calibration.savedFormat" = "Lapangan tersimpan: %@";
+"onboarding.challenge.title" = "Tantangan Hawk Eye";
+"onboarding.challenge.subtitle" = "Tidak yakin masuk atau keluar? Tantang keputusannya dan Hawk Eye memutar ulang jalur kok untuk menentukannya.";
+"onboarding.challenge.point1" = "Penentuan garis oleh AI dari videomu";
+"onboarding.challenge.point2" = "Pemutaran ulang lintasan gerak lambat";
+"onboarding.challenge.includedTitle" = "Sudah termasuk untukmu";
+"onboarding.challenge.includedSubtitle" = "Hawk Eye terbuka di versi ini — coba kapan saja.";
+"onboarding.challenge.subscribe" = "Berlangganan untuk membuka";
+"onboarding.ready.title" = "Semua siap";
+"onboarding.ready.subtitle" = "Mulai pertandingan kapan pun kamu siap.";
+"onboarding.ready.start" = "Mulai mencatat skor";
+
+/* Court auto-detect (Option 5) */
+"calibration.autoDetect.button" = "Deteksi lapangan otomatis";
+"calibration.autoDetect.detecting" = "Mendeteksi…";
+"calibration.autoDetect.notFound" = "Lapangan tidak ditemukan. Geser agar lebih banyak lapangan terlihat, atau ketuk sudut-sudutnya.";
+"calibration.autoDetect.noFrame" = "Kamera belum siap — coba lagi sebentar.";
+"calibration.autoDetect.hint" = "Tips: ketuk Deteksi otomatis agar aplikasi menemukan lapangan untukmu — atau ketuk sendiri keempat sudutnya.";

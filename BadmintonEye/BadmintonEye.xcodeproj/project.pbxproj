@@ -91,12 +91,15 @@
 		TW1001 /* TrackNetWindowAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = TW2001 /* TrackNetWindowAdapter.swift */; };
 		GV1001 /* GameVideoRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = GV2001 /* GameVideoRecord.swift */; };
 		FV1001 /* FootageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FV2001 /* FootageView.swift */; };
+		OB1001 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OB2001 /* OnboardingView.swift */; };
 		RV1001 /* RallyReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = RV2001 /* RallyReviewView.swift */; };
 		FD1001 /* FootageDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD2001 /* FootageDetailView.swift */; };
 		HE1001 /* HighlightClipEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = HE2001 /* HighlightClipEditorView.swift */; };
 		TR1001 /* TrajectoryRallySuggestor.swift in Sources */ = {isa = PBXBuildFile; fileRef = TR2001 /* TrajectoryRallySuggestor.swift */; };
 		LC1001 /* LiveCameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = LC2001 /* LiveCameraPreview.swift */; };
 		LM1001 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = LM2001 /* LocalizationManager.swift */; };
+		VC1001 /* VisionCourtDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = VC2001 /* VisionCourtDetector.swift */; };
+		CD1001 /* CourtDetecting.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2001 /* CourtDetecting.swift */; };
 		PR1001 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = PR2001 /* PrivacyInfo.xcprivacy */; };
 		IL1001 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = IL4001 /* Localizable.strings */; };
 		UT10001 /* BadmintonEyeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20001 /* BadmintonEyeTests.swift */; };
@@ -104,6 +107,8 @@
 		UT10008 /* FeaturizeGoldenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20006 /* FeaturizeGoldenTests.swift */; };
 		UT10009 /* LiveMatchScoringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20007 /* LiveMatchScoringTests.swift */; };
 		UT10010 /* ClipRefTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20008 /* ClipRefTests.swift */; };
+		UT10011 /* OnboardingFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20009 /* OnboardingFlowTests.swift */; };
+		UT10012 /* CourtDetectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20010 /* CourtDetectionTests.swift */; };
 		UT10005 /* WatchSyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20004 /* WatchSyncManagerTests.swift */; };
 		UT10006 /* WatchMatchViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20005 /* WatchMatchViewModelTests.swift */; };
 		UT10007 /* WatchMatchViewModel.swift in Sources (Tests) */ = {isa = PBXBuildFile; fileRef = W20002 /* WatchMatchViewModel.swift */; };
@@ -223,12 +228,15 @@
 		TW2001 /* TrackNetWindowAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackNetWindowAdapter.swift; sourceTree = "<group>"; };
 		GV2001 /* GameVideoRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameVideoRecord.swift; sourceTree = "<group>"; };
 		FV2001 /* FootageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootageView.swift; sourceTree = "<group>"; };
+		OB2001 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		RV2001 /* RallyReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RallyReviewView.swift; sourceTree = "<group>"; };
 		FD2001 /* FootageDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootageDetailView.swift; sourceTree = "<group>"; };
 		HE2001 /* HighlightClipEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightClipEditorView.swift; sourceTree = "<group>"; };
 		TR2001 /* TrajectoryRallySuggestor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryRallySuggestor.swift; sourceTree = "<group>"; };
 		LC2001 /* LiveCameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCameraPreview.swift; sourceTree = "<group>"; };
 		LM2001 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
+		VC2001 /* VisionCourtDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionCourtDetector.swift; sourceTree = "<group>"; };
+		CD2001 /* CourtDetecting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourtDetecting.swift; sourceTree = "<group>"; };
 		PR2001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		IL2001 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		IL2002 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
@@ -245,6 +253,8 @@
 		UT20006 /* FeaturizeGoldenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturizeGoldenTests.swift; sourceTree = "<group>"; };
 		UT20007 /* LiveMatchScoringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveMatchScoringTests.swift; sourceTree = "<group>"; };
 		UT20008 /* ClipRefTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipRefTests.swift; sourceTree = "<group>"; };
+		UT20009 /* OnboardingFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowTests.swift; sourceTree = "<group>"; };
+		UT20010 /* CourtDetectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourtDetectionTests.swift; sourceTree = "<group>"; };
 		UT20004 /* WatchSyncManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSyncManagerTests.swift; sourceTree = "<group>"; };
 		UT20005 /* WatchMatchViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchMatchViewModelTests.swift; sourceTree = "<group>"; };
 		WP2001 /* WCSessionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WCSessionProtocol.swift; sourceTree = "<group>"; };
@@ -376,6 +386,7 @@
 				H20008 /* TrajectoryReplayView.swift */,
 				S20002 /* StatsView.swift */,
 				FV2001 /* FootageView.swift */,
+				OB2001 /* OnboardingView.swift */,
 				RV2001 /* RallyReviewView.swift */,
 				FD2001 /* FootageDetailView.swift */,
 				HE2001 /* HighlightClipEditorView.swift */,
@@ -415,6 +426,8 @@
 				TW2001 /* TrackNetWindowAdapter.swift */,
 				TR2001 /* TrajectoryRallySuggestor.swift */,
 				LM2001 /* LocalizationManager.swift */,
+				VC2001 /* VisionCourtDetector.swift */,
+				CD2001 /* CourtDetecting.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -448,6 +461,8 @@
 				UT20006 /* FeaturizeGoldenTests.swift */,
 				UT20007 /* LiveMatchScoringTests.swift */,
 				UT20008 /* ClipRefTests.swift */,
+				UT20009 /* OnboardingFlowTests.swift */,
+				UT20010 /* CourtDetectionTests.swift */,
 				VI2002 /* ImportedVideoTests.swift */,
 				UT20004 /* WatchSyncManagerTests.swift */,
 				UT20005 /* WatchMatchViewModelTests.swift */,
@@ -743,12 +758,15 @@
 				TW1001 /* TrackNetWindowAdapter.swift in Sources */,
 				GV1001 /* GameVideoRecord.swift in Sources */,
 				FV1001 /* FootageView.swift in Sources */,
+				OB1001 /* OnboardingView.swift in Sources */,
 				RV1001 /* RallyReviewView.swift in Sources */,
 				FD1001 /* FootageDetailView.swift in Sources */,
 				HE1001 /* HighlightClipEditorView.swift in Sources */,
 				TR1001 /* TrajectoryRallySuggestor.swift in Sources */,
 				LC1001 /* LiveCameraPreview.swift in Sources */,
 				LM1001 /* LocalizationManager.swift in Sources */,
+				VC1001 /* VisionCourtDetector.swift in Sources */,
+				CD1001 /* CourtDetecting.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -788,6 +806,8 @@
 				UT10008 /* FeaturizeGoldenTests.swift in Sources */,
 				UT10009 /* LiveMatchScoringTests.swift in Sources */,
 				UT10010 /* ClipRefTests.swift in Sources */,
+				UT10011 /* OnboardingFlowTests.swift in Sources */,
+				UT10012 /* CourtDetectionTests.swift in Sources */,
 				VI1002 /* ImportedVideoTests.swift in Sources */,
 				/* Watch tests (UT10005/06/07) quarantined from the iOS test target:
 				   WatchMatchViewModel.swift is a watchOS-module source that can't

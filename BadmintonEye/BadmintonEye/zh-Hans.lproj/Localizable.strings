@@ -143,3 +143,45 @@
 "recording.camera.accessRequired.message" = "Badminton Eye 需要相机访问权限才能录制您的比赛。请在设置中启用。";
 "recording.camera.openSettings" = "打开设置";
 "recording.rec.accessibilityLabel" = "录制中";
+
+/* Onboarding (first-run) */
+"onboarding.skip" = "跳过";
+"onboarding.back" = "返回";
+"onboarding.continue" = "继续";
+"onboarding.welcome.title" = "欢迎使用 Badminton Eye";
+"onboarding.welcome.subtitle" = "轻点即可记分——并让设备端 AI 推测每一回合的胜方。";
+"onboarding.signIn.title" = "个性化设置";
+"onboarding.signIn.subtitle" = "使用 Apple 登录，让你的比赛在各设备间保持同步。";
+"onboarding.signIn.freeTitle" = "无需账户";
+"onboarding.signIn.freeSubtitle" = "此版本将所有数据保存在你的设备上——无需登录。";
+"onboarding.signIn.continueWithout" = "不使用账户继续";
+"onboarding.autoScore.title" = "自动记分";
+"onboarding.autoScore.subtitle" = "把摄像头对准球场。每个回合结束后，应用会推测胜方——你只需确认。";
+"onboarding.autoScore.point1" = "约两秒内推测出该回合的胜方";
+"onboarding.autoScore.point2" = "轻点一下即可确认或更改";
+"onboarding.autoScore.point3" = "随时也能作为完整的手动记分器";
+"onboarding.calibration.title" = "设置你的球场";
+"onboarding.calibration.subtitle" = "标记一次球场，让应用知道界线的位置。只需几秒钟。";
+"onboarding.calibration.point1" = "把手机放在能看到球场的位置";
+"onboarding.calibration.point2" = "依次轻点四个角";
+"onboarding.calibration.point3" = "为它命名，方便下次重复使用";
+"onboarding.calibration.calibrateNow" = "立即校准球场";
+"onboarding.calibration.later" = "你也可以稍后在任意比赛中进行设置。";
+"onboarding.calibration.savedFormat" = "已保存球场：%@";
+"onboarding.challenge.title" = "鹰眼挑战";
+"onboarding.challenge.subtitle" = "不确定是界内还是界外？发起挑战，鹰眼会回放羽毛球的轨迹来判定。";
+"onboarding.challenge.point1" = "根据你的视频进行 AI 司线判定";
+"onboarding.challenge.point2" = "慢动作轨迹回放";
+"onboarding.challenge.includedTitle" = "已为你解锁";
+"onboarding.challenge.includedSubtitle" = "此版本已解锁鹰眼——随时可以体验。";
+"onboarding.challenge.subscribe" = "订阅以解锁";
+"onboarding.ready.title" = "一切就绪";
+"onboarding.ready.subtitle" = "随时可以开始一场比赛。";
+"onboarding.ready.start" = "开始记分";
+
+/* Court auto-detect (Option 5) */
+"calibration.autoDetect.button" = "自动识别球场";
+"calibration.autoDetect.detecting" = "识别中…";
+"calibration.autoDetect.notFound" = "未找到球场。请移动以露出更多球场，或手动轻点四个角。";
+"calibration.autoDetect.noFrame" = "摄像头尚未就绪——请稍后再试。";
+"calibration.autoDetect.hint" = "提示：点按“自动识别球场”让应用替你找到球场——或者自己轻点四个角。";

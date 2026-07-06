@@ -145,3 +145,45 @@
 "recording.camera.accessRequired.message" = "Badminton Eye ต้องการสิทธิ์เข้าถึงกล้องเพื่อบันทึกการแข่งขันของคุณ เปิดใช้งานในการตั้งค่า";
 "recording.camera.openSettings" = "เปิดการตั้งค่า";
 "recording.rec.accessibilityLabel" = "กำลังบันทึก";
+
+/* Onboarding (first-run) */
+"onboarding.skip" = "ข้าม";
+"onboarding.back" = "ย้อนกลับ";
+"onboarding.continue" = "ต่อไป";
+"onboarding.welcome.title" = "ยินดีต้อนรับสู่ Badminton Eye";
+"onboarding.welcome.subtitle" = "บันทึกคะแนนการแข่งขันด้วยการแตะเพียงครั้งเดียว — และให้ AI บนอุปกรณ์ช่วยคาดเดาผู้ชนะในแต่ละแร็ลลี";
+"onboarding.signIn.title" = "ปรับให้เป็นของคุณ";
+"onboarding.signIn.subtitle" = "ลงชื่อเข้าใช้ด้วย Apple เพื่อซิงค์การแข่งขันของคุณในทุกอุปกรณ์";
+"onboarding.signIn.freeTitle" = "ไม่ต้องมีบัญชี";
+"onboarding.signIn.freeSubtitle" = "บิลด์นี้เก็บทุกอย่างไว้บนอุปกรณ์ของคุณ — ไม่ต้องลงชื่อเข้าใช้";
+"onboarding.signIn.continueWithout" = "ดำเนินการต่อโดยไม่ใช้บัญชี";
+"onboarding.autoScore.title" = "การให้คะแนนอัตโนมัติ";
+"onboarding.autoScore.subtitle" = "หันกล้องไปที่สนาม หลังจบแต่ละแร็ลลี แอปจะแนะนำผู้ชนะ — คุณเพียงยืนยัน";
+"onboarding.autoScore.point1" = "แนะนำผู้ชนะของแร็ลลีภายในประมาณสองวินาที";
+"onboarding.autoScore.point2" = "แตะครั้งเดียวเพื่อยืนยันหรือเปลี่ยน";
+"onboarding.autoScore.point3" = "ยังคงเป็นเครื่องบันทึกคะแนนแบบแมนนวลเต็มรูปแบบเมื่อใดก็ได้";
+"onboarding.calibration.title" = "ตั้งค่าสนามของคุณ";
+"onboarding.calibration.subtitle" = "ทำเครื่องหมายสนามหนึ่งครั้งเพื่อให้แอปรู้ตำแหน่งของเส้น ใช้เวลาเพียงไม่กี่วินาที";
+"onboarding.calibration.point1" = "วางโทรศัพท์ในตำแหน่งที่มองเห็นสนาม";
+"onboarding.calibration.point2" = "แตะที่มุมทั้งสี่ทีละมุม";
+"onboarding.calibration.point3" = "ตั้งชื่อเพื่อใช้ซ้ำในครั้งต่อไป";
+"onboarding.calibration.calibrateNow" = "ปรับเทียบสนามตอนนี้";
+"onboarding.calibration.later" = "คุณยังตั้งค่าภายหลังได้จากการแข่งขันใดก็ได้";
+"onboarding.calibration.savedFormat" = "บันทึกสนามแล้ว: %@";
+"onboarding.challenge.title" = "การท้าทาย Hawk Eye";
+"onboarding.challenge.subtitle" = "ไม่แน่ใจว่าลงในหรือออก? ท้าทายการตัดสิน แล้ว Hawk Eye จะเล่นเส้นทางของลูกขนไก่ซ้ำเพื่อชี้ขาด";
+"onboarding.challenge.point1" = "การตัดสินเส้นด้วย AI จากวิดีโอของคุณ";
+"onboarding.challenge.point2" = "เล่นซ้ำวิถีการเคลื่อนที่แบบสโลว์โมชัน";
+"onboarding.challenge.includedTitle" = "รวมไว้ให้คุณแล้ว";
+"onboarding.challenge.includedSubtitle" = "Hawk Eye ปลดล็อกในบิลด์นี้ — ลองใช้ได้ทุกเมื่อ";
+"onboarding.challenge.subscribe" = "สมัครสมาชิกเพื่อปลดล็อก";
+"onboarding.ready.title" = "พร้อมแล้ว";
+"onboarding.ready.subtitle" = "เริ่มการแข่งขันเมื่อคุณพร้อม";
+"onboarding.ready.start" = "เริ่มให้คะแนน";
+
+/* Court auto-detect (Option 5) */
+"calibration.autoDetect.button" = "ตรวจจับสนามอัตโนมัติ";
+"calibration.autoDetect.detecting" = "กำลังตรวจจับ…";
+"calibration.autoDetect.notFound" = "ไม่พบสนาม ขยับเพื่อให้เห็นสนามมากขึ้น หรือแตะที่มุมทั้งสี่";
+"calibration.autoDetect.noFrame" = "กล้องยังไม่พร้อม — ลองอีกครั้งในอีกสักครู่";
+"calibration.autoDetect.hint" = "เคล็ดลับ: แตะ ‘ตรวจจับสนามอัตโนมัติ’ เพื่อให้แอปหาสนามให้คุณ — หรือแตะที่มุมทั้งสี่ด้วยตัวเอง";
