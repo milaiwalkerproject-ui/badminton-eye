@@ -70,6 +70,28 @@ final class CourtDetectionTests: XCTestCase {
         XCTAssertNil(CourtGeometry.orderedClockwise([p, p, CGPoint(x: 0.9, y: 0.1), CGPoint(x: 0.1, y: 0.9)]))
     }
 
+    func testOrderedClockwiseRecanonicalizesAfterQuarterTurn() {
+        // Sensor→screen regression: the portrait preview rotates the buffer 90°,
+        // which preserves clockwise order but shifts which physical corner is
+        // top-left. Ordering done in sensor space is therefore stale after the
+        // conversion — re-running orderedClockwise on the rotated points must
+        // restore [TL, TR, BR, BL] in the rotated (screen) space.
+        let sensorTL = CGPoint(x: 0.20, y: 0.30)
+        let sensorTR = CGPoint(x: 0.80, y: 0.25)
+        let sensorBR = CGPoint(x: 0.85, y: 0.70)
+        let sensorBL = CGPoint(x: 0.15, y: 0.75)
+        // 90° clockwise rotation in a top-left-origin unit square: (x, y) → (1 − y, x).
+        let rotate = { (p: CGPoint) in CGPoint(x: 1 - p.y, y: p.x) }
+        let rotatedInSensorOrder = [sensorTL, sensorTR, sensorBR, sensorBL].map(rotate)
+
+        // The sensor ordering no longer starts at the rotated-space top-left…
+        XCTAssertNotEqual(rotatedInSensorOrder.first, rotate(sensorBL))
+        // …but re-canonicalizing recovers it: sensor BL becomes screen TL, etc.
+        let reordered = CourtGeometry.orderedClockwise(rotatedInSensorOrder)
+        assertPointsEqual(reordered ?? [],
+                          [rotate(sensorBL), rotate(sensorTL), rotate(sensorTR), rotate(sensorBR)])
+    }
+
     // MARK: - quadArea
 
     func testQuadAreaUnitSquare() {

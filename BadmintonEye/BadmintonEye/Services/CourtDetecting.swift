@@ -7,11 +7,12 @@ import Foundation
 /// A detected badminton-court outline.
 ///
 /// `corners` are four points in NORMALIZED capture-device space (x,y in
-/// `[0,1]`, **top-left origin**), ordered clockwise from the top-left:
-/// `[topLeft, topRight, bottomRight, bottomLeft]`. That order matches the
-/// manual 4-tap order in `CourtCalibrationView` (`Top-Left, Top-Right,
-/// Bottom-Right, Bottom-Left`), so the downstream homography is identical
-/// whether the corners came from a tap or from auto-detection.
+/// `[0,1]`, **top-left origin**), ordered clockwise from the top-left **of the
+/// buffer's own (sensor) orientation**: `[topLeft, topRight, bottomRight,
+/// bottomLeft]`. When the preview is rotated relative to the sensor (90° in
+/// portrait), the buffer-space top-left is NOT the on-screen top-left, so
+/// consumers that need the manual 4-tap screen order must re-canonicalize
+/// after converting to view space (see `CourtCalibrationView.autoDetectCourt`).
 struct DetectedCourt: Equatable, Sendable {
     /// Clockwise from top-left: `[TL, TR, BR, BL]`.
     let corners: [CGPoint]

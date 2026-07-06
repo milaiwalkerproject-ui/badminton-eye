@@ -313,9 +313,19 @@ struct CourtCalibrationView: View {
                 // Map normalized capture-device points → on-screen points via
                 // the preview layer (handles rotation + aspect-fill cropping),
                 // matching where a manual tap would have landed.
-                corners = detected.corners.map {
+                let viewPoints = detected.corners.map {
                     layer.layerPointConverted(fromCaptureDevicePoint: $0)
                 }
+                // The detector ordered the corners in sensor space; the preview
+                // rotation (90° in portrait) shifts which physical corner is
+                // top-left on screen while preserving clockwise order. Corners
+                // are consumed positionally (index 0 → court origin), so
+                // re-canonicalize in view space to match the manual tap order.
+                guard let screenOrdered = CourtGeometry.orderedClockwise(viewPoints) else {
+                    detectionMessage = localized("calibration.autoDetect.notFound")
+                    return
+                }
+                corners = screenOrdered
                 detectionMessage = nil
             }
         }
