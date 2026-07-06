@@ -118,9 +118,13 @@ struct FootageView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
+                // Resolved outside the picker label: PhotosPicker's label
+                // closure is nonisolated in the iOS 18.5 SDK, so it can't
+                // touch the main-actor LocalizationManager directly.
+                let importToFootageTitle = LocalizationManager.shared.localized("footage.importToFootage")
                 Menu {
                     PhotosPicker(selection: $footageImportItem, matching: .videos) {
-                        Label(LocalizationManager.shared.localized("footage.importToFootage"),
+                        Label(importToFootageTitle,
                               systemImage: "square.and.arrow.down.on.square")
                     }
                     Button {
