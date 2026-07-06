@@ -151,4 +151,58 @@ final class HitDetectorTests: XCTestCase {
                     TrackSample(t: 1, court: CourtPoint(x: 0.5, y: 0.4))]
         XCTAssertTrue(det.detectRallies(dupT).isEmpty)   // dedup → too few → empty, no crash
     }
+
+    // MARK: fabricated-serve fix — static/noise tracks must stay silent
+
+    func testStaticTrackYieldsNoHitsNoWinnerZeroQuality() {
+        // 1 s of a perfectly stationary visible shuttle: no significant motion →
+        // no fabricated serve, no segment at all.
+        let s = (0..<120).map { TrackSample(t: Double($0) / 120, court: CourtPoint(x: 0.5, y: 0.45)) }
+        XCTAssertTrue(det.detectRallies(s).isEmpty)
+        let hit = det.detectHits(s)
+        XCTAssertTrue(hit.hits.isEmpty)
+        XCTAssertNil(hit.lastHitter)
+        XCTAssertEqual(hit.quality, 0)
+        XCTAssertNil(det.confidentRallyEnd(s))
+    }
+
+    func testTinyJitterTrackStaysSilent() {
+        // Alternating ±0.005 cu detector jitter at 120 fps: smoothed central-diff
+        // vy stays ~0.01 cu/s, far below minApproachSpeed (0.5) → no serve seeded.
+        let s = (0..<120).map { i in
+            TrackSample(t: Double(i) / 120,
+                        court: CourtPoint(x: 0.5, y: 0.5 + (i % 2 == 0 ? 0.005 : -0.005)))
+        }
+        XCTAssertTrue(det.detectRallies(s).isEmpty)
+        XCTAssertNil(det.detectHits(s).lastHitter)
+        XCTAssertNil(det.confidentRallyEnd(s))
+    }
+
+    // MARK: boundary — a slow but real serve must survive the no-motion guard
+
+    func testSlowServeStillDetected() {
+        // 0.30 → 0.72 cu over 0.6 s ≈ 0.7 cu/s (> minApproachSpeed 0.5), then settles.
+        // Serve-only rally: 1 hit, near player (.sideB); quality NOT killed by the
+        // single-hit prominence cap (drift ≈ 0.42 cu > the 0.32 saturation point).
+        let s = ramp(fps: 120, [(0.6, 0.30, 0.72), (0.4, 0.72, 0.72)])
+        let seg = det.detectRallies(s).first
+        XCTAssertEqual(seg?.shotCount, 1)
+        XCTAssertEqual(seg?.hits.first?.hitter, .sideB)
+        XCTAssertEqual(seg?.lastHitter, .sideB)
+        XCTAssertGreaterThanOrEqual(seg?.quality ?? 0, 0.6)
+    }
+
+    // MARK: residual channel — a one-frame glitch spike must never be confident
+
+    func testGlitchSpikeInStaticTrackNotConfident() {
+        // One-frame +0.08 cu outlier in an otherwise static track: the smoothed
+        // spike can clear the motion guard, but total drift ≈ 0 so the single-hit
+        // prominence cap holds quality near 0.5 — below confidentRallyEnd's gate.
+        let s = (0..<120).map { i in
+            TrackSample(t: Double(i) / 120,
+                        court: CourtPoint(x: 0.5, y: i == 60 ? 0.53 : 0.45))
+        }
+        XCTAssertLessThan(det.detectHits(s).quality, 0.6)
+        XCTAssertNil(det.confidentRallyEnd(s))
+    }
 }

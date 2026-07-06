@@ -3,8 +3,9 @@ import Foundation
 // MARK: - Types
 
 struct CourtPoint: Codable, Sendable, Equatable {
-    let x: Double  // court-space X (0.0 = left sideline, 1.0 = right sideline)
-    let y: Double  // court-space Y (0.0 = near baseline, 1.0 = far baseline)
+    let x: Double  // court-space X: 0 = sideline on the LEFT of the calibrated image, 1 = right
+    let y: Double  // court-space Y: 0 = baseline at the TOP of the calibrated image (the far
+                   // baseline when the camera films from behind a baseline), 1 = bottom (near)
 }
 
 enum LandingResult: String, Codable, Sendable, Equatable {
@@ -31,16 +32,21 @@ struct TrajectoryCalculator {
 
     /// Computes a 3x3 perspective transform matrix mapping image coordinates to normalized
     /// court coordinates (0-1 range). Solves the 8-equation system from 4 corner correspondences.
-    /// Court corners map to (0,0), (1,0), (1,1), (0,1).
+    /// `imageCorners` MUST be in clockwise order [TL, TR, BR, BL] as seen in the image —
+    /// the calibration tap order — and map to (0,0), (1,0), (1,1), (0,1) respectively.
     func computeHomography(imageCorners: [CGPoint], imageSize: CGSize) -> [[Double]] {
         guard imageCorners.count == 4 else {
             return [[1, 0, 0], [0, 1, 0], [0, 0, 1]] // identity fallback
         }
 
-        // Source points (image corners): TL, TR, BL, BR
+        // Source points (image corners) in CLOCKWISE order: TL, TR, BR, BL — the
+        // calibration tap order (CourtCalibrationView.cornerLabels) and the
+        // CourtGeometry.orderedClockwise order.
         let src = imageCorners.map { (Double($0.x), Double($0.y)) }
-        // Destination points (court normalized): TL=(0,0), TR=(1,0), BL=(0,1), BR=(1,1)
-        let dst: [(Double, Double)] = [(0, 0), (1, 0), (0, 1), (1, 1)]
+        // Destination: matching clockwise traversal of the unit square:
+        // TL=(0,0), TR=(1,0), BR=(1,1), BL=(0,1). Must stay cyclic with src or
+        // the homography folds over itself (see CalibrationHomographyTests).
+        let dst: [(Double, Double)] = [(0, 0), (1, 0), (1, 1), (0, 1)]
 
         // Build 8x8 system: for each correspondence (sx, sy) -> (dx, dy):
         //   dx = (h0*sx + h1*sy + h2) / (h6*sx + h7*sy + 1)

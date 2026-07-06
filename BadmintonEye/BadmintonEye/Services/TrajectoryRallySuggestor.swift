@@ -18,7 +18,7 @@ import ScoringEngine
 ///      smooth trajectory and a court-space landing point (via the
 ///      homography defined by `CalibrationProfile`).
 ///   4. Decides the winning side from the landing's court-space `y`
-///      (≥ 0.5 → far side = `.sideA`; < 0.5 → near side = `.sideB`).
+///      (< 0.5 → far half, top of image → `.sideA`; ≥ 0.5 → near half → `.sideB`).
 ///   5. Combines three signals into a confidence in `[0, 1]`:
 ///        a) detection count (capped at 12 — the per-frame detector returns
 ///           ≤ 1 point per frame, so ~2s @ 6+ fps is "plenty")
@@ -166,9 +166,10 @@ final class TrajectoryRallySuggestor: RallySuggesting, @unchecked Sendable {
         let courtPoints = detected.map { calculator.transformPoint($0.px, using: homography) }
 
         // Geometric "where did it land" signal. Side mapping: calibration corners
-        // are TL, TR, BL, BR → TrajectoryCalculator maps TL→(0,0)…BR→(1,1), and a
-        // landing with court-y < 0.5 → `.sideA`, ≥ 0.5 → `.sideB`. If orientation
-        // is ever flipped, only this mapping changes.
+        // are CLOCKWISE [TL, TR, BR, BL] → computeHomography maps TL→(0,0),
+        // TR→(1,0), BR→(1,1), BL→(0,1); court y=0 is the top-of-image (far)
+        // baseline. A landing with court-y < 0.5 → `.sideA`, ≥ 0.5 → `.sideB`.
+        // If orientation is ever flipped, only this mapping changes.
         let (_, landing) = calculator.fitTrajectory(courtPoints)
         let geomSide: Side = landing.y < 0.5 ? .sideA : .sideB
 

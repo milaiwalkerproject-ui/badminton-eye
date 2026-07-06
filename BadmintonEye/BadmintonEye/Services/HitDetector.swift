@@ -205,8 +205,11 @@ struct HitDetector: Sendable {
         }
         if n > 2 { vy[0] = vy[1]; vy[n - 1] = vy[n - 2] }
 
-        // --- Seed the serve (shot 1): direction of the initial significant motion. ---
-        let serveIdx = indexOfFirstSignificant(vy)
+        // --- Seed the serve (shot 1): direction of the initial significant motion.
+        // No significant motion anywhere in the window → static/noise track: emit
+        // no segment, so detectHits yields ([], nil, quality 0) and
+        // confidentRallyEnd stays silent instead of fabricating a serve. ---
+        guard let serveIdx = indexOfFirstSignificant(vy) else { return nil }
         let serveDir = vy[serveIdx]
         let serveHitter: Side = serveDir >= 0 ? nearSide : farSide
         var hits: [HitEvent] = [HitEvent(
@@ -270,10 +273,14 @@ struct HitDetector: Sendable {
         if inferredPresent { quality -= 0.4 }
         if endReason == .trackLost { quality -= 0.3 }
         if lowFps { quality -= 0.45 }
-        if hits.count > 1 {
-            let avgProm = hits.dropFirst().map { $0.prominence }.reduce(0, +) / Double(hits.count - 1)
-            quality = Swift.min(quality, 0.5 + 0.5 * Swift.min(1, avgProm / Swift.max(1e-6, config.minProminence) * 0.25))
-        }
+        // Prominence evidence cap. Multi-hit: average reversal prominence (serve
+        // excluded, as before). Single-hit: the serve's own drift is the only
+        // evidence — a real serve travels far enough to saturate the cap, while a
+        // one-frame glitch spike drifts ~0 and is capped near 0.5, below
+        // confidentRallyEnd's quality gate.
+        let promHits = hits.count > 1 ? Array(hits.dropFirst()) : hits
+        let avgProm = promHits.map { $0.prominence }.reduce(0, +) / Double(promHits.count)
+        quality = Swift.min(quality, 0.5 + 0.5 * Swift.min(1, avgProm / Swift.max(1e-6, config.minProminence) * 0.25))
         quality = Swift.max(0, Swift.min(1, quality))
 
         return RallySegment(
@@ -282,8 +289,10 @@ struct HitDetector: Sendable {
     }
 
     // MARK: tiny helpers
-    private func indexOfFirstSignificant(_ vy: [Double]) -> Int {
+    /// Index of the first sample with significant side-axis speed, or `nil`
+    /// when the whole window is static/noise (callers must not seed a serve).
+    private func indexOfFirstSignificant(_ vy: [Double]) -> Int? {
         for (i, v) in vy.enumerated() where abs(v) >= config.minApproachSpeed { return i }
-        return 0
+        return nil
     }
 }

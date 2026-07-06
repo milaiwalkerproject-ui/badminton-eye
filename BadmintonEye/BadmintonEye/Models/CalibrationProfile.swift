@@ -5,6 +5,15 @@ import SwiftData
 final class CalibrationProfile {
     var id: UUID = UUID()
     var venueName: String = ""
+    // HISTORICAL FIELD CROSSING — do not "tidy". The bottom two field names are
+    // crossed relative to their contents: `cornerBottomLeft` persists the 3rd
+    // calibration tap (the image bottom-RIGHT corner) and `cornerBottomRight`
+    // persists the 4th tap (bottom-LEFT). The `corners` accessor below reads the
+    // fields in declaration order, which re-inverts the crossing and yields the
+    // clockwise tap order [TL, TR, BR, BL]. DO NOT rename these fields: they are
+    // SwiftData store columns / CloudKit record fields for profiles already saved
+    // on user devices (CloudKit cannot rename fields, and cross-swapping two
+    // attribute names is unsafe for lightweight migration).
     var cornerTopLeft: Data?
     var cornerTopRight: Data?
     var cornerBottomLeft: Data?
@@ -20,7 +29,12 @@ final class CalibrationProfile {
 
     // MARK: - Computed Corners
 
-    /// Decodes all 4 corner Data fields into CGPoints, returning nil if any corner is missing.
+    /// Decodes all 4 corner Data fields into CGPoints, returning nil if any corner
+    /// is missing. Returns the corners in CLOCKWISE tap order [top-left, top-right,
+    /// bottom-right, bottom-left] — exactly what `TrajectoryCalculator.computeHomography`
+    /// requires. Reading the fields in declaration order re-inverts the historical
+    /// field crossing documented above — the body must not be reordered to match
+    /// the field names.
     var corners: [CGPoint]? {
         guard let tlData = cornerTopLeft,
               let trData = cornerTopRight,
@@ -43,6 +57,11 @@ final class CalibrationProfile {
     // MARK: - Set Corners
 
     /// Encodes each CGPoint as JSON Data and stores image dimensions.
+    /// `corners` must be in CLOCKWISE order [TL, TR, BR, BL] — the
+    /// `CourtCalibrationView` tap order / `CourtGeometry.orderedClockwise` order.
+    /// The positional field assignment below is intentional (corners[2] → the
+    /// crossed `cornerBottomLeft` field) to keep on-disk semantics identical to
+    /// every profile saved since v1.
     func setCorners(_ corners: [CGPoint], imageSize: CGSize) {
         guard corners.count == 4 else { return }
         let encoder = JSONEncoder()
