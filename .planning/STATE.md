@@ -26,12 +26,19 @@ Open follow-ups (quality improvements, not Phase E blockers):
 3. ~~**Footage tab WIP**~~ ✅ RESOLVED — `GameVideoRecord` is registered in the `ModelContainer` schema, `PersistedMatch.gameVideos` cascade relationship is in place, and the files are wired into `project.pbxproj`. Footage editor (trim/zoom, `ClipRef`) shipped.
 
 Infra:
-- **CI added** (`.github/workflows/ci.yml`): macOS runner runs `swift test` for ScoringEngine and `xcodebuild test` for the BadmintonEye scheme on push/PR to `main`.
-- **Stale PRs:** 7 open PRs (#18, #20–24, #27) are pre-pivot (claude-flow bot, May 10) and mostly target features the MVP pivot cut (paywall, widgets, account deletion, superseded CoreML detector). Triaged 2026-06-15 — see PR comments.
+- **CI live and green** (`.github/workflows/ci.yml`, merged 2026-07-06): macOS runner runs `swift test` for ScoringEngine and `xcodebuild test` for the BadmintonEye scheme on push/PR to `main`. First green run required 5 rounds of Swift 6.1 (Xcode 16.4) strict-concurrency fixes to pre-existing code — the runner's compiler is stricter than the local Xcode; keep new code 6.1-clean.
+- **Branch/PR triage complete (2026-07-06):** all pre-pivot PRs closed (#21 superseded by the new onboarding, #23/#27 stale — code recoverable from the closed PRs). Three live branches merged to `main`: onboarding + Vision court auto-detect (with a corner-ordering fix found in review), hit detection (FK) + shot-speed foundation, and the CI branch. 24 dead remote branches audited safe to delete; deletion pending (owner runs `git push origin --delete …` from a clone — the cloud session's proxy blocks ref deletion).
 
-Last activity: 2026-06-15 — refreshed planning state, added CI, triaged stale pre-pivot PRs. Code-complete through Phase D; Phase E (on-device) is the remaining gate.
+Approved direction (owner decisions, 2026-07-06):
+1. **Full-match analysis wave 1: GO** — replace fake footage analysis with real chunked/resumable on-device TrackNet over full matches, and put "Who won? A/B" rally labeling INTO the app (locked: frame index `f=round(t×30)`; imports tagged `unmasked_import:true` and quarantined until court-masked). Note: FULLMATCH-ANALYSIS-DESIGN.md lives on the Mac Studio, not in-repo — plan reconstructed from HANDOFF.md + code inventory.
+2. **Design restructure (a): GO** — one match = score + video + highlights on one screen; hero "Start Match".
+3. Court masks for end-on videos: **parked** until back at the Studio.
+4. Calibration corner-field naming cleanup: approved.
+5. HitDetector phantom-serve fix: approved (prerequisite for wiring `confidentRallyEnd()` in wave 1 Phase 2).
 
-Progress: [########--] 80% on MVP milestone — full pipeline live + hardened; awaiting on-device validation
+Last activity: 2026-07-06 — branch/PR cleanup, three branches merged, CI green; owner approved full-match analysis wave 1 + UI restructure (a).
+
+Progress: [########--] 80% on MVP milestone — full pipeline live + hardened; awaiting on-device validation. Wave 1 (full-match analysis + in-app labeling) kicking off.
 
 ## v2.0 history (paused, preserved for context)
 
@@ -112,6 +119,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-06-15
-Stopped at: Planning state refreshed, CI workflow added, stale pre-pivot PRs triaged. MVP Phases A–D code-complete; Phase E (on-device validation on a tethered iPhone) is the remaining gate and requires the user + a Mac.
+Last session: 2026-07-06 (cloud session, owner traveling with MacBook)
+Stopped at: Repo cleanup done (merges, PR closures, CI green). Owner approved: full-match analysis wave 1 (GO), UI restructure tier (a) (GO), corner-naming cleanup, phantom-serve fix; court masks parked until back at the Studio. Next: land the two approved fixes, then wave 1 planning + implementation. Physical-device Phase E validation still requires the owner + a Mac (HANDOFF.md §5).
 Resume file: None

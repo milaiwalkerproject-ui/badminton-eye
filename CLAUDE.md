@@ -80,8 +80,8 @@ The pipeline produces a Core ML model consumed by `CoreMLShuttleDetector`. iOS b
 - **Scoring rules are engine-only.** `ScoringEngine` is the single source of truth for match state transitions (BWF 21-point, 3×15, custom user-defined formats). Both the iOS app and Watch import it; never re-implement scoring inside a view or view model. `ScoringRules.isValid` gates custom formats — extend it (and its tests) when adding new rule parameters.
 - **Watch sync is bidirectional and engine-driven.** A point recorded on either device is broadcast as a `SyncPayload` and re-applied through `MatchEngine` on the other side; UI state must derive from the engine, not from the payload directly.
 - **Hawk Eye is composed via protocols** (`ShuttleDetecting`, with `CoreMLShuttleDetector` / `PlaceholderShuttleDetector`) so tests and previews don't need the real Core ML model. Wire new detectors through the protocol, not directly into `HawkEyePipeline`.
-- **SwiftData + CloudKit** is the persistence story; models live in `Models/SwiftDataModels.swift`. CloudKit zone deletion is part of the account-deletion flow (App Store Guideline 5.1.1(v)) — see `AccountDeletedView` and `AccountDeletionTests`.
-- **iOS 17 / watchOS 10 minimum**, Swift 6 strict concurrency. View models are `@MainActor`.
+- **SwiftData is the persistence story**; models live in `Models/SwiftDataModels.swift` (plus `GameVideoRecord` for recorded footage). The 2026-05-16 MVP pivot gates CloudKit, Apple Sign In, StoreKit, Live Activity, and Watch sync OFF behind `AppMode.freeAppleIDMode` — the account-deletion flow was cut with them. The paused v2.0 line (paywall, accounts, widgets) is preserved in closed PRs and `.planning/STATE.md` history.
+- **iOS 17 / watchOS 10 minimum**, Swift 6 strict concurrency. View models are `@MainActor`. CI compiles with Xcode 16.4 (Swift 6.1), which is stricter about actor isolation than newer local Xcodes — don't reference main-actor state from nonisolated closures (SDK callback closures, `nonisolated` funcs), and keep test classes that touch `@MainActor` API annotated `@MainActor`.
 
 ## Planning workflow (GSD)
 
@@ -98,5 +98,5 @@ When the user invokes `/gsd:*` slash commands, those operate on this directory. 
 
 - New user-facing strings → add to all 9 `*.lproj/Localizable.strings`.
 - New scoring rules / edge cases → add tests under `ScoringEngine/Tests/ScoringEngineTests/` first; existing files are organized by concern (`SinglesScoringTests`, `DoublesScoringTests`, `MixedDoublesScoringTests`, `DeuceAndCapTests`, `GameTransitionTests`, `ServiceRotationTests`, `ThreeByFifteenTests`, `CustomScoringTests`, `UndoTests`).
-- Account deletion / GDPR flow must wipe Keychain + SwiftData + UserDefaults + CloudKit zone; the regression test is `BadmintonEyeTests/AccountDeletionTests.swift`.
+- CI (`.github/workflows/ci.yml`) runs ScoringEngine `swift test` plus a full simulator build & test of the `BadmintonEye` scheme on every push/PR to `main` — keep it green; it is the only build verification available to cloud sessions.
 - Top-level files `wanman-debug.log`, `wanman-hourly-check.md`, `progress-report.md`, and the `.wanman/` directory are from an automation agent and are not part of the app — leave them alone unless explicitly asked.
