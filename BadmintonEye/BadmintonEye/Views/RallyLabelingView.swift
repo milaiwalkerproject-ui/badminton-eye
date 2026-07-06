@@ -224,6 +224,12 @@ struct RallyLabelingView: View {
     private func loadIfNeeded() {
         guard !loaded else { return }
         items = RallyLabelExport.queueItems(matchID: matchID, fileName: record.fileName)
+        if items.isEmpty {
+            // No live-scored rally clips for this video: fall back to rallies
+            // segmented from a full-match analysis pass (Phase 3). The id
+            // domains never mix per video — see RallySegmenter.queueItems.
+            items = RallySegmenter.queueItems(videoStem: record.videoStem)
+        }
         orientation = record.orientation
         if let url = record.resolvedURL() {
             player = AVPlayer(url: url)
@@ -285,8 +291,20 @@ struct RallyLabelingView: View {
         for video in videos where !video.videoStem.isEmpty {
             if let known = video.orientation { orientations[video.videoStem] = known }
         }
-        let urls = RallyLabelExport.writeExportFiles(labels: labels, orientations: orientations)
+        var urls = RallyLabelExport.writeExportFiles(labels: labels, orientations: orientations)
         guard !urls.isEmpty else { return }
+        // Attach trajectories/<stem>.json for labeled videos that have a
+        // full-match analysis — labels made against segmented rallies join
+        // the flywheel through these files (same rally ids).
+        for stem in Set(labels.map(\.videoStem)) {
+            let detections = FullMatchAnalysisStore.allDetections(videoStem: stem)
+            guard !detections.isEmpty else { continue }
+            let rallies = RallySegmenter.detectRallies(detections)
+            if let url = RallySegmenter.writeTrajectoriesFile(
+                videoStem: stem, orientation: orientations[stem], rallies: rallies) {
+                urls.append(url)
+            }
+        }
         for label in all { label.exported = true }
         try? modelContext.save()
         shareURLs = ShareURLs(urls: urls)
