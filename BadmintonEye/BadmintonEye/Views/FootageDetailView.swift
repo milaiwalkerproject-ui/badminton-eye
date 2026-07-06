@@ -5,15 +5,12 @@ import UIKit
 
 /// Per-match footage screen. Shows every `GameVideoRecord` attached to the
 /// match in order, with inline playback and metadata, plus a premium-gated
-/// "Generate Highlight" action.
+/// "Share Highlight" action.
 ///
-/// Wiring still required:
-/// - `GameVideoRecord` must be registered in the `ModelContainer` and as a
-///   relationship on `PersistedMatch.gameVideos`. Until that lands, the
-///   record list will be empty and this view shows the empty state.
-/// - The Highlight pipeline (trim trash time / zoom / slow-mo / super-rally)
-///   is a follow-up. The button currently no-ops for subscribed users and
-///   shows the paywall for free users — see TODO(highlight-pipeline).
+/// Restructure PR 1: the per-game section body lives in the reusable
+/// `GameVideoSection` (shared with the imported-video screen and, next, the
+/// unified MatchDetailView). This view keeps ONLY the parent-owned state:
+/// paywall gating, the highlight editor sheet, and the share flow.
 struct FootageDetailView: View {
 
     let match: PersistedMatch
@@ -33,10 +30,8 @@ struct FootageDetailView: View {
     private var isSubscribed: Bool { SubscriptionManager.shared.isPremium }
 
     private var games: [GameVideoRecord] {
-        // Direct relationship access — `PersistedMatch.gameVideos` is now a
-        // wired SwiftData @Relationship. (The previous Mirror lookup never
-        // resolved the synthesized stored property, so the list was always
-        // empty and the screen permanently showed "No game videos".)
+        // Direct relationship access — `PersistedMatch.gameVideos` is a wired
+        // SwiftData @Relationship.
         (match.gameVideos ?? []).sorted { $0.gameNumber < $1.gameNumber }
     }
 
@@ -52,7 +47,22 @@ struct FootageDetailView: View {
             } else {
                 List {
                     ForEach(games) { rec in
-                        gameSection(for: rec)
+                        GameVideoSection(
+                            record: rec,
+                            matchID: match.id,
+                            analysis: analysis,
+                            playbackStyle: .inlinePlayer,
+                            headerText: "Game \(rec.gameNumber)",
+                            onEditHighlight: { editingRecord = $0 },
+                            onShareHighlight: { record in
+                                pendingRecord = record
+                                if isSubscribed {
+                                    runHighlightPipeline(for: record)
+                                } else {
+                                    showPaywall = true
+                                }
+                            }
+                        )
                     }
                 }
             }
@@ -79,155 +89,7 @@ struct FootageDetailView: View {
         var id: String { url.path }
     }
 
-    // MARK: - Per-game section
-
-    @ViewBuilder
-    private func gameSection(for rec: GameVideoRecord) -> some View {
-        // Resolve once per render — drives the player/placeholder, the
-        // disabled state of both highlight actions, AND the explanatory
-        // footer so a grayed row is never left unexplained (no dead taps).
-        let recordingAvailable = rec.resolvedURL() != nil
-        Section {
-            if let url = rec.resolvedURL() {
-                VideoPlayer(player: AVPlayer(url: url))
-                    .frame(height: 220)
-                    .listRowInsets(EdgeInsets())
-            } else {
-                ZStack {
-                    Color.black.opacity(0.05)
-                    VStack(spacing: 6) {
-                        Image(systemName: "film.slash")
-                            .font(.title2)
-                            .foregroundStyle(.secondary)
-                        Text("Recording not available")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                .frame(height: 160)
-                .listRowInsets(EdgeInsets())
-            }
-
-            LabeledContent("Score", value: "\(rec.scoreA) – \(rec.scoreB)")
-            LabeledContent("Rallies", value: "\(rec.rallyCount)")
-            LabeledContent("Duration", value: durationLabel(rec.duration))
-            if let loc = rec.locationName, !loc.isEmpty {
-                LabeledContent("Location", value: loc)
-            }
-
-            if rec.clipRef != nil {
-                LabeledContent("Highlight", value: highlightLabel(rec))
-            }
-
-            // Trim/zoom highlight editor entry point. Lets the user bound a
-            // rally segment, preview, save the ClipRef, and export+share the
-            // trimmed clip.
-            Button {
-                editingRecord = rec
-            } label: {
-                Label {
-                    Text(rec.clipRef == nil ? "Create Highlight" : "Edit Highlight")
-                } icon: {
-                    Image(systemName: "scissors")
-                }
-            }
-            .disabled(!recordingAvailable)
-            .accessibilityLabel(rec.clipRef == nil
-                ? "Create highlight for game \(rec.gameNumber)"
-                : "Edit highlight for game \(rec.gameNumber)")
-
-            Button {
-                pendingRecord = rec
-                if isSubscribed {
-                    runHighlightPipeline(for: rec)
-                } else {
-                    showPaywall = true
-                }
-            } label: {
-                Label {
-                    Text("Share Highlight")
-                } icon: {
-                    Image(systemName: "square.and.arrow.up")
-                }
-            }
-            .disabled(!recordingAvailable)
-
-            // Wave 1 Phase 1: "Who won this rally?" ground-truth labeler.
-            NavigationLink {
-                RallyLabelingView(record: rec, matchID: match.id)
-            } label: {
-                Label {
-                    Text(LocalizationManager.shared.localized("footage.labelRallies"))
-                } icon: {
-                    Image(systemName: "checkmark.rectangle.stack")
-                }
-            }
-            .disabled(!recordingAvailable)
-
-            // Wave 1 Phase 2: chunked on-device TrackNet pass over the full
-            // game video. Resumable — completed chunks persist across runs.
-            if analysis.analyzingStem == rec.videoStem, let progress = analysis.progress {
-                HStack {
-                    ProgressView(value: Double(progress.completed),
-                                 total: Double(max(1, progress.total)))
-                    Text(String(format: LocalizationManager.shared.localized("footage.analyze.progress"),
-                                progress.completed, progress.total))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .monospacedDigit()
-                }
-            } else if analysis.doneStem == rec.videoStem {
-                Label {
-                    Text(LocalizationManager.shared.localized("footage.analyze.done"))
-                } icon: {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
-                }
-            } else {
-                Button {
-                    if let url = rec.resolvedURL() {
-                        analysis.start(url: url, stem: rec.videoStem)
-                    }
-                } label: {
-                    Label {
-                        Text(LocalizationManager.shared.localized("footage.analyze"))
-                    } icon: {
-                        Image(systemName: "waveform.badge.magnifyingglass")
-                    }
-                }
-                .disabled(!recordingAvailable || analysis.analyzingStem != nil)
-            }
-            if let message = analysis.errorMessage, analysis.errorStem == rec.videoStem {
-                Text(message)
-                    .font(.caption)
-                    .foregroundStyle(.red)
-            }
-        } header: {
-            Text("Game \(rec.gameNumber)")
-        } footer: {
-            if !recordingAvailable {
-                Text("Recording unavailable — this game's video file is missing, so highlight actions are disabled.")
-            }
-        }
-    }
-
-    // MARK: - Helpers
-
-    private func durationLabel(_ s: TimeInterval) -> String {
-        guard s > 0 else { return "—" }
-        let total = Int(s.rounded())
-        return String(format: "%d:%02d", total / 60, total % 60)
-    }
-
-    /// Short "0:05 – 0:18" label for a saved highlight clip.
-    private func highlightLabel(_ record: GameVideoRecord) -> String {
-        guard let clip = record.clipRef else { return "—" }
-        func fmt(_ s: Double) -> String {
-            let t = Int(s.rounded())
-            return String(format: "%d:%02d", t / 60, t % 60)
-        }
-        return "\(fmt(clip.startTime)) – \(fmt(clip.endTime))"
-    }
+    // MARK: - Highlight share flow
 
     /// Produces a shareable highlight for the game. If a `ClipRef` has been
     /// saved via the trim/zoom editor, the trimmed segment is exported and
@@ -265,55 +127,4 @@ private struct ShareSheet: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ controller: UIActivityViewController, context: Context) {}
-}
-
-// MARK: - Full-match analysis coordinator (wave 1 Phase 2)
-
-/// Main-actor state holder driving `FullMatchAnalyzer` for one video at a
-/// time. A @MainActor class is implicitly Sendable, so the analyzer's
-/// @Sendable progress callback can safely hop back to it — the view struct
-/// itself must never be captured across that boundary (Swift 6.1).
-@MainActor
-@Observable
-final class FullMatchAnalysisCoordinator {
-    private(set) var analyzingStem: String?
-    private(set) var progress: (completed: Int, total: Int)?
-    private(set) var errorMessage: String?
-    private(set) var errorStem: String?
-    private(set) var doneStem: String?
-    private var task: Task<Void, Never>?
-
-    func start(url: URL, stem: String) {
-        guard analyzingStem == nil, !stem.isEmpty else { return }
-        analyzingStem = stem
-        progress = (0, 1)
-        errorMessage = nil
-        errorStem = nil
-        UIApplication.shared.isIdleTimerDisabled = true
-
-        task = Task {
-            let analyzer = FullMatchAnalyzer()
-            do {
-                try await analyzer.analyze(videoURL: url, videoStem: stem) { completed, total in
-                    Task { @MainActor [weak self] in
-                        guard let self, self.analyzingStem == stem else { return }
-                        self.progress = (completed, total)
-                    }
-                }
-                doneStem = stem
-            } catch is CancellationError {
-                // Cancelled: completed chunks are persisted; a rerun resumes.
-            } catch {
-                errorMessage = error.localizedDescription
-                errorStem = stem
-            }
-            UIApplication.shared.isIdleTimerDisabled = false
-            analyzingStem = nil
-            progress = nil
-        }
-    }
-
-    func cancel() {
-        task?.cancel()
-    }
 }

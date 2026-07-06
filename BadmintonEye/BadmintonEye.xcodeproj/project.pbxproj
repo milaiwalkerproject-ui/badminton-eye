@@ -99,6 +99,7 @@
 		FV1001 /* FootageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FV2001 /* FootageView.swift */; };
 		OB1001 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OB2001 /* OnboardingView.swift */; };
 		RB1001 /* RallyLabelingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = RB2001 /* RallyLabelingView.swift */; };
+		GS1001 /* GameVideoSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = GS2001 /* GameVideoSection.swift */; };
 		RV1001 /* RallyReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = RV2001 /* RallyReviewView.swift */; };
 		FD1001 /* FootageDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD2001 /* FootageDetailView.swift */; };
 		HE1001 /* HighlightClipEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = HE2001 /* HighlightClipEditorView.swift */; };
@@ -249,6 +250,7 @@
 		FV2001 /* FootageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootageView.swift; sourceTree = "<group>"; };
 		OB2001 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		RB2001 /* RallyLabelingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RallyLabelingView.swift; sourceTree = "<group>"; };
+		GS2001 /* GameVideoSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameVideoSection.swift; sourceTree = "<group>"; };
 		RV2001 /* RallyReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RallyReviewView.swift; sourceTree = "<group>"; };
 		FD2001 /* FootageDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootageDetailView.swift; sourceTree = "<group>"; };
 		HE2001 /* HighlightClipEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightClipEditorView.swift; sourceTree = "<group>"; };
@@ -415,6 +417,7 @@
 				FV2001 /* FootageView.swift */,
 				OB2001 /* OnboardingView.swift */,
 				RB2001 /* RallyLabelingView.swift */,
+				GS2001 /* GameVideoSection.swift */,
 				RV2001 /* RallyReviewView.swift */,
 				FD2001 /* FootageDetailView.swift */,
 				HE2001 /* HighlightClipEditorView.swift */,
@@ -805,6 +808,7 @@
 				FV1001 /* FootageView.swift in Sources */,
 				OB1001 /* OnboardingView.swift in Sources */,
 				RB1001 /* RallyLabelingView.swift in Sources */,
+				GS1001 /* GameVideoSection.swift in Sources */,
 				RV1001 /* RallyReviewView.swift in Sources */,
 				FD1001 /* FootageDetailView.swift in Sources */,
 				HE1001 /* HighlightClipEditorView.swift in Sources */,
