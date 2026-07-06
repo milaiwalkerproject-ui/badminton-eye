@@ -70,8 +70,9 @@ enum RallySegmenter {
     static func trajectoriesJSON(videoStem: String,
                                  orientation: VideoOrientation?,
                                  rallies: [SegmentedRally],
-                                 fps: Double = 30) -> String? {
-        let payload: [String: Any] = [
+                                 fps: Double = 30,
+                                 unmaskedImport: Bool = false) -> String? {
+        var payload: [String: Any] = [
             "video": videoStem,
             "fps": fps,
             "orientation": (orientation ?? .sideOn).rawValue,
@@ -86,6 +87,7 @@ enum RallySegmenter {
                 ] as [String: Any]
             },
         ]
+        if unmaskedImport { payload["unmasked_import"] = true }
         guard let data = try? JSONSerialization.data(withJSONObject: payload,
                                                      options: [.sortedKeys]),
               let text = String(data: data, encoding: .utf8)
@@ -98,12 +100,14 @@ enum RallySegmenter {
     @discardableResult
     static func writeTrajectoriesFile(videoStem: String,
                                       orientation: VideoOrientation?,
-                                      rallies: [SegmentedRally]) -> URL? {
+                                      rallies: [SegmentedRally],
+                                      unmaskedImport: Bool = false) -> URL? {
         guard !videoStem.isEmpty,
               let dir = FullMatchAnalysisStore.directory(),
               let json = trajectoriesJSON(videoStem: videoStem,
                                           orientation: orientation,
-                                          rallies: rallies)
+                                          rallies: rallies,
+                                          unmaskedImport: unmaskedImport)
         else { return nil }
         let url = dir.appendingPathComponent("\(videoStem).json")
         guard (try? json.write(to: url, atomically: true, encoding: .utf8)) != nil else { return nil }

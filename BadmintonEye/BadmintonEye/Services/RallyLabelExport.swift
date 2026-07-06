@@ -69,7 +69,8 @@ enum RallyLabelExport {
     /// One holdout JSONL line for a labeled rally. Field order is sorted for
     /// determinism; python readers use json.loads and don't care.
     static func holdoutLine(videoStem: String, rallyID: Int, verdict: RallyVerdict,
-                            orientation: VideoOrientation?, timestamp: Date) -> String? {
+                            orientation: VideoOrientation?, timestamp: Date,
+                            unmaskedImport: Bool = false) -> String? {
         guard !videoStem.isEmpty else { return nil }
         var record: [String: Any] = [
             "video": videoStem,
@@ -81,6 +82,10 @@ enum RallyLabelExport {
         ]
         if let orientation { record["orientation"] = orientation.rawValue }
         if verdict == .notRally { record["not_rally"] = true }
+        // Imported (not court-masked) footage: quarantined by the offline
+        // pipeline until masked. Python readers ignore unknown fields, so
+        // this is purely additive provenance.
+        if unmaskedImport { record["unmasked_import"] = true }
         guard let data = try? JSONSerialization.data(withJSONObject: record, options: [.sortedKeys]),
               let line = String(data: data, encoding: .utf8)
         else { return nil }
@@ -90,13 +95,15 @@ enum RallyLabelExport {
     /// Full holdout file content (one line per label, trailing newline).
     static func holdoutFileContent(
         _ labels: [(videoStem: String, rallyID: Int, verdict: RallyVerdict,
-                    orientation: VideoOrientation?, labeledAt: Date)]
+                    orientation: VideoOrientation?, labeledAt: Date)],
+        importedStems: Set<String> = []
     ) -> String {
         let lines = labels
             .sorted { ($0.videoStem, $0.rallyID) < ($1.videoStem, $1.rallyID) }
             .compactMap { holdoutLine(videoStem: $0.videoStem, rallyID: $0.rallyID,
                                       verdict: $0.verdict, orientation: $0.orientation,
-                                      timestamp: $0.labeledAt) }
+                                      timestamp: $0.labeledAt,
+                                      unmaskedImport: importedStems.contains($0.videoStem)) }
         return lines.isEmpty ? "" : lines.joined(separator: "\n") + "\n"
     }
 
@@ -118,9 +125,10 @@ enum RallyLabelExport {
     static func writeExportFiles(
         labels: [(videoStem: String, rallyID: Int, verdict: RallyVerdict,
                   orientation: VideoOrientation?, labeledAt: Date)],
-        orientations: [String: VideoOrientation]
+        orientations: [String: VideoOrientation],
+        importedStems: Set<String> = []
     ) -> [URL] {
-        let content = holdoutFileContent(labels)
+        let content = holdoutFileContent(labels, importedStems: importedStems)
         guard !content.isEmpty else { return [] }
         let dir = FileManager.default.temporaryDirectory
             .appendingPathComponent("RallyLabelExport", isDirectory: true)

@@ -216,3 +216,9 @@
 "footage.analyze" = "Analysér kampvideo";
 "footage.analyze.progress" = "Analyserer… %d/%d";
 "footage.analyze.done" = "Analyse fuldført";
+
+/* Imported footage (wave 1 Phase 4) */
+"footage.imported.section" = "Importerede videoer";
+"footage.importToFootage" = "Importér til optagelser";
+"footage.imported.title" = "Importeret video";
+"footage.imported.footer" = "Analysér videoen først, og markér derefter dens dueller. Markeringer fra importerede videoer afventer gennemsyn, indtil banen er maskeret i træningspipelinen.";

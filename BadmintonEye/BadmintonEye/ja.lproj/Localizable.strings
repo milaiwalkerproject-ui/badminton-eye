@@ -214,3 +214,9 @@
 "footage.analyze" = "試合動画を解析";
 "footage.analyze.progress" = "解析中… %d/%d";
 "footage.analyze.done" = "解析が完了しました";
+
+/* Imported footage (wave 1 Phase 4) */
+"footage.imported.section" = "読み込んだ動画";
+"footage.importToFootage" = "フッテージに読み込む";
+"footage.imported.title" = "読み込んだ動画";
+"footage.imported.footer" = "まず動画を解析してから、ラリーにラベルを付けてください。読み込んだ動画のラベルは、学習パイプラインでコートがマスクされるまで確認待ちとして扱われます。";

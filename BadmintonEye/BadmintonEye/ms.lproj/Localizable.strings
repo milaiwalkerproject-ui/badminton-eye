@@ -216,3 +216,9 @@
 "footage.analyze" = "Analisis Video Perlawanan";
 "footage.analyze.progress" = "Menganalisis… %d/%d";
 "footage.analyze.done" = "Analisis selesai";
+
+/* Imported footage (wave 1 Phase 4) */
+"footage.imported.section" = "Video Import";
+"footage.importToFootage" = "Import ke Rakaman";
+"footage.imported.title" = "Video Import";
+"footage.imported.footer" = "Analisis video dahulu, kemudian labelkan ralinya. Label daripada video import ditanda untuk semakan sehingga gelanggang dimasker dalam saluran latihan.";

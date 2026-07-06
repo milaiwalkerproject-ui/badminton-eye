@@ -214,3 +214,9 @@
 "footage.analyze" = "分析比赛视频";
 "footage.analyze.progress" = "正在分析… %d/%d";
 "footage.analyze.done" = "分析完成";
+
+/* Imported footage (wave 1 Phase 4) */
+"footage.imported.section" = "导入的视频";
+"footage.importToFootage" = "导入到视频库";
+"footage.imported.title" = "导入的视频";
+"footage.imported.footer" = "请先分析视频，然后标注回合。来自导入视频的标注将标记为待审核，直到训练流程中完成场地遮罩。";

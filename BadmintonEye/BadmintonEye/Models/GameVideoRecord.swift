@@ -86,6 +86,14 @@ final class GameVideoRecord {
         set { orientationRaw = newValue?.rawValue }
     }
 
+    /// True for videos brought in from the photo library rather than recorded
+    /// live (`match == nil` for these). Optional so the migration stays purely
+    /// additive; `nil` means recorded live. Training/label exports derived
+    /// from imported videos are tagged `unmasked_import: true` and quarantined
+    /// by the offline pipeline until the video is court-masked (adjacent-court
+    /// shuttle pollution — see FULLMATCH-WAVE1-PLAN.md Phase 4).
+    var isImported: Bool?
+
     /// `fileName` without its extension — the `video` join key used by the
     /// hawkeye pipeline and by `RallyLabel.videoStem`. Empty when no video
     /// was captured for this game.
@@ -232,6 +240,24 @@ extension GameVideoRecord {
         else { return nil }
         let url = dir.appendingPathComponent(fileName)
         return FileManager.default.fileExists(atPath: url.path) ? url : nil
+    }
+
+    /// Copies an imported photo-library video (already streamed to a temp
+    /// file by `ImportedVideo`) into the Footage directory and returns an
+    /// un-inserted record for it (`match == nil`, `isImported == true`).
+    /// The caller inserts it into a ModelContext and saves.
+    static func makeImported(copyingFrom tempURL: URL) throws -> GameVideoRecord {
+        guard let dir = footageDirectory() else { throw VideoImportError.emptyFile }
+        let ext = tempURL.pathExtension.isEmpty ? "mov" : tempURL.pathExtension
+        let fileName = "import-\(UUID().uuidString).\(ext)"
+        try FileManager.default.copyItem(at: tempURL,
+                                         to: dir.appendingPathComponent(fileName))
+        let record = GameVideoRecord()
+        record.gameNumber = 0
+        record.fileName = fileName
+        record.startedAt = Date()
+        record.isImported = true
+        return record
     }
 
     /// Convenience: clock-time duration. Returns 0 while the recording is

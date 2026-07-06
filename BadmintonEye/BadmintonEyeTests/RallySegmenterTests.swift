@@ -110,3 +110,23 @@ final class RallySegmenterTests: XCTestCase {
         XCTAssertEqual(items[0].endTime, 149.0 / 30.0, accuracy: 1e-9)
     }
 }
+
+// MARK: - unmasked_import provenance (wave 1 Phase 4)
+
+extension RallySegmenterTests {
+
+    func testTrajectoriesJSONTagsUnmaskedImport() throws {
+        let json = try XCTUnwrap(RallySegmenter.trajectoriesJSON(
+            videoStem: "import-abc", orientation: nil, rallies: [],
+            unmaskedImport: true))
+        let obj = try XCTUnwrap(
+            try JSONSerialization.jsonObject(with: Data(json.utf8)) as? [String: Any])
+        XCTAssertEqual(obj["unmasked_import"] as? Bool, true)
+
+        let live = try XCTUnwrap(RallySegmenter.trajectoriesJSON(
+            videoStem: "M-game1", orientation: nil, rallies: []))
+        let liveObj = try XCTUnwrap(
+            try JSONSerialization.jsonObject(with: Data(live.utf8)) as? [String: Any])
+        XCTAssertNil(liveObj["unmasked_import"])
+    }
+}

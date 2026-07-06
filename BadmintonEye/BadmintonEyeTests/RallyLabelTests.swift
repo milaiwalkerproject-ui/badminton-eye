@@ -196,3 +196,42 @@ final class RallyLabelTests: XCTestCase {
         XCTAssertEqual(try context.fetch(FetchDescriptor<RallyLabel>()).count, 1)
     }
 }
+
+// MARK: - unmasked_import provenance (wave 1 Phase 4)
+
+extension RallyLabelTests {
+
+    func testHoldoutLineTagsUnmaskedImport() throws {
+        let line = try XCTUnwrap(RallyLabelExport.holdoutLine(
+            videoStem: "import-abc", rallyID: 0, verdict: .sideA,
+            orientation: .endOn, timestamp: Date(timeIntervalSince1970: 0),
+            unmaskedImport: true))
+        let rec = try decodeLineForImportTests(line)
+        XCTAssertEqual(rec["unmasked_import"] as? Bool, true)
+    }
+
+    func testHoldoutLineOmitsUnmaskedImportForLiveFootage() throws {
+        let line = try XCTUnwrap(RallyLabelExport.holdoutLine(
+            videoStem: "M-game1", rallyID: 0, verdict: .sideA,
+            orientation: nil, timestamp: Date(timeIntervalSince1970: 0)))
+        let rec = try decodeLineForImportTests(line)
+        XCTAssertNil(rec["unmasked_import"], "live footage must not carry the tag")
+    }
+
+    func testHoldoutFileContentAppliesTagPerStem() {
+        let content = RallyLabelExport.holdoutFileContent([
+            (videoStem: "import-abc", rallyID: 0, verdict: .sideA, orientation: nil,
+             labeledAt: Date(timeIntervalSince1970: 0)),
+            (videoStem: "M-game1", rallyID: 0, verdict: .sideB, orientation: nil,
+             labeledAt: Date(timeIntervalSince1970: 0)),
+        ], importedStems: ["import-abc"])
+        let lines = content.split(separator: "\n").map(String.init)
+        XCTAssertTrue(lines.contains { $0.contains("\"import-abc\"") && $0.contains("\"unmasked_import\":true") })
+        XCTAssertTrue(lines.contains { $0.contains("\"M-game1\"") && !$0.contains("unmasked_import") })
+    }
+
+    private func decodeLineForImportTests(_ line: String) throws -> [String: Any] {
+        let obj = try JSONSerialization.jsonObject(with: Data(line.utf8))
+        return try XCTUnwrap(obj as? [String: Any])
+    }
+}

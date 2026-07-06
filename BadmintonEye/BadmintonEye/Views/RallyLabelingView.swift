@@ -17,7 +17,9 @@ import AVKit
 
 struct RallyLabelingView: View {
     let record: GameVideoRecord
-    let matchID: UUID
+    /// Owning match for live-recorded footage; nil for photo-library imports
+    /// (whose rallies come from full-match analysis segmentation only).
+    let matchID: UUID?
 
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
@@ -223,7 +225,9 @@ struct RallyLabelingView: View {
 
     private func loadIfNeeded() {
         guard !loaded else { return }
-        items = RallyLabelExport.queueItems(matchID: matchID, fileName: record.fileName)
+        if let matchID {
+            items = RallyLabelExport.queueItems(matchID: matchID, fileName: record.fileName)
+        }
         if items.isEmpty {
             // No live-scored rally clips for this video: fall back to rallies
             // segmented from a full-match analysis pass (Phase 3). The id
@@ -288,10 +292,13 @@ struct RallyLabelingView: View {
         }
         let videos = (try? modelContext.fetch(FetchDescriptor<GameVideoRecord>())) ?? []
         var orientations: [String: VideoOrientation] = [:]
+        var importedStems: Set<String> = []
         for video in videos where !video.videoStem.isEmpty {
             if let known = video.orientation { orientations[video.videoStem] = known }
+            if video.isImported == true { importedStems.insert(video.videoStem) }
         }
-        var urls = RallyLabelExport.writeExportFiles(labels: labels, orientations: orientations)
+        var urls = RallyLabelExport.writeExportFiles(labels: labels, orientations: orientations,
+                                                     importedStems: importedStems)
         guard !urls.isEmpty else { return }
         // Attach trajectories/<stem>.json for labeled videos that have a
         // full-match analysis — labels made against segmented rallies join
@@ -301,7 +308,8 @@ struct RallyLabelingView: View {
             guard !detections.isEmpty else { continue }
             let rallies = RallySegmenter.detectRallies(detections)
             if let url = RallySegmenter.writeTrajectoriesFile(
-                videoStem: stem, orientation: orientations[stem], rallies: rallies) {
+                videoStem: stem, orientation: orientations[stem], rallies: rallies,
+                unmaskedImport: importedStems.contains(stem)) {
                 urls.append(url)
             }
         }

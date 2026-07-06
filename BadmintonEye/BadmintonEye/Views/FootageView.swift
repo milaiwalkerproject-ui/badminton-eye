@@ -1,5 +1,7 @@
 import SwiftUI
 import SwiftData
+import PhotosUI
+import AVKit
 
 /// Top-level "Footage" tab. Replaces the previous "Ranks" tab.
 ///
@@ -37,14 +39,32 @@ struct FootageView: View {
     )
     private var matches: [PersistedMatch]
 
+    // Imported (photo-library) videos — standalone records with no match.
+    // Leaf-table SQL predicate per the launch-perf convention.
+    @Query(
+        filter: #Predicate<GameVideoRecord> { record in
+            record.match == nil && !record.fileName.isEmpty
+        },
+        sort: \GameVideoRecord.startedAt,
+        order: .reverse
+    )
+    private var importedVideos: [GameVideoRecord]
+
     /// Presents the shared video-import / Hawk-Eye challenge flow
     /// (`ChallengeVideoView`). Footage is where users look for "Import Video",
     /// so the entry point lives here in addition to the Matches tab.
     @State private var showVideoImport = false
 
+    // Wave 1 Phase 4: photo-library import INTO Footage (analyzable/labelable,
+    // exported with unmasked_import provenance).
+    @Environment(\.modelContext) private var modelContext
+    @State private var footageImportItem: PhotosPickerItem?
+    @State private var isImportingFootage = false
+    @State private var footageImportError: String?
+
     var body: some View {
         Group {
-            if matches.isEmpty {
+            if matches.isEmpty && importedVideos.isEmpty {
                 ContentUnavailableView {
                     Label("No footage yet", systemImage: "film.stack")
                 } description: {
@@ -60,6 +80,23 @@ struct FootageView: View {
                 }
             } else {
                 List {
+                    if !importedVideos.isEmpty {
+                        Section {
+                            ForEach(importedVideos) { record in
+                                NavigationLink {
+                                    ImportedFootageDetailView(record: record)
+                                } label: {
+                                    Label {
+                                        Text(record.startedAt, style: .date)
+                                    } icon: {
+                                        Image(systemName: "square.and.arrow.down.on.square")
+                                    }
+                                }
+                            }
+                        } header: {
+                            Text(LocalizationManager.shared.localized("footage.imported.section"))
+                        }
+                    }
                     Section {
                         ForEach(matches) { match in
                             NavigationLink {
@@ -81,17 +118,140 @@ struct FootageView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button {
-                    showVideoImport = true
+                Menu {
+                    PhotosPicker(selection: $footageImportItem, matching: .videos) {
+                        Label(LocalizationManager.shared.localized("footage.importToFootage"),
+                              systemImage: "square.and.arrow.down.on.square")
+                    }
+                    Button {
+                        showVideoImport = true
+                    } label: {
+                        Label("Hawk Eye Challenge", systemImage: "eye")
+                    }
                 } label: {
-                    Label("Import Video", systemImage: "square.and.arrow.down.on.square")
+                    if isImportingFootage {
+                        ProgressView()
+                    } else {
+                        Label("Import Video", systemImage: "square.and.arrow.down.on.square")
+                    }
                 }
+                .disabled(isImportingFootage)
                 .accessibilityLabel("Import video")
             }
         }
         .sheet(isPresented: $showVideoImport) {
             ChallengeVideoView()
         }
+        .onChange(of: footageImportItem) { _, item in
+            handleFootageImport(item)
+        }
+        .alert("Import failed", isPresented: .constant(footageImportError != nil)) {
+            Button("OK") { footageImportError = nil }
+        } message: {
+            Text(footageImportError ?? "")
+        }
+    }
+
+    // MARK: - Photo-library import into Footage (wave 1 Phase 4)
+
+    private func handleFootageImport(_ item: PhotosPickerItem?) {
+        guard let item else { return }
+        isImportingFootage = true
+        _ = item.loadTransferable(type: ImportedVideo.self) { result in
+            Task { @MainActor in
+                defer {
+                    isImportingFootage = false
+                    footageImportItem = nil
+                }
+                do {
+                    guard let video = try result.get() else {
+                        throw VideoImportError.unsupportedItem
+                    }
+                    try ImportedVideo.validate(url: video.url)
+                    let record = try GameVideoRecord.makeImported(copyingFrom: video.url)
+                    modelContext.insert(record)
+                    try? modelContext.save()
+                    try? FileManager.default.removeItem(at: video.url)
+                } catch {
+                    footageImportError = error.localizedDescription
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Imported video detail (wave 1 Phase 4)
+
+/// Slim detail screen for a photo-library import: playback, full-match
+/// analysis, and rally labeling. Mirrors the per-game rows of
+/// `FootageDetailView` without requiring a match.
+private struct ImportedFootageDetailView: View {
+    let record: GameVideoRecord
+
+    @State private var analysis = FullMatchAnalysisCoordinator()
+
+    var body: some View {
+        List {
+            Section {
+                if let url = record.resolvedURL() {
+                    VideoPlayer(player: AVPlayer(url: url))
+                        .frame(height: 220)
+                        .listRowInsets(EdgeInsets())
+                }
+
+                if analysis.analyzingStem == record.videoStem, let progress = analysis.progress {
+                    HStack {
+                        ProgressView(value: Double(progress.completed),
+                                     total: Double(max(1, progress.total)))
+                        Text(String(format: LocalizationManager.shared.localized("footage.analyze.progress"),
+                                    progress.completed, progress.total))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                    }
+                } else if analysis.doneStem == record.videoStem {
+                    Label {
+                        Text(LocalizationManager.shared.localized("footage.analyze.done"))
+                    } icon: {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                    }
+                } else {
+                    Button {
+                        if let url = record.resolvedURL() {
+                            analysis.start(url: url, stem: record.videoStem)
+                        }
+                    } label: {
+                        Label {
+                            Text(LocalizationManager.shared.localized("footage.analyze"))
+                        } icon: {
+                            Image(systemName: "waveform.badge.magnifyingglass")
+                        }
+                    }
+                    .disabled(record.resolvedURL() == nil || analysis.analyzingStem != nil)
+                }
+                if let message = analysis.errorMessage, analysis.errorStem == record.videoStem {
+                    Text(message)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
+
+                NavigationLink {
+                    RallyLabelingView(record: record, matchID: nil)
+                } label: {
+                    Label {
+                        Text(LocalizationManager.shared.localized("footage.labelRallies"))
+                    } icon: {
+                        Image(systemName: "checkmark.rectangle.stack")
+                    }
+                }
+                .disabled(record.resolvedURL() == nil)
+            } footer: {
+                Text(LocalizationManager.shared.localized("footage.imported.footer"))
+            }
+        }
+        .navigationTitle(LocalizationManager.shared.localized("footage.imported.title"))
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

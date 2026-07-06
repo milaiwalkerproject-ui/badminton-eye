@@ -214,3 +214,9 @@
 "footage.analyze" = "Analyze Match Video";
 "footage.analyze.progress" = "Analyzing… %d/%d";
 "footage.analyze.done" = "Analysis complete";
+
+/* Imported footage (wave 1 Phase 4) */
+"footage.imported.section" = "Imported Videos";
+"footage.importToFootage" = "Import to Footage";
+"footage.imported.title" = "Imported Video";
+"footage.imported.footer" = "Analyze the video first, then label its rallies. Labels from imported videos are marked for review until the court is masked in the training pipeline.";
