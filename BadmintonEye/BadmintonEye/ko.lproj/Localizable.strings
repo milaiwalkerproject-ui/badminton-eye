@@ -185,3 +185,27 @@
 "calibration.autoDetect.notFound" = "코트를 찾지 못했습니다. 코트가 더 보이도록 움직이거나 네 모서리를 탭하세요.";
 "calibration.autoDetect.noFrame" = "카메라가 아직 준비되지 않았습니다. 잠시 후 다시 시도하세요.";
 "calibration.autoDetect.hint" = "팁: ‘코트 자동 감지’를 탭하면 앱이 찾아 줍니다 — 직접 네 모서리를 탭해도 됩니다.";
+
+/* Rally labeling (wave 1 Phase 1) */
+"footage.labelRallies" = "랠리 라벨 지정";
+"labeling.title" = "랠리 라벨 지정";
+"labeling.whoWon" = "이 랠리는 누가 이겼나요?";
+"labeling.progress" = "랠리 %d / %d";
+"labeling.leftWon" = "왼쪽 선수 승리";
+"labeling.rightWon" = "오른쪽 선수 승리";
+"labeling.nearWon" = "가까운 선수 승리";
+"labeling.farWon" = "먼 쪽 선수 승리";
+"labeling.notRally" = "랠리 아님";
+"labeling.skip" = "건너뛰기";
+"labeling.replay" = "다시 보기";
+"labeling.export" = "라벨 내보내기";
+"labeling.done.title" = "모든 랠리 라벨 완료";
+"labeling.done.detail" = "이 기기에서 %d개의 랠리에 라벨을 지정했습니다. 라벨을 내보내 학습 파이프라인으로 파일을 보내세요.";
+"labeling.empty.title" = "라벨을 지정할 랠리 없음";
+"labeling.empty.detail" = "랠리 시간 범위는 녹화를 켠 상태로 실시간 경기를 기록할 때 캡처됩니다.";
+"labeling.orientation.question" = "이 영상은 어떻게 촬영했나요?";
+"labeling.orientation.explainer" = "답변 버튼의 의미가 결정되므로 신중히 선택하세요.";
+"labeling.orientation.sideOn" = "측면에서";
+"labeling.orientation.sideOn.detail" = "선수가 화면의 왼쪽과 오른쪽에 보임";
+"labeling.orientation.endOn" = "코트 뒤에서";
+"labeling.orientation.endOn.detail" = "선수가 화면의 가까운 쪽(아래)과 먼 쪽(위)에 보임";

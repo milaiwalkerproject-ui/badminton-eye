@@ -146,6 +146,18 @@ struct FootageDetailView: View {
                 }
             }
             .disabled(!recordingAvailable)
+
+            // Wave 1 Phase 1: "Who won this rally?" ground-truth labeler.
+            NavigationLink {
+                RallyLabelingView(record: rec, matchID: match.id)
+            } label: {
+                Label {
+                    Text(LocalizationManager.shared.localized("footage.labelRallies"))
+                } icon: {
+                    Image(systemName: "checkmark.rectangle.stack")
+                }
+            }
+            .disabled(!recordingAvailable)
         } header: {
             Text("Game \(rec.gameNumber)")
         } footer: {

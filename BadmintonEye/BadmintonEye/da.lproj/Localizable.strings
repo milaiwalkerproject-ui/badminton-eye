@@ -187,3 +187,27 @@
 "calibration.autoDetect.notFound" = "Ingen bane fundet. Flyt dig, så mere af banen er synlig, eller tryk på hjørnerne.";
 "calibration.autoDetect.noFrame" = "Kameraet er ikke klar endnu — prøv igen om et øjeblik.";
 "calibration.autoDetect.hint" = "Tip: tryk på Find banen automatisk, så appen finder banen for dig — eller tryk selv på de fire hjørner.";
+
+/* Rally labeling (wave 1 Phase 1) */
+"footage.labelRallies" = "Markér dueller";
+"labeling.title" = "Markér dueller";
+"labeling.whoWon" = "Hvem vandt duellen?";
+"labeling.progress" = "Duel %d af %d";
+"labeling.leftWon" = "Venstre spiller vandt";
+"labeling.rightWon" = "Højre spiller vandt";
+"labeling.nearWon" = "Nærmeste spiller vandt";
+"labeling.farWon" = "Fjerneste spiller vandt";
+"labeling.notRally" = "Ikke en duel";
+"labeling.skip" = "Spring over";
+"labeling.replay" = "Afspil igen";
+"labeling.export" = "Eksportér markeringer";
+"labeling.done.title" = "Alle dueller markeret";
+"labeling.done.detail" = "%d dueller markeret på denne enhed. Eksportér markeringerne og send filen tilbage til din træningspipeline.";
+"labeling.empty.title" = "Ingen dueller at markere";
+"labeling.empty.detail" = "Duellers tidsintervaller registreres, mens du scorer en livekamp med optagelse slået til.";
+"labeling.orientation.question" = "Hvordan blev denne video optaget?";
+"labeling.orientation.explainer" = "Dette bestemmer, hvad svarknapperne betyder, så vælg omhyggeligt.";
+"labeling.orientation.sideOn" = "Fra siden";
+"labeling.orientation.sideOn.detail" = "Spillerne ses til venstre og højre i billedet";
+"labeling.orientation.endOn" = "Bagfra banen";
+"labeling.orientation.endOn.detail" = "Spillerne ses nær (nederst) og fjern (øverst) i billedet";

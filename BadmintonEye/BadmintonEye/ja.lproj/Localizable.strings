@@ -185,3 +185,27 @@
 "calibration.autoDetect.notFound" = "コートが見つかりません。コートがもっと見えるように移動するか、四隅をタップしてください。";
 "calibration.autoDetect.noFrame" = "カメラの準備ができていません。少し待ってからもう一度お試しください。";
 "calibration.autoDetect.hint" = "ヒント：「コートを自動検出」をタップするとアプリが探してくれます。自分で四隅をタップしてもOKです。";
+
+/* Rally labeling (wave 1 Phase 1) */
+"footage.labelRallies" = "ラリーにラベル付け";
+"labeling.title" = "ラリーのラベル付け";
+"labeling.whoWon" = "このラリーの勝者は？";
+"labeling.progress" = "ラリー %d / %d";
+"labeling.leftWon" = "左の選手の勝ち";
+"labeling.rightWon" = "右の選手の勝ち";
+"labeling.nearWon" = "手前の選手の勝ち";
+"labeling.farWon" = "奥の選手の勝ち";
+"labeling.notRally" = "ラリーではない";
+"labeling.skip" = "スキップ";
+"labeling.replay" = "リプレイ";
+"labeling.export" = "ラベルを書き出す";
+"labeling.done.title" = "すべてのラリーをラベル付けしました";
+"labeling.done.detail" = "この端末で %d 件のラリーをラベル付けしました。ラベルを書き出して、学習パイプラインにファイルを送ってください。";
+"labeling.empty.title" = "ラベル付けするラリーがありません";
+"labeling.empty.detail" = "ラリーの時間範囲は、録画をオンにしてライブ試合のスコアを付けている間に記録されます。";
+"labeling.orientation.question" = "この動画はどの向きで撮影しましたか？";
+"labeling.orientation.explainer" = "回答ボタンの意味が決まるため、正しく選択してください。";
+"labeling.orientation.sideOn" = "横から";
+"labeling.orientation.sideOn.detail" = "選手が画面の左右に映っている";
+"labeling.orientation.endOn" = "コートの後ろから";
+"labeling.orientation.endOn.detail" = "選手が画面の手前（下）と奥（上）に映っている";

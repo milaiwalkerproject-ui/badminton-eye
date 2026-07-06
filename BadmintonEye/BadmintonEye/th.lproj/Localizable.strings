@@ -187,3 +187,27 @@
 "calibration.autoDetect.notFound" = "ไม่พบสนาม ขยับเพื่อให้เห็นสนามมากขึ้น หรือแตะที่มุมทั้งสี่";
 "calibration.autoDetect.noFrame" = "กล้องยังไม่พร้อม — ลองอีกครั้งในอีกสักครู่";
 "calibration.autoDetect.hint" = "เคล็ดลับ: แตะ ‘ตรวจจับสนามอัตโนมัติ’ เพื่อให้แอปหาสนามให้คุณ — หรือแตะที่มุมทั้งสี่ด้วยตัวเอง";
+
+/* Rally labeling (wave 1 Phase 1) */
+"footage.labelRallies" = "ติดป้ายแรลลี่";
+"labeling.title" = "ติดป้ายแรลลี่";
+"labeling.whoWon" = "ใครชนะแรลลี่นี้?";
+"labeling.progress" = "แรลลี่ %d จาก %d";
+"labeling.leftWon" = "ผู้เล่นฝั่งซ้ายชนะ";
+"labeling.rightWon" = "ผู้เล่นฝั่งขวาชนะ";
+"labeling.nearWon" = "ผู้เล่นฝั่งใกล้ชนะ";
+"labeling.farWon" = "ผู้เล่นฝั่งไกลชนะ";
+"labeling.notRally" = "ไม่ใช่แรลลี่";
+"labeling.skip" = "ข้าม";
+"labeling.replay" = "เล่นซ้ำ";
+"labeling.export" = "ส่งออกป้ายกำกับ";
+"labeling.done.title" = "ติดป้ายแรลลี่ครบแล้ว";
+"labeling.done.detail" = "ติดป้ายแรลลี่ %d รายการบนอุปกรณ์นี้แล้ว ส่งออกป้ายกำกับและส่งไฟล์กลับไปยังไปป์ไลน์การฝึกของคุณ";
+"labeling.empty.title" = "ไม่มีแรลลี่ให้ติดป้าย";
+"labeling.empty.detail" = "ช่วงเวลาแรลลี่จะถูกบันทึกขณะที่คุณจดคะแนนแมตช์สดโดยเปิดการบันทึกวิดีโอ";
+"labeling.orientation.question" = "วิดีโอนี้ถ่ายจากมุมไหน?";
+"labeling.orientation.explainer" = "ตัวเลือกนี้กำหนดความหมายของปุ่มคำตอบ โปรดเลือกให้ถูกต้อง";
+"labeling.orientation.sideOn" = "จากด้านข้าง";
+"labeling.orientation.sideOn.detail" = "ผู้เล่นอยู่ทางซ้ายและขวาของเฟรม";
+"labeling.orientation.endOn" = "จากด้านหลังคอร์ท";
+"labeling.orientation.endOn.detail" = "ผู้เล่นอยู่ฝั่งใกล้ (ล่าง) และไกล (บน) ของเฟรม";

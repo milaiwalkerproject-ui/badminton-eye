@@ -72,6 +72,27 @@ final class GameVideoRecord {
     /// Highlight end offset, in seconds from the start of the game video.
     var clipEndTime: Double?
 
+    // MARK: - Filming orientation (rally labeling / ADR-0001)
+
+    /// How this video was filmed: "side_on" (players left/right) or "end_on"
+    /// (players near/far). Optional so the migration stays purely additive;
+    /// `nil` means "not asked yet" — the labeler prompts once per video and
+    /// treats absence as side_on ONLY at export time (the hawkeye sidecar
+    /// convention: absent means side_on).
+    var orientationRaw: String?
+
+    var orientation: VideoOrientation? {
+        get { orientationRaw.flatMap(VideoOrientation.init(rawValue:)) }
+        set { orientationRaw = newValue?.rawValue }
+    }
+
+    /// `fileName` without its extension — the `video` join key used by the
+    /// hawkeye pipeline and by `RallyLabel.videoStem`. Empty when no video
+    /// was captured for this game.
+    var videoStem: String {
+        fileName.isEmpty ? "" : (fileName as NSString).deletingPathExtension
+    }
+
     init() {}
 
     init(

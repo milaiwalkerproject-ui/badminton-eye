@@ -187,3 +187,27 @@
 "calibration.autoDetect.notFound" = "Gelanggang tidak ditemui. Gerak supaya lebih banyak gelanggang kelihatan, atau ketik penjurunya.";
 "calibration.autoDetect.noFrame" = "Kamera belum bersedia — cuba lagi sebentar.";
 "calibration.autoDetect.hint" = "Petua: ketik Kesan automatik untuk biarkan apl mencari gelanggang — atau ketik sendiri keempat-empat penjuru.";
+
+/* Rally labeling (wave 1 Phase 1) */
+"footage.labelRallies" = "Label Rali";
+"labeling.title" = "Label Rali";
+"labeling.whoWon" = "Siapa memenangi rali ini?";
+"labeling.progress" = "Rali %d daripada %d";
+"labeling.leftWon" = "Pemain kiri menang";
+"labeling.rightWon" = "Pemain kanan menang";
+"labeling.nearWon" = "Pemain dekat menang";
+"labeling.farWon" = "Pemain jauh menang";
+"labeling.notRally" = "Bukan rali";
+"labeling.skip" = "Langkau";
+"labeling.replay" = "Main semula";
+"labeling.export" = "Eksport label";
+"labeling.done.title" = "Semua rali telah dilabel";
+"labeling.done.detail" = "%d rali dilabel pada peranti ini. Eksport label dan hantar fail kembali ke saluran latihan anda.";
+"labeling.empty.title" = "Tiada rali untuk dilabel";
+"labeling.empty.detail" = "Julat masa rali dirakam semasa anda menjaringkan perlawanan langsung dengan rakaman dihidupkan.";
+"labeling.orientation.question" = "Bagaimanakah video ini dirakam?";
+"labeling.orientation.explainer" = "Ini menentukan maksud butang jawapan, jadi pilih dengan teliti.";
+"labeling.orientation.sideOn" = "Dari sisi";
+"labeling.orientation.sideOn.detail" = "Pemain kelihatan di kiri dan kanan bingkai";
+"labeling.orientation.endOn" = "Dari belakang gelanggang";
+"labeling.orientation.endOn.detail" = "Pemain kelihatan dekat (bawah) dan jauh (atas) dalam bingkai";

@@ -64,6 +64,7 @@
 		H10006 /* HawkEyePipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20006 /* HawkEyePipeline.swift */; };
 		H10007 /* TrajectoryCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20007 /* TrajectoryCalculator.swift */; };
 		HD1001 /* HitDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = HD2001 /* HitDetector.swift */; };
+		RX1001 /* RallyLabelExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = RX2001 /* RallyLabelExport.swift */; };
 		H10008 /* TrajectoryReplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = H20008 /* TrajectoryReplayView.swift */; };
 		S10001 /* MatchStatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20001 /* MatchStatsViewModel.swift */; };
 		S10002 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = S20002 /* StatsView.swift */; };
@@ -91,8 +92,10 @@
 		TD1001 /* TrackNetShuttleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = TD2001 /* TrackNetShuttleDetector.swift */; };
 		TW1001 /* TrackNetWindowAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = TW2001 /* TrackNetWindowAdapter.swift */; };
 		GV1001 /* GameVideoRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = GV2001 /* GameVideoRecord.swift */; };
+		RL1001 /* RallyLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = RL2001 /* RallyLabel.swift */; };
 		FV1001 /* FootageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FV2001 /* FootageView.swift */; };
 		OB1001 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OB2001 /* OnboardingView.swift */; };
+		RB1001 /* RallyLabelingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = RB2001 /* RallyLabelingView.swift */; };
 		RV1001 /* RallyReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = RV2001 /* RallyReviewView.swift */; };
 		FD1001 /* FootageDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD2001 /* FootageDetailView.swift */; };
 		HE1001 /* HighlightClipEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = HE2001 /* HighlightClipEditorView.swift */; };
@@ -113,6 +116,7 @@
 		UT10013 /* ShotSpeedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20011 /* ShotSpeedTests.swift */; };
 		UT10014 /* HitDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20012 /* HitDetectorTests.swift */; };
 		UT10015 /* CalibrationHomographyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20013 /* CalibrationHomographyTests.swift */; };
+		UT10016 /* RallyLabelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20014 /* RallyLabelTests.swift */; };
 		UT10005 /* WatchSyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20004 /* WatchSyncManagerTests.swift */; };
 		UT10006 /* WatchMatchViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UT20005 /* WatchMatchViewModelTests.swift */; };
 		UT10007 /* WatchMatchViewModel.swift in Sources (Tests) */ = {isa = PBXBuildFile; fileRef = W20002 /* WatchMatchViewModel.swift */; };
@@ -205,6 +209,7 @@
 		H20006 /* HawkEyePipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HawkEyePipeline.swift; sourceTree = "<group>"; };
 		H20007 /* TrajectoryCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryCalculator.swift; sourceTree = "<group>"; };
 		HD2001 /* HitDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitDetector.swift; sourceTree = "<group>"; };
+		RX2001 /* RallyLabelExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RallyLabelExport.swift; sourceTree = "<group>"; };
 		H20008 /* TrajectoryReplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryReplayView.swift; sourceTree = "<group>"; };
 		S20001 /* MatchStatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchStatsViewModel.swift; sourceTree = "<group>"; };
 		S20002 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
@@ -232,8 +237,10 @@
 		TD2001 /* TrackNetShuttleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackNetShuttleDetector.swift; sourceTree = "<group>"; };
 		TW2001 /* TrackNetWindowAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackNetWindowAdapter.swift; sourceTree = "<group>"; };
 		GV2001 /* GameVideoRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameVideoRecord.swift; sourceTree = "<group>"; };
+		RL2001 /* RallyLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RallyLabel.swift; sourceTree = "<group>"; };
 		FV2001 /* FootageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootageView.swift; sourceTree = "<group>"; };
 		OB2001 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		RB2001 /* RallyLabelingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RallyLabelingView.swift; sourceTree = "<group>"; };
 		RV2001 /* RallyReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RallyReviewView.swift; sourceTree = "<group>"; };
 		FD2001 /* FootageDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootageDetailView.swift; sourceTree = "<group>"; };
 		HE2001 /* HighlightClipEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightClipEditorView.swift; sourceTree = "<group>"; };
@@ -263,6 +270,7 @@
 		UT20011 /* ShotSpeedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShotSpeedTests.swift; sourceTree = "<group>"; };
 		UT20012 /* HitDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitDetectorTests.swift; sourceTree = "<group>"; };
 		UT20013 /* CalibrationHomographyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationHomographyTests.swift; sourceTree = "<group>"; };
+		UT20014 /* RallyLabelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RallyLabelTests.swift; sourceTree = "<group>"; };
 		UT20004 /* WatchSyncManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSyncManagerTests.swift; sourceTree = "<group>"; };
 		UT20005 /* WatchMatchViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchMatchViewModelTests.swift; sourceTree = "<group>"; };
 		WP2001 /* WCSessionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WCSessionProtocol.swift; sourceTree = "<group>"; };
@@ -356,6 +364,7 @@
 				A20010 /* Player.swift */,
 				H20001 /* CalibrationProfile.swift */,
 				GV2001 /* GameVideoRecord.swift */,
+				RL2001 /* RallyLabel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -395,6 +404,7 @@
 				S20002 /* StatsView.swift */,
 				FV2001 /* FootageView.swift */,
 				OB2001 /* OnboardingView.swift */,
+				RB2001 /* RallyLabelingView.swift */,
 				RV2001 /* RallyReviewView.swift */,
 				FD2001 /* FootageDetailView.swift */,
 				HE2001 /* HighlightClipEditorView.swift */,
@@ -417,6 +427,7 @@
 				H20006 /* HawkEyePipeline.swift */,
 				H20007 /* TrajectoryCalculator.swift */,
 				HD2001 /* HitDetector.swift */,
+				RX2001 /* RallyLabelExport.swift */,
 				T72001 /* ShuttleDetecting.swift */,
 				T72002 /* PlaceholderShuttleDetector.swift */,
 				V82001 /* CircularFrameBuffer.swift */,
@@ -475,6 +486,7 @@
 				UT20011 /* ShotSpeedTests.swift */,
 				UT20012 /* HitDetectorTests.swift */,
 				UT20013 /* CalibrationHomographyTests.swift */,
+				UT20014 /* RallyLabelTests.swift */,
 				VI2002 /* ImportedVideoTests.swift */,
 				UT20004 /* WatchSyncManagerTests.swift */,
 				UT20005 /* WatchMatchViewModelTests.swift */,
@@ -746,6 +758,7 @@
 				H10006 /* HawkEyePipeline.swift in Sources */,
 				H10007 /* TrajectoryCalculator.swift in Sources */,
 				HD1001 /* HitDetector.swift in Sources */,
+				RX1001 /* RallyLabelExport.swift in Sources */,
 				H10008 /* TrajectoryReplayView.swift in Sources */,
 				S10001 /* MatchStatsViewModel.swift in Sources */,
 				S10002 /* StatsView.swift in Sources */,
@@ -770,8 +783,10 @@
 				TD1001 /* TrackNetShuttleDetector.swift in Sources */,
 				TW1001 /* TrackNetWindowAdapter.swift in Sources */,
 				GV1001 /* GameVideoRecord.swift in Sources */,
+				RL1001 /* RallyLabel.swift in Sources */,
 				FV1001 /* FootageView.swift in Sources */,
 				OB1001 /* OnboardingView.swift in Sources */,
+				RB1001 /* RallyLabelingView.swift in Sources */,
 				RV1001 /* RallyReviewView.swift in Sources */,
 				FD1001 /* FootageDetailView.swift in Sources */,
 				HE1001 /* HighlightClipEditorView.swift in Sources */,
@@ -824,6 +839,7 @@
 				UT10013 /* ShotSpeedTests.swift in Sources */,
 				UT10014 /* HitDetectorTests.swift in Sources */,
 				UT10015 /* CalibrationHomographyTests.swift in Sources */,
+				UT10016 /* RallyLabelTests.swift in Sources */,
 				VI1002 /* ImportedVideoTests.swift in Sources */,
 				/* Watch tests (UT10005/06/07) quarantined from the iOS test target:
 				   WatchMatchViewModel.swift is a watchOS-module source that can't

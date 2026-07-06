@@ -185,3 +185,27 @@
 "calibration.autoDetect.notFound" = "未找到球场。请移动以露出更多球场，或手动轻点四个角。";
 "calibration.autoDetect.noFrame" = "摄像头尚未就绪——请稍后再试。";
 "calibration.autoDetect.hint" = "提示：点按“自动识别球场”让应用替你找到球场——或者自己轻点四个角。";
+
+/* Rally labeling (wave 1 Phase 1) */
+"footage.labelRallies" = "标注回合";
+"labeling.title" = "标注回合";
+"labeling.whoWon" = "这个回合谁赢了？";
+"labeling.progress" = "第 %d 回合，共 %d 回合";
+"labeling.leftWon" = "左侧球员获胜";
+"labeling.rightWon" = "右侧球员获胜";
+"labeling.nearWon" = "近侧球员获胜";
+"labeling.farWon" = "远侧球员获胜";
+"labeling.notRally" = "不是回合";
+"labeling.skip" = "跳过";
+"labeling.replay" = "重放";
+"labeling.export" = "导出标注";
+"labeling.done.title" = "所有回合已标注";
+"labeling.done.detail" = "本设备已标注 %d 个回合。导出标注并将文件发送回你的训练流程。";
+"labeling.empty.title" = "没有可标注的回合";
+"labeling.empty.detail" = "回合时间范围会在你开启录像并为现场比赛计分时自动记录。";
+"labeling.orientation.question" = "这段视频是如何拍摄的？";
+"labeling.orientation.explainer" = "这决定了作答按钮的含义，请谨慎选择。";
+"labeling.orientation.sideOn" = "从侧面";
+"labeling.orientation.sideOn.detail" = "球员位于画面的左右两侧";
+"labeling.orientation.endOn" = "从场地后方";
+"labeling.orientation.endOn.detail" = "球员位于画面的近处（下方）和远处（上方）";

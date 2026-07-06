@@ -185,3 +185,27 @@
 "calibration.autoDetect.notFound" = "No court found. Move so more of the court is visible, or tap the corners.";
 "calibration.autoDetect.noFrame" = "Camera not ready yet — try again in a moment.";
 "calibration.autoDetect.hint" = "Tip: tap Auto-detect to find the court for you — or tap the four corners yourself.";
+
+/* Rally labeling (wave 1 Phase 1) */
+"footage.labelRallies" = "Label Rallies";
+"labeling.title" = "Label Rallies";
+"labeling.whoWon" = "Who won this rally?";
+"labeling.progress" = "Rally %d of %d";
+"labeling.leftWon" = "Left player won";
+"labeling.rightWon" = "Right player won";
+"labeling.nearWon" = "Near player won";
+"labeling.farWon" = "Far player won";
+"labeling.notRally" = "Not a rally";
+"labeling.skip" = "Skip";
+"labeling.replay" = "Replay";
+"labeling.export" = "Export labels";
+"labeling.done.title" = "All rallies labeled";
+"labeling.done.detail" = "%d rallies labeled on this device. Export the labels and send the file back to your training pipeline.";
+"labeling.empty.title" = "No rallies to label";
+"labeling.empty.detail" = "Rally time ranges are captured while you score a live match with recording on.";
+"labeling.orientation.question" = "How was this video filmed?";
+"labeling.orientation.explainer" = "This sets what the answer buttons mean, so pick carefully.";
+"labeling.orientation.sideOn" = "From the side";
+"labeling.orientation.sideOn.detail" = "Players appear on the left and right of the frame";
+"labeling.orientation.endOn" = "From behind the court";
+"labeling.orientation.endOn.detail" = "Players appear near (bottom) and far (top) in the frame";

@@ -73,7 +73,7 @@ struct BadmintonEyeApp: App {
             do {
                 let container = try ModelContainer(
                     for: PersistedMatch.self, Player.self, CalibrationProfile.self,
-                    GameVideoRecord.self,
+                    GameVideoRecord.self, RallyLabel.self,
                     configurations: config
                 )
                 return (container, nil)
@@ -83,7 +83,7 @@ struct BadmintonEyeApp: App {
                 let fallbackConfig = ModelConfiguration(isStoredInMemoryOnly: true)
                 if let fallback = try? ModelContainer(
                     for: PersistedMatch.self, Player.self, CalibrationProfile.self,
-                    GameVideoRecord.self,
+                    GameVideoRecord.self, RallyLabel.self,
                     configurations: fallbackConfig
                 ) {
                     return (fallback, primaryError.localizedDescription)

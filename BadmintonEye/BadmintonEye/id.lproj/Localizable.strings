@@ -187,3 +187,27 @@
 "calibration.autoDetect.notFound" = "Lapangan tidak ditemukan. Geser agar lebih banyak lapangan terlihat, atau ketuk sudut-sudutnya.";
 "calibration.autoDetect.noFrame" = "Kamera belum siap — coba lagi sebentar.";
 "calibration.autoDetect.hint" = "Tips: ketuk Deteksi otomatis agar aplikasi menemukan lapangan untukmu — atau ketuk sendiri keempat sudutnya.";
+
+/* Rally labeling (wave 1 Phase 1) */
+"footage.labelRallies" = "Beri Label Reli";
+"labeling.title" = "Beri Label Reli";
+"labeling.whoWon" = "Siapa yang memenangkan reli ini?";
+"labeling.progress" = "Reli %d dari %d";
+"labeling.leftWon" = "Pemain kiri menang";
+"labeling.rightWon" = "Pemain kanan menang";
+"labeling.nearWon" = "Pemain dekat menang";
+"labeling.farWon" = "Pemain jauh menang";
+"labeling.notRally" = "Bukan reli";
+"labeling.skip" = "Lewati";
+"labeling.replay" = "Putar ulang";
+"labeling.export" = "Ekspor label";
+"labeling.done.title" = "Semua reli sudah dilabeli";
+"labeling.done.detail" = "%d reli dilabeli di perangkat ini. Ekspor label dan kirim berkasnya kembali ke pipeline pelatihan Anda.";
+"labeling.empty.title" = "Tidak ada reli untuk dilabeli";
+"labeling.empty.detail" = "Rentang waktu reli direkam saat Anda menskor pertandingan langsung dengan perekaman aktif.";
+"labeling.orientation.question" = "Bagaimana video ini direkam?";
+"labeling.orientation.explainer" = "Ini menentukan arti tombol jawaban, jadi pilih dengan cermat.";
+"labeling.orientation.sideOn" = "Dari samping";
+"labeling.orientation.sideOn.detail" = "Pemain tampak di kiri dan kanan bingkai";
+"labeling.orientation.endOn" = "Dari belakang lapangan";
+"labeling.orientation.endOn.detail" = "Pemain tampak dekat (bawah) dan jauh (atas) di bingkai";
