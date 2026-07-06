@@ -131,31 +131,30 @@ final class TrajectoryRallySuggestor: RallySuggesting, @unchecked Sendable {
         ).map { sampleBuffers[$0] }
         let frames = Array(strided.suffix(maxFramesPerSuggestion))
 
-        // Detect shuttle positions across the window
-        var imagePoints: [CGPoint] = []
-        for (idx, sb) in frames.enumerated() {
+        // Detect shuttle positions across the window, keeping each frame's PTS so
+        // the hit detector can work in real seconds (FK keystone).
+        var detected: [(px: CGPoint, t: Double, conf: Double)] = []
+        for sb in frames {
             guard let pb = CMSampleBufferGetImageBuffer(sb) else { continue }
+            let t = CMTimeGetSeconds(CMSampleBufferGetPresentationTimeStamp(sb))
             do {
                 let obs = try await detector.detect(in: pb)
                 if let best = obs.max(by: { $0.confidence < $1.confidence }) {
-                    // Normalize detector output into image-pixel space using
-                    // the calibration capture dimensions. Vision/CoreML give
-                    // points in normalized [0,1]; the homography expects
-                    // pixel coordinates from the same frame the calibration
-                    // corners were tapped in.
+                    // Normalize detector output into image-pixel space using the
+                    // calibration capture dimensions (Vision/CoreML give [0,1];
+                    // the homography expects pixels from the calibrated frame).
                     let px = CGPoint(
                         x: best.position.x * CGFloat(snapshot.imageWidth),
                         y: best.position.y * CGFloat(snapshot.imageHeight)
                     )
-                    imagePoints.append(px)
+                    detected.append((px: px, t: t, conf: Double(best.confidence)))
                 }
-                _ = idx
             } catch {
                 continue
             }
         }
 
-        guard imagePoints.count >= 2 else {
+        guard detected.count >= 2 else {
             return coinFlipFallback()
         }
 
@@ -164,29 +163,40 @@ final class TrajectoryRallySuggestor: RallySuggesting, @unchecked Sendable {
             imageCorners: snapshot.corners,
             imageSize: CGSize(width: snapshot.imageWidth, height: snapshot.imageHeight)
         )
-        let courtPoints = imagePoints.map { calculator.transformPoint($0, using: homography) }
+        let courtPoints = detected.map { calculator.transformPoint($0.px, using: homography) }
 
-        // Fit + extrapolate landing
-        let (trajectory, landing) = calculator.fitTrajectory(courtPoints)
-        _ = trajectory  // not needed for the suggestion, but the calculator returns it
+        // Geometric "where did it land" signal. Side mapping: calibration corners
+        // are TL, TR, BL, BR → TrajectoryCalculator maps TL→(0,0)…BR→(1,1), and a
+        // landing with court-y < 0.5 → `.sideA`, ≥ 0.5 → `.sideB`. If orientation
+        // is ever flipped, only this mapping changes.
+        let (_, landing) = calculator.fitTrajectory(courtPoints)
+        let geomSide: Side = landing.y < 0.5 ? .sideA : .sideB
 
-        // Side mapping: calibration corners are TL, TR, BL, BR.
-        // TrajectoryCalculator maps TL→(0,0), TR→(1,0), BL→(0,1), BR→(1,1).
-        // In a typical user setup the top of the image is the far baseline
-        // (opposite court half) and the bottom is the near baseline. We
-        // therefore map court-y < 0.5 → far side → `.sideA`,
-        // court-y >= 0.5 → near side → `.sideB`. If the orientation is
-        // ever flipped, only this mapping needs to change.
-        let side: Side = landing.y < 0.5 ? .sideA : .sideB
-
-        // Confidence
-        let confidence = confidence(
-            detectionCount: imagePoints.count,
+        var side = geomSide
+        var conf = confidence(
+            detectionCount: courtPoints.count,
             courtPoints: courtPoints,
             landing: landing
         )
 
-        return RallySuggestion(side: side, confidence: confidence)
+        // FK — last-hit attribution from the SAME trajectory: a more robust winner
+        // signal than the monocular landing call (validated by the reel teardown).
+        // The HitDetector's .sideA/.sideB convention is consistent with `geomSide`
+        // above (a last hit toward high-y ⇒ .sideA, which also lands low-y ⇒ .sideA).
+        let trackSamples = zip(courtPoints, detected).map {
+            TrackSample(t: $0.1.t, court: $0.0, conf: $0.1.conf)
+        }
+        let hit = HitDetector().detectHits(trackSamples)
+        if let lastHitter = hit.lastHitter, hit.quality >= 0.5 {
+            side = lastHitter
+            if lastHitter == geomSide {
+                conf = min(1.0, conf + 0.10)     // two independent signals agree → corroboration
+            } else {
+                conf = min(conf, 0.60)           // disagree → cap below auto-apply; let the user confirm
+            }
+        }
+
+        return RallySuggestion(side: side, confidence: conf)
     }
 
     // MARK: - Confidence
