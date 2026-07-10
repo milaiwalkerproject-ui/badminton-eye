@@ -82,6 +82,7 @@
 
 /* Match End */
 "match.new" = "New Match";
+"matchEnd.viewMatch" = "View Match";
 "match.games" = "Games";
 
 /* Head to Head */

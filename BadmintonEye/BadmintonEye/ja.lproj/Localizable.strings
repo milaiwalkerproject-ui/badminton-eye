@@ -82,6 +82,7 @@
 
 /* Match End */
 "match.new" = "新しい試合";
+"matchEnd.viewMatch" = "試合を見る";
 "match.games" = "ゲーム";
 
 /* Head to Head */

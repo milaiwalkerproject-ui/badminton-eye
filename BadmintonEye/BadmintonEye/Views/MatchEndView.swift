@@ -3,11 +3,28 @@ import ScoringEngine
 
 struct MatchEndView: View {
     let state: MatchState
+    /// Persisted record of the match that just ended (restructure PR 4).
+    /// When present, a "View Match" button hands off to MatchDetailView so
+    /// footage/highlights are one tap away from the final whistle. Optional
+    /// so previews and any state-only call sites keep working.
+    var match: PersistedMatch?
     var onNewMatch: (() -> Void)?
     @Environment(\.dismiss) private var dismiss
     @State private var localization = LocalizationManager.shared
 
     private var isAbandoned: Bool { state.matchPhase == .abandoned }
+
+    /// Mirror of the history-list rule: completed matches are always
+    /// viewable; abandoned ones only earn the handoff when they carry
+    /// footage (otherwise MatchDetailView would be an empty shell).
+    private var viewableMatch: PersistedMatch? {
+        guard let match else { return nil }
+        if isAbandoned {
+            let hasFootage = match.gameVideos?.contains { !$0.fileName.isEmpty } ?? false
+            return hasFootage ? match : nil
+        }
+        return match
+    }
 
     private var winnerNames: [String] {
         guard let winner = state.matchWinner else { return [] }
@@ -34,6 +51,9 @@ struct MatchEndView: View {
                 scorecard
                 if state.format != .singles { rosterCard }
                 Spacer(minLength: BE.Space.l)
+                if let viewableMatch {
+                    viewMatchButton(for: viewableMatch)
+                }
                 newMatchButton
             }
             .padding(.horizontal, BE.Space.m)
@@ -173,6 +193,25 @@ struct MatchEndView: View {
     }
 
     // MARK: - Action
+
+    /// Post-match handoff (restructure PR 4): push the unified match screen
+    /// — scorecard, game footage, highlights — for the match that just ended.
+    private func viewMatchButton(for match: PersistedMatch) -> some View {
+        NavigationLink {
+            MatchDetailView(match: match)
+        } label: {
+            Label {
+                Text(localization.localized("matchEnd.viewMatch"))
+            } icon: {
+                Image(systemName: "film.stack")
+            }
+            .font(.system(.headline, design: .rounded).weight(.semibold))
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(BE.card(16).fill(Color(.secondarySystemGroupedBackground)))
+            .foregroundStyle(.tint)
+        }
+    }
 
     private var newMatchButton: some View {
         Button {

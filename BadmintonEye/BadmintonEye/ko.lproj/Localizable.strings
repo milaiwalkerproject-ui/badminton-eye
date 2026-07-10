@@ -82,6 +82,7 @@
 
 /* Match End */
 "match.new" = "새 경기";
+"matchEnd.viewMatch" = "경기 보기";
 "match.games" = "게임 수";
 
 /* Head to Head */

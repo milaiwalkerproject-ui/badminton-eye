@@ -84,6 +84,7 @@
 
 /* Match End */
 "match.new" = "Ny kamp";
+"matchEnd.viewMatch" = "Se kamp";
 "match.games" = "Sæt";
 
 /* Head to Head */

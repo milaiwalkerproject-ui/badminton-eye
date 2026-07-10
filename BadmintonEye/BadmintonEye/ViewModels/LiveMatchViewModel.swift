@@ -8,7 +8,10 @@ import ScoringEngine
 @MainActor
 final class LiveMatchViewModel {
     private(set) var state: MatchState
-    private var persistedMatch: PersistedMatch
+    /// Read-only outside the view model: MatchEndView hands this to
+    /// MatchDetailView for the post-match handoff (restructure PR 4).
+    /// All mutation still goes through the view model's own save paths.
+    private(set) var persistedMatch: PersistedMatch
     private let modelContext: ModelContext
 
     private var currentActivityID: String?

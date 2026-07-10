@@ -152,7 +152,9 @@ struct LiveMatchView: View {
                 set: { _ in }
             )
         ) {
-            MatchEndView(state: viewModel.state, onNewMatch: onMatchEnd)
+            MatchEndView(state: viewModel.state,
+                         match: viewModel.persistedMatch,
+                         onNewMatch: onMatchEnd)
         }
         .navigationDestination(
             isPresented: Binding(
@@ -160,7 +162,9 @@ struct LiveMatchView: View {
                 set: { _ in }
             )
         ) {
-            MatchEndView(state: viewModel.state, onNewMatch: onMatchEnd)
+            MatchEndView(state: viewModel.state,
+                         match: viewModel.persistedMatch,
+                         onNewMatch: onMatchEnd)
         }
     }
 

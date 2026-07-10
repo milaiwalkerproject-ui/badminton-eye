@@ -82,6 +82,7 @@
 
 /* Match End */
 "match.new" = "新比赛";
+"matchEnd.viewMatch" = "查看比赛";
 "match.games" = "局数";
 
 /* Head to Head */
