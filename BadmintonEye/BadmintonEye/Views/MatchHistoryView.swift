@@ -1,30 +1,44 @@
 import SwiftUI
 import SwiftData
 
+/// Matches tab home (restructure PR 3): a hero "Start Match" button above the
+/// date-grouped history. The query also surfaces abandoned matches that have
+/// footage (own section) so their videos stay reachable once the Footage tab
+/// retires in PR 5. Filter pushed into SQL per the launch-perf convention.
 struct MatchHistoryView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(
-        filter: #Predicate<PersistedMatch> { $0.isComplete },
+        filter: #Predicate<PersistedMatch> { match in
+            match.isComplete ||
+            (match.isAbandoned && (match.gameVideos?.contains { !$0.fileName.isEmpty } ?? false))
+        },
         sort: \PersistedMatch.startedAt,
         order: .reverse
     )
-    private var completedMatches: [PersistedMatch]
+    private var matches: [PersistedMatch]
 
     @State private var showDeleteConfirmation = false
     @State private var matchToDelete: PersistedMatch?
+    @State private var showVideoImport = false
     @State private var localization = LocalizationManager.shared
 
     var body: some View {
         Group {
-            if completedMatches.isEmpty {
+            if matches.isEmpty {
                 emptyState
             } else {
-                matchList
-                    .scrollContentBackground(.hidden)
-                    .background(Color(.systemGroupedBackground))
+                VStack(spacing: 0) {
+                    heroHeader
+                    matchList
+                        .scrollContentBackground(.hidden)
+                }
+                .background(Color(.systemGroupedBackground))
             }
         }
         .navigationTitle(localization.localized("history.title"))
+        .sheet(isPresented: $showVideoImport) {
+            ChallengeVideoView()
+        }
         .alert("Delete Match?", isPresented: $showDeleteConfirmation) {
             Button("Delete", role: .destructive) {
                 if let match = matchToDelete {
@@ -38,6 +52,45 @@ struct MatchHistoryView: View {
         } message: {
             Text("This match will be permanently removed.")
         }
+    }
+
+    // MARK: - Hero header (restructure PR 3)
+
+    private var heroHeader: some View {
+        VStack(spacing: BE.Space.s) {
+            NavigationLink {
+                MatchSetupView()
+            } label: {
+                HStack(spacing: BE.Space.s) {
+                    Image(systemName: "play.fill")
+                        .font(.title3)
+                    Text(localization.localized("home.startMatch"))
+                        .font(.system(.title3, design: .rounded).weight(.bold))
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.subheadline.weight(.semibold))
+                        .opacity(0.7)
+                }
+                .foregroundStyle(.white)
+                .padding(BE.Space.m)
+                .background(BE.card(16).fill(Color.accentColor))
+                .shadow(color: Color.accentColor.opacity(0.25), radius: 10, y: 4)
+            }
+
+            Button {
+                showVideoImport = true
+            } label: {
+                Label(localization.localized("home.importVideo"),
+                      systemImage: "square.and.arrow.down.on.square")
+                    .font(.system(.subheadline, design: .rounded).weight(.medium))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(BE.card(12).fill(Color(.secondarySystemGroupedBackground)))
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, BE.Space.m)
+        .padding(.top, BE.Space.s)
     }
 
     // MARK: - Empty state
@@ -242,8 +295,15 @@ struct MatchHistoryView: View {
         var yesterday: [PersistedMatch] = []
         var thisWeek: [PersistedMatch] = []
         var older: [PersistedMatch] = []
+        var abandoned: [PersistedMatch] = []
 
-        for match in completedMatches {
+        for match in matches {
+            // Abandoned matches (surfaced only when they carry footage) get
+            // their own trailing section instead of polluting the date groups.
+            if match.isAbandoned && !match.isComplete {
+                abandoned.append(match)
+                continue
+            }
             let date = match.startedAt
             if calendar.isDateInToday(date) {
                 today.append(match)
@@ -261,6 +321,10 @@ struct MatchHistoryView: View {
         if !yesterday.isEmpty { sections.append(MatchSection(title: "Yesterday", matches: yesterday)) }
         if !thisWeek.isEmpty { sections.append(MatchSection(title: "This Week", matches: thisWeek)) }
         if !older.isEmpty { sections.append(MatchSection(title: "Older", matches: older)) }
+        if !abandoned.isEmpty {
+            sections.append(MatchSection(title: localization.localized("history.abandoned"),
+                                         matches: abandoned))
+        }
         return sections
     }
 }

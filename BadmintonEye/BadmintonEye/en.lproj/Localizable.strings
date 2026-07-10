@@ -224,3 +224,8 @@
 /* Unified match screen (restructure PR 2) */
 "match.video.title" = "Video";
 "match.highlights.title" = "Highlights";
+
+/* Hero home screen (restructure PR 3) */
+"home.startMatch" = "Start Match";
+"home.importVideo" = "Import Video";
+"history.abandoned" = "Abandoned";

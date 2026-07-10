@@ -224,3 +224,8 @@
 /* Unified match screen (restructure PR 2) */
 "match.video.title" = "视频";
 "match.highlights.title" = "精彩片段";
+
+/* Hero home screen (restructure PR 3) */
+"home.startMatch" = "开始比赛";
+"home.importVideo" = "导入视频";
+"history.abandoned" = "已中止";

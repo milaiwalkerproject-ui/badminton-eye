@@ -226,3 +226,8 @@
 /* Unified match screen (restructure PR 2) */
 "match.video.title" = "वीडियो";
 "match.highlights.title" = "हाइलाइट्स";
+
+/* Hero home screen (restructure PR 3) */
+"home.startMatch" = "मैच शुरू करें";
+"home.importVideo" = "वीडियो आयात करें";
+"history.abandoned" = "अधूरे मैच";

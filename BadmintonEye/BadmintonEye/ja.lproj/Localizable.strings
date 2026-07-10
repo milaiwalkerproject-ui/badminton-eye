@@ -224,3 +224,8 @@
 /* Unified match screen (restructure PR 2) */
 "match.video.title" = "動画";
 "match.highlights.title" = "ハイライト";
+
+/* Hero home screen (restructure PR 3) */
+"home.startMatch" = "試合を開始";
+"home.importVideo" = "動画を読み込む";
+"history.abandoned" = "中断した試合";
