@@ -222,3 +222,7 @@
 "footage.importToFootage" = "Impor ke Rekaman";
 "footage.imported.title" = "Video Impor";
 "footage.imported.footer" = "Analisis video terlebih dahulu, lalu beri label relinya. Label dari video impor ditandai untuk ditinjau sampai lapangan dimasker di pipeline pelatihan.";
+
+/* Unified match screen (restructure PR 2) */
+"match.video.title" = "Video";
+"match.highlights.title" = "Sorotan";

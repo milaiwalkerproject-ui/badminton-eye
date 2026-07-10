@@ -1,7 +1,12 @@
 import SwiftUI
 import UIKit
+import AVKit
 import ScoringEngine
 
+/// Unified match screen (restructure PR 2): score + video + highlights in one
+/// place. The video cards reuse the PR 1 components (VideoThumbnailView,
+/// FullMatchAnalysisCoordinator) in this screen's BE-card language —
+/// GameVideoSection stays the List-based variant used by the Footage screens.
 struct MatchDetailView: View {
     let match: PersistedMatch
     @State private var showExportPicker = false
@@ -9,14 +14,29 @@ struct MatchDetailView: View {
     @State private var shareImage: UIImage?
     @State private var localization = LocalizationManager.shared
 
+    // Video + highlights (restructure PR 2)
+    @State private var analysis = FullMatchAnalysisCoordinator()
+    @State private var editingRecord: GameVideoRecord?
+    @State private var showPaywall = false
+    @State private var highlightShareURL: ShareableURL?
+    @State private var playingClip: PlayableClip?
+
     private var decodedState: CodableMatchState? {
         guard let data = match.stateJSON else { return nil }
         return try? JSONDecoder().decode(CodableMatchState.self, from: data)
     }
 
+    private var games: [GameVideoRecord] {
+        (match.gameVideos ?? []).sorted { $0.gameNumber < $1.gameNumber }
+    }
+
+    private var highlightRecords: [GameVideoRecord] {
+        games.filter { $0.clipRef != nil && $0.resolvedURL() != nil }
+    }
+
     var body: some View {
         ScrollView {
-            VStack(spacing: 24) {
+            VStack(spacing: BE.Space.l) {
                 // Match metadata header
                 metadataSection
 
@@ -26,6 +46,14 @@ struct MatchDetailView: View {
                     rallyAnalyticsSection(state)
                 } else {
                     fallbackScorecard
+                }
+
+                if !highlightRecords.isEmpty {
+                    highlightsStrip
+                }
+
+                if !games.isEmpty {
+                    videoSection
                 }
             }
             .padding()
@@ -58,6 +86,18 @@ struct MatchDetailView: View {
             if let image = shareImage {
                 ActivityViewController(items: [image])
             }
+        }
+        .sheet(item: $editingRecord) { rec in
+            HighlightClipEditorView(record: rec)
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView()
+        }
+        .sheet(item: $highlightShareURL) { wrapper in
+            ActivityViewController(items: [wrapper.url])
+        }
+        .sheet(item: $playingClip) { clip in
+            ClipPlayerSheet(url: clip.url, startTime: clip.startTime, endTime: clip.endTime)
         }
     }
 
@@ -127,9 +167,9 @@ struct MatchDetailView: View {
                 }
                 .frame(maxWidth: .infinity)
             }
-            .padding(24)
+            .padding(BE.Space.l)
             .background(.ultraThinMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(BE.card(16))
         )
     }
 
@@ -214,9 +254,9 @@ struct MatchDetailView: View {
                     .frame(width: 80)
             }
         }
-        .padding(24)
+        .padding(BE.Space.l)
         .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(BE.card(16))
     }
 
     // MARK: - Fallback Scorecard
@@ -247,9 +287,9 @@ struct MatchDetailView: View {
                 gameRow(String(format: localization.localized("game.number"), 3), scoreA: g3a, scoreB: g3b)
             }
         }
-        .padding(24)
+        .padding(BE.Space.l)
         .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(BE.card(16))
     }
 
     private func gameRow(_ label: String, scoreA: Int, scoreB: Int) -> some View {
@@ -267,6 +307,189 @@ struct MatchDetailView: View {
                 .font(.title2.bold())
                 .foregroundStyle(scoreB > scoreA ? .primary : .secondary)
                 .frame(width: 80)
+        }
+    }
+
+    // MARK: - Highlights strip (restructure PR 2)
+
+    private var highlightsStrip: some View {
+        VStack(alignment: .leading, spacing: BE.Space.s) {
+            Text(localization.localized("match.highlights.title").uppercased())
+                .font(BE.eyebrow)
+                .foregroundStyle(.secondary)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: BE.Space.s) {
+                    ForEach(highlightRecords) { record in
+                        highlightChip(record)
+                    }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func highlightChip(_ record: GameVideoRecord) -> some View {
+        Button {
+            if let url = record.resolvedURL(), let clip = record.clipRef {
+                playingClip = PlayableClip(id: record.id,
+                                           url: url,
+                                           startTime: clip.startTime,
+                                           endTime: clip.endTime)
+            }
+        } label: {
+            HStack(spacing: BE.Space.xs) {
+                Image(systemName: "play.fill")
+                    .font(.caption2)
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(String(format: localization.localized("game.number"), record.gameNumber))
+                        .font(.caption.weight(.semibold))
+                    Text(GameVideoSection.highlightLabel(record))
+                        .font(.caption2)
+                        .opacity(0.8)
+                }
+            }
+            .foregroundStyle(.white)
+            .padding(.horizontal, BE.Space.m)
+            .padding(.vertical, BE.Space.s)
+            .background(BE.card(14).fill(BE.TeamA.gradient))
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Video section (restructure PR 2)
+
+    private var videoSection: some View {
+        VStack(alignment: .leading, spacing: BE.Space.s) {
+            Text(localization.localized("match.video.title").uppercased())
+                .font(BE.eyebrow)
+                .foregroundStyle(.secondary)
+
+            ForEach(games) { record in
+                gameVideoCard(record)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func gameVideoCard(_ record: GameVideoRecord) -> some View {
+        VStack(spacing: 0) {
+            if let url = record.resolvedURL() {
+                VideoThumbnailView(url: url, height: 190)
+            } else {
+                ZStack {
+                    Color.black.opacity(0.05)
+                    Image(systemName: "film.slash")
+                        .font(.title2)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(height: 100)
+            }
+
+            VStack(spacing: BE.Space.s) {
+                HStack {
+                    Text(String(format: localization.localized("game.number"), record.gameNumber))
+                        .font(BE.eyebrow)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Text("\(record.scoreA) – \(record.scoreB)")
+                        .font(.subheadline.weight(.semibold))
+                    if record.duration > 0 {
+                        Text(GameVideoSection.durationLabel(record.duration))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                gameVideoActions(record)
+            }
+            .padding(BE.Space.m)
+        }
+        .background(.ultraThinMaterial)
+        .clipShape(BE.card(16))
+    }
+
+    @ViewBuilder
+    private func gameVideoActions(_ record: GameVideoRecord) -> some View {
+        let available = record.resolvedURL() != nil
+        HStack(spacing: BE.Space.s) {
+            NavigationLink {
+                RallyLabelingView(record: record, matchID: match.id)
+            } label: {
+                Label(localization.localized("footage.labelRallies"),
+                      systemImage: "checkmark.rectangle.stack")
+                    .font(.caption)
+            }
+            .buttonStyle(.bordered)
+            .disabled(!available)
+
+            analysisAction(record)
+
+            Menu {
+                Button {
+                    editingRecord = record
+                } label: {
+                    Label(record.clipRef == nil ? "Create Highlight" : "Edit Highlight",
+                          systemImage: "scissors")
+                }
+                Button {
+                    if SubscriptionManager.shared.isPremium {
+                        runHighlightShare(for: record)
+                    } else {
+                        showPaywall = true
+                    }
+                } label: {
+                    Label("Share Highlight", systemImage: "square.and.arrow.up")
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle")
+                    .font(.body)
+            }
+            .disabled(!available)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    @ViewBuilder
+    private func analysisAction(_ record: GameVideoRecord) -> some View {
+        if analysis.analyzingStem == record.videoStem, let progress = analysis.progress {
+            ProgressView(value: Double(progress.completed),
+                         total: Double(max(1, progress.total)))
+                .frame(width: 60)
+        } else if analysis.doneStem == record.videoStem {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(.green)
+        } else {
+            Button {
+                if let url = record.resolvedURL() {
+                    analysis.start(url: url, stem: record.videoStem)
+                }
+            } label: {
+                Label(localization.localized("footage.analyze"),
+                      systemImage: "waveform.badge.magnifyingglass")
+                    .font(.caption)
+            }
+            .buttonStyle(.bordered)
+            .disabled(record.resolvedURL() == nil || analysis.analyzingStem != nil)
+        }
+    }
+
+    /// Same behavior as FootageDetailView's share flow: export the trimmed
+    /// clip when one exists, otherwise share the whole game video.
+    private func runHighlightShare(for record: GameVideoRecord) {
+        guard let url = record.resolvedURL() else { return }
+        guard let clip = record.clipRef else {
+            highlightShareURL = ShareableURL(url: url)
+            return
+        }
+        Task {
+            if let outURL = try? await HighlightExporter.exportTrimmed(
+                sourceURL: url, clip: clip
+            ) {
+                await MainActor.run { highlightShareURL = ShareableURL(url: outURL) }
+            } else {
+                await MainActor.run { highlightShareURL = ShareableURL(url: url) }
+            }
         }
     }
 
@@ -310,5 +533,44 @@ struct MatchDetailView: View {
         if minutes < 1 { return "<1 min" }
         if minutes < 60 { return "\(minutes) min" }
         return "\(minutes / 60)h \(minutes % 60)m"
+    }
+}
+
+// MARK: - Clip playback helpers (restructure PR 2)
+
+private struct ShareableURL: Identifiable {
+    let url: URL
+    var id: String { url.path }
+}
+
+private struct PlayableClip: Identifiable {
+    let id: UUID              // GameVideoRecord.id
+    let url: URL
+    let startTime: TimeInterval
+    let endTime: TimeInterval
+}
+
+/// Plays a saved highlight directly as a time range into the game video —
+/// no export needed. Seeks to the clip start and stops at the clip end via
+/// forwardPlaybackEndTime (the HighlightClipEditorView preview pattern).
+private struct ClipPlayerSheet: View {
+    let url: URL
+    let startTime: TimeInterval
+    let endTime: TimeInterval
+
+    @State private var player: AVPlayer?
+
+    var body: some View {
+        VideoPlayer(player: player)
+            .ignoresSafeArea()
+            .task {
+                let newPlayer = AVPlayer(url: url)
+                newPlayer.currentItem?.forwardPlaybackEndTime =
+                    CMTime(seconds: endTime, preferredTimescale: 600)
+                await newPlayer.seek(to: CMTime(seconds: startTime, preferredTimescale: 600),
+                                     toleranceBefore: .zero, toleranceAfter: .zero)
+                player = newPlayer
+                newPlayer.play()
+            }
     }
 }

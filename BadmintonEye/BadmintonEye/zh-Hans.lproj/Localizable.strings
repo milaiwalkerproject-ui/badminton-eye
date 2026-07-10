@@ -220,3 +220,7 @@
 "footage.importToFootage" = "导入到视频库";
 "footage.imported.title" = "导入的视频";
 "footage.imported.footer" = "请先分析视频，然后标注回合。来自导入视频的标注将标记为待审核，直到训练流程中完成场地遮罩。";
+
+/* Unified match screen (restructure PR 2) */
+"match.video.title" = "视频";
+"match.highlights.title" = "精彩片段";

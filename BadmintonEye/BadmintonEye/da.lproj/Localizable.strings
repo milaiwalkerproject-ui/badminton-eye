@@ -222,3 +222,7 @@
 "footage.importToFootage" = "Importér til optagelser";
 "footage.imported.title" = "Importeret video";
 "footage.imported.footer" = "Analysér videoen først, og markér derefter dens dueller. Markeringer fra importerede videoer afventer gennemsyn, indtil banen er maskeret i træningspipelinen.";
+
+/* Unified match screen (restructure PR 2) */
+"match.video.title" = "Video";
+"match.highlights.title" = "Højdepunkter";

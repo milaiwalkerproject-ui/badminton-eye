@@ -222,3 +222,7 @@
 "footage.importToFootage" = "นำเข้าไปยังฟุตเทจ";
 "footage.imported.title" = "วิดีโอที่นำเข้า";
 "footage.imported.footer" = "วิเคราะห์วิดีโอก่อน แล้วจึงติดป้ายแรลลี่ ป้ายจากวิดีโอที่นำเข้าจะถูกทำเครื่องหมายรอตรวจสอบจนกว่าคอร์ทจะถูกมาสก์ในไปป์ไลน์การฝึก";
+
+/* Unified match screen (restructure PR 2) */
+"match.video.title" = "วิดีโอ";
+"match.highlights.title" = "ไฮไลต์";

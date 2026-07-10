@@ -220,3 +220,7 @@
 "footage.importToFootage" = "フッテージに読み込む";
 "footage.imported.title" = "読み込んだ動画";
 "footage.imported.footer" = "まず動画を解析してから、ラリーにラベルを付けてください。読み込んだ動画のラベルは、学習パイプラインでコートがマスクされるまで確認待ちとして扱われます。";
+
+/* Unified match screen (restructure PR 2) */
+"match.video.title" = "動画";
+"match.highlights.title" = "ハイライト";

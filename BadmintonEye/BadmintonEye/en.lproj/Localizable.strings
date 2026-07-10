@@ -220,3 +220,7 @@
 "footage.importToFootage" = "Import to Footage";
 "footage.imported.title" = "Imported Video";
 "footage.imported.footer" = "Analyze the video first, then label its rallies. Labels from imported videos are marked for review until the court is masked in the training pipeline.";
+
+/* Unified match screen (restructure PR 2) */
+"match.video.title" = "Video";
+"match.highlights.title" = "Highlights";

@@ -220,3 +220,7 @@
 "footage.importToFootage" = "푸티지로 가져오기";
 "footage.imported.title" = "가져온 영상";
 "footage.imported.footer" = "먼저 영상을 분석한 뒤 랠리에 라벨을 지정하세요. 가져온 영상의 라벨은 학습 파이프라인에서 코트 마스킹이 완료될 때까지 검토 대상으로 표시됩니다.";
+
+/* Unified match screen (restructure PR 2) */
+"match.video.title" = "영상";
+"match.highlights.title" = "하이라이트";

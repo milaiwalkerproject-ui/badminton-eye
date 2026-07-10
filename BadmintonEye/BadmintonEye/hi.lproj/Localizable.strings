@@ -222,3 +222,7 @@
 "footage.importToFootage" = "फुटेज में आयात करें";
 "footage.imported.title" = "आयातित वीडियो";
 "footage.imported.footer" = "पहले वीडियो का विश्लेषण करें, फिर उसकी रैलियाँ लेबल करें। आयातित वीडियो के लेबल तब तक समीक्षा हेतु चिह्नित रहते हैं जब तक ट्रेनिंग पाइपलाइन में कोर्ट मास्क नहीं हो जाता।";
+
+/* Unified match screen (restructure PR 2) */
+"match.video.title" = "वीडियो";
+"match.highlights.title" = "हाइलाइट्स";
