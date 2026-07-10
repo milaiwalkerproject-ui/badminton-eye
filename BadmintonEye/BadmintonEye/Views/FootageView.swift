@@ -3,16 +3,13 @@ import SwiftData
 import PhotosUI
 import AVKit
 
-/// Top-level "Footage" tab. Replaces the previous "Ranks" tab.
-///
-/// Lists every completed match that has at least one recorded game video,
-/// most recent first. Tapping a row drills into `FootageDetailView`, which
-/// plays each game and exposes the (premium-gated) Highlight pipeline.
-///
-/// Wiring still required:
-/// - Register this file in `BadmintonEye.xcodeproj/project.pbxproj`.
-/// - Replace the `Ranks` entry in `App/BadmintonEyeApp.swift` (iPad sidebar
-///   and iPhone TabView) with a `FootageView` entry. See HANDOFF.md.
+/// RETIRED from the tab shell (restructure PR 5) — kept compiling for one
+/// release per RESTRUCTURE-PLAN.md, then delete this file (and its pbxproj
+/// entries FV1001/FV2001). Its jobs moved to:
+/// - per-match footage → unified `MatchDetailView` (PR 2)
+/// - photo-library import + imported-videos list → home screen
+///   (`MatchHistoryView`, sharing `FootageImporter` and
+///   `ImportedFootageDetailView` from here).
 struct FootageView: View {
 
     // Any finished match (completed OR abandoned) that has at least one
@@ -167,25 +164,13 @@ struct FootageView: View {
     private func handleFootageImport(_ item: PhotosPickerItem?) {
         guard let item else { return }
         isImportingFootage = true
-        _ = item.loadTransferable(type: ImportedVideo.self) { result in
-            Task { @MainActor in
-                defer {
-                    isImportingFootage = false
-                    footageImportItem = nil
-                }
-                do {
-                    guard let video = try result.get() else {
-                        throw VideoImportError.unsupportedItem
-                    }
-                    try ImportedVideo.validate(url: video.url)
-                    let record = try GameVideoRecord.makeImported(copyingFrom: video.url)
-                    modelContext.insert(record)
-                    try? modelContext.save()
-                    try? FileManager.default.removeItem(at: video.url)
-                } catch {
-                    footageImportError = error.localizedDescription
-                }
-            }
+        Task {
+            let errorMessage = await FootageImporter.importVideo(
+                item, modelContext: modelContext
+            )
+            isImportingFootage = false
+            footageImportItem = nil
+            footageImportError = errorMessage
         }
     }
 }
@@ -196,7 +181,9 @@ struct FootageView: View {
 /// tap-to-play), full-match analysis, and rally labeling — all via the shared
 /// `GameVideoSection` (restructure PR 1). Highlight actions are hidden
 /// (nil closures): imports have no match context for the highlight flow yet.
-private struct ImportedFootageDetailView: View {
+/// Internal (not private): the home screen's imported-videos section pushes
+/// it too (restructure PR 5). Move it out of this file when FootageView dies.
+struct ImportedFootageDetailView: View {
     let record: GameVideoRecord
 
     @State private var analysis = FullMatchAnalysisCoordinator()

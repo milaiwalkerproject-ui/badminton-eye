@@ -1,10 +1,15 @@
 import SwiftUI
 import SwiftData
+import PhotosUI
 
 /// Matches tab home (restructure PR 3): a hero "Start Match" button above the
 /// date-grouped history. The query also surfaces abandoned matches that have
 /// footage (own section) so their videos stay reachable once the Footage tab
 /// retires in PR 5. Filter pushed into SQL per the launch-perf convention.
+///
+/// Restructure PR 5: the Footage tab is retired, so this screen also owns the
+/// photo-library footage import (wave 1 Phase 4) and lists imported videos in
+/// a trailing section.
 struct MatchHistoryView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(
@@ -17,14 +22,32 @@ struct MatchHistoryView: View {
     )
     private var matches: [PersistedMatch]
 
+    // Imported (photo-library) videos — standalone records with no match.
+    // Relocated from the retired Footage tab; leaf-table SQL predicate per
+    // the launch-perf convention.
+    @Query(
+        filter: #Predicate<GameVideoRecord> { record in
+            record.match == nil && !record.fileName.isEmpty
+        },
+        sort: \GameVideoRecord.startedAt,
+        order: .reverse
+    )
+    private var importedVideos: [GameVideoRecord]
+
     @State private var showDeleteConfirmation = false
     @State private var matchToDelete: PersistedMatch?
     @State private var showVideoImport = false
     @State private var localization = LocalizationManager.shared
 
+    // Photo-library import into Footage (wave 1 Phase 4, relocated from the
+    // retired Footage tab).
+    @State private var footageImportItem: PhotosPickerItem?
+    @State private var isImportingFootage = false
+    @State private var footageImportError: String?
+
     var body: some View {
         Group {
-            if matches.isEmpty {
+            if matches.isEmpty && importedVideos.isEmpty {
                 emptyState
             } else {
                 VStack(spacing: 0) {
@@ -38,6 +61,23 @@ struct MatchHistoryView: View {
         .navigationTitle(localization.localized("history.title"))
         .sheet(isPresented: $showVideoImport) {
             ChallengeVideoView()
+        }
+        .onChange(of: footageImportItem) { _, item in
+            guard let item else { return }
+            isImportingFootage = true
+            Task {
+                let errorMessage = await FootageImporter.importVideo(
+                    item, modelContext: modelContext
+                )
+                isImportingFootage = false
+                footageImportItem = nil
+                footageImportError = errorMessage
+            }
+        }
+        .alert("Import failed", isPresented: .constant(footageImportError != nil)) {
+            Button("OK") { footageImportError = nil }
+        } message: {
+            Text(footageImportError ?? "")
         }
         .alert("Delete Match?", isPresented: $showDeleteConfirmation) {
             Button("Delete", role: .destructive) {
@@ -77,20 +117,47 @@ struct MatchHistoryView: View {
                 .shadow(color: Color.accentColor.opacity(0.25), radius: 10, y: 4)
             }
 
-            Button {
-                showVideoImport = true
+            Menu {
+                importMenuItems
             } label: {
-                Label(localization.localized("home.importVideo"),
-                      systemImage: "square.and.arrow.down.on.square")
-                    .font(.system(.subheadline, design: .rounded).weight(.medium))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 10)
-                    .background(BE.card(12).fill(Color(.secondarySystemGroupedBackground)))
+                Group {
+                    if isImportingFootage {
+                        ProgressView()
+                    } else {
+                        Label(localization.localized("home.importVideo"),
+                              systemImage: "square.and.arrow.down.on.square")
+                    }
+                }
+                .font(.system(.subheadline, design: .rounded).weight(.medium))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+                .background(BE.card(12).fill(Color(.secondarySystemGroupedBackground)))
             }
             .buttonStyle(.plain)
+            .disabled(isImportingFootage)
         }
         .padding(.horizontal, BE.Space.m)
         .padding(.top, BE.Space.s)
+    }
+
+    /// Shared menu content for the hero and empty-state import entry points:
+    /// photo-library import into Footage (analyzable/labelable, wave 1) plus
+    /// the Hawk Eye in/out challenge flow.
+    private var importMenuItems: some View {
+        // Hoisted: PhotosPicker's label closure is nonisolated in the
+        // iOS 18.5 SDK, so it can't touch the main-actor LocalizationManager.
+        let importTitle = localization.localized("footage.importToFootage")
+        let challengeTitle = localization.localized("hawkeye.challenge")
+        return Group {
+            PhotosPicker(selection: $footageImportItem, matching: .videos) {
+                Label(importTitle, systemImage: "square.and.arrow.down.on.square")
+            }
+            Button {
+                showVideoImport = true
+            } label: {
+                Label(challengeTitle, systemImage: "eye")
+            }
+        }
     }
 
     // MARK: - Empty state
@@ -127,6 +194,20 @@ struct MatchHistoryView: View {
                     .foregroundStyle(.white)
                     .shadow(color: Color.accentColor.opacity(0.25), radius: 10, y: 4)
             }
+            // With the Footage tab retired, this is the only import entry
+            // point when there's nothing to list yet.
+            Menu {
+                importMenuItems
+            } label: {
+                if isImportingFootage {
+                    ProgressView()
+                } else {
+                    Label(localization.localized("home.importVideo"),
+                          systemImage: "square.and.arrow.down.on.square")
+                        .font(.system(.subheadline, design: .rounded).weight(.medium))
+                }
+            }
+            .disabled(isImportingFootage)
             Spacer()
         }
         .frame(maxWidth: .infinity)
@@ -149,6 +230,24 @@ struct MatchHistoryView: View {
                         if let first = offsets.first {
                             matchToDelete = section.matches[first]
                             showDeleteConfirmation = true
+                        }
+                    }
+                }
+            }
+
+            // Photo-library imports (no owning match) — trailing section,
+            // relocated from the retired Footage tab.
+            if !importedVideos.isEmpty {
+                Section(localization.localized("footage.imported.section")) {
+                    ForEach(importedVideos) { record in
+                        NavigationLink {
+                            ImportedFootageDetailView(record: record)
+                        } label: {
+                            Label {
+                                Text(record.startedAt, style: .date)
+                            } icon: {
+                                Image(systemName: "square.and.arrow.down.on.square")
+                            }
                         }
                     }
                 }
@@ -326,5 +425,35 @@ struct MatchHistoryView: View {
                                          matches: abandoned))
         }
         return sections
+    }
+}
+
+// MARK: - Photo-library import (wave 1 Phase 4)
+
+/// Loads a picked photo-library video, validates it, and files it as an
+/// imported `GameVideoRecord` (no owning match) so it shows up in the
+/// imported-videos section, analyzable and labelable. Shared by the home
+/// screen and the retired `FootageView` so the copy/validate/cleanup steps
+/// live in one place.
+@MainActor
+enum FootageImporter {
+    /// Returns a user-facing error message, or nil on success.
+    static func importVideo(
+        _ item: PhotosPickerItem,
+        modelContext: ModelContext
+    ) async -> String? {
+        do {
+            guard let video = try await item.loadTransferable(type: ImportedVideo.self) else {
+                throw VideoImportError.unsupportedItem
+            }
+            try ImportedVideo.validate(url: video.url)
+            let record = try GameVideoRecord.makeImported(copyingFrom: video.url)
+            modelContext.insert(record)
+            try? modelContext.save()
+            try? FileManager.default.removeItem(at: video.url)
+            return nil
+        } catch {
+            return error.localizedDescription
+        }
     }
 }

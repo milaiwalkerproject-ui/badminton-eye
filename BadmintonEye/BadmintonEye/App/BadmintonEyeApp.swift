@@ -184,13 +184,9 @@ struct ContentView: View {
                                 Label("Player List", systemImage: "person.2")
                             }
                         }
-                        Section("Footage") {
-                            NavigationLink {
-                                FootageView()
-                            } label: {
-                                Label("Footage", systemImage: "film.stack")
-                            }
-                        }
+                        // Footage section retired (restructure PR 5): per-match
+                        // footage lives in MatchDetailView, imports on the
+                        // Match History home screen.
                         Section("Settings") {
                             NavigationLink {
                                 SettingsView()
@@ -229,13 +225,9 @@ struct ContentView: View {
                         Label("Players", systemImage: "person.2")
                     }
 
-                    NavigationStack {
-                        FootageView()
-                    }
-                    .tabItem {
-                        Label("Footage", systemImage: "film.stack")
-                    }
-
+                    // Footage tab retired (restructure PR 5): per-match footage
+                    // lives in MatchDetailView, imports on the Match History
+                    // home screen.
                     NavigationStack {
                         SettingsView()
                     }
